@@ -1,11 +1,18 @@
+using OPS.Infrastructure;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+{
+    builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
+}
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseInfrastructure(app.Environment);
+app.MapHealthChecks("health");
 
 if (app.Environment.IsDevelopment())
 {
