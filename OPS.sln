@@ -15,13 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Persistence", "src\OPS.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Service", "src\OPS.Service\OPS.Service.csproj", "{12DA9794-C72C-4FAC-80E7-799B8FE5B566}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Client", "src\Client\Client.esproj", "{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D192DD34-4D01-4187-B461-353EB077E91A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,6 +43,15 @@ Global
 		{12DA9794-C72C-4FAC-80E7-799B8FE5B566}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12DA9794-C72C-4FAC-80E7-799B8FE5B566}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12DA9794-C72C-4FAC-80E7-799B8FE5B566}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D192DD34-4D01-4187-B461-353EB077E91A} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
@@ -51,5 +59,6 @@ Global
 		{4705BF7F-B14B-44C6-8F0C-B8F47F8D4C24} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
 		{2FFC0590-8E45-4580-99E7-39052907F711} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
 		{12DA9794-C72C-4FAC-80E7-799B8FE5B566} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
+		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
 	EndGlobalSection
 EndGlobal
