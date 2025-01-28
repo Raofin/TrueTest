@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OPS.Domain.Entities;
+using OPS.Domain.Entities.Usr;
 
-namespace OPS.Persistence.Configurations;
+namespace OPS.Persistence.Configurations.Usr;
 
 public partial class UserDetailConfiguration : IEntityTypeConfiguration<UserDetail>
 {
     public void Configure(EntityTypeBuilder<UserDetail> entity)
     {
         // Table
-        entity.ToTable("UserDetails", "core");
+        entity.ToTable("UserDetails", "usr");
         entity.HasKey(e => e.UserDetailsId);
         entity.HasIndex(e => e.UserId).IsUnique();
 
