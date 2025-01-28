@@ -1,4 +1,6 @@
-﻿namespace OPS.Domain.Entities;
+﻿using OPS.Domain.Entities.Auth;
+
+namespace OPS.Domain.Entities.Usr;
 
 public partial class UserDetail
 {
@@ -11,5 +13,5 @@ public partial class UserDetail
     public bool IsDeleted { get; set; }
 
     public long? UserId { get; set; }
-    public virtual User User { get; set; } = null!;
+    public User User { get; set; } = null!;
 }
