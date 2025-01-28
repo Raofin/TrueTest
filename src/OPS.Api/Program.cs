@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+builder.Host.AddSerilog(builder.Configuration, builder.Environment);
+
 var app = builder.Build();
 
 app.UseInfrastructure(app.Environment);

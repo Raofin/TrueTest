@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OPS.Persistence;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 
 namespace OPS.Infrastructure;
 
@@ -22,6 +25,8 @@ public static class AppConfigurations
 
     public static void UseInfrastructure(this IApplicationBuilder app, IHostEnvironment env)
     {
+        app.UseSerilogRequestLogging();
+
         if (env.IsDevelopment())
         {
             app.ApplyMigration();
@@ -51,5 +56,24 @@ public static class AppConfigurations
         {
             dbContext.Database.Migrate();
         }
+    }
+
+    public static void AddSerilog(this IHostBuilder hostBuilder, IConfiguration configuration, IHostEnvironment env)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        hostBuilder.UseSerilog((context, config) =>
+            config.ReadFrom.Configuration(context.Configuration)
+                .WriteTo.Console(env.IsDevelopment() ? LogEventLevel.Information : LogEventLevel.Error)
+                .WriteTo.MSSqlServer(
+                    restrictedToMinimumLevel: LogEventLevel.Warning,
+                    connectionString: connectionString,
+                    sinkOptions: new MSSqlServerSinkOptions
+                    {
+                        TableName = "LogEvents",
+                        AutoCreateSqlTable = false
+                    }
+                )
+        );
     }
 }
