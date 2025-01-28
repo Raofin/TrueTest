@@ -1,9 +1,14 @@
 using OPS.Infrastructure;
+using OPS.Persistence;
+using OPS.Service;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
+    builder.Services
+        .AddInfrastructure(builder.Configuration, builder.Environment)
+        .AddPersistence()
+        .AddService();
 }
 
 builder.Services.AddControllers();

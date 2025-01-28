@@ -14,13 +14,15 @@ namespace OPS.Infrastructure;
 
 public static class AppConfigurations
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
     {
         services
             .AddDatabase(configuration)
             .AddHttpContextAccessor()
             .AddMemoryCache()
             .AddHealthChecks();
+
+        return services;
     }
 
     public static void UseInfrastructure(this IApplicationBuilder app, IHostEnvironment env)
