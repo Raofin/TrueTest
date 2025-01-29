@@ -11,7 +11,7 @@ export default function Component() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log('handleSubmit')
+    console.log('submit')
   }
 
   return (
