@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OPS.Service.Contract;
+using OPS.Service.Contracts;
 using OPS.Service.Implementation;
 
 namespace OPS.Service;
