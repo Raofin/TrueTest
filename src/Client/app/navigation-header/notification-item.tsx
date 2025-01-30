@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import {Avatar, Badge, Button} from "@nextui-org/react";
-import {Icon} from "@iconify/react";
+import {Avatar, Badge} from "@nextui-org/react";
 import {cn} from "@nextui-org/react";
 
 export type NotificationType = "default"|"request";
@@ -36,12 +35,7 @@ const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>
       >
         <div className="relative flex-none">
           <Badge
-            color="primary"
-            content=""
-            isInvisible={isRead}
-            placement="bottom-right"
-            shape="circle"
-          >
+            color="primary" content="" isInvisible={isRead} placement="bottom-right" shape="circle">
             <Avatar src={avatar} />
           </Badge>
         </div>

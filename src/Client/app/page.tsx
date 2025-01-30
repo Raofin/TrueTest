@@ -34,7 +34,7 @@ export default function App() {
             </NavbarContent>
             <NavbarContent justify="end">
                 <NavbarItem className="hidden lg:flex">
-                    <Link href="/login"><button className="bg-blue-600 text-white py-1 rounded-xl px-2">Login</button></Link>
+                    <Link href="/login"><Button color="primary" variant="shadow">Login</Button></Link>
                 </NavbarItem>
 
             </NavbarContent>

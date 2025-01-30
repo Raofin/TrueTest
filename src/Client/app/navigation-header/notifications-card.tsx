@@ -3,7 +3,7 @@
 import type {CardProps} from "@nextui-org/react";
 
 import React from "react";
-import {Button, Card, CardBody, CardHeader, Chip, Tabs, Tab, ScrollShadow, CardFooter} from "@nextui-org/react";
+import {Button, Card, CardBody, CardHeader, Chip, Tabs, Tab, ScrollShadow} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
 import NotificationItem from "./notification-item";
@@ -17,13 +17,10 @@ type Notification = {
   time: string;
   type?: "default"|"request";
 };
-
 enum NotificationTabs {
   All = "all",
-  Unread = "unread",
-  Archive = "archive",
+  Unread = "unread"
 }
-
 const notifications: Record<NotificationTabs, Notification[]> = {
   all: [
     {
@@ -46,15 +43,12 @@ const notifications: Record<NotificationTabs, Notification[]> = {
       time: "2 hours ago",
       type: "request",
     },
-  ],
-  archive: [],
+  ]
 };
 
 export default function Component(props: CardProps) {
   const [activeTab, setActiveTab] = React.useState<NotificationTabs>(NotificationTabs.All);
-
   const activeNotifications = notifications[activeTab];
-
   return (
     <Card className="w-full max-w-[420px]" {...props}>
       <CardHeader className="flex flex-col px-0 pb-0">
@@ -80,16 +74,13 @@ export default function Component(props: CardProps) {
           color="primary"
           selectedKey={activeTab}
           variant="underlined"
-          onSelectionChange={(selected) => setActiveTab(selected as NotificationTabs)}
-        >
+          onSelectionChange={(selected) => setActiveTab(selected as NotificationTabs)}>
           <Tab
             key="all"
             title={
               <div className="flex items-center space-x-2">
                 <span>All</span>
-                <Chip size="sm" variant="flat">
-                  9
-                </Chip>
+                <Chip size="sm" variant="flat">9</Chip>
               </div>
             }
           />
@@ -107,7 +98,7 @@ export default function Component(props: CardProps) {
         </Tabs>
       </CardHeader>
       <CardBody className="w-full gap-0 p-0">
-        <ScrollShadow className="h-[500px] w-full">
+        <ScrollShadow className=" w-full">
           {activeNotifications?.length > 0 ? (
             activeNotifications.map((notification) => (
               <NotificationItem key={notification.id} {...notification} />

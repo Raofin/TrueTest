@@ -20,7 +20,6 @@ export default function Component() {
         <div className="flex flex-col gap-1">
           <h1 className="text-large font-medium">Sign in to your account</h1>
         </div>
-
         <Form className="flex w-full flex-wrap md:flex-nowrap gap-4 flex-col" validationBehavior="native" onSubmit={handleSubmit}>
           <Input isRequired label="Email" name="email" type="email" variant="bordered" />
           <Input isRequired endContent={
@@ -51,7 +50,7 @@ export default function Component() {
           <Divider className="flex-1" />
         </div>
         <div className="flex flex-col gap-2">
-          <Link href='/api/auth/signin'><Button className='w-full' startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
+          <Link href='#'><Button className='w-full' startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
             Continue with Google
           </Button></Link>
           <Button startContent={<Icon className="text-default-500" icon="fe:github" width={24} />} variant="bordered">
