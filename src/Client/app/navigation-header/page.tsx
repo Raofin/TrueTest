@@ -21,10 +21,11 @@ import {
 } from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-
+import { useState } from "react";
 import NotificationsCard from "./notifications-card";
 
 export default function Component() {
+  const [page, setPage] = useState("home");
   return (
     <Navbar
       classNames={{
@@ -32,28 +33,26 @@ export default function Component() {
         item: "data-[active=true]:text-primary",
         wrapper: "px-4 sm:px-6",
       }}
-      height="60px"
-    >
+      height="60px">
       <NavbarBrand>
         <NavbarMenuToggle className="mr-2 h-6 sm:hidden" />
         <p className="font-extrabold text-3xl ">OPS</p>
       </NavbarBrand>
       <NavbarContent
         className="ml-4 hidden h-12 w-full max-w-fit gap-4 rounded-full bg-content2 px-4 dark:bg-content1 sm:flex"
-        justify="start"
-      >
-        <NavbarItem isActive>
-          <Link className="flex gap-2 text-inherit" href="#">
-            Dashboard
+        justify="start">
+        <NavbarItem isActive={page === "home"}>
+          <Link className="flex gap-2 text-inherit" href="/" >
+            Home
           </Link>
         </NavbarItem>
-        <NavbarItem >
-          <Link aria-current="page" className="flex gap-2 text-inherit" href="#">
+        <NavbarItem isActive={page === "attend-exam"}>
+          <Link aria-current="page" className="flex gap-2 text-inherit" href="/attend-exam" onPress={() => setPage("attend-exam")}>
             Attend Exam
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link className="flex gap-2 text-inherit" href="#">
+          <Link className="flex gap-2 text-inherit" href="/exam-schedule">
             Exam Schedule
           </Link>
         </NavbarItem>
