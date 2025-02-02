@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.Exams;
 using OPS.Application.Extensions;
@@ -44,5 +45,46 @@ public class UpdateExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
         return result > 0
             ? exam.ToDto()
             : Error.Failure("The exam could not be saved.");
+    }
+}
+
+public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
+{
+    public UpdateExamCommandValidator()
+    {
+        RuleFor(x => x.ExamId)
+            .GreaterThan(0).WithMessage("ExamId must be a positive number.");
+
+        RuleFor(x => x.Title)
+            .MaximumLength(100)
+            .When(x => !string.IsNullOrEmpty(x.Title))
+            .WithMessage("Title cannot exceed 100 characters.");
+
+        RuleFor(x => x.Description)
+            .MaximumLength(500)
+            .When(x => !string.IsNullOrEmpty(x.Description))
+            .WithMessage("Description cannot exceed 500 characters.");
+
+        RuleFor(x => x.OpensAt)
+            .GreaterThan(DateTime.UtcNow)
+            .When(x => x.OpensAt.HasValue)
+            .WithMessage("OpensAt must be in the future.");
+
+        RuleFor(x => x.ClosesAt)
+            .GreaterThan(x => x.OpensAt)
+            .When(x => x.ClosesAt.HasValue && x.OpensAt.HasValue)
+            .WithMessage("ClosesAt must be later than OpensAt.");
+
+        RuleFor(x => x.Duration)
+            .GreaterThan(5).When(x => x.Duration.HasValue)
+            .WithMessage("Duration must be more than 5 minutes.");
+
+        RuleFor(x => x.IsActive)
+            .NotNull().When(x => x.IsActive.HasValue)
+            .WithMessage("IsActive flag is required when provided.");
+
+        RuleFor(x => x.IsDeleted)
+            .NotNull().When(x => x.IsDeleted.HasValue)
+            .WithMessage("IsDeleted flag is required when provided.");
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Application.Features.Exams.Commands;
@@ -6,7 +7,10 @@ using OPS.Application.Features.Exams.Queries;
 
 namespace OPS.Api.Controllers;
 
-public class ExamController(IMediator mediator) : ApiController
+public class ExamController(
+    IMediator mediator,
+    IValidator<CreateExamCommand> _createExamValidator, 
+    IValidator<UpdateExamCommand> _updateExamValidator) : ApiController
 {
     private readonly IMediator _mediator = mediator;
 
@@ -51,6 +55,14 @@ public class ExamController(IMediator mediator) : ApiController
     [HttpPost]
     public async Task<IActionResult> CreateAsync(CreateExamCommand command)
     {
+        var validation = await _createExamValidator.ValidateAsync(command);
+        
+        if (!validation.IsValid)
+        {
+            var errors = validation.Errors.Select(e => e.ErrorMessage).ToArray();
+            return BadRequest(new { errors });
+        }
+        
         var result = await _mediator.Send(command);
         
         return !result.IsError
@@ -61,6 +73,14 @@ public class ExamController(IMediator mediator) : ApiController
     [HttpPut]
     public async Task<IActionResult> UpdateAsync(UpdateExamCommand command)
     {
+        var validation = await _updateExamValidator.ValidateAsync(command);
+        
+        if (!validation.IsValid)
+        {
+            var errors = validation.Errors.Select(e => e.ErrorMessage).ToArray();
+            return BadRequest(new { errors });
+        }
+        
         var result = await _mediator.Send(command);
         
         return !result.IsError

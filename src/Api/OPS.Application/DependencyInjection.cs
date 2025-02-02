@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OPS.Application;
 
@@ -10,6 +11,8 @@ public static class DependencyInjection
         {
             options.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly);
         });
+        
+        services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
         
         return services;
     }
