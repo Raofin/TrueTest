@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\OPS.Service\OPS.Service.csproj" />
+		<ProjectReference Include="..\OPS.Application\OPS.Application.csproj" />
 	</ItemGroup>
 
 </Project>

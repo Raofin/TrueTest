@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
-using OPS.Service.Contracts;
-using OPS.Service.Dtos;
+using OPS.Application.Contracts;
+using OPS.Application.Dtos;
 
 namespace OPS.Api.Controllers;
 

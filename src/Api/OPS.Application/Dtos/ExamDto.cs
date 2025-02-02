@@ -1,4 +1,4 @@
-﻿namespace OPS.Service.Dtos;
+﻿namespace OPS.Application.Dtos;
 
 public record ExamDto(
     long ExamId,

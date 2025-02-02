@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OPS.Service.Contracts;
-using OPS.Service.Implementation;
+using OPS.Application.Contracts;
+using OPS.Application.Implementation;
 
-namespace OPS.Service;
+namespace OPS.Application;
 
 public static class Dependencies
 {
@@ -12,5 +12,4 @@ public static class Dependencies
 
         return services;
     }
-
 }

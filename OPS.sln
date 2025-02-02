@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Infrastructure", "src\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Persistence", "src\Api\OPS.Persistence\OPS.Persistence.csproj", "{2FFC0590-8E45-4580-99E7-39052907F711}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Service", "src\Api\OPS.Service\OPS.Service.csproj", "{12DA9794-C72C-4FAC-80E7-799B8FE5B566}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Application", "src\Api\OPS.Application\OPS.Application.csproj", "{12DA9794-C72C-4FAC-80E7-799B8FE5B566}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Client", "src\Client\Client.esproj", "{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}"
 EndProject

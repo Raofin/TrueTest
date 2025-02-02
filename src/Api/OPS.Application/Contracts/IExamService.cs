@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
-using OPS.Service.Dtos;
+using OPS.Application.Dtos;
 
-namespace OPS.Service.Contracts;
+namespace OPS.Application.Contracts;
 
 public interface IExamService
 {

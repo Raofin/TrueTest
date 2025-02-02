@@ -1,10 +1,10 @@
 ﻿using ErrorOr;
+using OPS.Application.Contracts;
+using OPS.Application.Dtos;
 using OPS.Domain;
 using OPS.Domain.Entities.Exam;
-using OPS.Service.Contracts;
-using OPS.Service.Dtos;
 
-namespace OPS.Service.Implementation;
+namespace OPS.Application.Implementation;
 
 internal class ExamService(IUnitOfWork unitOfWork) : IExamService
 {
