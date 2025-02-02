@@ -1,15 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OPS.Application.Contracts;
-using OPS.Application.Implementation;
 
 namespace OPS.Application;
 
-public static class Dependencies
+public static class DependencyInjection
 {
     public static IServiceCollection AddService(this IServiceCollection services)
     {
-        services.AddScoped<IExamService, ExamService>();
-
+        services.AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly);
+        });
+        
         return services;
     }
 }

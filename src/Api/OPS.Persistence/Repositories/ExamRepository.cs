@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OPS.Domain.Contracts;
 using OPS.Domain.Entities.Exam;
-using OPS.Domain.Interfaces.Repositories;
 
 namespace OPS.Persistence.Repositories;
 
@@ -8,11 +8,12 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<List<Examination>> GetUpcomingExamsAsync()
+    public async Task<List<Examination>> GetUpcomingExamsAsync(CancellationToken cancellationToken)
     {
         return await _dbContext.Exams
+            .AsNoTracking()
             .Where(exam => exam.OpensAt > DateTime.UtcNow)
             .OrderBy(exam => exam.OpensAt)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

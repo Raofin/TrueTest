@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OPS.Domain;
-using OPS.Domain.Interfaces.Repositories;
+using OPS.Domain.Contracts;
 using OPS.Persistence.Repositories;
 
 namespace OPS.Persistence;
 
-public static class Dependencies
+public static class DependencyInjection
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services)
     {
@@ -15,5 +15,4 @@ public static class Dependencies
 
         return services;
     }
-
 }
