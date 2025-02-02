@@ -1,6 +1,6 @@
+using OPS.Application;
 using OPS.Infrastructure;
 using OPS.Persistence;
-using OPS.Service;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

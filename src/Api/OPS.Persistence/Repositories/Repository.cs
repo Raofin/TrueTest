@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Interfaces.Repositories;
 using System.Linq.Expressions;
+using OPS.Domain.Contracts;
 
 namespace OPS.Persistence.Repositories;
 
@@ -8,24 +8,24 @@ internal class Repository<TEntity>(AppDbContext context) : IRepository<TEntity> 
 {
     private readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 
-    public async Task<TEntity?> GetAsync(long id)
+    public async Task<TEntity?> GetAsync(long id, CancellationToken cancellationToken = default)
     {
-        return await _entities.FindAsync(id);
+        return await _entities.FindAsync([id], cancellationToken);
     }
 
-    public async Task<IEnumerable<TEntity>> GetAsync()
+    public async Task<IEnumerable<TEntity>> GetAsync(CancellationToken cancellationToken = default)
     {
-        return await _entities.ToListAsync();
+        return await _entities.ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await _entities.Where(predicate).ToListAsync();
+        return await _entities.Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public async Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await _entities.SingleOrDefaultAsync(predicate);
+        return await _entities.SingleOrDefaultAsync(predicate, cancellationToken);
     }
 
     public void Add(TEntity entity)

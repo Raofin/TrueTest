@@ -1,4 +1,4 @@
-﻿using OPS.Domain.Interfaces.Repositories;
+﻿using OPS.Domain.Contracts;
 
 namespace OPS.Domain;
 
@@ -6,5 +6,5 @@ public interface IUnitOfWork : IDisposable
 {
     IExamRepository Exam { get; }
 
-    Task<int> CommitAsync();
+    Task<int> CommitAsync(CancellationToken cancellationToken = default);
 }

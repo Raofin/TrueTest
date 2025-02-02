@@ -1,5 +1,5 @@
 ﻿using OPS.Domain;
-using OPS.Domain.Interfaces.Repositories;
+using OPS.Domain.Contracts;
 
 namespace OPS.Persistence;
 
@@ -9,9 +9,9 @@ internal class UnitOfWork(AppDbContext dbContext, IExamRepository examRepository
 
     public IExamRepository Exam { get; } = examRepository;
 
-    public async Task<int> CommitAsync()
+    public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 
     public void Dispose()
