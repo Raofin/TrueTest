@@ -71,9 +71,8 @@ export default function Component() {
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden sm:flex">
-
            <Button isIconOnly radius="full" variant="light">
-             <Link href="/settings"> <Icon className="text-default-500" icon="solar:settings-linear" width={24} />
+             <Link href="/candidate_dashboard/settings"> <Icon className="text-default-500" icon="solar:settings-linear" width={24} />
              </Link> </Button>
 
         </NavbarItem>
@@ -116,7 +115,7 @@ export default function Component() {
                 <p className="font-semibold">Signed in as</p>
                 <p className="font-semibold">johndoe@example.com</p>
               </DropdownItem>
-              <DropdownItem key="settings"><Link href="/myprofile">My Profile</Link></DropdownItem>
+              <DropdownItem key="settings"><Link href="/candidate_dashboard/myprofile">My Profile</Link></DropdownItem>
               <DropdownItem key="logout" color="danger">
                <Link href="/"> Log Out</Link>
               </DropdownItem>
