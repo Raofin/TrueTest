@@ -47,17 +47,17 @@ export default function Component() {
           </Link>
         </NavbarItem>
         <NavbarItem isActive={page === "attend-exam"}>
-          <Link aria-current="page" className="flex gap-2 text-inherit" href="/attend-exam" onPress={() => setPage("attend-exam")}>
+          <Link aria-current="page" className="flex gap-2 text-inherit" href="/candidate_dashboard/attend-exam" onPress={() => setPage("attend-exam")}>
             Attend Exam
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link className="flex gap-2 text-inherit" href="/exam-schedule">
+          <Link className="flex gap-2 text-inherit" href="/candidate_dashboard/exam-schedule">
             Exam Schedule
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link className="flex gap-2 text-inherit" href="#">
+          <Link className="flex gap-2 text-inherit" href="/candidate_dashboard/view-result">
             View Result
           </Link>
         </NavbarItem>

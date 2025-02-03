@@ -1,5 +1,4 @@
 "use client"
-
 import React, {SVGProps} from "react";
 import {
     Table,
@@ -97,7 +96,6 @@ const statusOptions = [
     {name: "Finished", uid: "finished"},
     {name: "Running", uid: "running"},
 ];
-
 const users = [
     {
         id: 1,
@@ -105,7 +103,7 @@ const users = [
         email: "tony.reichert@example.com",
         role: "Software Engineer",
         date:"25-02-2025",
-        status: "pass",
+        status: "upcoming",
     },
     {
         id: 2,
@@ -113,13 +111,14 @@ const users = [
         email: "tony.reichert@example.com",
         role: "Software Engineer",
         date:"25-02-2025",
-        status: "fail",
+        status: "finished",
     }
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
     active: "success",
     paused: "danger",
+    vacation: "warning",
 };
 
 const INITIAL_VISIBLE_COLUMNS = ["id","name","email", "role", "date","status"];
@@ -135,7 +134,7 @@ export default function Component() {
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-        column: "date",
+        column:"date",
         direction: "ascending",
     });
 
@@ -202,7 +201,7 @@ export default function Component() {
                 );
             case "status":
                 return (
-                    <Chip className="capitalize text-md font-bold px-2" color={statusColorMap[user.status]} size="sm" variant="flat">
+                    <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
                         {cellValue}
                     </Chip>
                 );

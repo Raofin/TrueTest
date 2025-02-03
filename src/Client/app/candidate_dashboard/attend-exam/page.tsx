@@ -1,5 +1,6 @@
 "use client"
 import React from "react";
+import '../../../styles/globals.css'
 import {CheckboxGroup, Checkbox, Button} from "@heroui/react";
 export default function Component() {
     const [selected, setSelected] =React.useState<string[]>([]);

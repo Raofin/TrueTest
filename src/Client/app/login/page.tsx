@@ -3,7 +3,7 @@
 import React from 'react'
 import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
-
+import '../../styles/globals.css'
 export default function Component() {
   const [isVisible, setIsVisible] = React.useState(false)
 
