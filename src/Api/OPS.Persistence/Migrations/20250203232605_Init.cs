@@ -576,7 +576,7 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.CreateTable(
                 name: "FlaggedSubmissions",
-                schema: "Exam",
+                schema: "Submit",
                 columns: table => new
                 {
                     FlaggedSolutionId = table.Column<long>(type: "bigint", nullable: false)
@@ -658,7 +658,7 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_FlaggedSubmissions_ProblemSubmissionId",
-                schema: "Exam",
+                schema: "Submit",
                 table: "FlaggedSubmissions",
                 column: "ProblemSubmissionId");
 
@@ -842,7 +842,7 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "FlaggedSubmissions",
-                schema: "Exam");
+                schema: "Submit");
 
             migrationBuilder.DropTable(
                 name: "LogEvents",

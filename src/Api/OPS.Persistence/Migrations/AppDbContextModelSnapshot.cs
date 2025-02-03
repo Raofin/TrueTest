@@ -557,7 +557,7 @@ namespace OPS.Persistence.Migrations
 
                     b.HasIndex("ProblemSubmissionId");
 
-                    b.ToTable("FlaggedSubmissions", "Exam");
+                    b.ToTable("FlaggedSubmissions", "Submit");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.McqSubmission", b =>

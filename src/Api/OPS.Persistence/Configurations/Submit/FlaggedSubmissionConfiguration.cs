@@ -8,7 +8,7 @@ public class FlaggedSubmissionConfiguration : IEntityTypeConfiguration<FlaggedSu
 {
     public void Configure(EntityTypeBuilder<FlaggedSubmission> entity)
     {
-        entity.ToTable("FlaggedSubmissions", "Exam");
+        entity.ToTable("FlaggedSubmissions", "Submit");
         entity.HasKey(e => e.FlaggedSolutionId);
 
         entity.Property(e => e.ReasonMarkdown).IsRequired();

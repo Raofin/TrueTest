@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250203231710_Init")]
+    [Migration("20250203232605_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -560,7 +560,7 @@ namespace OPS.Persistence.Migrations
 
                     b.HasIndex("ProblemSubmissionId");
 
-                    b.ToTable("FlaggedSubmissions", "Exam");
+                    b.ToTable("FlaggedSubmissions", "Submit");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.McqSubmission", b =>
