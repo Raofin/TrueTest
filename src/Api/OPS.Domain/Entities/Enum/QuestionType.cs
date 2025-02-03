@@ -2,7 +2,7 @@
 
 namespace OPS.Domain.Entities.Enum;
 
-public partial class QuestionType
+public class QuestionType
 {
     public long QuestionTypeId { get; set; }
     public string Type { get; set; } = null!;

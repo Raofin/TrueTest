@@ -4,16 +4,13 @@ using OPS.Domain.Entities.Enum;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public partial class SocialPlatformConfiguration : IEntityTypeConfiguration<SocialPlatform>
+public class SocialTypesConfiguration : IEntityTypeConfiguration<SocialType>
 {
-    public void Configure(EntityTypeBuilder<SocialPlatform> entity)
+    public void Configure(EntityTypeBuilder<SocialType> entity)
     {
-        // Table
-        entity.ToTable("SocialPlatforms", "enum");
-        entity.HasKey(e => e.SocialPlatformId);
+        entity.ToTable("SocialTypes", "Enum");
+        entity.HasKey(e => e.SocialTypeId);
         entity.HasIndex(e => e.PlatformName).IsUnique();
-
-        // Properties
         entity.Property(e => e.PlatformName).IsRequired().HasMaxLength(255);
     }
 }

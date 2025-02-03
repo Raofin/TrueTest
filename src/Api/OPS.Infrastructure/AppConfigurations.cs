@@ -14,7 +14,8 @@ namespace OPS.Infrastructure;
 
 public static class AppConfigurations
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
+        IHostEnvironment env)
     {
         services
             .AddDatabase(configuration)
@@ -29,10 +30,7 @@ public static class AppConfigurations
     {
         app.UseSerilogRequestLogging();
 
-        if (env.IsDevelopment())
-        {
-            app.ApplyMigration();
-        }
+        if (env.IsDevelopment()) app.ApplyMigration();
     }
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
@@ -41,7 +39,7 @@ public static class AppConfigurations
 
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
             connectionString,
-            m => m.MigrationsHistoryTable("Migrations"))
+            m => m.MigrationsHistoryTable("Migrations", "Core"))
         );
 
         return services;
@@ -54,10 +52,7 @@ public static class AppConfigurations
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var databaseCreator = dbContext.GetService<IRelationalDatabaseCreator>();
 
-        if (!databaseCreator.Exists())
-        {
-            dbContext.Database.Migrate();
-        }
+        if (!databaseCreator.Exists()) dbContext.Database.Migrate();
     }
 
     public static void AddSerilog(this IHostBuilder hostBuilder, IConfiguration configuration, IHostEnvironment env)
@@ -73,6 +68,7 @@ public static class AppConfigurations
                     sinkOptions: new MSSqlServerSinkOptions
                     {
                         TableName = "LogEvents",
+                        SchemaName = "Core",
                         AutoCreateSqlTable = false
                     }
                 )

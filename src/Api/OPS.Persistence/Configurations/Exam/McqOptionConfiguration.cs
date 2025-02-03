@@ -4,15 +4,19 @@ using OPS.Domain.Entities.Exam;
 
 namespace OPS.Persistence.Configurations.Exam;
 
-public partial class McqOptionConfiguration : IEntityTypeConfiguration<McqOption>
+public class McqOptionConfiguration : IEntityTypeConfiguration<McqOption>
 {
     public void Configure(EntityTypeBuilder<McqOption> entity)
     {
-        // Table
-        entity.ToTable("McqOptions", "exam");
+        entity.ToTable("McqOptions", "Exam");
         entity.HasKey(e => e.McqOptionId);
 
-        // Properties
-        entity.Property(e => e.Optionn).IsRequired();
+        entity.Property(e => e.McqOptionId).ValueGeneratedNever();
+        entity.Property(e => e.OptionMarkdown).IsRequired();
+
+        entity.HasOne(d => d.Question)
+            .WithMany(p => p.McqQptions)
+            .HasForeignKey(d => d.QuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

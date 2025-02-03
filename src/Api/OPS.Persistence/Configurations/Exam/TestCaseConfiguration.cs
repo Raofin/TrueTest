@@ -4,21 +4,19 @@ using OPS.Domain.Entities.Exam;
 
 namespace OPS.Persistence.Configurations.Exam;
 
-public partial class TestCaseConfiguration : IEntityTypeConfiguration<TestCase>
+public class TestCaseConfiguration : IEntityTypeConfiguration<TestCase>
 {
     public void Configure(EntityTypeBuilder<TestCase> entity)
     {
-        // Table
-        entity.ToTable("TestCases", "exam");
+        entity.ToTable("TestCases", "Exam");
         entity.HasKey(e => e.TestCaseId);
 
-        // Properties
         entity.Property(e => e.Input).IsRequired();
         entity.Property(e => e.Output).IsRequired();
 
-        // Relationships
-        entity.HasOne(d => d.Problem).WithMany(p => p.TestCases)
-            .HasForeignKey(d => d.ProblemId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+        entity.HasOne(d => d.Question)
+            .WithMany(q => q.TestCases)
+            .HasForeignKey(d => d.QuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

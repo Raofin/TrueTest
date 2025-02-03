@@ -1,11 +1,11 @@
-﻿using OPS.Domain.Entities.Usr;
+﻿using OPS.Domain.Entities.Submit;
 
 namespace OPS.Domain.Entities.Enum;
 
-public partial class ProgLanguage
+public class ProgLanguage
 {
-    public long ProgLanguagesId { get; set; }
+    public long ProgLanguageId { get; set; }
     public string Language { get; set; } = null!;
 
-    public ICollection<UserSolution> UserSolutions { get; set; } = [];
+    public ICollection<ProblemSubmission> ProblemSubmissions { get; set; } = [];
 }

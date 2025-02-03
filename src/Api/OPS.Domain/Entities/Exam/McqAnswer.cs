@@ -2,8 +2,9 @@
 
 public class McqAnswer
 {
+    public long McqAnswerId { get; set; }
     public long QuestionId { get; set; }
     public long McqOptionId { get; set; }
-    public Question Question { get; set; } = null!;
     public McqOption McqOption { get; set; } = null!;
+    public Question Question { get; set; } = null!;
 }

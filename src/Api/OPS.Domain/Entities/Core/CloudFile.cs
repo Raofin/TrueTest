@@ -2,7 +2,7 @@
 
 namespace OPS.Domain.Entities.Core;
 
-public partial class CloudFile
+public class CloudFile
 {
     public long CloudFileId { get; set; }
     public string Name { get; set; } = null!;
@@ -13,7 +13,7 @@ public partial class CloudFile
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
 
-    public long? UserId { get; set; }
-    public User? User { get; set; }
-    public ICollection<User> Users { get; set; } = [];
+    public long? AccountId { get; set; }
+    public Account? Account { get; set; }
+    public ICollection<Account> Accounts { get; set; } = [];
 }

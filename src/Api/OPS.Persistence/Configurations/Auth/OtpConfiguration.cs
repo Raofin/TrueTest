@@ -4,17 +4,17 @@ using OPS.Domain.Entities.Auth;
 
 namespace OPS.Persistence.Configurations.Auth;
 
-public partial class OtpConfiguration : IEntityTypeConfiguration<Otp>
+public class OtpConfiguration : IEntityTypeConfiguration<Otp>
 {
     public void Configure(EntityTypeBuilder<Otp> entity)
     {
-        // Table
-        entity.ToTable("Otps", "auth");
-        entity.HasKey(e => e.Email);
+        entity.ToTable("Otps", "Auth");
+        entity.HasKey(e => e.OtpId);
 
-        // Properties
-        entity.Property(e => e.Email).HasMaxLength(255);
         entity.Property(e => e.Code).IsRequired().HasMaxLength(255);
-        entity.Property(e => e.ExpiresAt).HasDefaultValueSql("(dateadd(minute,(5),getdate()))").HasColumnType("datetime");
+        entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+        entity.Property(e => e.ExpiresAt)
+            .HasDefaultValueSql("(dateadd(minute,(5),getutcdate()))")
+            .HasColumnType("datetime");
     }
 }
