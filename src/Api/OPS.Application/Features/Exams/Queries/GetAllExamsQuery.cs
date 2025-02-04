@@ -8,7 +8,7 @@ namespace OPS.Application.Features.Exams.Queries;
 
 public record GetAllExamsQuery : IRequest<ErrorOr<List<ExamResponse>>>;
 
-public class GetAllExamsQueryHandler(IUnitOfWork unitOfWork) 
+public class GetAllExamsQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetAllExamsQuery, ErrorOr<List<ExamResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;

@@ -13,6 +13,8 @@ public static class DependencyInjection
 
         services.AddScoped<IExamRepository, ExamRepository>();
 
+        services.AddScoped<IAccountRepository, AccountRepository>();
+
         return services;
     }
 }
