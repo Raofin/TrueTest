@@ -1,12 +1,13 @@
-﻿using OPS.Domain.Entities.Usr;
+﻿using OPS.Domain.Entities.Submit;
 
 namespace OPS.Domain.Entities.Exam;
 
-public partial class McqOption
+public class McqOption
 {
     public long McqOptionId { get; set; }
-    public string Optionn { get; set; } = null!;
-
-    public ICollection<Question> Questions { get; set; } = [];
-    public ICollection<UserMcqAnswer> UserMcqAnswers { get; set; } = [];
+    public long QuestionId { get; set; }
+    public string OptionMarkdown { get; set; }
+    public Question Question { get; set; }
+    public ICollection<McqAnswer> McqAnswers { get; set; } = [];
+    public ICollection<McqSubmission> McqSubmissions { get; set; } = [];
 }

@@ -4,40 +4,30 @@ using OPS.Domain.Entities.Exam;
 
 namespace OPS.Persistence.Configurations.Exam;
 
-public partial class QuestionConfiguration : IEntityTypeConfiguration<Question>
+public class QuestionConfiguration : IEntityTypeConfiguration<Question>
 {
     public void Configure(EntityTypeBuilder<Question> entity)
     {
-        // Table
-        entity.ToTable("Questions", "exam");
+        entity.ToTable("Questions", "Exam");
         entity.HasKey(e => e.QuestionId);
 
-        // Properties
-        entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())").HasColumnType("datetime");
-        entity.Property(e => e.IsActive).HasDefaultValue(true);
+        entity.Property(e => e.StatementMarkdown).IsRequired();
         entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
-        entity.Property(e => e.Statement).IsRequired();
-        entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())").HasColumnType("datetime");
+        entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())").HasColumnType("datetime");
+        entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+        entity.Property(e => e.IsActive).HasDefaultValue(true);
 
-        // Relationships
-        entity.HasOne(d => d.Exam).WithMany(p => p.Questions)
-            .HasForeignKey(d => d.ExamId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
-        entity.HasOne(d => d.QuestionType).WithMany(p => p.Questions)
+        entity.HasOne(d => d.Difficulty)
+            .WithMany(p => p.Questions)
+            .HasForeignKey(d => d.DifficultyId)
+            .OnDelete(DeleteBehavior.Restrict);
+        entity.HasOne(d => d.Examination)
+            .WithMany(p => p.Questions)
+            .HasForeignKey(d => d.ExaminationId)
+            .OnDelete(DeleteBehavior.Restrict);
+        entity.HasOne(d => d.QuestionType)
+            .WithMany(p => p.Questions)
             .HasForeignKey(d => d.QuestionTypeId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
-        entity.HasMany(d => d.McqOptions).WithMany(p => p.Questions)
-            .UsingEntity<Dictionary<string, object>>("McqAnswer",
-                r => r.HasOne<McqOption>().WithMany()
-                        .HasForeignKey("McqOptionId")
-                        .OnDelete(DeleteBehavior.ClientSetNull),
-                l => l.HasOne<Question>().WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.ClientSetNull),
-                j =>
-                {
-                    j.HasKey("QuestionId", "McqOptionId");
-                    j.ToTable("McqAnswers", "exam");
-                });
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

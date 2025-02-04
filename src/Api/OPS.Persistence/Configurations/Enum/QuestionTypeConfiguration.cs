@@ -4,15 +4,13 @@ using OPS.Domain.Entities.Enum;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public partial class QuestionTypeConfiguration : IEntityTypeConfiguration<QuestionType>
+public class QuestionTypeConfiguration : IEntityTypeConfiguration<QuestionType>
 {
     public void Configure(EntityTypeBuilder<QuestionType> entity)
     {
-        // Table
-        entity.ToTable("QuestionTypes", "enum");
+        entity.ToTable("QuestionTypes", "Enum");
         entity.HasKey(e => e.QuestionTypeId);
-
-        // Properties
+        entity.HasIndex(e => e.Type).IsUnique();
         entity.Property(e => e.Type).IsRequired().HasMaxLength(255);
     }
 }

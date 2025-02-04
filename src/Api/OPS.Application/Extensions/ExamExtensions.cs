@@ -8,9 +8,9 @@ public static class ExamExtensions
     public static ExamResponse ToDto(this Examination exam)
     {
         return new ExamResponse(
-            exam.ExamId,
+            exam.ExaminationId,
             exam.Title,
-            exam.Description,
+            exam.DescriptionMarkdown,
             exam.OpensAt,
             exam.ClosesAt,
             exam.Duration,

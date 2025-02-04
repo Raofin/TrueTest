@@ -4,19 +4,22 @@ using OPS.Domain.Entities.Core;
 
 namespace OPS.Persistence.Configurations.Core;
 
-public partial class CloudFileConfiguration : IEntityTypeConfiguration<CloudFile>
+public class CloudFileConfiguration : IEntityTypeConfiguration<CloudFile>
 {
     public void Configure(EntityTypeBuilder<CloudFile> entity)
     {
-        // Table
-        entity.ToTable("CloudFiles", "core");
+        entity.ToTable("CloudFiles", "Core");
         entity.HasKey(e => e.CloudFileId);
 
-        // Properties
         entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
         entity.Property(e => e.ContentType).IsRequired().HasMaxLength(255);
         entity.Property(e => e.Link).IsRequired();
-        entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())").HasColumnType("datetime");
-        entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())").HasColumnType("datetime");
+        entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())").HasColumnType("datetime");
+        entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
+        entity.HasOne(d => d.Account)
+            .WithMany(p => p.CloudFiles)
+            .HasForeignKey(d => d.AccountId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

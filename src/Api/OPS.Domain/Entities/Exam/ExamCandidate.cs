@@ -1,12 +1,16 @@
-﻿namespace OPS.Domain.Entities.Exam;
+﻿using OPS.Domain.Entities.Auth;
 
-public partial class ExamCandidate
+namespace OPS.Domain.Entities.Exam;
+
+public class ExamCandidate
 {
     public long ExamCandidateId { get; set; }
-    public string UserEmail { get; set; } = null!;
+    public string CandidateEmail { get; set; } = null!;
     public bool IsActive { get; set; }
     public bool IsDeleted { get; set; }
 
-    public long ExamId { get; set; }
-    public Examination Exam { get; set; } = null!;
+    public long? AccountId { get; set; }
+    public long ExaminationId { get; set; }
+    public Account? Account { get; set; }
+    public Examination Examination { get; set; } = null!;
 }

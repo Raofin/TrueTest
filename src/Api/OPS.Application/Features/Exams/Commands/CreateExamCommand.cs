@@ -1,6 +1,6 @@
-﻿using MediatR;
-using ErrorOr;
+﻿using ErrorOr;
 using FluentValidation;
+using MediatR;
 using OPS.Application.Contracts.Exams;
 using OPS.Application.Extensions;
 using OPS.Domain;
@@ -17,7 +17,8 @@ public record CreateExamCommand(
     bool IsActive
 ) : IRequest<ErrorOr<ExamResponse>>;
 
-public class CreateExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<CreateExamCommand, ErrorOr<ExamResponse>>
+public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<CreateExamCommand, ErrorOr<ExamResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
@@ -26,12 +27,12 @@ public class CreateExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
         var exam = new Examination
         {
             Title = request.Title,
-            Description = request.Description,
+            DescriptionMarkdown = request.Description,
             OpensAt = request.OpensAt,
             ClosesAt = request.ClosesAt,
             Duration = request.Duration,
             CreatedAt = DateTime.UtcNow,
-            IsActive = request.IsActive,
+            IsActive = request.IsActive
         };
 
         _unitOfWork.Exam.Add(exam);
