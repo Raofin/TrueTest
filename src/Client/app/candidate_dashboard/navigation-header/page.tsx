@@ -29,7 +29,7 @@ export default function Component() {
   return (
     <Navbar
       classNames={{
-        base: "lg:bg-transparent lg:backdrop-filter-none",
+        base: "shadow lg:backdrop-filter-none",
         item: "data-[active=true]:text-primary",
         wrapper: "px-4 sm:px-6",
       }}

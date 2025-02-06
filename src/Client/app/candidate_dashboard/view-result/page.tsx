@@ -1,34 +1,20 @@
 "use client"
 
-import React, {SVGProps} from "react";
-import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Input,
-    Button,
-    DropdownTrigger,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem,
-    Chip,
-    User,
-    Pagination,
+import React,{SVGProps} from "react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, DropdownTrigger, Dropdown, DropdownMenu, DropdownItem, Chip, User, Pagination,
     Selection,
     ChipProps,
     SortDescriptor,
 } from "@heroui/react";
+import Piechart from "./piechart/page"
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };
-
 function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
+
 const SearchIcon = (props: IconSvgProps) => {
     return (
         <svg
@@ -335,6 +321,7 @@ export default function Component() {
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
     return (
+        <>
         <Table
             isHeaderSticky
             aria-label="Example table with custom cells, pagination and sorting"
@@ -370,5 +357,7 @@ export default function Component() {
                 )}
             </TableBody>
         </Table>
+    <Piechart/>
+    </>
     );
 }
