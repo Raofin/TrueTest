@@ -72,9 +72,8 @@ export default function Component() {
         </NavbarItem>
         <NavbarItem className="hidden sm:flex">
            <Button isIconOnly radius="full" variant="light">
-             <Link href="/candidate_dashboard/settings"> <Icon className="text-default-500" icon="solar:settings-linear" width={24} />
+             <Link href="../../settings/1"> <Icon className="text-default-500" icon="solar:settings-linear" width={24} />
              </Link> </Button>
-
         </NavbarItem>
         <NavbarItem className="flex">
           <Popover offset={12} placement="bottom-end">
@@ -85,9 +84,7 @@ export default function Component() {
                 className="overflow-visible"
                 radius="full"
                 variant="light">
-                <Badge color="danger" content="5" showOutline={false} size="md">
                   <Icon className="text-default-500" icon="solar:bell-linear" width={22} />
-                </Badge>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="max-w-[90vw] p-0 sm:max-w-[380px]">
@@ -115,7 +112,7 @@ export default function Component() {
                 <p className="font-semibold">Signed in as</p>
                 <p className="font-semibold">johndoe@example.com</p>
               </DropdownItem>
-              <DropdownItem key="settings"><Link href="/candidate_dashboard/myprofile">My Profile</Link></DropdownItem>
+              <DropdownItem key="settings"><Link href="../../myprofile/1">My Profile</Link></DropdownItem>
               <DropdownItem key="logout" color="danger">
                <Link href="/"> Log Out</Link>
               </DropdownItem>

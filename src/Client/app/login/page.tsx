@@ -6,12 +6,12 @@ import { Icon } from '@iconify/react'
 import '../../styles/globals.css'
 export default function Component() {
   const [isVisible, setIsVisible] = React.useState(false)
-
   const toggleVisibility = () => setIsVisible(!isVisible)
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    console.log('submit')
+  const [user,setUser]=React.useState({
+    email:"",password:"",
+  })
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
   }
 
   return (
