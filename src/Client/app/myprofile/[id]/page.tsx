@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-
 import {Card, CardHeader, CardBody, Button, Avatar,Chip} from "@nextui-org/react";
 import '../../../styles/globals.css'
 import { SocialIcon } from 'react-social-icons'
+
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
 {
     const paramsId=React.use(params);

@@ -1,19 +1,15 @@
 "use client"
-
-import React,{SVGProps} from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, DropdownTrigger, Dropdown, DropdownMenu, DropdownItem, Chip, User, Pagination,
-    Selection,
-    ChipProps,
-    SortDescriptor,
+import React, {SVGProps} from "react";
+import { FiFlag } from "react-icons/fi";
+import { FaHourglassEnd } from "react-icons/fa";
+import {
+    Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination, Chip,
+    Selection, SortDescriptor, Tooltip, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure,
 } from "@heroui/react";
-import Piechart from "./piechart/page"
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };
-function capitalize(s: string) {
-    return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
-}
 
 const SearchIcon = (props: IconSvgProps) => {
     return (
@@ -45,74 +41,42 @@ const SearchIcon = (props: IconSvgProps) => {
     );
 };
 
-const ChevronDownIcon = ({strokeWidth = 1.5, ...otherProps}: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height="1em"
-            role="presentation"
-            viewBox="0 0 24 24"
-            width="1em"
-            {...otherProps}
-        >
-            <path
-                d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeMiterlimit={10}
-                strokeWidth={strokeWidth}
-            />
-        </svg>
-    );
-};
 
 const columns = [
-    {name: "ID", uid: "id"},
-    {name: "NAME", uid: "name"},
-    {name: "EMAIL", uid: "email"},
-    {name: "ROLE", uid: "role",sortable: true},
-    {name: "DATE", uid: "date",sortable: true},
-    {name: "STATUS", uid: "status", sortable: true},
+    {name: "Exam ID", uid: "ExamId"},
+    {name: "Exam Name", uid: "ExamName"},
+    {name: "Candidate Id", uid: "CandidateId"},
+    {name: "Candidate Name", uid: "CandidateName"},
+    {name: "Date", uid: "Date",sortable: true},
+    {name: "Time", uid: "Time"},
+    {name:"Status",uid:"Status"},
+    {name:"Webcam",uid:"Webcam"},
+    {name: "Action", uid: "Action"},
 ];
-
-const statusOptions = [
-    {name: "Pass", uid: "pass"},
-    {name: "Fail", uid: "fail"},
-];
-
-const users = [
-    {
-        id: 1,
-        name: "Tony Reichert",
-        email: "tony.reichert@example.com",
-        role: "Software Engineer",
-        date:"25-02-2025",
-        status: "pass",
-    },
-    {
-        id: 2,
-        name: "Tony Reichert",
-        email: "tony.reichert@example.com",
-        role: "Software Engineer",
-        date:"25-02-2025",
-        status: "fail",
-    }
-];
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-    active: "success",
-    paused: "danger",
-};
-
-const INITIAL_VISIBLE_COLUMNS = ["id","name","email", "role", "date","status"];
-
+const users = [{
+    ExamId: 1,
+    ExamName: "QA engineer intern",
+    CandidateId:1,
+    CandidateName:"aa",
+    Date:"25-02-2025",
+    Time:"08:20",
+    Status:"Active",
+    Webcam:"Visible",
+    Action:"Edit Delete"
+},];
+const INITIAL_VISIBLE_COLUMNS = ["ExamId","ExamName","CandidateId", "CandidateName", "Date","Time","Status","Webcam","Action"];
 type User = (typeof users)[0];
 
 export default function Component() {
     const [filterValue, setFilterValue] = React.useState("");
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const [size, setSize] = React.useState("sm");
+    const [state, setState] = React.useState("");
+    const handleOpen = (word:string) => {
+        setSize("sm");
+        setState(word);
+        onOpen();
+    };
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS),
@@ -120,46 +84,32 @@ export default function Component() {
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-        column: "date",
+        column:"Date",
         direction: "ascending",
     });
-
     const [page, setPage] = React.useState(1);
-
     const hasSearchFilter = Boolean(filterValue);
-
     const headerColumns = React.useMemo(() => {
         if (visibleColumns === "all") return columns;
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
-
     const filteredItems = React.useMemo(() => {
         let filteredUsers = [...users];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.name.toLowerCase().includes(filterValue.toLowerCase()),
+                user.ExamName.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-            filteredUsers = filteredUsers.filter((user) =>
-                Array.from(statusFilter).includes(user.status),
-            );
-        }
-
         return filteredUsers;
     }, [users, filterValue, statusFilter]);
-
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
-
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
-
     const sortedItems = React.useMemo(() => {
         return [...items].sort((a: User, b: User) => {
             const first = a[sortDescriptor.column as keyof User] as number;
@@ -169,50 +119,51 @@ export default function Component() {
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
     }, [sortDescriptor, items]);
-
     const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
         const cellValue = user[columnKey as keyof User];
         switch (columnKey) {
-            case "name":
-                return (
-                    <User name={cellValue}>
-                        {user.email}
-                    </User>
-                );
-            case "role":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
+            case "Status":
+                return(
+                    <div>
+                        {/*<Chip color="success" className={'text-white'}>Active</Chip>*/}
+                        <Chip color="success" variant="dot">Active</Chip>
                     </div>
                 );
-            case "status":
-                return (
-                    <Chip className="capitalize text-md font-bold px-2" color={statusColorMap[user.status]} size="sm" variant="flat">
-                        {cellValue}
-                    </Chip>
+            case "Webcam":
+                return(
+                    <div><Chip color="warning" variant="solid" className={'text-white'}>Invisible</Chip></div>
+                );
+            case "Action":
+                return(
+                    <>
+                        <div className='flex gap-4 ml-12'>
+                            <Tooltip key={"Flag"} className="capitalize"  content={"Flag"}>
+                                <button onClick={()=>handleOpen('flag')}><FiFlag className={'text-xl'}/></button>
+                            </Tooltip>
+                            <Tooltip key={"End"} className="capitalize" content={"End"}>
+                                <button onClick={()=>handleOpen('end')}><FaHourglassEnd className={'text-xl'} /></button>
+                            </Tooltip>
+                        </div>
+                    </>
                 );
             default:
                 return cellValue;
         }
     }, []);
-
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
         }
     }, [page, pages]);
-
     const onPreviousPage = React.useCallback(() => {
         if (page > 1) {
             setPage(page - 1);
         }
     }, [page]);
-
     const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
-
     const onSearchChange = React.useCallback((value?: string) => {
         if (value) {
             setFilterValue(value);
@@ -229,7 +180,8 @@ export default function Component() {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4 mt-12">
+            <div className="flex flex-col gap-4 mt-8 w-full">
+                <h3 className="text-2xl text-center font-bold">Live Monitoring</h3>
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
@@ -240,29 +192,6 @@ export default function Component() {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Status
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                {statusOptions.map((status) => (
-                                    <DropdownItem key={status.uid} className="capitalize">
-                                        {capitalize(status.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">Total {users.length} users</span>
@@ -270,8 +199,7 @@ export default function Component() {
                         Rows per page:
                         <select
                             className="bg-transparent outline-none text-default-400 text-small"
-                            onChange={onRowsPerPageChange}
-                        >
+                            onChange={onRowsPerPageChange}>
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>
@@ -289,14 +217,11 @@ export default function Component() {
         users.length,
         hasSearchFilter,
     ]);
-
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-              ? "All items selected"
-              : `${selectedKeys.size} of ${filteredItems.length} selected`}
+
         </span>
                 <Pagination
                     isCompact
@@ -318,45 +243,58 @@ export default function Component() {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-
     return (
         <>
-        <Table
-            isHeaderSticky
-            aria-label="Example table with custom cells, pagination and sorting"
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={{
-                wrapper: "max-h-[382px]",
-            }}
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
-            onSortChange={setSortDescriptor}
-        >
-            <TableHeader columns={headerColumns}>
-                {(column) => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
-                        allowsSorting={column.sortable}
-                    >
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody emptyContent={"No users found"} items={sortedItems}>
-                {(item) => (
-                    <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
-    <Piechart/>
-    </>
+            <Table className="px-10 mx-2"
+                   isHeaderSticky
+                   aria-label="Example table with custom cells, pagination and sorting"
+                   bottomContent={bottomContent}
+                   bottomContentPlacement="outside"
+                   classNames={{
+                       wrapper: "max-h-[382px]",
+                   }}
+                   selectedKeys={selectedKeys}
+                   sortDescriptor={sortDescriptor}
+                   topContent={topContent}
+                   topContentPlacement="outside"
+                   onSelectionChange={setSelectedKeys}
+                   onSortChange={setSortDescriptor}>
+                <TableHeader columns={headerColumns}>
+                    {(column) => (
+                        <TableColumn
+                            key={column.uid}
+                            align={ "center"} className={" font-semibold"}
+                            allowsSorting={column.sortable}>
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody emptyContent={"No exam found"} items={sortedItems}>
+                    {(item) => (
+                        <TableRow key={item.ExamId}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+            <Modal isOpen={isOpen} onClose={onClose} >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">{state==='flag'?"Flag Confirmation":"End Confirmation"}</ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    {`Do you want to ${state==='flag'?"flag this candidate":"end this exam"}?`}
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" variant="light" onPress={onClose}>Close</Button>
+                                <Button color="danger" onPress={onClose}>{state==='flag'?"Flag":"End"}</Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+        </>
     );
 }

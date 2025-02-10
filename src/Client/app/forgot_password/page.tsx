@@ -5,7 +5,6 @@ import {Link} from "@nextui-org/react";
 import toast, {Toaster} from "react-hot-toast";
 const ForgotPasswordPage: React.FC = () => {
     const [contactInfo, setContactInfo] = useState("");
-    const deliveryMethod="email";
     const [mail, setEmail] = useState("");
     const [message, setMessage] = useState("");
     const [isEmailSent, setIsEmailSent] = useState(false);
@@ -28,11 +27,10 @@ const ForgotPasswordPage: React.FC = () => {
             return;
         }
         if(isSuccess) toast.success('Check your email');
-        const res = await fetch("/api/auth/forgotpassword/generate", {
+        const res = await fetch("", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: contactInfo ,deliveryMethod,}),
+            body: JSON.stringify({email: contactInfo}),
         });
         const result = await res.json();
         setMessage(result.message);
@@ -111,7 +109,7 @@ const ForgotPasswordPage: React.FC = () => {
                             </div>
                         ) : (
                             <div className="text-center">
-                                <Link href="./reset_password" className="text-xl font-semibold">Reset Password</Link>
+                                <Link href="/forgot_password/reset_password" className="text-xl font-semibold">Reset Password</Link>
                             </div>
                         )}
                     </div>

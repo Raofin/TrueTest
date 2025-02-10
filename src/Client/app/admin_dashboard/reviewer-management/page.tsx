@@ -1,20 +1,22 @@
 "use client"
-
-import React,{SVGProps} from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, DropdownTrigger, Dropdown, DropdownMenu, DropdownItem, Chip, User, Pagination,
+import React, {SVGProps} from "react";
+import {Icon} from "@iconify/react";
+import { MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
+import { IoIosAddCircle } from "react-icons/io";
+import {
+    Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination,
     Selection,
-    ChipProps,
-    SortDescriptor,
+    SortDescriptor, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure,
 } from "@heroui/react";
-import Piechart from "./piechart/page"
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };
+
 function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
-
 const SearchIcon = (props: IconSvgProps) => {
     return (
         <svg
@@ -70,44 +72,24 @@ const ChevronDownIcon = ({strokeWidth = 1.5, ...otherProps}: IconSvgProps) => {
 };
 
 const columns = [
-    {name: "ID", uid: "id"},
-    {name: "NAME", uid: "name"},
-    {name: "EMAIL", uid: "email"},
-    {name: "ROLE", uid: "role",sortable: true},
-    {name: "DATE", uid: "date",sortable: true},
-    {name: "STATUS", uid: "status", sortable: true},
+    {name: "Exam ID", uid: "ExamId"},
+    {name: "Exam Name", uid: "ExamName"},
+    {name: "Reviewer Id", uid: "ReviewerId"},
+    {name: "Reviewer Name", uid: "ReviewerName"},
+    {name: "Date", uid: "Date",sortable: true},
+    {name: "Time", uid: "Time"},
+    {name: "Action", uid: "Action"},
 ];
-
-const statusOptions = [
-    {name: "Pass", uid: "pass"},
-    {name: "Fail", uid: "fail"},
-];
-
-const users = [
-    {
-        id: 1,
-        name: "Tony Reichert",
-        email: "tony.reichert@example.com",
-        role: "Software Engineer",
-        date:"25-02-2025",
-        status: "pass",
-    },
-    {
-        id: 2,
-        name: "Tony Reichert",
-        email: "tony.reichert@example.com",
-        role: "Software Engineer",
-        date:"25-02-2025",
-        status: "fail",
-    }
-];
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-    active: "success",
-    paused: "danger",
-};
-
-const INITIAL_VISIBLE_COLUMNS = ["id","name","email", "role", "date","status"];
+const users = [{
+    ExamId: 1,
+    ExamName: "QA engineer intern",
+    ReviewerId:1,
+    ReviewerName:"aa",
+    Date:"25-02-2025",
+    Time:"08:20",
+    Action:"Edit Delete"
+},];
+const INITIAL_VISIBLE_COLUMNS = ["ExamId","ExamName","ReviewerId", "ReviewerName", "Date","Time","Action"];
 
 type User = (typeof users)[0];
 
@@ -120,46 +102,32 @@ export default function Component() {
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-        column: "date",
+        column:"datetime",
         direction: "ascending",
     });
-
     const [page, setPage] = React.useState(1);
-
     const hasSearchFilter = Boolean(filterValue);
-
     const headerColumns = React.useMemo(() => {
         if (visibleColumns === "all") return columns;
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
-
     const filteredItems = React.useMemo(() => {
         let filteredUsers = [...users];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((user) =>
-                user.name.toLowerCase().includes(filterValue.toLowerCase()),
+                user.ExamName.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-            filteredUsers = filteredUsers.filter((user) =>
-                Array.from(statusFilter).includes(user.status),
-            );
-        }
-
         return filteredUsers;
     }, [users, filterValue, statusFilter]);
-
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
-
         return filteredItems.slice(start, end);
     }, [page, filteredItems, rowsPerPage]);
-
     const sortedItems = React.useMemo(() => {
         return [...items].sort((a: User, b: User) => {
             const first = a[sortDescriptor.column as keyof User] as number;
@@ -169,33 +137,29 @@ export default function Component() {
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
     }, [sortDescriptor, items]);
-
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const [state, setState] = React.useState("");
+    const handleOpen = (word:string) => {
+        setState(word);
+        onOpen();
+    };
     const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
         const cellValue = user[columnKey as keyof User];
         switch (columnKey) {
-            case "name":
-                return (
-                    <User name={cellValue}>
-                        {user.email}
-                    </User>
-                );
-            case "role":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
-                    </div>
-                );
-            case "status":
-                return (
-                    <Chip className="capitalize text-md font-bold px-2" color={statusColorMap[user.status]} size="sm" variant="flat">
-                        {cellValue}
-                    </Chip>
+
+            case "Action":
+                return(
+                    <>
+                        <div className='flex gap-4 ml-20'>
+                            <button onClick={()=>handleOpen('edit')}><FaEdit className={'text-xl'}/></button>
+                            <button onClick={()=>handleOpen('delete')}><MdDelete className={'text-xl'} /></button>
+                        </div>
+                    </>
                 );
             default:
                 return cellValue;
         }
     }, []);
-
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
@@ -229,7 +193,8 @@ export default function Component() {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4 mt-12">
+            <div className="flex flex-col gap-4 mt-8 w-full">
+                <h3 className="text-2xl text-center font-bold">Reviewer Management</h3>
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
@@ -240,29 +205,9 @@ export default function Component() {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Status
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                {statusOptions.map((status) => (
-                                    <DropdownItem key={status.uid} className="capitalize">
-                                        {capitalize(status.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
+                    <Button color="primary" startContent={<Icon icon="solar:add-circle-bold" width={20} />}>
+                        Assign
+                    </Button>
                 </div>
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">Total {users.length} users</span>
@@ -294,9 +239,7 @@ export default function Component() {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-              ? "All items selected"
-              : `${selectedKeys.size} of ${filteredItems.length} selected`}
+
         </span>
                 <Pagination
                     isCompact
@@ -321,42 +264,56 @@ export default function Component() {
 
     return (
         <>
-        <Table
-            isHeaderSticky
-            aria-label="Example table with custom cells, pagination and sorting"
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={{
-                wrapper: "max-h-[382px]",
-            }}
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
-            onSortChange={setSortDescriptor}
-        >
-            <TableHeader columns={headerColumns}>
-                {(column) => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
-                        allowsSorting={column.sortable}
-                    >
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody emptyContent={"No users found"} items={sortedItems}>
-                {(item) => (
-                    <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
-    <Piechart/>
-    </>
+            <Table className="px-10 mx-2"
+                   isHeaderSticky
+                   aria-label="Example table with custom cells, pagination and sorting"
+                   bottomContent={bottomContent}
+                   bottomContentPlacement="outside"
+                   classNames={{
+                       wrapper: "max-h-[382px]",
+                   }}
+                   sortDescriptor={sortDescriptor}
+                   topContent={topContent}
+                   topContentPlacement="outside"
+                   onSelectionChange={setSelectedKeys}
+                   onSortChange={setSortDescriptor}>
+                <TableHeader columns={headerColumns}>
+                    {(column) => (
+                        <TableColumn
+                            key={column.uid}
+                            align={ "center"} className={" font-semibold"}
+                            allowsSorting={column.sortable}>
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+
+                <TableBody emptyContent={"No exam found"} items={sortedItems}>
+                    {(item) => (
+                        <TableRow key={item.ExamId}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+            <Modal isOpen={isOpen} onClose={onClose} >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">{state==='edit'?"Edit Confirmation":"Delete Confirmation"}</ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    {`Do you want to ${state==='edit'?"edit this reviewer record":"delete this reviewer record"}?`}
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" variant="light" onPress={onClose}>Close</Button>
+                                <Button color="danger" onPress={onClose}>{state==='edit'?"Edit":"Delete"}</Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+        </>
     );
 }

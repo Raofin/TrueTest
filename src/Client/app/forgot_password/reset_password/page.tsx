@@ -4,14 +4,10 @@ import React from 'react'
 import { Button, Input, Form } from '@heroui/react'
 import '../../../styles/globals.css'
 export default function Component() {
-    const [isVisible, setIsVisible] = React.useState(false)
-    const toggleVisibility = () => setIsVisible(!isVisible)
-
     const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
     }
-
     return (
         <div className="flex h-full w-full items-center justify-center mt-16">
             <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
