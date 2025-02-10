@@ -11,7 +11,7 @@ namespace OPS.Api.Controllers;
 public class AccountController(
     IMediator mediator,
     IValidator<CreateAccountCommand> _createAccountValidator, 
-    IValidator<UpdateAccountCommand> _updateAccountValidator) : ApiController
+    IValidator<UpdateProfileCommand> _updateAccountValidator) : ApiController
 {
     private readonly IMediator _mediator = mediator;
 
@@ -41,17 +41,6 @@ public class AccountController(
             };
     }
 
-    [HttpGet("UpcomingAccounts")]
-    public async Task<IActionResult> GetUpcomingAccountsAsync()
-    {
-        var query = new GetUpcomingAccounts();
-        
-        var result = await _mediator.Send(query);
-
-        return !result.IsError
-            ? Ok(result.Value)
-            : Problem(result.FirstError.Description);
-    }
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync(CreateAccountCommand command)
@@ -72,7 +61,7 @@ public class AccountController(
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateAsync(UpdateAccountCommand command)
+    public async Task<IActionResult> UpdateAsync(UpdateProfileCommand command)
     {
         var validation = await _updateAccountValidator.ValidateAsync(command);
         

@@ -37,7 +37,8 @@ public class CreateAccountCommandHandler(IUnitOfWork unitOfWork)
             IsVerified = request.IsVerified,
             CloudFileId = request.CloudFileId,
             CreatedAt = DateTime.UtcNow,
-            IsActive = request.IsActive
+            IsActive = request.IsActive,
+            UpdatedAt = DateTime.UtcNow,        
         };
 
         _unitOfWork.Account.Add(Account);
