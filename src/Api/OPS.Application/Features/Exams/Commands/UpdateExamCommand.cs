@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.Exams;
@@ -16,14 +17,14 @@ public record UpdateExamCommand(
     int? Duration,
     bool? IsActive,
     bool? IsDeleted
-) : IRequest<ErrorOr<ExamResponse>>;
+) : IRequest<ErrorOr<ProfileResponse>>;
 
 public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateExamCommand, ErrorOr<ExamResponse>>
+    : IRequestHandler<UpdateExamCommand, ErrorOr<ProfileResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ExamResponse>> Handle(UpdateExamCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ProfileResponse>> Handle(UpdateExamCommand command, CancellationToken cancellationToken)
     {
         var exam = await _unitOfWork.Exam.GetAsync(command.ExamId, cancellationToken);
 

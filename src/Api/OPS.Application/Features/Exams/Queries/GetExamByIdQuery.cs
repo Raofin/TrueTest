@@ -6,14 +6,14 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Queries;
 
-public record GetExamByIdQuery(long ExamId) : IRequest<ErrorOr<ExamResponse>>;
+public record GetExamByIdQuery(long ExamId) : IRequest<ErrorOr<ProfileResponse>>;
 
-public class GetExamByIdQueryHandler(IUnitOfWork unitOfWork) 
-    : IRequestHandler<GetExamByIdQuery, ErrorOr<ExamResponse>>
+public class GetExamByIdQueryHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<GetExamByIdQuery, ErrorOr<ProfileResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    
-    public async Task<ErrorOr<ExamResponse>> Handle(GetExamByIdQuery request, CancellationToken cancellationToken)
+
+    public async Task<ErrorOr<ProfileResponse>> Handle(GetExamByIdQuery request, CancellationToken cancellationToken)
     {
         var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
 

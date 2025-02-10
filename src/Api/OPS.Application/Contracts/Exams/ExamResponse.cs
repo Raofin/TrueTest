@@ -1,6 +1,6 @@
 ﻿namespace OPS.Application.Contracts.Exams;
 
-public record ExamResponse(
+public record ProfileResponse(
     long ExamId,
     string Title,
     string Description,
