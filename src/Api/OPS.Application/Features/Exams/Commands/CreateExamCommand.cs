@@ -15,14 +15,14 @@ public record CreateExamCommand(
     DateTime ClosesAt,
     int Duration,
     bool IsActive
-) : IRequest<ErrorOr<ExamResponse>>;
+) : IRequest<ErrorOr<ProfileResponse>>;
 
 public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<CreateExamCommand, ErrorOr<ExamResponse>>
+    : IRequestHandler<CreateExamCommand, ErrorOr<ProfileResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ExamResponse>> Handle(CreateExamCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ProfileResponse>> Handle(CreateExamCommand request, CancellationToken cancellationToken)
     {
         var exam = new Examination
         {

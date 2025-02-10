@@ -5,9 +5,9 @@ namespace OPS.Application.Extensions;
 
 public static class ExamExtensions
 {
-    public static ExamResponse ToDto(this Examination exam)
+    public static ProfileResponse ToDto(this Examination exam)
     {
-        return new ExamResponse(
+        return new ProfileResponse(
             exam.ExaminationId,
             exam.Title,
             exam.DescriptionMarkdown,
