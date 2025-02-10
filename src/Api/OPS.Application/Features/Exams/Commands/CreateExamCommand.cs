@@ -32,6 +32,7 @@ public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
             ClosesAt = request.ClosesAt,
             Duration = request.Duration,
             CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
             IsActive = request.IsActive
         };
 

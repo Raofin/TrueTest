@@ -9,16 +9,18 @@ namespace OPS.Api.Controllers;
 
 public class ExamController(
     IMediator mediator,
-    IValidator<CreateExamCommand> _createExamValidator, 
-    IValidator<UpdateExamCommand> _updateExamValidator) : ApiController
+    IValidator<CreateExamCommand> createExamValidator,
+    IValidator<UpdateExamCommand> updateExamValidator) : ApiController
 {
     private readonly IMediator _mediator = mediator;
+    private readonly IValidator<CreateExamCommand> _createExamValidator = createExamValidator;
+    private readonly IValidator<UpdateExamCommand> _updateExamValidator = updateExamValidator;
 
     [HttpGet]
     public async Task<IActionResult> GetAllExamsAsync()
     {
         var query = new GetAllExamsQuery();
-        
+
         var result = await _mediator.Send(query);
 
         return Ok(result.Value);
@@ -28,7 +30,7 @@ public class ExamController(
     public async Task<IActionResult> GetExamByIdAsync(long examId)
     {
         var query = new GetExamByIdQuery(examId);
-        
+
         var result = await _mediator.Send(query);
 
         return !result.IsError
@@ -44,7 +46,7 @@ public class ExamController(
     public async Task<IActionResult> GetUpcomingExamsAsync()
     {
         var query = new GetUpcomingExams();
-        
+
         var result = await _mediator.Send(query);
 
         return !result.IsError
@@ -56,15 +58,15 @@ public class ExamController(
     public async Task<IActionResult> CreateAsync(CreateExamCommand command)
     {
         var validation = await _createExamValidator.ValidateAsync(command);
-        
+
         if (!validation.IsValid)
         {
             var errors = validation.Errors.Select(e => e.ErrorMessage).ToArray();
             return BadRequest(new { errors });
         }
-        
+
         var result = await _mediator.Send(command);
-        
+
         return !result.IsError
             ? Ok(result.Value)
             : Problem(result.FirstError.Description);
@@ -74,15 +76,15 @@ public class ExamController(
     public async Task<IActionResult> UpdateAsync(UpdateExamCommand command)
     {
         var validation = await _updateExamValidator.ValidateAsync(command);
-        
+
         if (!validation.IsValid)
         {
             var errors = validation.Errors.Select(e => e.ErrorMessage).ToArray();
             return BadRequest(new { errors });
         }
-        
+
         var result = await _mediator.Send(command);
-        
+
         return !result.IsError
             ? Ok(result.Value)
             : Problem(result.FirstError.Description);
@@ -92,7 +94,7 @@ public class ExamController(
     public async Task<IActionResult> DeleteAsync(long examId)
     {
         var command = new DeleteExamCommand(examId);
-        
+
         var result = await _mediator.Send(command);
 
         return !result.IsError
