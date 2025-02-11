@@ -4,9 +4,10 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Auth.Commands;
 
-public record DeleteAccountCommand(long AccountId) : IRequest<ErrorOr<Success>>;
+public record DeleteAccountCommand(Guid AccountId) : IRequest<ErrorOr<Success>>;
 
-public class DeleteAccountCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteAccountCommand, ErrorOr<Success>>
+public class DeleteAccountCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<DeleteAccountCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
@@ -14,10 +15,7 @@ public class DeleteAccountCommandHandler(IUnitOfWork unitOfWork) : IRequestHandl
     {
         var Account = await _unitOfWork.Account.GetAsync(request.AccountId, cancellationToken);
 
-        if (Account is null)
-        {
-            return Error.NotFound("Account was not found");
-        }
+        if (Account is null) return Error.NotFound("Account was not found");
 
         _unitOfWork.Account.Remove(Account);
         var result = await _unitOfWork.CommitAsync(cancellationToken);

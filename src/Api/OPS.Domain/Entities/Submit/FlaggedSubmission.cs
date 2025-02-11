@@ -1,13 +1,11 @@
-﻿namespace OPS.Domain.Entities.Submit;
+﻿using OPS.Domain.Entities.Common;
 
-public class FlaggedSubmission
+namespace OPS.Domain.Entities.Submit;
+
+public class FlaggedSubmission : SoftDeletableEntity
 {
-    public long FlaggedSolutionId { get; set; }
     public string ReasonMarkdown { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public bool IsDeleted { get; set; }
 
-    public long ProblemSubmissionId { get; set; }
+    public Guid ProblemSubmissionId { get; set; }
     public ProblemSubmission ProblemSubmission { get; set; } = null!;
 }

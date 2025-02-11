@@ -8,7 +8,7 @@ internal class Repository<TEntity>(AppDbContext context) : IRepository<TEntity> 
 {
     private readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 
-    public async Task<TEntity?> GetAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _entities.FindAsync([id], cancellationToken);
     }
@@ -18,12 +18,14 @@ internal class Repository<TEntity>(AppDbContext context) : IRepository<TEntity> 
         return await _entities.ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken)
     {
         return await _entities.Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public async Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+    public async Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken)
     {
         return await _entities.SingleOrDefaultAsync(predicate, cancellationToken);
     }

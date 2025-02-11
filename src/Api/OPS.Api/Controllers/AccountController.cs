@@ -2,34 +2,36 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OPS.Api.Common;
 using OPS.Application.Features.Auth.Commands;
 using OPS.Application.Features.Auth.Queries;
 
 namespace OPS.Api.Controllers;
 
-
 public class AccountController(
     IMediator mediator,
-    IValidator<CreateAccountCommand> _createAccountValidator, 
-    IValidator<UpdateProfileCommand> _updateAccountValidator) : ApiController
+    IValidator<CreateAccountCommand> createAccountValidator,
+    IValidator<UpdateProfileCommand> updateAccountValidator) : ApiController
 {
     private readonly IMediator _mediator = mediator;
+    private readonly IValidator<CreateAccountCommand> _createAccountValidator = createAccountValidator;
+    private readonly IValidator<UpdateProfileCommand> _updateAccountValidator = updateAccountValidator;
 
     [HttpGet]
     public async Task<IActionResult> GetAllAccountsAsync()
     {
         var query = new GetAllAccountsQuery();
-        
+
         var result = await _mediator.Send(query);
 
         return Ok(result.Value);
     }
 
-    [HttpGet("{AccountId:long}")]
-    public async Task<IActionResult> GetAccountByIdAsync(long AccountId)
+    [HttpGet("{accountId:guid}")]
+    public async Task<IActionResult> GetAccountByIdAsync(Guid accountId)
     {
-        var query = new GetAccountByIdQuery(AccountId);
-        
+        var query = new GetAccountByIdQuery(accountId);
+
         var result = await _mediator.Send(query);
 
         return !result.IsError
@@ -46,15 +48,15 @@ public class AccountController(
     public async Task<IActionResult> CreateAsync(CreateAccountCommand command)
     {
         var validation = await _createAccountValidator.ValidateAsync(command);
-        
+
         if (!validation.IsValid)
         {
             var errors = validation.Errors.Select(e => e.ErrorMessage).ToArray();
             return BadRequest(new { errors });
         }
-        
+
         var result = await _mediator.Send(command);
-        
+
         return !result.IsError
             ? Ok(result.Value)
             : Problem(result.FirstError.Description);
@@ -64,25 +66,25 @@ public class AccountController(
     public async Task<IActionResult> UpdateAsync(UpdateProfileCommand command)
     {
         var validation = await _updateAccountValidator.ValidateAsync(command);
-        
+
         if (!validation.IsValid)
         {
             var errors = validation.Errors.Select(e => e.ErrorMessage).ToArray();
             return BadRequest(new { errors });
         }
-        
+
         var result = await _mediator.Send(command);
-        
+
         return !result.IsError
             ? Ok(result.Value)
             : Problem(result.FirstError.Description);
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteAsync(long AccountId)
+    public async Task<IActionResult> DeleteAsync(Guid accountId)
     {
-        var command = new DeleteAccountCommand(AccountId);
-        
+        var command = new DeleteAccountCommand(accountId);
+
         var result = await _mediator.Send(command);
 
         return !result.IsError

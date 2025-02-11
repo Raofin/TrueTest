@@ -1,21 +1,17 @@
-﻿using OPS.Domain.Entities.Enum;
+﻿using OPS.Domain.Entities.Common;
+using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Submit;
 
 namespace OPS.Domain.Entities.Exam;
 
-public class Question
+public class Question : SoftDeletableEntity
 {
-    public long QuestionId { get; set; }
     public string StatementMarkdown { get; set; } = null!;
     public decimal Score { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public bool IsActive { get; set; }
-    public bool IsDeleted { get; set; }
 
-    public long ExaminationId { get; set; }
-    public long DifficultyId { get; set; }
-    public long QuestionTypeId { get; set; }
+    public Guid ExaminationId { get; set; }
+    public Guid DifficultyId { get; set; }
+    public Guid QuestionTypeId { get; set; }
     public Examination Examination { get; set; } = null!;
     public Difficulty Difficulty { get; set; } = null!;
     public QuestionType QuestionType { get; set; } = null!;

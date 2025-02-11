@@ -1,11 +1,10 @@
-﻿using OPS.Domain.Entities.Exam;
+﻿using OPS.Domain.Entities.Common;
+using OPS.Domain.Entities.Exam;
 
 namespace OPS.Domain.Entities.Enum;
 
-public class QuestionType
+public class QuestionType : BaseEntity
 {
-    public long QuestionTypeId { get; set; }
     public string Type { get; set; } = null!;
-
     public ICollection<Question> Questions { get; set; } = [];
 }

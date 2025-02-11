@@ -2,6 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OPS.Api.Common;
 using OPS.Application.Features.Exams.Commands;
 using OPS.Application.Features.Exams.Queries;
 
@@ -9,10 +10,12 @@ namespace OPS.Api.Controllers;
 
 public class ExamController(
     IMediator mediator,
-    IValidator<CreateExamCommand> _createExamValidator,
-    IValidator<UpdateExamCommand> _updateExamValidator) : ApiController
+    IValidator<CreateExamCommand> createExamValidator,
+    IValidator<UpdateExamCommand> updateExamValidator) : ApiController
 {
     private readonly IMediator _mediator = mediator;
+    private readonly IValidator<CreateExamCommand> _createExamValidator = createExamValidator;
+    private readonly IValidator<UpdateExamCommand> _updateExamValidator = updateExamValidator;
 
     [HttpGet]
     public async Task<IActionResult> GetAllExamsAsync()
@@ -24,8 +27,8 @@ public class ExamController(
         return Ok(result.Value);
     }
 
-    [HttpGet("{examId:long}")]
-    public async Task<IActionResult> GetExamByIdAsync(long examId)
+    [HttpGet("{examId:guid}")]
+    public async Task<IActionResult> GetExamByIdAsync(Guid examId)
     {
         var query = new GetExamByIdQuery(examId);
 
@@ -89,7 +92,7 @@ public class ExamController(
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteAsync(long examId)
+    public async Task<IActionResult> DeleteAsync(Guid examId)
     {
         var command = new DeleteExamCommand(examId);
 

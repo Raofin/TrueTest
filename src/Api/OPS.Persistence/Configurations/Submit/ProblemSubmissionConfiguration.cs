@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Submit;
+using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Submit;
 
@@ -9,12 +10,12 @@ public class ProblemSubmissionConfiguration : IEntityTypeConfiguration<ProblemSu
     public void Configure(EntityTypeBuilder<ProblemSubmission> entity)
     {
         entity.ToTable("ProblemSubmissions", "Submit");
-        entity.HasKey(e => e.ProblemSubmissionId);
+        entity.HasKey(e => e.Id);
 
         entity.Property(e => e.Code).IsRequired();
-        entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())").HasColumnType("datetime");
         entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
-        entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
+        new BaseEntityConfig<ProblemSubmission>().Configure(entity);
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.ProblemSubmissions)

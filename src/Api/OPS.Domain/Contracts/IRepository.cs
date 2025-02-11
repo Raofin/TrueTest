@@ -4,7 +4,7 @@ namespace OPS.Domain.Contracts;
 
 public interface IRepository<TEntity> where TEntity : class
 {
-    Task<TEntity?> GetAsync(long id, CancellationToken cancellationToken = default);
+    Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IEnumerable<TEntity>> GetAsync(CancellationToken cancellationToken = default);
 
     Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);

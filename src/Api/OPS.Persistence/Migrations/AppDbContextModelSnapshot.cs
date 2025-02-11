@@ -24,19 +24,17 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.Account", b =>
                 {
-                    b.Property<long>("AccountId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AccountId"));
-
-                    b.Property<long?>("CloudFileId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("CloudFileId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -49,7 +47,9 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
@@ -64,19 +64,27 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("AccountId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CloudFileId");
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -86,11 +94,11 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.AccountRole", b =>
                 {
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("RoleTypeId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("RoleTypeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("AccountId", "RoleTypeId");
 
@@ -101,14 +109,12 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.Otp", b =>
                 {
-                    b.Property<long>("OtpId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OtpId"));
-
-                    b.Property<long?>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Attempts")
                         .HasColumnType("int");
@@ -118,6 +124,11 @@ namespace OPS.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -125,10 +136,15 @@ namespace OPS.Persistence.Migrations
 
                     b.Property<DateTime>("ExpiresAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(dateadd(minute,(5),getutcdate()))");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("(DateAdd(minute, (5), GetUtcDate()))");
 
-                    b.HasKey("OtpId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
@@ -137,14 +153,12 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
                 {
-                    b.Property<long>("CloudFileId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CloudFileId"));
-
-                    b.Property<long?>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
@@ -153,11 +167,18 @@ namespace OPS.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Link")
                         .IsRequired()
@@ -172,11 +193,17 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.HasKey("CloudFileId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("CloudFiles", "Core");
                 });
@@ -212,8 +239,8 @@ namespace OPS.Persistence.Migrations
 
                     b.Property<DateTime>("TimeStamp")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("(GetUtcDate())");
 
                     b.HasKey("Id");
 
@@ -222,18 +249,26 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.Difficulty", b =>
                 {
-                    b.Property<long>("DifficultyId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DifficultyId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("DifficultyName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("DifficultyId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DifficultyName")
                         .IsUnique();
@@ -243,18 +278,26 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.ProgLanguage", b =>
                 {
-                    b.Property<long>("ProgLanguageId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProgLanguageId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("Language")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ProgLanguageId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("Language")
                         .IsUnique();
@@ -264,18 +307,26 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.QuestionType", b =>
                 {
-                    b.Property<long>("QuestionTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("QuestionTypeId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("QuestionTypeId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("Type")
                         .IsUnique();
@@ -285,18 +336,26 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.RoleType", b =>
                 {
-                    b.Property<long>("RoleTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RoleTypeId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("RoleTypeId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("RoleName")
                         .IsUnique();
@@ -306,18 +365,26 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.SocialType", b =>
                 {
-                    b.Property<long>("SocialTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SocialTypeId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("PlatformName")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("SocialTypeId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("PlatformName")
                         .IsUnique();
@@ -327,22 +394,25 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.ExamCandidate", b =>
                 {
-                    b.Property<long>("ExamCandidateId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ExamCandidateId"));
-
-                    b.Property<long?>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CandidateEmail")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long>("ExaminationId")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<Guid>("ExaminationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -350,38 +420,50 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
-                    b.HasKey("ExamCandidateId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
                     b.HasIndex("ExaminationId");
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("ExamCandidates", "Exam");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Examination", b =>
                 {
-                    b.Property<long>("ExaminationId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ExaminationId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ClosesAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("DateTime");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("DescriptionMarkdown")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Duration")
+                    b.Property<int>("DurationMinutes")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -390,10 +472,12 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("OpensAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("DateTime");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -401,28 +485,40 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.HasKey("ExaminationId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.ToTable("Examinations", "Exam");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.McqAnswer", b =>
                 {
-                    b.Property<long>("McqAnswerId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("McqAnswerId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<long>("McqOptionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("McqOptionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("QuestionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("McqAnswerId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("McqOptionId");
 
@@ -433,17 +529,34 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.McqOption", b =>
                 {
-                    b.Property<long>("McqOptionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("OptionMarkdown")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("QuestionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("McqOptionId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
 
@@ -452,22 +565,20 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Question", b =>
                 {
-                    b.Property<long>("QuestionId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("QuestionId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<long>("DifficultyId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("DifficultyId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("ExaminationId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("ExaminationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -475,10 +586,12 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
-                    b.Property<long>("QuestionTypeId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("QuestionTypeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Score")
                         .HasColumnType("decimal(10, 2)");
@@ -488,13 +601,21 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.HasKey("QuestionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("DifficultyId");
 
                     b.HasIndex("ExaminationId");
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.HasIndex("QuestionTypeId");
 
@@ -503,24 +624,48 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.TestCase", b =>
                 {
-                    b.Property<long>("TestCaseId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TestCaseId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("Input")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Output")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("QuestionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("TestCaseId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.HasIndex("QuestionId");
 
@@ -529,31 +674,44 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.FlaggedSubmission", b =>
                 {
-                    b.Property<long>("FlaggedSolutionId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("FlaggedSolutionId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
-                    b.Property<long>("ProblemSubmissionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("ProblemSubmissionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ReasonMarkdown")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.HasKey("FlaggedSolutionId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.HasIndex("ProblemSubmissionId");
 
@@ -562,30 +720,30 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.McqSubmission", b =>
                 {
-                    b.Property<long>("McqSubmissionId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("McqSubmissionId"));
-
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<long>("McqOptionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("McqOptionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("QuestionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.HasKey("McqSubmissionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
@@ -598,14 +756,12 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.ProblemSubmission", b =>
                 {
-                    b.Property<long>("ProblemSubmissionId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProblemSubmissionId"));
-
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Attempts")
                         .HasColumnType("int");
@@ -616,25 +772,24 @@ namespace OPS.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                    b.Property<Guid>("ProgLanguagesId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("ProgLanguagesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("QuestionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Score")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.HasKey("ProblemSubmissionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
@@ -647,14 +802,12 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.WrittenSubmission", b =>
                 {
-                    b.Property<long>("WrittenSubmissionId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("WrittenSubmissionId"));
-
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Answer")
                         .IsRequired()
@@ -662,19 +815,21 @@ namespace OPS.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getutcdate())");
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<long>("QuestionId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Score")
                         .HasColumnType("decimal(10, 2)");
 
-                    b.HasKey("WrittenSubmissionId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
@@ -683,46 +838,44 @@ namespace OPS.Persistence.Migrations
                     b.ToTable("WrittenSubmissions", "Submit");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.User.AccountSocial", b =>
-                {
-                    b.Property<long>("SocialLinkId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("SocialLinkId");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("AccountSocials", "User");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.User.Profile", b =>
                 {
-                    b.Property<long>("ProfileId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProfileId"));
-
-                    b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BioMarkdown")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<Guid?>("ImageFileId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("InstituteName")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("LastName")
                         .HasMaxLength(255)
@@ -732,45 +885,74 @@ namespace OPS.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ProfileId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountId")
                         .IsUnique();
 
+                    b.HasIndex("ImageFileId")
+                        .IsUnique()
+                        .HasFilter("[ImageFileId] IS NOT NULL");
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
+
                     b.ToTable("Profiles", "User");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.User.ProfileSocial", b =>
+                {
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SocialLinkId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProfileId", "SocialLinkId");
+
+                    b.HasIndex("SocialLinkId");
+
+                    b.ToTable("ProfileSocials", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.User.SocialLink", b =>
                 {
-                    b.Property<long>("SocialLinkId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SocialLinkId"));
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<string>("Link")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long>("SocialTypeId")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
-                    b.HasKey("SocialLinkId");
-
-                    b.HasIndex("SocialTypeId");
+                    b.HasKey("Id");
 
                     b.ToTable("SocialLinks", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.Account", b =>
                 {
-                    b.HasOne("OPS.Domain.Entities.Core.CloudFile", "CloudFile")
+                    b.HasOne("OPS.Domain.Entities.Core.CloudFile", null)
                         .WithMany("Accounts")
-                        .HasForeignKey("CloudFileId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CloudFile");
+                        .HasForeignKey("CloudFileId");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.AccountRole", b =>
@@ -797,16 +979,6 @@ namespace OPS.Persistence.Migrations
                     b.HasOne("OPS.Domain.Entities.Auth.Account", null)
                         .WithMany("Otps")
                         .HasForeignKey("AccountId");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
-                        .WithMany("CloudFiles")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.ExamCandidate", b =>
@@ -979,25 +1151,6 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.User.AccountSocial", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
-                        .WithMany("AccountSocials")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OPS.Domain.Entities.User.SocialLink", "SocialLink")
-                        .WithMany("AccountSocials")
-                        .HasForeignKey("SocialLinkId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("SocialLink");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.User.Profile", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
@@ -1006,14 +1159,39 @@ namespace OPS.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OPS.Domain.Entities.Core.CloudFile", "ImageFile")
+                        .WithOne("Profile")
+                        .HasForeignKey("OPS.Domain.Entities.User.Profile", "ImageFileId");
+
                     b.Navigation("Account");
+
+                    b.Navigation("ImageFile");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.User.ProfileSocial", b =>
+                {
+                    b.HasOne("OPS.Domain.Entities.User.Profile", "Profile")
+                        .WithMany("ProfileSocials")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OPS.Domain.Entities.User.SocialLink", "SocialLink")
+                        .WithMany("ProfileSocials")
+                        .HasForeignKey("SocialLinkId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+
+                    b.Navigation("SocialLink");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.User.SocialLink", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.Enum.SocialType", "SocialType")
                         .WithMany("SocialLinks")
-                        .HasForeignKey("SocialTypeId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1024,10 +1202,6 @@ namespace OPS.Persistence.Migrations
                 {
                     b.Navigation("AccountRoles");
 
-                    b.Navigation("AccountSocials");
-
-                    b.Navigation("CloudFiles");
-
                     b.Navigation("ExamCandidates");
 
                     b.Navigation("McqSubmissions");
@@ -1036,8 +1210,7 @@ namespace OPS.Persistence.Migrations
 
                     b.Navigation("ProblemSubmissions");
 
-                    b.Navigation("Profile")
-                        .IsRequired();
+                    b.Navigation("Profile");
 
                     b.Navigation("WrittenSubmissions");
                 });
@@ -1045,6 +1218,8 @@ namespace OPS.Persistence.Migrations
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
                 {
                     b.Navigation("Accounts");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.Difficulty", b =>
@@ -1106,9 +1281,14 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("FlaggedSubmissions");
                 });
 
+            modelBuilder.Entity("OPS.Domain.Entities.User.Profile", b =>
+                {
+                    b.Navigation("ProfileSocials");
+                });
+
             modelBuilder.Entity("OPS.Domain.Entities.User.SocialLink", b =>
                 {
-                    b.Navigation("AccountSocials");
+                    b.Navigation("ProfileSocials");
                 });
 #pragma warning restore 612, 618
         }

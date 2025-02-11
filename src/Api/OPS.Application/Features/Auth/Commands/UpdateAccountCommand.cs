@@ -8,11 +8,11 @@ using OPS.Domain;
 namespace OPS.Application.Features.Auth.Commands;
 
 public record UpdateProfileCommand(
-    long AccountId,
+    Guid Id,
     string? Username,
     string? Email,
-    string? PasswordHash,   
-    string? Salt,   
+    string? PasswordHash,
+    string? Salt,
     DateTime? UpdatedAt,
     bool? IsVerified,
     bool? IsActive,
@@ -24,20 +24,21 @@ public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork)
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountResponse>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AccountResponse>> Handle(UpdateProfileCommand command,
+        CancellationToken cancellationToken)
     {
-        var account = await _unitOfWork.Account.GetAsync(command.AccountId, cancellationToken);
+        var account = await _unitOfWork.Account.GetAsync(command.Id, cancellationToken);
 
         if (account is null) return Error.NotFound("Account was not found");
 
         account.Username = command.Username ?? account.Username;
         account.Email = command.Email ?? account.Email;
         account.PasswordHash = command.PasswordHash ?? account.PasswordHash;
-        account.Salt = command.Salt ?? account.Salt;        
+        account.Salt = command.Salt ?? account.Salt;
         account.UpdatedAt = DateTime.UtcNow;
         account.IsActive = command.IsActive ?? account.IsActive;
         account.IsDeleted = command.IsDeleted ?? account.IsDeleted;
-        account.IsVerified = command.IsVerified ?? account.IsVerified;      
+        account.IsVerified = command.IsVerified ?? account.IsVerified;
 
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
@@ -52,8 +53,9 @@ public class UpdateAccountCommandValidator : AbstractValidator<UpdateProfileComm
 {
     public UpdateAccountCommandValidator()
     {
-        RuleFor(x => x.AccountId)
-            .GreaterThan(0).WithMessage("AccountId must be a positive number.");
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage("Id is required.")
+            .Must(id => Guid.TryParse(id.ToString(), out _)).WithMessage("Id must be a valid GUID.");
 
         RuleFor(x => x.Username)
             .MaximumLength(100)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Submit;
+using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Submit;
 
@@ -9,10 +10,9 @@ public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission
     public void Configure(EntityTypeBuilder<McqSubmission> entity)
     {
         entity.ToTable("McqSubmissions", "Submit");
-        entity.HasKey(e => e.McqSubmissionId);
+        entity.HasKey(e => e.Id);
 
-        entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())").HasColumnType("datetime");
-        entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+        new BaseEntityConfig<McqSubmission>().Configure(entity);
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.McqSubmissions)

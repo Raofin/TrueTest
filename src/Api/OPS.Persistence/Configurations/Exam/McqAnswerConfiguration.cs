@@ -9,7 +9,7 @@ public class McqAnswerConfiguration : IEntityTypeConfiguration<McqAnswer>
     public void Configure(EntityTypeBuilder<McqAnswer> entity)
     {
         entity.ToTable("McqAnswers", "Exam");
-        entity.HasKey(e => e.McqAnswerId);
+        entity.HasKey(e => e.Id);
 
         entity.HasOne(d => d.McqOption)
             .WithMany(p => p.McqAnswers)
