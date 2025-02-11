@@ -13,6 +13,8 @@ public class LogEventConfiguration : IEntityTypeConfiguration<LogEvent>
 
         entity.Property(e => e.Message).IsRequired();
         entity.Property(e => e.Level).IsRequired().HasMaxLength(50);
-        entity.Property(e => e.TimeStamp).HasDefaultValueSql("(getutcdate())").HasColumnType("datetime");
+        entity.Property(e => e.TimeStamp)
+            .HasDefaultValueSql("(GetUtcDate())")
+            .HasColumnType("DateTime");
     }
 }

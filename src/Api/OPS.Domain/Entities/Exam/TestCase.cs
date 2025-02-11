@@ -1,10 +1,12 @@
-﻿namespace OPS.Domain.Entities.Exam;
+﻿using OPS.Domain.Entities.Common;
 
-public class TestCase
+namespace OPS.Domain.Entities.Exam;
+
+public class TestCase : SoftDeletableEntity
 {
-    public long TestCaseId { get; set; }
     public string Input { get; set; } = null!;
     public string Output { get; set; } = null!;
-    public long QuestionId { get; set; }
+
+    public Guid QuestionId { get; set; }
     public Question Question { get; set; } = null!;
 }

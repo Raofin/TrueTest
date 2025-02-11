@@ -1,18 +1,15 @@
-﻿namespace OPS.Domain.Entities.Exam;
+﻿using OPS.Domain.Entities.Common;
 
-public class Examination
+namespace OPS.Domain.Entities.Exam;
+
+public class Examination : SoftDeletableEntity
 {
-    public long ExaminationId { get; set; }
     public string Title { get; set; } = null!;
     public string DescriptionMarkdown { get; set; } = null!;
+    public int DurationMinutes { get; set; }
     public DateTime OpensAt { get; set; }
     public DateTime ClosesAt { get; set; }
-    public int Duration { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public bool IsActive { get; set; }
-    public bool IsDeleted { get; set; }
 
-    public virtual ICollection<ExamCandidate> ExamCandidates { get; set; } = [];
-    public virtual ICollection<Question> Questions { get; set; } = [];
+    public ICollection<ExamCandidate> ExamCandidates { get; set; } = [];
+    public ICollection<Question> Questions { get; set; } = [];
 }

@@ -1,18 +1,15 @@
 ﻿using OPS.Domain.Entities.Auth;
+using OPS.Domain.Entities.Common;
 using OPS.Domain.Entities.Exam;
 
 namespace OPS.Domain.Entities.Submit;
 
-public class McqSubmission
+public class McqSubmission : BaseEntity
 {
-    public long McqSubmissionId { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-
-    public long AccountId { get; set; }
-    public long QuestionId { get; set; }
-    public long McqOptionId { get; set; }
-    public virtual Account Account { get; set; } = null!;
-    public virtual McqOption McqOption { get; set; } = null!;
-    public virtual Question Question { get; set; } = null!;
+    public Guid AccountId { get; set; }
+    public Guid QuestionId { get; set; }
+    public Guid McqOptionId { get; set; }
+    public Account Account { get; set; } = null!;
+    public McqOption McqOption { get; set; } = null!;
+    public Question Question { get; set; } = null!;
 }

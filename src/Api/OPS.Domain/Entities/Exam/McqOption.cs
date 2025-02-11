@@ -1,13 +1,14 @@
-﻿using OPS.Domain.Entities.Submit;
+﻿using OPS.Domain.Entities.Common;
+using OPS.Domain.Entities.Submit;
 
 namespace OPS.Domain.Entities.Exam;
 
-public class McqOption
+public class McqOption : SoftDeletableEntity
 {
-    public long McqOptionId { get; set; }
-    public long QuestionId { get; set; }
-    public string OptionMarkdown { get; set; }
-    public Question Question { get; set; }
+    public string OptionMarkdown { get; set; } = null!;
+
+    public Guid QuestionId { get; set; }
+    public Question Question { get; set; } = null!;
     public ICollection<McqAnswer> McqAnswers { get; set; } = [];
     public ICollection<McqSubmission> McqSubmissions { get; set; } = [];
 }

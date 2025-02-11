@@ -1,8 +1,9 @@
-﻿namespace OPS.Domain.Entities.Auth;
+﻿using OPS.Domain.Entities.Common;
 
-public class Otp
+namespace OPS.Domain.Entities.Auth;
+
+public class Otp : BaseEntity
 {
-    public long OtpId { get; set; }
     public string Email { get; set; } = null!;
     public string Code { get; set; } = null!;
     public DateTime ExpiresAt { get; set; } = DateTime.UtcNow.AddMinutes(5);
