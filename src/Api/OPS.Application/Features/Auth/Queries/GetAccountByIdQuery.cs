@@ -6,7 +6,7 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Auth.Queries;
 
-public record GetAccountByIdQuery(long AccountId) : IRequest<ErrorOr<AccountResponse>>;
+public record GetAccountByIdQuery(Guid AccountId) : IRequest<ErrorOr<AccountResponse>>;
 
 public class GetAccountByIdQueryHandler(IUnitOfWork unitOfWork) 
     : IRequestHandler<GetAccountByIdQuery, ErrorOr<AccountResponse>>

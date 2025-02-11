@@ -12,13 +12,12 @@ public record CreateAccountCommand(
     string Username,
     string Email,
     bool IsVerified,
-    long? CloudFileId,
     string PasswordHash,
     string Salt,
     DateTime CreatedAt,
     DateTime UpdatedAt,
     bool IsActive,
-    bool IsDeleted  
+    bool IsDeleted
 ) : IRequest<ErrorOr<AccountResponse>>;
 
 public class CreateAccountCommandHandler(IUnitOfWork unitOfWork)
@@ -26,19 +25,19 @@ public class CreateAccountCommandHandler(IUnitOfWork unitOfWork)
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountResponse>> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AccountResponse>> Handle(CreateAccountCommand request,
+        CancellationToken cancellationToken)
     {
         var Account = new Account
         {
             Username = request.Username,
             Email = request.Email,
             PasswordHash = request.PasswordHash,
-            Salt = request.Salt,    
+            Salt = request.Salt,
             IsVerified = request.IsVerified,
-            CloudFileId = request.CloudFileId,
             CreatedAt = DateTime.UtcNow,
             IsActive = request.IsActive,
-            UpdatedAt = DateTime.UtcNow,        
+            UpdatedAt = DateTime.UtcNow
         };
 
         _unitOfWork.Account.Add(Account);

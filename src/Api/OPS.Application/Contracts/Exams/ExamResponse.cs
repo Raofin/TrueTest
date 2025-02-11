@@ -1,12 +1,12 @@
 ﻿namespace OPS.Application.Contracts.Exams;
 
-public record ProfileResponse(
-    long ExamId,
+public record ExamResponse(
+    Guid Id,
     string Title,
     string Description,
+    int Duration,
     DateTime OpensAt,
     DateTime ClosesAt,
-    int Duration,
     DateTime CreatedAt,
     DateTime UpdatedAt,
     bool IsActive,

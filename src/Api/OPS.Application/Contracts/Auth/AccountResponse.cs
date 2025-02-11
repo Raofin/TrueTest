@@ -1,13 +1,12 @@
 ﻿namespace OPS.Application.Contracts.Auth;
 
 public record AccountResponse(
-    long AccountId,
+    Guid Id,
     string Username,
     string Email,
-    string PasswordHash,    
-    string Salt,    
-    bool isVerified,  
-    long? CloudFileId,
+    string PasswordHash,
+    string Salt,
+    bool IsVerified,
     DateTime CreatedAt,
     DateTime UpdatedAt,
     bool IsActive,
