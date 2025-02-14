@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
-using OPS.Domain.Common;
+using OPS.Domain.Contracts.Core.Authentication;
 
-namespace OPS.Infrastructure.Authentication.PasswordHasher;
+namespace OPS.Infrastructure.Authentication;
 
 internal class PasswordHasher : IPasswordHasher
 {

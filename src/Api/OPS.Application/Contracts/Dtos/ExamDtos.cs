@@ -4,7 +4,7 @@ public record ExamResponse(
     Guid Id,
     string Title,
     string Description,
-    int Duration,
+    int DurationMinutes,
     DateTime OpensAt,
     DateTime ClosesAt,
     DateTime CreatedAt,

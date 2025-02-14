@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain;
-using OPS.Domain.Contracts;
+using OPS.Domain.Contracts.Repository;
 using OPS.Domain.Entities.Common;
 
 namespace OPS.Persistence;
 
-internal class UnitOfWork(AppDbContext dbContext, IExamRepository examRepository, IAccountRepository accountRepository)
-    : IUnitOfWork
+internal class UnitOfWork(
+    AppDbContext dbContext,
+    IExamRepository examRepository,
+    IAccountRepository accountRepository) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 

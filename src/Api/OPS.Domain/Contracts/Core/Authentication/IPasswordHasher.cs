@@ -1,4 +1,4 @@
-﻿namespace OPS.Domain.Common;
+﻿namespace OPS.Domain.Contracts.Core.Authentication;
 
 public interface IPasswordHasher
 {

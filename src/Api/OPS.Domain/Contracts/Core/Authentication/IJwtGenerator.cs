@@ -1,6 +1,6 @@
 ﻿using OPS.Domain.Entities.Auth;
 
-namespace OPS.Domain.Common;
+namespace OPS.Domain.Contracts.Core.Authentication;
 
 public interface IJwtGenerator
 {

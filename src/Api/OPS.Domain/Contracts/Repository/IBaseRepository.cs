@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 
-namespace OPS.Domain.Contracts;
+namespace OPS.Domain.Contracts.Repository;
 
-public interface IRepository<TEntity> where TEntity : class
+public interface IBaseRepository<TEntity> where TEntity : class
 {
     Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IEnumerable<TEntity>> GetAsync(CancellationToken cancellationToken = default);

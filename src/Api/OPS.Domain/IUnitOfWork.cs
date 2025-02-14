@@ -1,4 +1,4 @@
-﻿ using OPS.Domain.Contracts;
+﻿using OPS.Domain.Contracts.Repository;
 
 namespace OPS.Domain;
 

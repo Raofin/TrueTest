@@ -4,7 +4,7 @@ using MediatR;
 using OPS.Application.Contracts.Dtos;
 using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
-using OPS.Domain.Common;
+using OPS.Domain.Contracts.Core.Authentication;
 
 namespace OPS.Application.Features.User.Queries;
 

@@ -1,4 +1,4 @@
-﻿namespace OPS.Infrastructure.Authentication.TokenGenerator;
+﻿namespace OPS.Infrastructure.Authentication;
 
 public class JwtSettings
 {

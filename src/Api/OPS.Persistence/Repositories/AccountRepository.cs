@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts;
+using OPS.Domain.Contracts.Repository;
 using OPS.Domain.Entities.Auth;
 
 namespace OPS.Persistence.Repositories;

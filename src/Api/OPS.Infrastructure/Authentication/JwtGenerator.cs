@@ -3,10 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using OPS.Domain.Common;
+using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Auth;
 
-namespace OPS.Infrastructure.Authentication.TokenGenerator;
+namespace OPS.Infrastructure.Authentication;
 
 internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
 {
