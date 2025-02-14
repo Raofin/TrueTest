@@ -13,7 +13,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
            <h3>Profile : {paramsId.id}</h3>
            <Card className="my-10 w-[900px]">
                <CardHeader className="relative flex h-[200px] flex-col justify-end overflow-visible bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400">
-                   <Avatar className="h-44 w-44 translate-y-12" src="https://i.pravatar.cc/150?u=a04258114e29026708c"/>
+                   <Avatar className="h-44 w-44 translate-y-12" src=""/>
                    <Button
                        className="absolute right-3 top-3 bg-white/20 text-white dark:bg-black/20" radius="full" size="sm" variant="light">
                        Edit Profile

@@ -1,7 +1,9 @@
 'use client'
 
-import { HeroUIProvider } from '@heroui/react'
+
+import {DashboardProvider} from "./DashboardContext";
+
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <HeroUIProvider>{children}</HeroUIProvider>
+  return <DashboardProvider>{children}</DashboardProvider>
 }
