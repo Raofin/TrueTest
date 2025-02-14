@@ -1,10 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using OPS.Domain.Common;
+using OPS.Infrastructure.Authentication.PasswordHasher;
+using OPS.Infrastructure.Authentication.TokenGenerator;
 using OPS.Persistence;
 using Serilog;
 using Serilog.Events;
@@ -14,13 +20,17 @@ namespace OPS.Infrastructure;
 
 public static class AppConfigurations
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration,
         IHostEnvironment env)
     {
         services
             .AddDatabase(configuration)
+            .AddAuthentication(configuration)
             .AddHttpContextAccessor()
             .AddMemoryCache()
+            .AddDependencies()
             .AddHealthChecks();
 
         return services;
@@ -53,6 +63,38 @@ public static class AppConfigurations
         var databaseCreator = dbContext.GetService<IRelationalDatabaseCreator>();
 
         if (!databaseCreator.Exists()) dbContext.Database.Migrate();
+    }
+
+    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<IJwtGenerator, JwtGenerator>();
+
+        var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+
+        if (jwtSettings == null || string.IsNullOrEmpty(jwtSettings.Secret))
+            throw new ArgumentNullException(nameof(jwtSettings), "JWT settings are not configured properly.");
+
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.ASCII.GetBytes(jwtSettings.Secret)
+                    )
+                };
+            });
+
+        return services;
     }
 
     public static void AddSerilog(this IHostBuilder hostBuilder, IConfiguration configuration, IHostEnvironment env)

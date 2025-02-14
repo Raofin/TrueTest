@@ -1,0 +1,43 @@
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using OPS.Domain.Common;
+using OPS.Domain.Entities.Auth;
+
+namespace OPS.Infrastructure.Authentication.TokenGenerator;
+
+internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
+{
+    private readonly JwtSettings _jwtSettings = jwtSettings.Value;
+
+    public string CreateToken(Account account)
+    {
+        var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+        var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+
+        var claims = new List<Claim>
+        {
+            new("id", account.Id.ToString()),
+            new("username", account.Username),
+            new(JwtRegisteredClaimNames.Email, account.Email)
+        };
+
+        account.AccountRoles.ToList().ForEach(
+            role => claims.Add(new Claim(ClaimTypes.Role, role.RoleType.RoleName))
+        );
+
+        var token = new JwtSecurityTokenHandler().WriteToken(
+            new JwtSecurityToken(
+                _jwtSettings.Issuer,
+                _jwtSettings.Audience,
+                claims,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpirationInMinutes),
+                signingCredentials: credentials
+            )
+        );
+
+        return token;
+    }
+}

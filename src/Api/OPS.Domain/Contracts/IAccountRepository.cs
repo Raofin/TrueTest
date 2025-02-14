@@ -4,5 +4,7 @@ namespace OPS.Domain.Contracts;
 
 public interface IAccountRepository : IRepository<Account>
 {
-    Task<List<Account>> GetUpcomingAccountAsync(CancellationToken cancellationToken);
+    Task<bool> IsUsernameOrEmailTakenAsync(string username, string email, CancellationToken cancellationToken);
+    Task<bool> IsExistsAsync(string? username, string? email, CancellationToken cancellationToken);
+    Task<Account?> GetWithDetails(string usernameOrEmail, CancellationToken cancellationToken);
 }
