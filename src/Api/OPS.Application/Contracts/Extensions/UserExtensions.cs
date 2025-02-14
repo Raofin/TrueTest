@@ -1,7 +1,7 @@
-﻿using OPS.Application.Contracts.Auth;
+﻿using OPS.Application.Contracts.Dtos;
 using OPS.Domain.Entities.Auth;
 
-namespace OPS.Application.Extensions;
+namespace OPS.Application.Contracts.Extensions;
 
 public static class AccountExtensions
 {
@@ -11,13 +11,10 @@ public static class AccountExtensions
             account.Id,
             account.Username,
             account.Email,
-            account.PasswordHash,
-            account.Salt,
             account.IsVerified,
             account.CreatedAt,
             account.UpdatedAt,
-            account.IsActive,
-            account.IsDeleted
+            account.IsActive
         );
     }
 }

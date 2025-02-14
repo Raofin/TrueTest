@@ -1,7 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Features.User.Queries;
+using OPS.Application.Contracts.Dtos;
+using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 using OPS.Domain.Common;
 using OPS.Domain.Entities.Auth;
@@ -44,7 +45,7 @@ public class RegisterCommandHandler(
 
         if (result <= 0) return Error.Failure(description: "Account could not be saved.");
 
-        return new AuthenticationResult(account, _jwtGenerator.CreateToken(account));
+        return new AuthenticationResult(account.ToDto(), _jwtGenerator.CreateToken(account));
     }
 }
 

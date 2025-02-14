@@ -1,4 +1,4 @@
-﻿namespace OPS.Application.Contracts.Exams;
+﻿namespace OPS.Application.Contracts.Dtos;
 
 public record ExamResponse(
     Guid Id,
@@ -9,6 +9,5 @@ public record ExamResponse(
     DateTime ClosesAt,
     DateTime CreatedAt,
     DateTime UpdatedAt,
-    bool IsActive,
-    bool IsDeleted
+    bool IsActive
 );

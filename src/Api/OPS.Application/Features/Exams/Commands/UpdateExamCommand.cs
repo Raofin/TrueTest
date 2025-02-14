@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+using OPS.Application.Contracts.Dtos;
+using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Commands;
@@ -15,8 +15,7 @@ public record UpdateExamCommand(
     DateTime? OpensAt,
     DateTime? ClosesAt,
     bool? IsActive,
-    bool? IsDeleted
-) : IRequest<ErrorOr<ExamResponse>>;
+    bool? IsDeleted) : IRequest<ErrorOr<ExamResponse>>;
 
 public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateExamCommand, ErrorOr<ExamResponse>>

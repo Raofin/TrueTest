@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+using OPS.Application.Contracts.Dtos;
+using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 using OPS.Domain.Entities.Exam;
 
@@ -14,8 +14,7 @@ public record CreateExamCommand(
     string Description,
     int DurationMinutes,
     DateTime OpensAt,
-    DateTime ClosesAt
-) : IRequest<ErrorOr<ExamResponse>>;
+    DateTime ClosesAt) : IRequest<ErrorOr<ExamResponse>>;
 
 public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<CreateExamCommand, ErrorOr<ExamResponse>>

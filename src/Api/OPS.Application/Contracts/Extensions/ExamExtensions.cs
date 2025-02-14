@@ -1,7 +1,7 @@
-﻿using OPS.Application.Contracts.Exams;
+﻿using OPS.Application.Contracts.Dtos;
 using OPS.Domain.Entities.Exam;
 
-namespace OPS.Application.Extensions;
+namespace OPS.Application.Contracts.Extensions;
 
 public static class ExamExtensions
 {
@@ -16,8 +16,7 @@ public static class ExamExtensions
             exam.ClosesAt,
             exam.CreatedAt,
             exam.UpdatedAt,
-            exam.IsActive,
-            exam.IsDeleted
+            exam.IsActive
         );
     }
 }

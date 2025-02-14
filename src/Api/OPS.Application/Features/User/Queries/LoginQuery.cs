@@ -1,13 +1,12 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Contracts.Dtos;
+using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 using OPS.Domain.Common;
-using OPS.Domain.Entities.Auth;
 
 namespace OPS.Application.Features.User.Queries;
-
-public record AuthenticationResult(Account Account, string Token);
 
 public record LoginQuery(string UsernameOrEmail, string Password)
     : IRequest<ErrorOr<AuthenticationResult>>;
@@ -30,7 +29,7 @@ public class LoginQueryHandler(
         var isVerified = _passwordHasher.VerifyPassword(account.PasswordHash, account.Salt, request.Password);
 
         return isVerified
-            ? new AuthenticationResult(account, _jwtGenerator.CreateToken(account))
+            ? new AuthenticationResult(account.ToDto(), _jwtGenerator.CreateToken(account))
             : Error.Unauthorized();
     }
 }
