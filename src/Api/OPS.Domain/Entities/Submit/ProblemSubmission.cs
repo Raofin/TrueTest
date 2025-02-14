@@ -10,12 +10,13 @@ public class ProblemSubmission : BaseEntity
     public string Code { get; set; } = null!;
     public int Attempts { get; set; }
     public decimal Score { get; set; }
+    public bool IsFlagged { get; set; }
+    public string? FlagReason { get; set; }
 
     public Guid AccountId { get; set; }
     public Guid QuestionId { get; set; }
-    public Guid ProgLanguagesId { get; set; }
+    public Guid ProgLanguageId { get; set; }
     public Account Account { get; set; } = null!;
     public Question Question { get; set; } = null!;
     public ProgLanguage ProgLanguages { get; set; } = null!;
-    public ICollection<FlaggedSubmission> FlaggedSubmissions { get; set; } = [];
 }

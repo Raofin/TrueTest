@@ -10,7 +10,7 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
 
     public async Task<List<Examination>> GetUpcomingExamsAsync(CancellationToken cancellationToken)
     {
-        return await _dbContext.Exams
+        return await _dbContext.Examinations
             .AsNoTracking()
             .Where(exam => exam.OpensAt > DateTime.UtcNow)
             .OrderBy(exam => exam.OpensAt)

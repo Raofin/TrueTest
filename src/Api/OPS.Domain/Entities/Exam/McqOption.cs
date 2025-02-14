@@ -3,7 +3,7 @@ using OPS.Domain.Entities.Submit;
 
 namespace OPS.Domain.Entities.Exam;
 
-public class McqOption : SoftDeletableEntity
+public class McqOption : BaseEntity
 {
     public string OptionMarkdown { get; set; } = null!;
 

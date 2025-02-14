@@ -8,6 +8,8 @@ public class WrittenSubmission : BaseEntity
 {
     public string Answer { get; set; } = null!;
     public decimal Score { get; set; }
+    public bool IsFlagged { get; set; }
+    public string? FlagReason { get; set; }
 
     public Guid QuestionId { get; set; }
     public Guid AccountId { get; set; }

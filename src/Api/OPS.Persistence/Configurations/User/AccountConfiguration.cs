@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Auth;
 using OPS.Persistence.Configurations.Common;
 
-namespace OPS.Persistence.Configurations.Auth;
+namespace OPS.Persistence.Configurations.User;
 
 public class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
     public void Configure(EntityTypeBuilder<Account> entity)
     {
-        entity.ToTable("Accounts", "Auth");
+        entity.ToTable("Accounts", "User");
         entity.HasKey(e => e.Id);
         entity.HasIndex(e => e.Email).IsUnique();
         entity.HasIndex(e => e.Username).IsUnique();

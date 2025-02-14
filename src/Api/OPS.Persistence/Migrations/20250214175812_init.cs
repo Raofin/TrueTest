@@ -12,7 +12,7 @@ namespace OPS.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "Auth");
+                name: "User");
 
             migrationBuilder.EnsureSchema(
                 name: "Core");
@@ -26,20 +26,17 @@ namespace OPS.Persistence.Migrations
             migrationBuilder.EnsureSchema(
                 name: "Submit");
 
-            migrationBuilder.EnsureSchema(
-                name: "User");
-
             migrationBuilder.CreateTable(
-                name: "CloudFiles",
-                schema: "Core",
+                name: "Accounts",
+                schema: "User",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ContentType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Size = table.Column<long>(type: "bigint", nullable: false),
-                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salt = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
                     UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
@@ -47,7 +44,7 @@ namespace OPS.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CloudFiles", x => x.Id);
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -151,32 +148,16 @@ namespace OPS.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SocialTypes",
-                schema: "Enum",
+                name: "CloudFiles",
+                schema: "Core",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PlatformName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SocialTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Accounts",
-                schema: "Auth",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Salt = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
-                    CloudFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Size = table.Column<long>(type: "bigint", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
                     UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
@@ -184,13 +165,72 @@ namespace OPS.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.PrimaryKey("PK_CloudFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Accounts_CloudFiles_CloudFileId",
-                        column: x => x.CloudFileId,
-                        principalSchema: "Core",
-                        principalTable: "CloudFiles",
+                        name: "FK_CloudFiles_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalSchema: "User",
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Otps",
+                schema: "User",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "(DateAdd(minute, (5), GetUtcDate()))"),
+                    Attempts = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Otps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Otps_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalSchema: "User",
+                        principalTable: "Accounts",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExamCandidates",
+                schema: "Exam",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CandidateEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ExaminationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExamCandidates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExamCandidates_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalSchema: "User",
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExamCandidates_Examinations_ExaminationId",
+                        column: x => x.ExaminationId,
+                        principalSchema: "Exam",
+                        principalTable: "Examinations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -236,30 +276,8 @@ namespace OPS.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SocialLinks",
-                schema: "User",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Link = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SocialLinks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SocialLinks_SocialTypes_Id",
-                        column: x => x.Id,
-                        principalSchema: "Enum",
-                        principalTable: "SocialTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AccountRoles",
-                schema: "Auth",
+                schema: "User",
                 columns: table => new
                 {
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -271,7 +289,7 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_AccountRoles_Accounts_AccountId",
                         column: x => x.AccountId,
-                        principalSchema: "Auth",
+                        principalSchema: "User",
                         principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -282,64 +300,6 @@ namespace OPS.Persistence.Migrations
                         principalTable: "RoleTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExamCandidates",
-                schema: "Exam",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CandidateEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ExaminationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExamCandidates", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ExamCandidates_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalSchema: "Auth",
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ExamCandidates_Examinations_ExaminationId",
-                        column: x => x.ExaminationId,
-                        principalSchema: "Exam",
-                        principalTable: "Examinations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Otps",
-                schema: "Auth",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "(DateAdd(minute, (5), GetUtcDate()))"),
-                    Attempts = table.Column<int>(type: "int", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Otps", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Otps_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalSchema: "Auth",
-                        principalTable: "Accounts",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -366,7 +326,7 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Profiles_Accounts_AccountId",
                         column: x => x.AccountId,
-                        principalSchema: "Auth",
+                        principalSchema: "User",
                         principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -387,9 +347,7 @@ namespace OPS.Persistence.Migrations
                     OptionMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
                 },
                 constraints: table =>
                 {
@@ -412,9 +370,11 @@ namespace OPS.Persistence.Migrations
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Attempts = table.Column<int>(type: "int", nullable: false),
                     Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    IsFlagged = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    FlagReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProgLanguagesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProgLanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
                     UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
                 },
@@ -424,13 +384,13 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_ProblemSubmissions_Accounts_AccountId",
                         column: x => x.AccountId,
-                        principalSchema: "Auth",
+                        principalSchema: "User",
                         principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProblemSubmissions_ProgLanguages_ProgLanguagesId",
-                        column: x => x.ProgLanguagesId,
+                        name: "FK_ProblemSubmissions_ProgLanguages_ProgLanguageId",
+                        column: x => x.ProgLanguageId,
                         principalSchema: "Enum",
                         principalTable: "ProgLanguages",
                         principalColumn: "Id",
@@ -454,9 +414,7 @@ namespace OPS.Persistence.Migrations
                     Output = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
                 },
                 constraints: table =>
                 {
@@ -478,6 +436,8 @@ namespace OPS.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    IsFlagged = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    FlagReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
@@ -489,7 +449,7 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_WrittenSubmissions_Accounts_AccountId",
                         column: x => x.AccountId,
-                        principalSchema: "Auth",
+                        principalSchema: "User",
                         principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -507,24 +467,21 @@ namespace OPS.Persistence.Migrations
                 schema: "User",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SocialLinkId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProfileSocials", x => new { x.ProfileId, x.SocialLinkId });
+                    table.PrimaryKey("PK_ProfileSocials", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ProfileSocials_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalSchema: "User",
                         principalTable: "Profiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfileSocials_SocialLinks_SocialLinkId",
-                        column: x => x.SocialLinkId,
-                        principalSchema: "User",
-                        principalTable: "SocialLinks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -537,8 +494,8 @@ namespace OPS.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     McqOptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
                 },
                 constraints: table =>
                 {
@@ -577,7 +534,7 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_McqSubmissions_Accounts_AccountId",
                         column: x => x.AccountId,
-                        principalSchema: "Auth",
+                        principalSchema: "User",
                         principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -597,70 +554,45 @@ namespace OPS.Persistence.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "FlaggedSubmissions",
-                schema: "Submit",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReasonMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProblemSubmissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FlaggedSubmissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FlaggedSubmissions_ProblemSubmissions_ProblemSubmissionId",
-                        column: x => x.ProblemSubmissionId,
-                        principalSchema: "Submit",
-                        principalTable: "ProblemSubmissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AccountRoles_RoleTypeId",
-                schema: "Auth",
+                schema: "User",
                 table: "AccountRoles",
                 column: "RoleTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Accounts_CloudFileId",
-                schema: "Auth",
-                table: "Accounts",
-                column: "CloudFileId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Accounts_Email",
-                schema: "Auth",
+                schema: "User",
                 table: "Accounts",
                 column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_IsActive",
-                schema: "Auth",
+                schema: "User",
                 table: "Accounts",
                 column: "IsActive",
                 filter: "[IsActive] = 1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_IsDeleted",
-                schema: "Auth",
+                schema: "User",
                 table: "Accounts",
                 column: "IsDeleted",
                 filter: "[IsDeleted] = 0");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_Username",
-                schema: "Auth",
+                schema: "User",
                 table: "Accounts",
                 column: "Username",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CloudFiles_AccountId",
+                schema: "Core",
+                table: "CloudFiles",
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CloudFiles_IsActive",
@@ -724,26 +656,6 @@ namespace OPS.Persistence.Migrations
                 filter: "[IsDeleted] = 0");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlaggedSubmissions_IsActive",
-                schema: "Submit",
-                table: "FlaggedSubmissions",
-                column: "IsActive",
-                filter: "[IsActive] = 1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FlaggedSubmissions_IsDeleted",
-                schema: "Submit",
-                table: "FlaggedSubmissions",
-                column: "IsDeleted",
-                filter: "[IsDeleted] = 0");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FlaggedSubmissions_ProblemSubmissionId",
-                schema: "Submit",
-                table: "FlaggedSubmissions",
-                column: "ProblemSubmissionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_McqAnswers_McqOptionId",
                 schema: "Exam",
                 table: "McqAnswers",
@@ -781,7 +693,7 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Otps_AccountId",
-                schema: "Auth",
+                schema: "User",
                 table: "Otps",
                 column: "AccountId");
 
@@ -792,10 +704,10 @@ namespace OPS.Persistence.Migrations
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProblemSubmissions_ProgLanguagesId",
+                name: "IX_ProblemSubmissions_ProgLanguageId",
                 schema: "Submit",
                 table: "ProblemSubmissions",
-                column: "ProgLanguagesId");
+                column: "ProgLanguageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProblemSubmissions_QuestionId",
@@ -833,10 +745,10 @@ namespace OPS.Persistence.Migrations
                 filter: "[IsDeleted] = 0");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProfileSocials_SocialLinkId",
+                name: "IX_ProfileSocials_ProfileId",
                 schema: "User",
                 table: "ProfileSocials",
-                column: "SocialLinkId");
+                column: "ProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProgLanguages_Language",
@@ -892,27 +804,6 @@ namespace OPS.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SocialTypes_PlatformName",
-                schema: "Enum",
-                table: "SocialTypes",
-                column: "PlatformName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestCases_IsActive",
-                schema: "Exam",
-                table: "TestCases",
-                column: "IsActive",
-                filter: "[IsActive] = 1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestCases_IsDeleted",
-                schema: "Exam",
-                table: "TestCases",
-                column: "IsDeleted",
-                filter: "[IsDeleted] = 0");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TestCases_QuestionId",
                 schema: "Exam",
                 table: "TestCases",
@@ -936,15 +827,11 @@ namespace OPS.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AccountRoles",
-                schema: "Auth");
+                schema: "User");
 
             migrationBuilder.DropTable(
                 name: "ExamCandidates",
                 schema: "Exam");
-
-            migrationBuilder.DropTable(
-                name: "FlaggedSubmissions",
-                schema: "Submit");
 
             migrationBuilder.DropTable(
                 name: "LogEvents",
@@ -960,7 +847,11 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Otps",
-                schema: "Auth");
+                schema: "User");
+
+            migrationBuilder.DropTable(
+                name: "ProblemSubmissions",
+                schema: "Submit");
 
             migrationBuilder.DropTable(
                 name: "ProfileSocials",
@@ -979,36 +870,24 @@ namespace OPS.Persistence.Migrations
                 schema: "Enum");
 
             migrationBuilder.DropTable(
-                name: "ProblemSubmissions",
-                schema: "Submit");
-
-            migrationBuilder.DropTable(
                 name: "McqOptions",
                 schema: "Exam");
-
-            migrationBuilder.DropTable(
-                name: "Profiles",
-                schema: "User");
-
-            migrationBuilder.DropTable(
-                name: "SocialLinks",
-                schema: "User");
 
             migrationBuilder.DropTable(
                 name: "ProgLanguages",
                 schema: "Enum");
 
             migrationBuilder.DropTable(
+                name: "Profiles",
+                schema: "User");
+
+            migrationBuilder.DropTable(
                 name: "Questions",
                 schema: "Exam");
 
             migrationBuilder.DropTable(
-                name: "Accounts",
-                schema: "Auth");
-
-            migrationBuilder.DropTable(
-                name: "SocialTypes",
-                schema: "Enum");
+                name: "CloudFiles",
+                schema: "Core");
 
             migrationBuilder.DropTable(
                 name: "Difficulties",
@@ -1023,8 +902,8 @@ namespace OPS.Persistence.Migrations
                 schema: "Enum");
 
             migrationBuilder.DropTable(
-                name: "CloudFiles",
-                schema: "Core");
+                name: "Accounts",
+                schema: "User");
         }
     }
 }

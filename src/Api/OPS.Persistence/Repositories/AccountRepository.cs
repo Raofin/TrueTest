@@ -10,7 +10,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
 
     public async Task<List<Account>> GetUpcomingAccountAsync(CancellationToken cancellationToken)
     {
-        return await _dbContext.Users
+        return await _dbContext.Accounts
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }

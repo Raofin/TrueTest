@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Auth;
 
-namespace OPS.Persistence.Configurations.Auth;
+namespace OPS.Persistence.Configurations.User;
 
 public class AccountRoleConfiguration : IEntityTypeConfiguration<AccountRole>
 {
     public void Configure(EntityTypeBuilder<AccountRole> entity)
     {
-        entity.ToTable("AccountRoles", "Auth");
+        entity.ToTable("AccountRoles", "User");
         entity.HasKey(e => new { e.AccountId, e.RoleTypeId });
 
         entity.HasOne(d => d.Account)

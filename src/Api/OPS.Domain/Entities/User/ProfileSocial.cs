@@ -1,11 +1,12 @@
-﻿using OPS.Domain.Entities.Auth;
+﻿using OPS.Domain.Entities.Common;
 
 namespace OPS.Domain.Entities.User;
 
-public class ProfileSocial
+public class ProfileSocial : BaseEntity
 {
+    public string Name { get; set; } = null!;
+    public string Link { get; set; } = null!;
+
     public Guid ProfileId { get; set; }
-    public Guid SocialLinkId { get; set; }
     public Profile Profile { get; set; } = null!;
-    public SocialLink SocialLink { get; set; } = null!;
 }

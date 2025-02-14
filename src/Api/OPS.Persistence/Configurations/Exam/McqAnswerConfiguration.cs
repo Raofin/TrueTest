@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Exam;
+using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Exam;
 
@@ -10,6 +11,8 @@ public class McqAnswerConfiguration : IEntityTypeConfiguration<McqAnswer>
     {
         entity.ToTable("McqAnswers", "Exam");
         entity.HasKey(e => e.Id);
+
+        new BaseEntityConfig<McqAnswer>().Configure(entity);
 
         entity.HasOne(d => d.McqOption)
             .WithMany(p => p.McqAnswers)

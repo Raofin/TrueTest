@@ -28,9 +28,6 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CloudFileId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
@@ -75,8 +72,6 @@ namespace OPS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CloudFileId");
-
                     b.HasIndex("Email")
                         .IsUnique();
 
@@ -89,7 +84,7 @@ namespace OPS.Persistence.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("Accounts", "Auth");
+                    b.ToTable("Accounts", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.AccountRole", b =>
@@ -104,7 +99,7 @@ namespace OPS.Persistence.Migrations
 
                     b.HasIndex("RoleTypeId");
 
-                    b.ToTable("AccountRoles", "Auth");
+                    b.ToTable("AccountRoles", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.Otp", b =>
@@ -148,7 +143,7 @@ namespace OPS.Persistence.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Otps", "Auth");
+                    b.ToTable("Otps", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
@@ -157,7 +152,7 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountId")
+                    b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ContentType")
@@ -198,6 +193,8 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("GetUtcDate()");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("IsActive")
                         .HasFilter("[IsActive] = 1");
@@ -363,35 +360,6 @@ namespace OPS.Persistence.Migrations
                     b.ToTable("RoleTypes", "Enum");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.Enum.SocialType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.Property<string>("PlatformName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlatformName")
-                        .IsUnique();
-
-                    b.ToTable("SocialTypes", "Enum");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.Exam.ExamCandidate", b =>
                 {
                     b.Property<Guid>("Id")
@@ -507,7 +475,9 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<Guid>("McqOptionId")
                         .HasColumnType("uniqueidentifier");
@@ -516,7 +486,9 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
 
                     b.HasKey("Id");
 
@@ -537,12 +509,6 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("OptionMarkdown")
                         .IsRequired()
@@ -637,16 +603,6 @@ namespace OPS.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<string>("Output")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -661,61 +617,9 @@ namespace OPS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsActive")
-                        .HasFilter("[IsActive] = 1");
-
-                    b.HasIndex("IsDeleted")
-                        .HasFilter("[IsDeleted] = 0");
-
                     b.HasIndex("QuestionId");
 
                     b.ToTable("TestCases", "Exam");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Submit.FlaggedSubmission", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<Guid>("ProblemSubmissionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ReasonMarkdown")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IsActive")
-                        .HasFilter("[IsActive] = 1");
-
-                    b.HasIndex("IsDeleted")
-                        .HasFilter("[IsDeleted] = 0");
-
-                    b.HasIndex("ProblemSubmissionId");
-
-                    b.ToTable("FlaggedSubmissions", "Submit");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.McqSubmission", b =>
@@ -775,7 +679,15 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<Guid>("ProgLanguagesId")
+                    b.Property<string>("FlagReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFlagged")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("ProgLanguageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("QuestionId")
@@ -793,7 +705,7 @@ namespace OPS.Persistence.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("ProgLanguagesId");
+                    b.HasIndex("ProgLanguageId");
 
                     b.HasIndex("QuestionId");
 
@@ -817,6 +729,14 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<string>("FlagReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFlagged")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
@@ -910,22 +830,8 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.User.ProfileSocial", b =>
                 {
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SocialLinkId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProfileId", "SocialLinkId");
-
-                    b.HasIndex("SocialLinkId");
-
-                    b.ToTable("ProfileSocials", "User");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.User.SocialLink", b =>
-                {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -938,6 +844,14 @@ namespace OPS.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime")
@@ -945,14 +859,9 @@ namespace OPS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SocialLinks", "User");
-                });
+                    b.HasIndex("ProfileId");
 
-            modelBuilder.Entity("OPS.Domain.Entities.Auth.Account", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Core.CloudFile", null)
-                        .WithMany("Accounts")
-                        .HasForeignKey("CloudFileId");
+                    b.ToTable("ProfileSocials", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.AccountRole", b =>
@@ -979,6 +888,17 @@ namespace OPS.Persistence.Migrations
                     b.HasOne("OPS.Domain.Entities.Auth.Account", null)
                         .WithMany("Otps")
                         .HasForeignKey("AccountId");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
+                {
+                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
+                        .WithMany("CloudFiles")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.ExamCandidate", b =>
@@ -1067,17 +987,6 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.Submit.FlaggedSubmission", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Submit.ProblemSubmission", "ProblemSubmission")
-                        .WithMany("FlaggedSubmissions")
-                        .HasForeignKey("ProblemSubmissionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ProblemSubmission");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.Submit.McqSubmission", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
@@ -1115,7 +1024,7 @@ namespace OPS.Persistence.Migrations
 
                     b.HasOne("OPS.Domain.Entities.Enum.ProgLanguage", "ProgLanguages")
                         .WithMany("ProblemSubmissions")
-                        .HasForeignKey("ProgLanguagesId")
+                        .HasForeignKey("ProgLanguageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1176,31 +1085,14 @@ namespace OPS.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OPS.Domain.Entities.User.SocialLink", "SocialLink")
-                        .WithMany("ProfileSocials")
-                        .HasForeignKey("SocialLinkId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Profile");
-
-                    b.Navigation("SocialLink");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.User.SocialLink", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Enum.SocialType", "SocialType")
-                        .WithMany("SocialLinks")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("SocialType");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Auth.Account", b =>
                 {
                     b.Navigation("AccountRoles");
+
+                    b.Navigation("CloudFiles");
 
                     b.Navigation("ExamCandidates");
 
@@ -1217,8 +1109,6 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
                 {
-                    b.Navigation("Accounts");
-
                     b.Navigation("Profile");
                 });
 
@@ -1240,11 +1130,6 @@ namespace OPS.Persistence.Migrations
             modelBuilder.Entity("OPS.Domain.Entities.Enum.RoleType", b =>
                 {
                     b.Navigation("AccountRoles");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Enum.SocialType", b =>
-                {
-                    b.Navigation("SocialLinks");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Examination", b =>
@@ -1276,17 +1161,7 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("WrittenSubmissions");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.Submit.ProblemSubmission", b =>
-                {
-                    b.Navigation("FlaggedSubmissions");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.User.Profile", b =>
-                {
-                    b.Navigation("ProfileSocials");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.User.SocialLink", b =>
                 {
                     b.Navigation("ProfileSocials");
                 });

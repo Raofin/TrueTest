@@ -1,4 +1,5 @@
 ﻿using OPS.Domain.Entities.Common;
+using OPS.Domain.Entities.Core;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Entities.User;
@@ -20,4 +21,5 @@ public class Account : SoftDeletableEntity
     public ICollection<McqSubmission> McqSubmissions { get; set; } = [];
     public ICollection<ProblemSubmission> ProblemSubmissions { get; set; } = [];
     public ICollection<WrittenSubmission> WrittenSubmissions { get; set; } = [];
+    public ICollection<CloudFile> CloudFiles { get; set; } = [];
 }

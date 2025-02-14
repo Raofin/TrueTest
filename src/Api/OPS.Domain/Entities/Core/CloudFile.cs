@@ -11,7 +11,7 @@ public class CloudFile : SoftDeletableEntity
     public long Size { get; set; }
     public string Link { get; set; } = null!;
 
-    public Guid? AccountId { get; set; }
+    public Guid AccountId { get; set; }
+    public Account Account { get; set; } = null!;
     public Profile? Profile { get; set; }
-    public ICollection<Account> Accounts { get; set; } = [];
 }

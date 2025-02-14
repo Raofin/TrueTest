@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Auth;
 using OPS.Persistence.Configurations.Common;
 
-namespace OPS.Persistence.Configurations.Auth;
+namespace OPS.Persistence.Configurations.User;
 
 public class OtpConfiguration : IEntityTypeConfiguration<Otp>
 {
     public void Configure(EntityTypeBuilder<Otp> entity)
     {
-        entity.ToTable("Otps", "Auth");
+        entity.ToTable("Otps", "User");
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.Code).IsRequired().HasMaxLength(255);

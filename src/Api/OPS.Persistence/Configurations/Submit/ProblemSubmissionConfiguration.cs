@@ -14,6 +14,7 @@ public class ProblemSubmissionConfiguration : IEntityTypeConfiguration<ProblemSu
 
         entity.Property(e => e.Code).IsRequired();
         entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.IsFlagged).HasDefaultValue(false);
 
         new BaseEntityConfig<ProblemSubmission>().Configure(entity);
 
@@ -27,7 +28,7 @@ public class ProblemSubmissionConfiguration : IEntityTypeConfiguration<ProblemSu
             .OnDelete(DeleteBehavior.Restrict);
         entity.HasOne(d => d.ProgLanguages)
             .WithMany(p => p.ProblemSubmissions)
-            .HasForeignKey(d => d.ProgLanguagesId)
+            .HasForeignKey(d => d.ProgLanguageId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
