@@ -15,6 +15,8 @@ public static class DependencyInjection
 
         services.AddScoped<IAccountRepository, AccountRepository>();
 
+        services.AddScoped<IExamCandidatesRepository, ExamCandidatesRepository>();
+
         return services;
     }
 }

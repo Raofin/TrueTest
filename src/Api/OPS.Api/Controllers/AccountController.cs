@@ -17,7 +17,7 @@ public class AccountController(
     private readonly IValidator<CreateAccountCommand> _createAccountValidator = createAccountValidator;
     private readonly IValidator<UpdateProfileCommand> _updateAccountValidator = updateAccountValidator;
 
-    [HttpGet]
+    [HttpGet("All")]
     public async Task<IActionResult> GetAllAccountsAsync()
     {
         var query = new GetAllAccountsQuery();

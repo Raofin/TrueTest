@@ -9,7 +9,6 @@ using OPS.Domain.Entities.Exam;
 namespace OPS.Application.Features.Exams.Commands;
 
 public record CreateExamCommand(
-    Guid Id,
     string Title,
     string Description,
     int DurationMinutes,
@@ -46,10 +45,6 @@ public class CreateExamCommandValidator : AbstractValidator<CreateExamCommand>
 {
     public CreateExamCommandValidator()
     {
-        RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Id is required.")
-            .Must(id => Guid.TryParse(id.ToString(), out _)).WithMessage("Id must be a valid GUID.");
-
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required.")
             .Length(3, 100).WithMessage("Title must be between 3 and 100 characters.");

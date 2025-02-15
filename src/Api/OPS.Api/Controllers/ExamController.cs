@@ -27,7 +27,17 @@ public class ExamController(
         return Ok(result.Value);
     }
 
-    [HttpGet("{examId:guid}")]
+    [HttpGet("account/{accountId:guid}")]
+    public async Task<IActionResult> GetAllExamsByAccountIdAsync(Guid accountId)
+    {
+        var query = new GetAllExamsByAccountIdQuery(accountId);
+
+        var result = await _mediator.Send(query);
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("exam/{examId:guid}")]
     public async Task<IActionResult> GetExamByIdAsync(Guid examId)
     {
         var query = new GetExamByIdQuery(examId);
@@ -54,6 +64,31 @@ public class ExamController(
             ? Ok(result.Value)
             : Problem(result.FirstError.Description);
     }
+
+    [HttpGet("UpcomingExams/{accountId:guid}")]
+    public async Task<IActionResult> GetUpcomingExamsByAccountIdAsync(Guid accountId)
+    {
+        var query = new GetUpcomingExamsByAccountIdQuery(accountId);
+
+        var result = await _mediator.Send(query);
+
+        return !result.IsError
+            ? Ok(result.Value)
+            : Problem(result.FirstError.Description);
+    }
+
+    [HttpGet("PreviousExams/{accountId:guid}")]
+    public async Task<IActionResult> GetPreviousExamsByAccountIdAsync(Guid accountId)
+    {
+        var query = new GetPreviousExamsByAccountIdQuery(accountId);
+
+        var result = await _mediator.Send(query);
+
+        return !result.IsError
+            ? Ok(result.Value)
+            : Problem(result.FirstError.Description);
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync(CreateExamCommand command)

@@ -2,16 +2,18 @@
 using OPS.Domain;
 using OPS.Domain.Contracts;
 using OPS.Domain.Entities.Common;
+using OPS.Persistence.Repositories;
 
 namespace OPS.Persistence;
 
-internal class UnitOfWork(AppDbContext dbContext, IExamRepository examRepository, IAccountRepository accountRepository)
+internal class UnitOfWork(AppDbContext dbContext, IExamRepository examRepository, IAccountRepository accountRepository, IExamCandidatesRepository examCandidateRepository)
     : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
     public IExamRepository Exam { get; } = examRepository;
     public IAccountRepository Account { get; } = accountRepository;
+    public IExamCandidatesRepository ExamCandiates { get; } = examCandidateRepository;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
