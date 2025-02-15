@@ -10,6 +10,8 @@ internal static class DependencyInjection
         services.AddControllers();
         services.AddHttpContextAccessor();
 
+        services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
+
         return services;
     }
 
