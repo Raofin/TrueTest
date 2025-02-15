@@ -15,9 +15,13 @@ var app = builder.Build();
 
 app.UseInfrastructure();
 app.UseControllers();
-
 app.ApplyMigration();
 
-if (app.Environment.IsDevelopment()) app.UseScalar();
+if (true /*app.Environment.IsDevelopment()*/)
+{
+    app.UseScalar();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.Run();
