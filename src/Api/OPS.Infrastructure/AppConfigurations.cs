@@ -9,7 +9,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using OPS.Domain.Contracts.Core.Authentication;
+using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Infrastructure.Authentication;
+using OPS.Infrastructure.EmailSender;
 using OPS.Persistence;
 using Serilog;
 using Serilog.Events;
@@ -27,6 +29,7 @@ public static class AppConfigurations
         services
             .AddDatabase(configuration)
             .AddAuthentication(configuration)
+            .AddEmailSettings(configuration)
             .AddHttpContextAccessor()
             .AddMemoryCache()
             .AddDependencies()
@@ -92,6 +95,20 @@ public static class AppConfigurations
                     )
                 };
             });
+
+        return services;
+    }
+
+    private static IServiceCollection AddEmailSettings(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<IAccountEmails, AccountEmails>();
+
+        var settings = new EmailSettings();
+        configuration.Bind(nameof(EmailSettings), settings);
+
+        services
+            .AddFluentEmail(settings.Email, settings.Name)
+            .AddSmtpSender(settings.Server, settings.Port, settings.Email, settings.Password);
 
         return services;
     }
