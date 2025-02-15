@@ -26,8 +26,20 @@ public class RegisterCommandHandler(
 
     public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        if (await _unitOfWork.Account.IsUsernameOrEmailTakenAsync(request.Username, request.Email, cancellationToken))
-            return Error.Conflict(description: "Username or Email is already taken.");
+        var isUserUnique =
+            await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
+                request.Username,
+                request.Email,
+                cancellationToken
+            );
+
+        if (!isUserUnique)
+            return Error.Conflict();
+
+        var isValidOtp = await _unitOfWork.Otp.IsValidOtpAsync(request.Email, request.Otp, cancellationToken);
+
+        if (!isValidOtp)
+            return Error.Unauthorized();
 
         var (hashedPassword, salt) = _passwordHasher.HashPassword(request.Password);
 

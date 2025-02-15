@@ -7,13 +7,15 @@ namespace OPS.Persistence;
 
 internal class UnitOfWork(
     AppDbContext dbContext,
-    IExamRepository examRepository,
-    IAccountRepository accountRepository) : IUnitOfWork
+    IAccountRepository accountRepository,
+    IOtpRepository otpRepository,
+    IExamRepository examRepository) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public IExamRepository Exam { get; } = examRepository;
     public IAccountRepository Account { get; } = accountRepository;
+    public IOtpRepository Otp { get; } = otpRepository;
+    public IExamRepository Exam { get; } = examRepository;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
