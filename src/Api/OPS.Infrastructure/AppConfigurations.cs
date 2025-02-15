@@ -24,26 +24,29 @@ public static class AppConfigurations
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration,
-        IHostEnvironment env)
+        IHostEnvironment environment,
+        IHostBuilder hostBuilder)
     {
         services
             .AddDatabase(configuration)
             .AddAuthentication(configuration)
             .AddEmailSettings(configuration)
-            .AddHttpContextAccessor()
             .AddMemoryCache()
             .AddDependencies()
             .AddHealthChecks();
 
+        hostBuilder.AddSerilog(configuration, environment);
+
         return services;
     }
 
-    public static void UseInfrastructure(this IApplicationBuilder app, IHostEnvironment env)
+    public static void UseInfrastructure(this IApplicationBuilder app)
     {
         app.UseSerilogRequestLogging();
-
-        if (env.IsDevelopment()) app.ApplyMigration();
     }
+
+
+    #region Database
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
@@ -57,7 +60,7 @@ public static class AppConfigurations
         return services;
     }
 
-    private static void ApplyMigration(this IApplicationBuilder app)
+    public static void ApplyMigration(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
 
@@ -67,7 +70,13 @@ public static class AppConfigurations
         if (!databaseCreator.Exists()) dbContext.Database.Migrate();
     }
 
-    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    #endregion
+
+
+    #region Authentication & Authorization
+
+    private static IServiceCollection AddAuthentication(
+        this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -99,6 +108,11 @@ public static class AppConfigurations
         return services;
     }
 
+    #endregion
+
+
+    #region Email Settings
+
     private static IServiceCollection AddEmailSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IAccountEmails, AccountEmails>();
@@ -113,7 +127,12 @@ public static class AppConfigurations
         return services;
     }
 
-    public static void AddSerilog(this IHostBuilder hostBuilder, IConfiguration configuration, IHostEnvironment env)
+    #endregion
+
+
+    #region Serilog
+
+    private static void AddSerilog(this IHostBuilder hostBuilder, IConfiguration configuration, IHostEnvironment env)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
@@ -132,4 +151,6 @@ public static class AppConfigurations
                 )
         );
     }
+
+    #endregion
 }
