@@ -3,12 +3,12 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.User.Commands;
-using OPS.Application.Features.User.Queries;
+using OPS.Application.Features.Auth.Commands;
+using OPS.Application.Features.Auth.Queries;
 
 namespace OPS.Api.Controllers;
 
-public class UserController(
+public class AuthController(
     IMediator mediator,
     IValidator<LoginQuery> loginValidator,
     IValidator<RegisterCommand> registerValidator,

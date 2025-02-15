@@ -6,7 +6,7 @@ using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 
-namespace OPS.Application.Features.User.Queries;
+namespace OPS.Application.Features.Auth.Queries;
 
 public record LoginQuery(string UsernameOrEmail, string Password)
     : IRequest<ErrorOr<AuthenticationResult>>;

@@ -4,7 +4,7 @@ using OPS.Domain;
 using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.Auth;
 
-namespace OPS.Application.Features.User.Commands;
+namespace OPS.Application.Features.Auth.Commands;
 
 public record SendOtpCommand(string Email) : IRequest<Unit>;
 

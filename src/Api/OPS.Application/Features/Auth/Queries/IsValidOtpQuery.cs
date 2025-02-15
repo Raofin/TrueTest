@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using OPS.Domain;
 
-namespace OPS.Application.Features.User.Queries;
+namespace OPS.Application.Features.Auth.Queries;
 
 public record IsValidOtpQuery(string Email, string Otp) : IRequest<bool>;
 

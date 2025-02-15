@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using OPS.Domain;
 
-namespace OPS.Application.Features.User.Queries;
+namespace OPS.Application.Features.Auth.Queries;
 
 public record IsUserUniqueQuery(string? Username, string? Email) : IRequest<bool>;
 

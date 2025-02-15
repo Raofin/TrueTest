@@ -7,7 +7,7 @@ using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Auth;
 
-namespace OPS.Application.Features.User.Commands;
+namespace OPS.Application.Features.Auth.Commands;
 
 public record RegisterCommand(
     string Username,
