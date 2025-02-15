@@ -167,7 +167,7 @@ export default function Component(){
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4 mt-8 w-full">
+            <div className="flex flex-col gap-4 mt-8 w-full ">
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">Total {users.length} users</span>
                     <label className="flex items-center text-default-400 text-small">

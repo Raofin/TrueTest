@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body >
       <Providers>
           {!path.includes('login') && !path.includes('registration')
-              && !path.includes('settings') && !path.includes('myprofile') && <NavBar />}
+              && !path.includes('settings') && !path.includes('myprofile') && !path.includes('exam-review') && <NavBar />}
           <main>{children}</main>
       </Providers>
       </body>

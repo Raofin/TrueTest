@@ -1,9 +1,14 @@
 "use client";
 
 import { useDashboard } from "../DashboardContext";
-import {Card, CardBody, Chip, Tab, Tabs} from "@heroui/react";
+import {Card, CardBody, Tab, Tabs} from "@heroui/react";
 import {
-  Navbar, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Popover, PopoverContent, PopoverTrigger, Avatar, Badge,
+    Link, Dropdown, DropdownTrigger, DropdownMenu,
+    DropdownItem, Popover, PopoverContent, PopoverTrigger, Avatar, Badge, Navbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    NavbarMenuToggle,Button
 } from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 import React, {useState} from "react";
@@ -16,20 +21,29 @@ import ExamSchedule from '../candidate_dashboard/exam-schedule/page'
 import ViewResult from '../candidate_dashboard/view-result/page'
 import Review from '../reviewer_dashboard/review-list/page'
 import NotificationsCard from "./notifications-card";
+import GoTo from '../goto'
+
 export default function Component() {
   const {dashboardType} = useDashboard();
 
   const [selected, setSelected] = useState<string>("home");
   return (
-      <div >
-        <Tabs className={'w-full flex justify-center'} aria-label="Options" selectedKey={selected} onSelectionChange={(key) => setSelected(key as string)}>
+      <>
+          { dashboardType?
+              <Tabs className={'w-full flex justify-center'} aria-label="Options" selectedKey={selected} onSelectionChange={(key) => setSelected(key as string)}>
             <Tab title={<span className="opacity-100 ">OPS</span>} className="bg-none shadow-none border-none pointer-events-none font-extrabold text-3xl" isDisabled={true}  />
 
           {dashboardType === 'admin' ?
               <>
-                  <Tab key="home" title="Home" className={'ml-80'}/>
+                  <Tab key="home" title="Home" className={'ml-80'}>
+                      <Card className={"w-[200px] mt-24 ml-44 "}>
+                          <CardBody >
+                              <GoTo dashboardType={'candidate'}/>
+                          </CardBody>
+                      </Card>
+                  </Tab>
                 <Tab key="candidate" title="Candidate">
-                  <Card className="w-full ">
+                  <Card className="w-full">
                     <CardBody>
                       <Candidate/>
                     </CardBody>
@@ -58,7 +72,13 @@ export default function Component() {
                 </Tab>
               </>
               : dashboardType === 'candidate' ? < >
-                      <Tab key="home" title="Home" className={'ml-80'}/>
+                      <Tab key="home" title="Home" className={'ml-80'}>
+                          <Card className={"w-[200px] mt-24 ml-44 "}>
+                              <CardBody >
+                                  <GoTo dashboardType={'reviewer'}/>
+                              </CardBody>
+                          </Card>
+                      </Tab>
                     <Tab key="attend-exam" title="Attend Exam">
                       <Card>
                         <CardBody>
@@ -137,14 +157,40 @@ export default function Component() {
             </Tab>
 
         </Tabs>
-      </div>
+            :
+              <Navbar
+                  classNames={{
+                      base: "shadow lg:backdrop-filter-none",
+                      item: "data-[active=true]:text-primary",
+                      wrapper: "px-4",
+                  }}
+                  height="60px">
+                  <NavbarBrand>
+                      <NavbarMenuToggle className="mr-2 h-6 sm:hidden" />
+                      <p className="font-extrabold text-3xl">OPS</p>
+                  </NavbarBrand>
+
+                  <NavbarContent
+                      className="ml-4 hidden h-12 w-full max-w-fit gap-6 rounded-full bg-content2 px-4 dark:bg-content1 sm:flex"
+                      justify="start">
+                      <NavbarItem>
+                          <Link aria-current="page" className="flex gap-2 text-center" href={dashboardType ? `/${dashboardType}_dashboard` : `/`}>
+                              Home
+                          </Link>
+                      </NavbarItem>
+                  </NavbarContent>
+
+                      <NavbarContent justify="end">
+                          <NavbarItem className="hidden lg:flex">
+                              <Link href="/login">
+                                  <Button color="primary" variant="shadow">
+                                      Login
+                                  </Button>
+                              </Link>
+                          </NavbarItem>
+                      </NavbarContent>
+              </Navbar>
+          }
+      </>
   )
 }
-                //
-                //
-                // <Link href="/login">
-                //   <Button color="primary" variant="shadow">
-                //     Login
-                //   </Button>
-                // </Link>
-

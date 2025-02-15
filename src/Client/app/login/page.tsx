@@ -4,14 +4,17 @@ import React from 'react'
 import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import '../../styles/globals.css'
+import {useRouter} from "next/navigation";
 export default function Component() {
   const [isVisible, setIsVisible] = React.useState(false)
   const toggleVisibility = () => setIsVisible(!isVisible)
   const [user,setUser]=React.useState({
     email:"",password:"",
   })
+  const router =useRouter();
   const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    router.push('/admin_dashboard')
   }
 
   return (
