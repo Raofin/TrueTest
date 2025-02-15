@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Contracts.Core.EmailSender;
+using OPS.Domain.Enums;
 using OPS.Infrastructure.Authentication;
 using OPS.Infrastructure.EmailSender;
 using OPS.Persistence;
@@ -30,6 +31,7 @@ public static class AppConfigurations
         services
             .AddDatabase(configuration)
             .AddAuthentication(configuration)
+            .AddAuthorization()
             .AddEmailSettings(configuration)
             .AddMemoryCache()
             .AddDependencies()
@@ -104,6 +106,22 @@ public static class AppConfigurations
                     )
                 };
             });
+
+        return services;
+    }
+
+    private static IServiceCollection AddAuthorization(this IServiceCollection services)
+    {
+        foreach (var role in Enum.GetValues<RoleType>())
+        {
+            var roleName = Enum.GetName(role)!;
+
+            services
+                .AddAuthorizationBuilder()
+                .AddPolicy(roleName, policy => policy
+                    .RequireRole(roleName)
+                );
+        }
 
         return services;
     }

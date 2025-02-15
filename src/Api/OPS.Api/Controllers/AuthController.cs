@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Application.Features.Auth.Commands;
@@ -8,6 +9,7 @@ using OPS.Application.Features.Auth.Queries;
 
 namespace OPS.Api.Controllers;
 
+[AllowAnonymous]
 public class AuthController(
     IMediator mediator,
     IValidator<LoginQuery> loginValidator,
