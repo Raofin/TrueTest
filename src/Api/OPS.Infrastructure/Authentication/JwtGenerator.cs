@@ -19,7 +19,7 @@ internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
 
         var claims = new List<Claim>
         {
-            new("id", account.Id.ToString()),
+            new("accountId", account.Id.ToString()),
             new("username", account.Username),
             new(JwtRegisteredClaimNames.Email, account.Email)
         };
