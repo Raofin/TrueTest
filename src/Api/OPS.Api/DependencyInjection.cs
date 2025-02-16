@@ -6,7 +6,7 @@ namespace OPS.Api;
 
 internal static class DependencyInjection
 {
-    public static IServiceCollection AddController(this IServiceCollection services)
+    public static IServiceCollection AddApi(this IServiceCollection services)
     {
         services.AddControllers();
         services.AddHttpContextAccessor();
@@ -38,7 +38,7 @@ internal static class DependencyInjection
         });
     }
 
-    private static IServiceCollection AddSwagger(this IServiceCollection services)
+    private static void AddSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(options =>
         {
@@ -72,7 +72,5 @@ internal static class DependencyInjection
                 }
             });
         });
-
-        return services;
     }
 }
