@@ -6,7 +6,7 @@ using OPS.Application.Features.Exams.Queries;
 
 namespace OPS.Api.Controllers;
 
-public class ExamController(IMediator mediator) : ApiController
+public class ExamController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 

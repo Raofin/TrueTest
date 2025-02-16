@@ -9,7 +9,7 @@ namespace OPS.Api.Common;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class ApiController : ControllerBase
+public class BaseApiController : ControllerBase
 {
     protected IActionResult ToResult<T>(ErrorOr<T> result)
     {

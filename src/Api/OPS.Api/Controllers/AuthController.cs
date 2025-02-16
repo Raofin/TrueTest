@@ -8,7 +8,7 @@ using OPS.Application.Features.Auth.Queries;
 namespace OPS.Api.Controllers;
 
 [AllowAnonymous]
-public class AuthController(IMediator mediator) : ApiController
+public class AuthController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 

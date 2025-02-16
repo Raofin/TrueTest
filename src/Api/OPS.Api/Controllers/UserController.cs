@@ -7,7 +7,7 @@ namespace OPS.Api.Controllers;
 
 public class UserController(
     IMediator mediator,
-    IUserInfoProvider userInfoProvider) : ApiController
+    IUserInfoProvider userInfoProvider) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
