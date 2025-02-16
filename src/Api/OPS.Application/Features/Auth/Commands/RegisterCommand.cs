@@ -6,6 +6,7 @@ using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Auth;
+using OPS.Application.Constants;
 
 namespace OPS.Application.Features.Auth.Commands;
 
@@ -72,12 +73,12 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 
         RuleFor(x => x.Email)
             .NotEmpty()
-            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$");
+            .Matches(ValidationConstants.EmailRegex);
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password is required.")
-            .Matches(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$")
-            .WithMessage("Password must be at least 8 characters long, contain at least one letter, one number, and one special character.");
+            .NotEmpty()
+            .Matches(ValidationConstants.PasswordRegex)
+            .WithMessage("Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).");
 
         RuleFor(x => x.Otp)
             .NotEmpty()

@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Constants;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Auth.Queries;
@@ -34,7 +35,8 @@ public class IsUserUniqueQueryValidator : AbstractValidator<IsUserUniqueQuery>
             .When(x => !string.IsNullOrEmpty(x.Username));
 
         RuleFor(x => x.Email)
-            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
+            .Matches(ValidationConstants.EmailRegex)
+            .WithMessage("Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).")
             .When(x => !string.IsNullOrEmpty(x.Email));
 
         RuleFor(x => x)

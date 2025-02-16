@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Constants;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Auth.Queries;
@@ -30,7 +31,7 @@ public class IsValidOtpQueryValidator : AbstractValidator<IsValidOtpQuery>
     {
         RuleFor(x => x.Email)
             .NotEmpty()
-            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$");
+            .Matches(ValidationConstants.EmailRegex);
 
         RuleFor(x => x.Otp)
             .NotEmpty()
