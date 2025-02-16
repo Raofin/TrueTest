@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.EmailSender;
@@ -6,16 +7,16 @@ using OPS.Domain.Entities.Auth;
 
 namespace OPS.Application.Features.Auth.Commands;
 
-public record SendOtpCommand(string Email) : IRequest<Unit>;
+public record SendOtpCommand(string Email) : IRequest<ErrorOr<Unit>>;
 
 public class SendOtpCommandHandler(
     IUnitOfWork unitOfWork,
-    IAccountEmails accountEmails) : IRequestHandler<SendOtpCommand, Unit>
+    IAccountEmails accountEmails) : IRequestHandler<SendOtpCommand, ErrorOr<Unit>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IAccountEmails _accountEmails = accountEmails;
 
-    public async Task<Unit> Handle(SendOtpCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Unit>> Handle(SendOtpCommand request, CancellationToken cancellationToken)
     {
         var code = GenerateOtp();
 
@@ -47,8 +48,7 @@ public class SendOtpCommandValidator : AbstractValidator<SendOtpCommand>
     public SendOtpCommandValidator()
     {
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required.")
-            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
-            .WithMessage("Invalid email address.");
+            .NotEmpty()
+            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$");
     }
 }

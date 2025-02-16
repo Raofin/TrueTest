@@ -38,10 +38,12 @@ public class LoginCommandValidator : AbstractValidator<LoginQuery>
 {
     public LoginCommandValidator()
     {
-        RuleFor(a => a.UsernameOrEmail)
-            .NotEmpty().WithMessage("Username or email is required.");
+        RuleFor(x => x.UsernameOrEmail)
+            .NotEmpty()
+            .MinimumLength(4);
 
-        RuleFor(a => a.Password)
-            .NotEmpty().WithMessage("Password is required.");
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .MinimumLength(4);
     }
 }

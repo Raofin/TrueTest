@@ -55,9 +55,9 @@ public class RegisterCommandHandler(
         _unitOfWork.Account.Add(account);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        if (result <= 0) return Error.Failure(description: "Account could not be saved.");
-
-        return new AuthenticationResult(account.ToDto(), _jwtGenerator.CreateToken(account));
+        return result > 0
+            ? new AuthenticationResult(account.ToDto(), _jwtGenerator.CreateToken(account))
+            : Error.Failure();
     }
 }
 
@@ -66,14 +66,13 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     public RegisterCommandValidator()
     {
         RuleFor(x => x.Username)
-            .NotEmpty().WithMessage("Username is required.")
-            .MinimumLength(3).WithMessage("Username must be at least 3 characters.")
-            .MaximumLength(50).WithMessage("Username must not exceed 50 characters.");
+            .NotEmpty()
+            .MinimumLength(4)
+            .MaximumLength(50);
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required.")
-            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
-            .WithMessage("Invalid email address.");
+            .NotEmpty()
+            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
@@ -81,8 +80,7 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
             .WithMessage("Password must be at least 8 characters long, contain at least one letter, one number, and one special character.");
 
         RuleFor(x => x.Otp)
-            .NotEmpty().WithMessage("Otp is required.")
-            .MinimumLength(4).WithMessage("Otp must be at least 4 characters.")
-            .MaximumLength(4).WithMessage("Otp must not exceed 4 characters.");
+            .NotEmpty()
+            .Length(4);
     }
 }

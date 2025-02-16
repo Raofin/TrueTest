@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Domain;
 
@@ -14,13 +15,24 @@ public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
     {
         var exam = await _unitOfWork.Exam.GetAsync(request.Id, cancellationToken);
 
-        if (exam is null) return Error.NotFound("Exam was not found");
+        if (exam is null)
+            return Error.NotFound();
 
         _unitOfWork.Exam.Remove(exam);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
             ? Result.Success
-            : Error.Failure("The exam could not be deleted.");
+            : Error.Failure();
+    }
+}
+
+public class DeleteExamCommandValidator : AbstractValidator<DeleteExamCommand>
+{
+    public DeleteExamCommandValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty()
+            .Must(id => Guid.TryParse(id.ToString(), out _));
     }
 }

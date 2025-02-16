@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using ErrorOr;
+using FluentValidation;
 using OPS.Application.Contracts.Dtos;
 using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
@@ -18,7 +19,17 @@ public class GetExamByIdQueryHandler(IUnitOfWork unitOfWork)
         var exam = await _unitOfWork.Exam.GetAsync(request.Id, cancellationToken);
 
         return exam is null
-            ? Error.NotFound("Exam not found.")
+            ? Error.NotFound()
             : exam.ToDto();
+    }
+}
+
+public class GetExamByIdQueryValidator : AbstractValidator<GetExamByIdQuery>
+{
+    public GetExamByIdQueryValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty()
+            .Must(id => Guid.TryParse(id.ToString(), out _));
     }
 }
