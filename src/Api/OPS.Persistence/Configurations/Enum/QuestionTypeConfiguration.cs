@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Enum;
-using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class QuestionTypeConfiguration : IEntityTypeConfiguration<QuestionType>
+public class QuestionTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<QuestionType> entity)
     {
@@ -14,7 +13,5 @@ public class QuestionTypeConfiguration : IEntityTypeConfiguration<QuestionType>
         entity.HasIndex(e => e.Type).IsUnique();
 
         entity.Property(e => e.Type).IsRequired().HasMaxLength(255);
-
-        new BaseEntityConfig<QuestionType>().Configure(entity);
     }
 }

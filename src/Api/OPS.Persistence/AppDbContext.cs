@@ -22,7 +22,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Examination> Examinations { get; set; } = null!;
     public DbSet<ExamCandidate> ExamCandidates { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
-    public DbSet<McqAnswer> McqAnswers { get; set; } = null!;
     public DbSet<McqOption> McqOptions { get; set; } = null!;
     public DbSet<TestCase> TestCases { get; set; } = null!;
     public DbSet<McqSubmission> McqSubmissions { get; set; } = null!;

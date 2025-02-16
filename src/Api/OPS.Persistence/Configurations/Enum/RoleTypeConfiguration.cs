@@ -5,7 +5,7 @@ using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class RoleTypeConfiguration : IEntityTypeConfiguration<RoleType>
+public class RoleTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<RoleType> entity)
     {
@@ -14,7 +14,5 @@ public class RoleTypeConfiguration : IEntityTypeConfiguration<RoleType>
         entity.HasIndex(e => e.RoleName).IsUnique();
 
         entity.Property(e => e.RoleName).IsRequired().HasMaxLength(255);
-
-        new BaseEntityConfig<RoleType>().Configure(entity);
     }
 }

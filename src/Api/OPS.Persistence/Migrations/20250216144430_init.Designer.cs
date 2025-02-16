@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250216122748_init")]
+    [Migration("20250216144430_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -92,8 +92,8 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoleTypeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("RoleTypeId")
+                        .HasColumnType("int");
 
                     b.HasKey("AccountId", "RoleTypeId");
 
@@ -233,118 +233,70 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.Difficulty", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DifficultyName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DifficultyName")
-                        .IsUnique();
-
-                    b.ToTable("Difficulties", "Enum");
+                    b.ToTable("Difficulties");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.ProgLanguage", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Language")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Language")
-                        .IsUnique();
-
-                    b.ToTable("ProgLanguages", "Enum");
+                    b.ToTable("ProgLanguages");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.QuestionType", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Type")
-                        .IsUnique();
-
-                    b.ToTable("QuestionTypes", "Enum");
+                    b.ToTable("QuestionTypes");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.RoleType", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleName")
-                        .IsUnique();
-
-                    b.ToTable("RoleTypes", "Enum");
+                    b.ToTable("RoleTypes");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.ExamCandidate", b =>
@@ -455,50 +407,36 @@ namespace OPS.Persistence.Migrations
                     b.ToTable("Examinations", "Exam");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.Exam.McqAnswer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.Property<Guid>("McqOptionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("McqOptionId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("McqAnswers", "Exam");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.Exam.McqOption", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<string>("OptionMarkdown")
+                    b.Property<bool>("IsMultiSelect")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Option1")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Option2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Option3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Option4")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("QuestionId")
@@ -527,11 +465,16 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<Guid>("DifficultyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("DifficultyId")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ExaminationId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("HasLongAnswer")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -543,8 +486,8 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid>("QuestionTypeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionTypeId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Score")
                         .HasColumnType("decimal(10, 2)");
@@ -674,8 +617,8 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid>("ProgLanguageId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ProgLanguageId")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
@@ -899,25 +842,6 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("Examination");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.Exam.McqAnswer", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Exam.McqOption", "McqOption")
-                        .WithMany("McqAnswers")
-                        .HasForeignKey("McqOptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OPS.Domain.Entities.Exam.Question", "Question")
-                        .WithMany("McqAnswers")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("McqOption");
-
-                    b.Navigation("Question");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.Exam.McqOption", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.Exam.Question", "Question")
@@ -1119,15 +1043,11 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.McqOption", b =>
                 {
-                    b.Navigation("McqAnswers");
-
                     b.Navigation("McqSubmissions");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Question", b =>
                 {
-                    b.Navigation("McqAnswers");
-
                     b.Navigation("McqQptions");
 
                     b.Navigation("McqSubmissions");

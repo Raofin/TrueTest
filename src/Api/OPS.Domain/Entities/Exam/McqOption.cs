@@ -5,10 +5,14 @@ namespace OPS.Domain.Entities.Exam;
 
 public class McqOption : BaseEntity
 {
-    public string OptionMarkdown { get; set; } = null!;
+    public string Option1 { get; set; } = null!;
+    public string Option2 { get; set; } = null!;
+    public string? Option3 { get; set; }
+    public string? Option4 { get; set; }
+    public bool IsMultiSelect { get; set; }
+    public string Answer { get; set; } = null!;
 
     public Guid QuestionId { get; set; }
     public Question Question { get; set; } = null!;
-    public ICollection<McqAnswer> McqAnswers { get; set; } = [];
     public ICollection<McqSubmission> McqSubmissions { get; set; } = [];
 }

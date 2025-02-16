@@ -18,6 +18,10 @@ public class ProblemSubmissionConfiguration : IEntityTypeConfiguration<ProblemSu
 
         new BaseEntityConfig<ProblemSubmission>().Configure(entity);
 
+        entity.HasOne(d => d.ProgLanguages)
+            .WithMany(p => p.ProblemSubmissions)
+            .HasForeignKey(d => d.ProgLanguageId)
+            .OnDelete(DeleteBehavior.Restrict);
         entity.HasOne(d => d.Account)
             .WithMany(p => p.ProblemSubmissions)
             .HasForeignKey(d => d.AccountId)
@@ -25,10 +29,6 @@ public class ProblemSubmissionConfiguration : IEntityTypeConfiguration<ProblemSu
         entity.HasOne(d => d.Question)
             .WithMany(p => p.ProblemSubmissions)
             .HasForeignKey(d => d.QuestionId)
-            .OnDelete(DeleteBehavior.Restrict);
-        entity.HasOne(d => d.ProgLanguages)
-            .WithMany(p => p.ProblemSubmissions)
-            .HasForeignKey(d => d.ProgLanguageId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

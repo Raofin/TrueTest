@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Enum;
-using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class DifficultyConfiguration : IEntityTypeConfiguration<Difficulty>
+public class DifficultyConfiguration
 {
     public void Configure(EntityTypeBuilder<Difficulty> entity)
     {
@@ -14,7 +13,5 @@ public class DifficultyConfiguration : IEntityTypeConfiguration<Difficulty>
         entity.HasIndex(e => e.DifficultyName).IsUnique();
 
         entity.Property(e => e.DifficultyName).IsRequired().HasMaxLength(50);
-
-        new BaseEntityConfig<Difficulty>().Configure(entity);
     }
 }

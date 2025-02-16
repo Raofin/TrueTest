@@ -13,9 +13,9 @@ public class ProblemSubmission : BaseEntity
     public bool IsFlagged { get; set; }
     public string? FlagReason { get; set; }
 
+    public int ProgLanguageId { get; set; }
     public Guid AccountId { get; set; }
     public Guid QuestionId { get; set; }
-    public Guid ProgLanguageId { get; set; }
     public Account Account { get; set; } = null!;
     public Question Question { get; set; } = null!;
     public ProgLanguage ProgLanguages { get; set; } = null!;

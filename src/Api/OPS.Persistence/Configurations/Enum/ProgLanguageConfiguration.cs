@@ -5,7 +5,7 @@ using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class ProgLanguageConfiguration : IEntityTypeConfiguration<ProgLanguage>
+public class ProgLanguageConfiguration
 {
     public void Configure(EntityTypeBuilder<ProgLanguage> entity)
     {
@@ -14,7 +14,5 @@ public class ProgLanguageConfiguration : IEntityTypeConfiguration<ProgLanguage>
         entity.HasIndex(e => e.Language).IsUnique();
 
         entity.Property(e => e.Language).IsRequired().HasMaxLength(50);
-
-        new BaseEntityConfig<ProgLanguage>().Configure(entity);
     }
 }
