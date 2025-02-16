@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using OPS.Application.BackgroundServices;
 using OPS.Application.Behaviors;
 
 namespace OPS.Application;
@@ -15,6 +16,8 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection), includeInternalTypes: true);
+
+        services.AddHostedService<OtpCleanupService>();
 
         return services;
     }
