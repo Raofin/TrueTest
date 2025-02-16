@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using OPS.Api.Middlewares;
 using Scalar.AspNetCore;
 using OPS.Api.Transformers;
 
@@ -23,6 +24,9 @@ internal static class DependencyInjection
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.UseHealthChecks("/health");
+
+        if (app.Environment.IsProduction())
+            app.UseMiddleware<ExceptionHandleMiddleware>();
     }
 
     public static void UseScalar(this WebApplication app)
