@@ -49,8 +49,7 @@ public class RegisterCommandHandler(
             Username = request.Username,
             Email = request.Email,
             PasswordHash = hashedPassword,
-            Salt = salt,
-            IsVerified = true
+            Salt = salt
         };
 
         _unitOfWork.Account.Add(account);

@@ -11,7 +11,6 @@ public static class AccountExtensions
             account.Id,
             account.Username,
             account.Email,
-            account.IsVerified,
             account.CreatedAt,
             account.UpdatedAt,
             account.IsActive

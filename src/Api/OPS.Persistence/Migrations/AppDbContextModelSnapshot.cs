@@ -48,9 +48,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -108,9 +105,6 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Attempts")
                         .HasColumnType("int");
 
@@ -140,8 +134,6 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("GetUtcDate()");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
 
                     b.ToTable("Otps", "User");
                 });
@@ -214,30 +206,22 @@ namespace OPS.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Exception")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Level")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageTemplate")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Properties")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("TimeStamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("(GetUtcDate())");
+                    b.Property<DateTime?>("TimeStamp")
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
@@ -883,13 +867,6 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("RoleType");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.Auth.Otp", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", null)
-                        .WithMany("Otps")
-                        .HasForeignKey("AccountId");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
@@ -1097,8 +1074,6 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("ExamCandidates");
 
                     b.Navigation("McqSubmissions");
-
-                    b.Navigation("Otps");
 
                     b.Navigation("ProblemSubmissions");
 

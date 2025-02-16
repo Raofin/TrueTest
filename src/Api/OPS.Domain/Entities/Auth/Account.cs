@@ -12,10 +12,8 @@ public class Account : SoftDeletableEntity
     public string Email { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
     public string Salt { get; set; } = null!;
-    public bool IsVerified { get; set; }
 
     public Profile? Profile { get; set; }
-    public ICollection<Otp> Otps { get; set; } = [];
     public ICollection<AccountRole> AccountRoles { get; set; } = [];
     public ICollection<ExamCandidate> ExamCandidates { get; set; } = [];
     public ICollection<McqSubmission> McqSubmissions { get; set; } = [];
