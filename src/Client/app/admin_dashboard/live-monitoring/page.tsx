@@ -125,7 +125,6 @@ export default function Component() {
             case "Status":
                 return(
                     <div>
-                        {/*<Chip color="success" className={'text-white'}>Active</Chip>*/}
                         <Chip color="success" variant="dot">Active</Chip>
                     </div>
                 );

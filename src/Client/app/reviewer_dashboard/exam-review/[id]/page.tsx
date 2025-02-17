@@ -189,6 +189,7 @@ export default function Component({ params }: { params: Promise<{ id: string }> 
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
+                <span className="w-[30%] text-small text-default-400"></span>
                 <Pagination
                     isCompact
                     showControls

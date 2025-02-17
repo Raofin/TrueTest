@@ -38,40 +38,40 @@ const OtpPage: React.FC = () => {
             onOpen();
             toast.success('Check you email')
         }
-        const res = await fetch("/api/auth/otp/generate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: contactInfo , deliveryMethod,
-            }),
-        });
-        const result = await res.json();
-        setMessage(result.message);
-        if (res.status === 200) {
-            setIsOtpSent(true);
-            setIsSuccess(true);
-        } else {
-            setIsSuccess(false);
-        }
+        // const res = await fetch("", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({
+        //         email: contactInfo , deliveryMethod,
+        //     }),
+        // });
+        // const result = await res.json();
+        // setMessage(result.message);
+        // if (res.status === 200) {
+        //     setIsOtpSent(true);
+        //     setIsSuccess(true);
+        // } else {
+        //     setIsSuccess(false);
+        // }
     };
 
-    const handleVerifyOtp = async () => {
-        const res = await fetch("/api/auth/otp/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: contactInfo, otp,
-            }),
-        });
-        const result = await res.json();
-        setMessage(result.message);
-        if (res.status === 200) {
-            setIsOtpVerified(true);
-            setIsSuccess(true);
-        } else {
-            setIsSuccess(false);
-        }
-    };
+    // const handleVerifyOtp = async () => {
+    //     const res = await fetch("/api/auth/otp/verify", {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify({
+    //             email: contactInfo, otp,
+    //         }),
+    //     });
+    //     const result = await res.json();
+    //     setMessage(result.message);
+    //     if (res.status === 200) {
+    //         setIsOtpVerified(true);
+    //         setIsSuccess(true);
+    //     } else {
+    //         setIsSuccess(false);
+    //     }
+    // };
     const {handleSubmit, control, formState: {errors},} = useForm<FormValues>({
         defaultValues: {otp: ""}});
 

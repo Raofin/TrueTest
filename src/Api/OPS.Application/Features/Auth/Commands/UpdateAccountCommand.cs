@@ -7,7 +7,7 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Auth.Commands;
 
-public record UpdateAccountCommand(
+public record UpdateProfileCommand(
     Guid Id,
     string? Username,
     string? Email,
@@ -20,11 +20,11 @@ public record UpdateAccountCommand(
 ) : IRequest<ErrorOr<AccountResponse>>;
 
 public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateAccountCommand, ErrorOr<AccountResponse>>
+    : IRequestHandler<UpdateProfileCommand, ErrorOr<AccountResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountResponse>> Handle(UpdateAccountCommand command,
+    public async Task<ErrorOr<AccountResponse>> Handle(UpdateProfileCommand command,
         CancellationToken cancellationToken)
     {
         var account = await _unitOfWork.Account.GetAsync(command.Id, cancellationToken);
@@ -49,7 +49,7 @@ public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork)
     }
 }
 
-public class UpdateAccountCommandValidator : AbstractValidator<UpdateAccountCommand>
+public class UpdateAccountCommandValidator : AbstractValidator<UpdateProfileCommand>
 {
     public UpdateAccountCommandValidator()
     {

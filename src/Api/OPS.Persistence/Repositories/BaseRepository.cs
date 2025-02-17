@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using OPS.Domain.Contracts;
+using OPS.Domain.Contracts.Repository;
 
 namespace OPS.Persistence.Repositories;
 
-internal class Repository<TEntity>(AppDbContext context) : IRepository<TEntity> where TEntity : class
+internal class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEntity> where TEntity : class
 {
     private readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 
