@@ -6,7 +6,7 @@ public record AuthenticationResult(
 );
 
 public record AccountResponse(
-    Guid Id,
+    Guid AccountId,
     string Username,
     string Email,
     DateTime CreatedAt,

@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.EmailSender;
-using OPS.Domain.Entities.Auth;
+using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Features.Auth.Commands;
 

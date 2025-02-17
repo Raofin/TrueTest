@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OPS.Domain.Entities.Auth;
+using OPS.Domain.Entities.User;
 
 namespace OPS.Persistence.Configurations.User;
 

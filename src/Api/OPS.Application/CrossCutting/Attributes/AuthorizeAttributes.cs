@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using OPS.Domain.Enums;
 
-namespace OPS.Application.Attributes;
+namespace OPS.Application.CrossCutting.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class AuthorizeRolesAttribute : AuthorizeAttribute

@@ -1,5 +1,5 @@
-﻿using OPS.Domain.Entities.Auth;
-using OPS.Domain.Entities.Common;
+﻿using OPS.Domain.Entities.Common;
+using OPS.Domain.Entities.User;
 
 namespace OPS.Domain.Entities.Exam;
 

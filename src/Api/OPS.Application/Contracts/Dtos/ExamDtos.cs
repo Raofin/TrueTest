@@ -1,7 +1,7 @@
 ﻿namespace OPS.Application.Contracts.Dtos;
 
 public record ExamResponse(
-    Guid Id,
+    Guid ExamId,
     string Title,
     string Description,
     int DurationMinutes,

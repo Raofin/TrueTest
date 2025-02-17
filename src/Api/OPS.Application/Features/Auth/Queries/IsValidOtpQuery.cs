@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Constants;
+using OPS.Application.CrossCutting.Constants;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Auth.Queries;

@@ -21,10 +21,8 @@ public class ExamController(IMediator mediator) : BaseApiController
     }
 
     [HttpGet("{examId:guid}")]
-    public async Task<IActionResult> GetExamByIdAsync(Guid examId)
+    public async Task<IActionResult> GetExamByIdAsync(GetExamByIdQuery query)
     {
-        var query = new GetExamByIdQuery(examId);
-
         var exam = await _mediator.Send(query);
 
         return ToResult(exam);
@@ -57,10 +55,8 @@ public class ExamController(IMediator mediator) : BaseApiController
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteAsync(Guid examId)
+    public async Task<IActionResult> DeleteAsync(DeleteExamCommand command)
     {
-        var command = new DeleteExamCommand(examId);
-
         var deleteResult = await _mediator.Send(command);
 
         return ToResult(deleteResult);

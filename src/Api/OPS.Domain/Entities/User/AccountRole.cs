@@ -1,6 +1,6 @@
 ﻿using OPS.Domain.Entities.Enum;
 
-namespace OPS.Domain.Entities.Auth;
+namespace OPS.Domain.Entities.User;
 
 public class AccountRole
 {

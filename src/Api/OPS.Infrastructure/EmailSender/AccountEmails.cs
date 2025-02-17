@@ -1,5 +1,5 @@
 ﻿using FluentEmail.Core;
-using OPS.Application.Constants;
+using OPS.Application.CrossCutting.Constants;
 using OPS.Domain.Contracts.Core.EmailSender;
 using Serilog;
 

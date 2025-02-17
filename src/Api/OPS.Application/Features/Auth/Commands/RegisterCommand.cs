@@ -1,12 +1,12 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Entities.Auth;
-using OPS.Application.Constants;
+using OPS.Application.CrossCutting.Constants;
+using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Auth.Commands;
@@ -41,7 +41,7 @@ public class RegisterCommandHandler(
         var isValidOtp = await _unitOfWork.Otp.IsValidOtpAsync(request.Email, request.Otp, cancellationToken);
 
         if (!isValidOtp)
-            return Error.Unauthorized();
+            return Error.Unauthorized(description: "Invalid OTP.");
 
         var (hashedPassword, salt) = _passwordHasher.HashPassword(request.Password);
 

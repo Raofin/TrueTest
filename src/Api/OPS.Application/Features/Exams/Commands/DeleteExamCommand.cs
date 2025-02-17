@@ -5,7 +5,7 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Commands;
 
-public record DeleteExamCommand(Guid Id) : IRequest<ErrorOr<Success>>;
+public record DeleteExamCommand(Guid ExamId) : IRequest<ErrorOr<Success>>;
 
 public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteExamCommand, ErrorOr<Success>>
 {
@@ -13,7 +13,7 @@ public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
 
     public async Task<ErrorOr<Success>> Handle(DeleteExamCommand request, CancellationToken cancellationToken)
     {
-        var exam = await _unitOfWork.Exam.GetAsync(request.Id, cancellationToken);
+        var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
 
         if (exam is null)
             return Error.NotFound();
@@ -31,7 +31,7 @@ public class DeleteExamCommandValidator : AbstractValidator<DeleteExamCommand>
 {
     public DeleteExamCommandValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.ExamId)
             .NotEmpty()
             .Must(id => Guid.TryParse(id.ToString(), out _));
     }
