@@ -3,8 +3,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Exams.Commands;
-using OPS.Application.Features.Exams.Queries;
+using OPS.Application.Features.ExamQuestions.Commands;
+using OPS.Application.Features.ExamQuestions.Queries;
 
 namespace OPS.Api.Controllers;
 

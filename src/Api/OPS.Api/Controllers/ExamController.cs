@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Exams.Commands;
-using OPS.Application.Features.Exams.Queries;
+using OPS.Application.Features.Examinations.Commands;
+using OPS.Application.Features.Examinations.Queries;
 
 namespace OPS.Api.Controllers;
 

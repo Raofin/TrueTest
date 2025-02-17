@@ -3,8 +3,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Submit.Commands;
-using OPS.Application.Features.Submit.Queries;
+using OPS.Application.Features.WrittenSubmissions.Commands;
+using OPS.Application.Features.WrittenSubmissions.Queries;
 
 namespace OPS.Api.Controllers;
 
