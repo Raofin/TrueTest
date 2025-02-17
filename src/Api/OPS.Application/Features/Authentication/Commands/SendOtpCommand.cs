@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.CrossCutting.Constants;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
@@ -49,6 +50,6 @@ public class SendOtpCommandValidator : AbstractValidator<SendOtpCommand>
     {
         RuleFor(x => x.Email)
             .NotEmpty()
-            .Matches(@"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$");
+            .Matches(ValidationConstants.EmailRegex);
     }
 }

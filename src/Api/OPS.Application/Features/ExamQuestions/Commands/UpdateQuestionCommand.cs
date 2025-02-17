@@ -4,6 +4,7 @@ using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
+using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.ExamQuestions.Commands;
 
@@ -11,8 +12,8 @@ public record UpdateQuestionCommand(
     Guid QuestionId,
     string? StatementMarkdown,
     decimal? Score,
-    int? DifficultyId,
-    int? QuestionTypeId,
+    DifficultyType? DifficultyId,
+    QuestionType? QuestionTypeId,
     bool? IsActive,
     bool? IsDeleted) : IRequest<ErrorOr<QuestionResponse>>;
 
@@ -29,8 +30,8 @@ public class UpdateQuestionCommandHandler(IUnitOfWork unitOfWork)
 
         question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
         question.Score = command.Score ?? question.Score;
-        question.DifficultyId = command.DifficultyId ?? question.DifficultyId;
-        question.QuestionTypeId = command.QuestionTypeId ?? question.QuestionTypeId;
+        question.DifficultyId = command.DifficultyId.HasValue ? (int)command.DifficultyId.Value : question.DifficultyId;
+        question.QuestionTypeId = command.QuestionTypeId.HasValue ? (int)command.QuestionTypeId.Value : question.QuestionTypeId;
         question.IsActive = command.IsActive ?? question.IsActive;
         question.IsDeleted = command.IsDeleted ?? question.IsDeleted;
 
@@ -46,15 +47,24 @@ public class UpdateQuestionCommandValidator : AbstractValidator<UpdateQuestionCo
 {
     public UpdateQuestionCommandValidator()
     {
-        RuleFor(x => x.StatementMarkdown).NotEmpty();
+        RuleFor(x => x.QuestionId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
 
-        RuleFor(x => x.Score).NotEmpty();
+        RuleFor(x => x.StatementMarkdown)
+            .MaximumLength(5000)
+            .When(x => x.StatementMarkdown is not null);
 
-        RuleFor(x => x.DifficultyId).NotEmpty();
+        RuleFor(x => x.Score)
+            .GreaterThanOrEqualTo(0)
+            .When(x => x.Score.HasValue);
 
-        RuleFor(x => x.QuestionTypeId).NotEmpty();
+        RuleFor(x => x.DifficultyId)
+            .IsInEnum()
+            .When(x => x.DifficultyId.HasValue);
 
-        RuleFor(x => x.IsActive)
-            .NotNull().WithMessage("IsActive is required.");
+        RuleFor(x => x.QuestionTypeId)
+            .IsInEnum()
+            .When(x => x.QuestionTypeId.HasValue);
     }
 }

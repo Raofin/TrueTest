@@ -48,7 +48,7 @@ public class UpdateAccountCommandValidator : AbstractValidator<UpdateAccountComm
     {
         RuleFor(x => x.AccountId)
             .NotEmpty()
-            .Must(id => Guid.TryParse(id.ToString(), out _));
+            .Must(id => id != Guid.Empty);
 
         RuleFor(x => x.Username)
             .NotEmpty()

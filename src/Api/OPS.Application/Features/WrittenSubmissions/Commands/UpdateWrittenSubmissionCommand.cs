@@ -8,10 +8,9 @@ using OPS.Domain;
 namespace OPS.Application.Features.WrittenSubmissions.Commands;
 
 public record UpdateWrittenSubmissionCommand(
-    Guid Id,
+    Guid WrittenSubmissionId,
     string? Answer,
-    decimal? Score
-) : IRequest<ErrorOr<WrittenSubmissionResponse>>;
+    decimal? Score) : IRequest<ErrorOr<WrittenSubmissionResponse>>;
 
 public class UpdateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateWrittenSubmissionCommand, ErrorOr<WrittenSubmissionResponse>>
@@ -21,19 +20,18 @@ public class UpdateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<WrittenSubmissionResponse>> Handle(UpdateWrittenSubmissionCommand command,
         CancellationToken cancellationToken)
     {
-        var WrittenSubmission = await _unitOfWork.WrittenSubmission.GetAsync(command.Id, cancellationToken);
+        var writtenSubmission = await _unitOfWork.WrittenSubmission.GetAsync(command.WrittenSubmissionId, cancellationToken);
 
-        if (WrittenSubmission is null) return Error.NotFound("WrittenSubmission was not found");
+        if (writtenSubmission is null) return Error.NotFound("WrittenSubmission was not found");
 
-        WrittenSubmission.Answer = command.Answer ?? WrittenSubmission.Answer;
-        WrittenSubmission.Score = command.Score ?? WrittenSubmission.Score;
-        WrittenSubmission.UpdatedAt = DateTime.UtcNow;
-
+        writtenSubmission.Answer = command.Answer ?? writtenSubmission.Answer;
+        writtenSubmission.Score = command.Score ?? writtenSubmission.Score;
+        writtenSubmission.UpdatedAt = DateTime.UtcNow;
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? WrittenSubmission.ToDto()
+            ? writtenSubmission.ToDto()
             : Error.Failure("The WrittenSubmission could not be saved.");
     }
 }
@@ -42,11 +40,18 @@ public class UpdateWrittenSubmissionCommandValidator : AbstractValidator<UpdateW
 {
     public UpdateWrittenSubmissionCommandValidator()
     {
+        RuleFor(x => x.WrittenSubmissionId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
+
         RuleFor(x => x.Answer)
-            .NotEmpty().WithMessage("Answer is required.")
-            .MaximumLength(5000).WithMessage("Answer cannot exceed 5000 characters.");
+            .NotEmpty()
+            .MaximumLength(1000)
+            .When(x => !string.IsNullOrEmpty(x.Answer));
 
         RuleFor(x => x.Score)
-            .InclusiveBetween(0, 100).WithMessage("Score must be between 0 and 100.");
+            .NotEmpty()
+            .InclusiveBetween(0, 100)
+            .When(x => x.Score.HasValue);
     }
 }

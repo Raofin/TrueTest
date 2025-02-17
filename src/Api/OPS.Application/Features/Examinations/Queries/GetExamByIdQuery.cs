@@ -30,6 +30,6 @@ public class GetExamByIdQueryValidator : AbstractValidator<GetExamByIdQuery>
     {
         RuleFor(x => x.ExamId)
             .NotEmpty()
-            .Must(id => Guid.TryParse(id.ToString(), out _));
+            .Must(id => id != Guid.Empty);
     }
 }

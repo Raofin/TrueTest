@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Domain;
 
@@ -22,5 +23,15 @@ public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
         return result > 0
             ? Result.Success
             : Error.Failure("The exam could not be deleted.");
+    }
+}
+
+public class DeleteExamCommandValidator : AbstractValidator<DeleteExamCommand>
+{
+    public DeleteExamCommandValidator()
+    {
+        RuleFor(x => x.ExamId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Submit;
@@ -20,5 +21,15 @@ public class GetWrittenSubmissionByIdQueryHandler(IUnitOfWork unitOfWork)
         return writtenSubmission is null
             ? Error.NotFound("WrittenSubmission not found.")
             : writtenSubmission.ToDto();
+    }
+}
+
+public class GetWrittenSubmissionByIdQueryValidator : AbstractValidator<GetWrittenSubmissionByIdQuery>
+{
+    public GetWrittenSubmissionByIdQueryValidator()
+    {
+        RuleFor(x => x.WrittenSubmissionId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
     }
 }

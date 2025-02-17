@@ -52,7 +52,7 @@ public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
     {
         RuleFor(x => x.ExamId)
             .NotEmpty()
-            .Must(id => Guid.TryParse(id.ToString(), out _));
+            .Must(id => id != Guid.Empty);
 
         RuleFor(x => x.Title)
             .MaximumLength(10)

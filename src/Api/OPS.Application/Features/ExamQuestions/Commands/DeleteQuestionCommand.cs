@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Domain;
 
@@ -22,5 +23,15 @@ public class DeleteQuestionCommandHandler(IUnitOfWork unitOfWork) : IRequestHand
         return result > 0
             ? Result.Success
             : Error.Failure("The Question could not be deleted.");
+    }
+}
+
+public class DeleteQuestionCommandValidator : AbstractValidator<DeleteQuestionCommand>
+{
+    public DeleteQuestionCommandValidator()
+    {
+        RuleFor(x => x.QuestionId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
     }
 }

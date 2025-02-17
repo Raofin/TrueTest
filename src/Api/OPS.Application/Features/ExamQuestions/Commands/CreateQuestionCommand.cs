@@ -5,6 +5,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 using OPS.Domain.Entities.Exam;
+using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.ExamQuestions.Commands;
 
@@ -12,8 +13,8 @@ public record CreateQuestionCommand(
     string StatementMarkdown,
     decimal Score,
     Guid ExaminationId,
-    int DifficultyId,
-    int QuestionTypeId,
+    DifficultyType DifficultyId,
+    QuestionType QuestionTypeId,
     bool IsActive) : IRequest<ErrorOr<QuestionResponse>>;
 
 public class CreateQuestionCommandHandler(IUnitOfWork unitOfWork)
@@ -28,8 +29,8 @@ public class CreateQuestionCommandHandler(IUnitOfWork unitOfWork)
             StatementMarkdown = request.StatementMarkdown,
             Score = request.Score,
             ExaminationId = request.ExaminationId,
-            DifficultyId = request.DifficultyId,
-            QuestionTypeId = request.QuestionTypeId
+            DifficultyId = (int)request.DifficultyId,
+            QuestionTypeId = (int)request.QuestionTypeId
         };
 
         _unitOfWork.Question.Add(question);
@@ -37,7 +38,7 @@ public class CreateQuestionCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? question.ToDto()
-            : Error.Failure("The exam could not be saved.");
+            : Error.Failure();
     }
 }
 
@@ -46,23 +47,25 @@ public class CreateQuestionCommandValidator : AbstractValidator<CreateQuestionCo
     public CreateQuestionCommandValidator()
     {
         RuleFor(x => x.StatementMarkdown)
-            .NotEmpty().WithMessage("Statement Markdown is required.")
-            .Length(10, 2000).WithMessage("Statement Markdown must be between 10 and 2000 characters."); // Adjust max length as needed
+            .NotEmpty()
+            .MinimumLength(10);
 
         RuleFor(x => x.Score)
-            .NotEmpty().WithMessage("Score is required.")
-            .GreaterThanOrEqualTo(0).WithMessage("Score must be a non-negative number."); // Or set an appropriate max value
+            .NotNull()
+            .GreaterThanOrEqualTo(0);
 
         RuleFor(x => x.ExaminationId)
-            .NotEmpty().WithMessage("ExaminationId is required.");
+            .NotEmpty();
 
         RuleFor(x => x.DifficultyId)
-            .NotEmpty().WithMessage("DifficultyId is required.");
+            .NotEmpty()
+            .IsInEnum();
 
         RuleFor(x => x.QuestionTypeId)
-            .NotEmpty().WithMessage("QuestionTypeId is required.");
+            .NotEmpty()
+            .IsInEnum();
 
         RuleFor(x => x.IsActive)
-            .NotNull().WithMessage("IsActive is required.");
+            .NotNull();
     }
 }

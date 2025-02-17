@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Submit;
@@ -19,5 +20,15 @@ public class GetWrittenSubmissionQueryHandler(IUnitOfWork unitOfWork)
         var writtenSubmissions = await _unitOfWork.WrittenSubmission.GetByQuestionIdAsync(request.QuestionId, cancellationToken);
 
         return writtenSubmissions.Select(e => e.ToDto()).ToList();
+    }
+}
+
+public class GetWrittenSubmissionByQuestionIdQueryValidator : AbstractValidator<GetWrittenSubmissionByQuestionIdQuery>
+{
+    public GetWrittenSubmissionByQuestionIdQueryValidator()
+    {
+        RuleFor(x => x.QuestionId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
@@ -18,5 +19,15 @@ public class GetAllExamsByAccountIdQueryHandler(IUnitOfWork unitOfWork)
         var exams = await _unitOfWork.Exam.GetAllExamsByAccountIdAsync(request.AccountId, cancellationToken);
 
         return exams.Select(e => e.ToDto()).ToList();
+    }
+}
+
+public class GetAllExamsByAccountIdQueryValidator : AbstractValidator<GetAllExamsByAccountIdQuery>
+{
+    public GetAllExamsByAccountIdQueryValidator()
+    {
+        RuleFor(x => x.AccountId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
     }
 }

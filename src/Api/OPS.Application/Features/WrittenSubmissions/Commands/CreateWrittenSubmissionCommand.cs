@@ -12,8 +12,7 @@ public record CreateWrittenSubmissionCommand(
     Guid QuestionId,
     Guid AccountId,
     string Answer,
-    decimal Score
-) : IRequest<ErrorOr<WrittenSubmissionResponse>>;
+    decimal Score) : IRequest<ErrorOr<WrittenSubmissionResponse>>;
 
 public class CreateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<CreateWrittenSubmissionCommand, ErrorOr<WrittenSubmissionResponse>>
@@ -34,9 +33,7 @@ public class CreateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
             QuestionId = request.QuestionId,
             AccountId = request.AccountId,
             Answer = request.Answer,
-            Score = request.Score,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            Score = request.Score
         };
 
         _unitOfWork.WrittenSubmission.Add(writtenSubmission);
@@ -53,16 +50,15 @@ public class CreateWrittenSubmissionCommandValidator : AbstractValidator<CreateW
     public CreateWrittenSubmissionCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty().WithMessage("QuestionId is required.");
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
 
         RuleFor(x => x.AccountId)
-            .NotEmpty().WithMessage("AccountId is required.");
+            .NotEmpty()
+            .Must(id => id != Guid.Empty);
 
-        RuleFor(x => x.Answer)
-            .NotEmpty().WithMessage("Answer is required.")
-            .MaximumLength(5000).WithMessage("Answer cannot exceed 5000 characters.");
+        RuleFor(x => x.Answer).NotEmpty();
 
-        RuleFor(x => x.Score)
-            .InclusiveBetween(0, 100).WithMessage("Score must be between 0 and 100.");
+        RuleFor(x => x.Score).GreaterThanOrEqualTo(0);
     }
 }

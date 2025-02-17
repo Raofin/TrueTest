@@ -1,5 +1,4 @@
-﻿
-using ErrorOr;
+﻿using ErrorOr;
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
