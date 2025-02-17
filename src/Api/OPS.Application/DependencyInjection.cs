@@ -1,19 +1,24 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using OPS.Application.CrossCutting.BackgroundServices;
+using OPS.Application.CrossCutting.Behaviors;
 
 namespace OPS.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddService(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(options =>
+        services.AddMediatR(config =>
         {
-            options.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly);
+            config.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection));
+            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
-        
-        services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
-        
+
+        services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection), includeInternalTypes: true);
+
+        services.AddHostedService<OtpCleanupService>();
+
         return services;
     }
 }

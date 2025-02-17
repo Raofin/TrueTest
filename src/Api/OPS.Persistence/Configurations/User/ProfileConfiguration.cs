@@ -13,7 +13,7 @@ public class ProfileConfiguration : IEntityTypeConfiguration<Profile>
         entity.HasKey(e => e.Id);
         entity.HasIndex(e => e.AccountId).IsUnique();
 
-        entity.Property(e => e.FirstName).IsRequired().HasMaxLength(255);
+        entity.Property(e => e.FirstName).HasMaxLength(255);
         entity.Property(e => e.LastName).HasMaxLength(255);
         entity.Property(e => e.PhoneNumber).HasMaxLength(50);
         entity.Property(e => e.InstituteName).HasMaxLength(255);

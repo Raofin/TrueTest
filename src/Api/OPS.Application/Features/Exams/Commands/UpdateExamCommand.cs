@@ -1,22 +1,21 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+using OPS.Application.Contracts.DtoExtensions;
+using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Commands;
 
 public record UpdateExamCommand(
-    Guid Id,
+    Guid ExamId,
     string? Title,
     string? Description,
     int? DurationMinutes,
     DateTime? OpensAt,
     DateTime? ClosesAt,
     bool? IsActive,
-    bool? IsDeleted
-) : IRequest<ErrorOr<ExamResponse>>;
+    bool? IsDeleted) : IRequest<ErrorOr<ExamResponse>>;
 
 public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateExamCommand, ErrorOr<ExamResponse>>
@@ -25,9 +24,10 @@ public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<ExamResponse>> Handle(UpdateExamCommand command, CancellationToken cancellationToken)
     {
-        var exam = await _unitOfWork.Exam.GetAsync(command.Id, cancellationToken);
+        var exam = await _unitOfWork.Exam.GetAsync(command.ExamId, cancellationToken);
 
-        if (exam is null) return Error.NotFound("Exam was not found");
+        if (exam is null)
+            return Error.NotFound();
 
         exam.Title = command.Title ?? exam.Title;
         exam.DescriptionMarkdown = command.Description ?? exam.DescriptionMarkdown;
@@ -42,7 +42,7 @@ public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? exam.ToDto()
-            : Error.Failure("The exam could not be saved.");
+            : Error.Failure();
     }
 }
 
@@ -50,41 +50,34 @@ public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
 {
     public UpdateExamCommandValidator()
     {
-        RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Id is required.")
-            .Must(id => Guid.TryParse(id.ToString(), out _)).WithMessage("Id must be a valid GUID.");
+        RuleFor(x => x.ExamId)
+            .NotEmpty()
+            .Must(id => Guid.TryParse(id.ToString(), out _));
 
         RuleFor(x => x.Title)
             .MaximumLength(100)
-            .When(x => !string.IsNullOrEmpty(x.Title))
-            .WithMessage("Title cannot exceed 100 characters.");
+            .When(x => !string.IsNullOrEmpty(x.Title));
 
         RuleFor(x => x.Description)
             .MaximumLength(500)
-            .When(x => !string.IsNullOrEmpty(x.Description))
-            .WithMessage("Description cannot exceed 500 characters.");
+            .When(x => !string.IsNullOrEmpty(x.Description));
 
         RuleFor(x => x.DurationMinutes)
             .GreaterThan(10)
-            .When(x => x.DurationMinutes.HasValue)
-            .WithMessage("Duration must be more than 10 minutes.");
+            .When(x => x.DurationMinutes.HasValue);
 
         RuleFor(x => x.OpensAt)
             .GreaterThan(DateTime.UtcNow)
-            .When(x => x.OpensAt.HasValue)
-            .WithMessage("OpensAt must be in the future.");
+            .When(x => x.OpensAt.HasValue);
 
         RuleFor(x => x.ClosesAt)
             .GreaterThan(x => x.OpensAt)
-            .When(x => x.ClosesAt.HasValue && x.OpensAt.HasValue)
-            .WithMessage("ClosesAt must be later than OpensAt.");
+            .When(x => x.ClosesAt.HasValue && x.OpensAt.HasValue);
 
         RuleFor(x => x.IsActive)
-            .NotNull().When(x => x.IsActive.HasValue)
-            .WithMessage("IsActive flag is required when provided.");
+            .NotNull().When(x => x.IsActive.HasValue);
 
         RuleFor(x => x.IsDeleted)
-            .NotNull().When(x => x.IsDeleted.HasValue)
-            .WithMessage("IsDeleted flag is required when provided.");
+            .NotNull().When(x => x.IsDeleted.HasValue);
     }
 }
