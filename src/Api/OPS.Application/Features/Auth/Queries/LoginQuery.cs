@@ -29,7 +29,7 @@ public class LoginQueryHandler(
         var isVerified = _passwordHasher.VerifyPassword(account.PasswordHash, account.Salt, request.Password);
 
         return isVerified
-            ? new AuthenticationResult(account.ToDto(), _jwtGenerator.CreateToken(account))
+            ? new AuthenticationResult(_jwtGenerator.CreateToken(account), account.ToDto())
             : Error.Unauthorized();
     }
 }

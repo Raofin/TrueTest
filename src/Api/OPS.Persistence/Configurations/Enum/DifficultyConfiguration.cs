@@ -4,7 +4,7 @@ using OPS.Domain.Entities.Enum;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class DifficultyConfiguration
+public class DifficultyConfiguration : IEntityTypeConfiguration<Difficulty>
 {
     public void Configure(EntityTypeBuilder<Difficulty> entity)
     {

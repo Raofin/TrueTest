@@ -14,7 +14,7 @@ public class McqOptionConfiguration : IEntityTypeConfiguration<McqOption>
 
         entity.Property(e => e.Option1).IsRequired();
         entity.Property(e => e.Option2).IsRequired();
-        entity.Property(e => e.Answer).IsRequired();
+        entity.Property(e => e.AnswerOptions).IsRequired().HasMaxLength(50);
 
         new BaseEntityConfig<McqOption>().Configure(entity);
 

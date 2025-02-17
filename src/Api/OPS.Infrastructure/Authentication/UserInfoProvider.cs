@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using OPS.Domain.Contracts.Core.Authentication;
+using OPS.Domain.Enums;
 
 namespace OPS.Infrastructure.Authentication;
 
@@ -23,10 +24,11 @@ public class UserInfoProvider(IHttpContextAccessor httpContextAccessor) : IUserI
         return _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
     }
 
-    public List<string> Roles()
+    public List<RoleType> Roles()
     {
-        return _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role)
-            .Select(c => c.Value)
+        return _httpContextAccessor.HttpContext?.User
+            .FindAll(ClaimTypes.Role)
+            .Select(x => Enum.Parse<RoleType>(x.Value))
             .ToList() ?? [];
     }
 }

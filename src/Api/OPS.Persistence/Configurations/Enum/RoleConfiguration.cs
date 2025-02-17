@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Enum;
-using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class RoleTypeConfiguration
+public class RoleConfiguration : IEntityTypeConfiguration<Role>
 {
-    public void Configure(EntityTypeBuilder<RoleType> entity)
+    public void Configure(EntityTypeBuilder<Role> entity)
     {
-        entity.ToTable("RoleTypes", "Enum");
+        entity.ToTable("Roles", "Enum");
         entity.HasKey(e => e.Id);
         entity.HasIndex(e => e.RoleName).IsUnique();
 

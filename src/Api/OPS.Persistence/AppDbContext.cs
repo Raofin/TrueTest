@@ -5,6 +5,7 @@ using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Entities.User;
+using OPS.Persistence.Seeding;
 
 namespace OPS.Persistence;
 
@@ -18,7 +19,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Difficulty> Difficulties { get; set; } = null!;
     public DbSet<ProgLanguage> ProgLanguages { get; set; } = null!;
     public DbSet<QuestionType> QuestionTypes { get; set; } = null!;
-    public DbSet<RoleType> RoleTypes { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<Examination> Examinations { get; set; } = null!;
     public DbSet<ExamCandidate> ExamCandidates { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
@@ -34,7 +35,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        //modelBuilder.Seed();
+        modelBuilder.SeedRequiredData();
 
         base.OnModelCreating(modelBuilder);
     }

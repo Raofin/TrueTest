@@ -4,7 +4,7 @@ using OPS.Domain.Entities.Enum;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class QuestionTypeConfiguration
+public class QuestionTypeConfiguration : IEntityTypeConfiguration<QuestionType>
 {
     public void Configure(EntityTypeBuilder<QuestionType> entity)
     {

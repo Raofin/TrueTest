@@ -8,6 +8,6 @@ public record ExamResponse(
     DateTime OpensAt,
     DateTime ClosesAt,
     DateTime CreatedAt,
-    DateTime UpdatedAt,
+    DateTime? UpdatedAt,
     bool IsActive
 );

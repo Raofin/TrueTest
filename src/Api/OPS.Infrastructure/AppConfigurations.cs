@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Enums;
@@ -54,13 +55,14 @@ public static class AppConfigurations
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
-            connectionString,
-            m => m.MigrationsHistoryTable("Migrations", "Core"))
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(connectionString, m => m.MigrationsHistoryTable("Migrations", "Core"))
+                .ConfigureWarnings(builder => { builder.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning); })
         );
 
         return services;
     }
+
 
     public static void ApplyMigration(this IApplicationBuilder app)
     {

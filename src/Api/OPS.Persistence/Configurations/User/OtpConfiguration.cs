@@ -14,6 +14,7 @@ public class OtpConfiguration : IEntityTypeConfiguration<Otp>
 
         entity.Property(e => e.Code).IsRequired().HasMaxLength(255);
         entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+        entity.Property(e => e.Attempts).IsRequired().HasDefaultValue(0);
         entity.Property(e => e.ExpiresAt)
             .HasDefaultValueSql("(DateAdd(minute, (5), GetUtcDate()))")
             .HasColumnType("DateTime");

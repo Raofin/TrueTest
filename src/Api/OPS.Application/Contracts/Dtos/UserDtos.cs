@@ -1,8 +1,8 @@
 ﻿namespace OPS.Application.Contracts.Dtos;
 
 public record AuthenticationResult(
-    AccountResponse Account,
-    string Token
+    string Token,
+    AccountResponse Account
 );
 
 public record AccountResponse(
@@ -10,6 +10,6 @@ public record AccountResponse(
     string Username,
     string Email,
     DateTime CreatedAt,
-    DateTime UpdatedAt,
+    DateTime? UpdatedAt,
     bool IsActive
 );

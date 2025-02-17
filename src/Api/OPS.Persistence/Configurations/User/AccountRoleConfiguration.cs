@@ -9,15 +9,15 @@ public class AccountRoleConfiguration : IEntityTypeConfiguration<AccountRole>
     public void Configure(EntityTypeBuilder<AccountRole> entity)
     {
         entity.ToTable("AccountRoles", "User");
-        entity.HasKey(e => new { e.AccountId, e.RoleTypeId });
+        entity.HasKey(e => new { e.AccountId, e.RoleId });
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.AccountRoles)
             .HasForeignKey(d => d.AccountId)
             .OnDelete(DeleteBehavior.Restrict);
-        entity.HasOne(d => d.RoleType)
+        entity.HasOne(d => d.Role)
             .WithMany(p => p.AccountRoles)
-            .HasForeignKey(d => d.RoleTypeId)
+            .HasForeignKey(d => d.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

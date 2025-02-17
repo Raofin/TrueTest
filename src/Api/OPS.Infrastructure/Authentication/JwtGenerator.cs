@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Auth;
+using OPS.Domain.Enums;
 
 namespace OPS.Infrastructure.Authentication;
 
@@ -25,7 +26,10 @@ internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
         };
 
         account.AccountRoles.ToList().ForEach(
-            role => claims.Add(new Claim(ClaimTypes.Role, role.RoleType.RoleName))
+            role => claims.Add(new Claim(
+                ClaimTypes.Role,
+                ((RoleType)role.RoleId).ToString())
+            )
         );
 
         var token = new JwtSecurityTokenHandler().WriteToken(

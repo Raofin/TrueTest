@@ -10,7 +10,7 @@ public class McqOption : BaseEntity
     public string? Option3 { get; set; }
     public string? Option4 { get; set; }
     public bool IsMultiSelect { get; set; }
-    public string Answer { get; set; } = null!;
+    public string AnswerOptions { get; set; } = null!;
 
     public Guid QuestionId { get; set; }
     public Question Question { get; set; } = null!;

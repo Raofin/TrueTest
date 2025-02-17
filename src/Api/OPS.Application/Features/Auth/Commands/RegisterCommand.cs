@@ -7,6 +7,7 @@ using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Auth;
 using OPS.Application.Constants;
+using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Auth.Commands;
 
@@ -49,14 +50,18 @@ public class RegisterCommandHandler(
             Username = request.Username,
             Email = request.Email,
             PasswordHash = hashedPassword,
-            Salt = salt
+            Salt = salt,
+            AccountRoles = new List<AccountRole>
+            {
+                new() { RoleId = (int)RoleType.Candidate }
+            }
         };
 
         _unitOfWork.Account.Add(account);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? new AuthenticationResult(account.ToDto(), _jwtGenerator.CreateToken(account))
+            ? new AuthenticationResult(_jwtGenerator.CreateToken(account), account.ToDto())
             : Error.Failure();
     }
 }

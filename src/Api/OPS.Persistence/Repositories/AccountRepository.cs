@@ -39,7 +39,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
         return await _dbContext.Accounts
             .AsNoTracking()
             .Include(a => a.AccountRoles)
-            .ThenInclude(ar => ar.RoleType)
+            .ThenInclude(ar => ar.Role)
             .Include(a => a.Profile)
             .Where(a => a.Username == usernameOrEmail || a.Email == usernameOrEmail)
             .SingleOrDefaultAsync(cancellationToken);

@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Enum;
-using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Enum;
 
-public class ProgLanguageConfiguration
+public class ProgLanguageConfiguration : IEntityTypeConfiguration<ProgLanguage>
 {
     public void Configure(EntityTypeBuilder<ProgLanguage> entity)
     {

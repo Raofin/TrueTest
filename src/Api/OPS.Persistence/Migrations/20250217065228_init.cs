@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace OPS.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -18,6 +20,9 @@ namespace OPS.Persistence.Migrations
                 name: "Core");
 
             migrationBuilder.EnsureSchema(
+                name: "Enum");
+
+            migrationBuilder.EnsureSchema(
                 name: "Exam");
 
             migrationBuilder.EnsureSchema(
@@ -28,13 +33,13 @@ namespace OPS.Persistence.Migrations
                 schema: "User",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Username = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Salt = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
@@ -45,11 +50,12 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Difficulties",
+                schema: "Enum",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DifficultyName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DifficultyName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,14 +67,14 @@ namespace OPS.Persistence.Migrations
                 schema: "Exam",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DescriptionMarkdown = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    DescriptionMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DurationMinutes = table.Column<int>(type: "int", nullable: false),
                     OpensAt = table.Column<DateTime>(type: "DateTime", nullable: false),
                     ClosesAt = table.Column<DateTime>(type: "DateTime", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
@@ -101,13 +107,13 @@ namespace OPS.Persistence.Migrations
                 schema: "User",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ExpiresAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "(DateAdd(minute, (5), GetUtcDate()))"),
-                    Attempts = table.Column<int>(type: "int", nullable: false),
+                    Attempts = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -116,11 +122,12 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ProgLanguages",
+                schema: "Enum",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Language = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Language = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -129,11 +136,12 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.CreateTable(
                 name: "QuestionTypes",
+                schema: "Enum",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,16 +149,17 @@ namespace OPS.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoleTypes",
+                name: "Roles",
+                schema: "Enum",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RoleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoleTypes", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,14 +167,14 @@ namespace OPS.Persistence.Migrations
                 schema: "Core",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ContentType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Size = table.Column<long>(type: "bigint", nullable: false),
                     Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
@@ -186,12 +195,16 @@ namespace OPS.Persistence.Migrations
                 schema: "Exam",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     CandidateEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
+                    SubmittedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
+                    HasCheated = table.Column<bool>(type: "bit", nullable: false),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ExaminationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
@@ -219,7 +232,7 @@ namespace OPS.Persistence.Migrations
                 schema: "Exam",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     StatementMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     HasLongAnswer = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -227,7 +240,7 @@ namespace OPS.Persistence.Migrations
                     DifficultyId = table.Column<int>(type: "int", nullable: false),
                     ExaminationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
@@ -237,6 +250,7 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Questions_Difficulties_DifficultyId",
                         column: x => x.DifficultyId,
+                        principalSchema: "Enum",
                         principalTable: "Difficulties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -250,6 +264,7 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Questions_QuestionTypes_QuestionTypeId",
                         column: x => x.QuestionTypeId,
+                        principalSchema: "Enum",
                         principalTable: "QuestionTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -261,11 +276,11 @@ namespace OPS.Persistence.Migrations
                 columns: table => new
                 {
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleTypeId = table.Column<int>(type: "int", nullable: false)
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountRoles", x => new { x.AccountId, x.RoleTypeId });
+                    table.PrimaryKey("PK_AccountRoles", x => new { x.AccountId, x.RoleId });
                     table.ForeignKey(
                         name: "FK_AccountRoles_Accounts_AccountId",
                         column: x => x.AccountId,
@@ -274,9 +289,10 @@ namespace OPS.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AccountRoles_RoleTypes_RoleTypeId",
-                        column: x => x.RoleTypeId,
-                        principalTable: "RoleTypes",
+                        name: "FK_AccountRoles_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalSchema: "Enum",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -286,8 +302,8 @@ namespace OPS.Persistence.Migrations
                 schema: "User",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
+                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     BioMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InstituteName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -295,7 +311,7 @@ namespace OPS.Persistence.Migrations
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ImageFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
@@ -322,16 +338,16 @@ namespace OPS.Persistence.Migrations
                 schema: "Exam",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Option1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Option2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Option3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Option4 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsMultiSelect = table.Column<bool>(type: "bit", nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AnswerOptions = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -350,7 +366,7 @@ namespace OPS.Persistence.Migrations
                 schema: "Submit",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Attempts = table.Column<int>(type: "int", nullable: false),
                     Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
@@ -360,7 +376,7 @@ namespace OPS.Persistence.Migrations
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -375,6 +391,7 @@ namespace OPS.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_ProblemSubmissions_ProgLanguages_ProgLanguageId",
                         column: x => x.ProgLanguageId,
+                        principalSchema: "Enum",
                         principalTable: "ProgLanguages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -392,12 +409,12 @@ namespace OPS.Persistence.Migrations
                 schema: "Exam",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Input = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Output = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -416,7 +433,7 @@ namespace OPS.Persistence.Migrations
                 schema: "Submit",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     IsFlagged = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -424,7 +441,7 @@ namespace OPS.Persistence.Migrations
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -450,12 +467,12 @@ namespace OPS.Persistence.Migrations
                 schema: "User",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Link = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -474,12 +491,12 @@ namespace OPS.Persistence.Migrations
                 schema: "Submit",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
+                    AnswerOptions = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     McqOptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
-                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()")
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -498,20 +515,64 @@ namespace OPS.Persistence.Migrations
                         principalTable: "McqOptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_McqSubmissions_Questions_QuestionId",
-                        column: x => x.QuestionId,
-                        principalSchema: "Exam",
-                        principalTable: "Questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                schema: "Enum",
+                table: "Difficulties",
+                columns: new[] { "Id", "DifficultyName" },
+                values: new object[,]
+                {
+                    { 1, "Easy" },
+                    { 2, "Medium" },
+                    { 3, "Hard" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "Enum",
+                table: "ProgLanguages",
+                columns: new[] { "Id", "Language" },
+                values: new object[,]
+                {
+                    { 1, "Python" },
+                    { 2, "C" },
+                    { 3, "Cpp" },
+                    { 4, "Java" },
+                    { 5, "JavaScript" },
+                    { 6, "TypeScript" },
+                    { 7, "Csharp" },
+                    { 8, "Ruby" },
+                    { 9, "Go" },
+                    { 10, "PHP" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "Enum",
+                table: "QuestionTypes",
+                columns: new[] { "Id", "Type" },
+                values: new object[,]
+                {
+                    { 1, "Problem Solving" },
+                    { 2, "Written" },
+                    { 3, "MCQ" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "Enum",
+                table: "Roles",
+                columns: new[] { "Id", "RoleName" },
+                values: new object[,]
+                {
+                    { 1, "Candidate" },
+                    { 2, "Moderator" },
+                    { 3, "Admin" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccountRoles_RoleTypeId",
+                name: "IX_AccountRoles_RoleId",
                 schema: "User",
                 table: "AccountRoles",
-                column: "RoleTypeId");
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_Email",
@@ -560,6 +621,13 @@ namespace OPS.Persistence.Migrations
                 table: "CloudFiles",
                 column: "IsDeleted",
                 filter: "[IsDeleted] = 0");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Difficulties_DifficultyName",
+                schema: "Enum",
+                table: "Difficulties",
+                column: "DifficultyName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExamCandidates_AccountId",
@@ -620,12 +688,6 @@ namespace OPS.Persistence.Migrations
                 column: "McqOptionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_McqSubmissions_QuestionId",
-                schema: "Submit",
-                table: "McqSubmissions",
-                column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProblemSubmissions_AccountId",
                 schema: "Submit",
                 table: "ProblemSubmissions",
@@ -679,6 +741,13 @@ namespace OPS.Persistence.Migrations
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProgLanguages_Language",
+                schema: "Enum",
+                table: "ProgLanguages",
+                column: "Language",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Questions_DifficultyId",
                 schema: "Exam",
                 table: "Questions",
@@ -709,6 +778,20 @@ namespace OPS.Persistence.Migrations
                 schema: "Exam",
                 table: "Questions",
                 column: "QuestionTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuestionTypes_Type",
+                schema: "Enum",
+                table: "QuestionTypes",
+                column: "Type",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_RoleName",
+                schema: "Enum",
+                table: "Roles",
+                column: "RoleName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestCases_QuestionId",
@@ -769,14 +852,16 @@ namespace OPS.Persistence.Migrations
                 schema: "Submit");
 
             migrationBuilder.DropTable(
-                name: "RoleTypes");
+                name: "Roles",
+                schema: "Enum");
 
             migrationBuilder.DropTable(
                 name: "McqOptions",
                 schema: "Exam");
 
             migrationBuilder.DropTable(
-                name: "ProgLanguages");
+                name: "ProgLanguages",
+                schema: "Enum");
 
             migrationBuilder.DropTable(
                 name: "Profiles",
@@ -791,14 +876,16 @@ namespace OPS.Persistence.Migrations
                 schema: "Core");
 
             migrationBuilder.DropTable(
-                name: "Difficulties");
+                name: "Difficulties",
+                schema: "Enum");
 
             migrationBuilder.DropTable(
                 name: "Examinations",
                 schema: "Exam");
 
             migrationBuilder.DropTable(
-                name: "QuestionTypes");
+                name: "QuestionTypes",
+                schema: "Enum");
 
             migrationBuilder.DropTable(
                 name: "Accounts",
