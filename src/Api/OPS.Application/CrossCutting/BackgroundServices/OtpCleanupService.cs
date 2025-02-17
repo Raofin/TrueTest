@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using OPS.Domain;
 
-namespace OPS.Application.BackgroundServices;
+namespace OPS.Application.CrossCutting.BackgroundServices;
 
 internal class OtpCleanupService(IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {

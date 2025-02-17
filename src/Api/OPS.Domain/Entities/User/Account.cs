@@ -2,9 +2,8 @@
 using OPS.Domain.Entities.Core;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
-using OPS.Domain.Entities.User;
 
-namespace OPS.Domain.Entities.Auth;
+namespace OPS.Domain.Entities.User;
 
 public class Account : SoftDeletableEntity
 {

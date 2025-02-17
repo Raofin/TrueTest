@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 
-namespace OPS.Application.Behaviors;
+namespace OPS.Application.CrossCutting.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse>(IValidator<TRequest>? validator = null)
     : IPipelineBehavior<TRequest, TResponse>

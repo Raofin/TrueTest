@@ -1,4 +1,4 @@
-﻿namespace OPS.Application.Constants;
+﻿namespace OPS.Application.CrossCutting.Constants;
 
 public static class ValidationConstants
 {

@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
+using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Queries;

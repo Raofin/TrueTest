@@ -19,15 +19,22 @@ internal class UnitOfWork(
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
-        var softDeletableEntity = _dbContext.ChangeTracker
+        var softDeletableEntities = _dbContext.ChangeTracker
             .Entries<ISoftDeletable>()
             .Where(entry => entry.State == EntityState.Deleted);
 
-        foreach (var entityEntry in softDeletableEntity)
+        foreach (var entityEntry in softDeletableEntities)
         {
             entityEntry.Property(nameof(ISoftDeletable.IsDeleted)).CurrentValue = true;
             entityEntry.State = EntityState.Modified;
         }
+
+        var updatedEntities = _dbContext.ChangeTracker
+            .Entries<IBaseEntity>()
+            .Where(entry => entry.State == EntityState.Modified)
+            .ToList();
+
+        foreach (var entityEntry in updatedEntities) entityEntry.Property(nameof(IBaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow;
 
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }

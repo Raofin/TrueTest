@@ -1,6 +1,6 @@
 ﻿using OPS.Domain.Entities.Common;
 
-namespace OPS.Domain.Entities.Auth;
+namespace OPS.Domain.Entities.User;
 
 public class Otp : BaseEntity
 {

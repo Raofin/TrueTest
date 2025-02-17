@@ -1,4 +1,4 @@
-﻿using OPS.Domain.Entities.Auth;
+﻿using OPS.Domain.Entities.User;
 
 namespace OPS.Domain.Contracts.Core.Authentication;
 

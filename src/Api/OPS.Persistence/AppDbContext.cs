@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Entities.Auth;
 using OPS.Domain.Entities.Core;
 using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Exam;

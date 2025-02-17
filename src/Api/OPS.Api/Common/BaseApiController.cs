@@ -16,7 +16,7 @@ public class BaseApiController : ControllerBase
         if (result.IsError)
             return Problem(result.Errors);
 
-        return result.Value is Unit
+        return result.Value is Unit or Success
             ? Ok()
             : Ok(result.Value);
     }

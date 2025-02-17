@@ -38,7 +38,6 @@ public class AuthController(IMediator mediator) : BaseApiController
             : Ok(new { isUnique = result.Value });
     }
 
-
     [HttpPost("SendOtp")]
     public async Task<IActionResult> SendOtpAsync(SendOtpCommand command)
     {

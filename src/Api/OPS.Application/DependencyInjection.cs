@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using OPS.Application.BackgroundServices;
-using OPS.Application.Behaviors;
+using OPS.Application.CrossCutting.BackgroundServices;
+using OPS.Application.CrossCutting.Behaviors;
 
 namespace OPS.Application;
 

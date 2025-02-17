@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain.Contracts.Repository;
-using OPS.Domain.Entities.Auth;
+using OPS.Domain.Entities.User;
 
 namespace OPS.Persistence.Repositories;
 

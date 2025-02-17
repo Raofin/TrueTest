@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 
@@ -30,7 +30,7 @@ public class LoginQueryHandler(
 
         return isVerified
             ? new AuthenticationResult(_jwtGenerator.CreateToken(account), account.ToDto())
-            : Error.Unauthorized();
+            : Error.Unauthorized(description: "Invalid credentials.");
     }
 }
 

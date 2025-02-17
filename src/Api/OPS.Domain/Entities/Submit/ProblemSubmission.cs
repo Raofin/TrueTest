@@ -1,7 +1,7 @@
-﻿using OPS.Domain.Entities.Auth;
-using OPS.Domain.Entities.Common;
+﻿using OPS.Domain.Entities.Common;
 using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Exam;
+using OPS.Domain.Entities.User;
 
 namespace OPS.Domain.Entities.Submit;
 

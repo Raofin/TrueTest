@@ -1,7 +1,7 @@
 ﻿using OPS.Application.Contracts.Dtos;
-using OPS.Domain.Entities.Auth;
+using OPS.Domain.Entities.User;
 
-namespace OPS.Application.Contracts.Extensions;
+namespace OPS.Application.Contracts.DtoExtensions;
 
 public static class AccountExtensions
 {

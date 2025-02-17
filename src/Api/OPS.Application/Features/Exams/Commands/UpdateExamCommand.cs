@@ -1,14 +1,14 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Commands;
 
 public record UpdateExamCommand(
-    Guid Id,
+    Guid ExamId,
     string? Title,
     string? Description,
     int? DurationMinutes,
@@ -24,7 +24,7 @@ public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<ExamResponse>> Handle(UpdateExamCommand command, CancellationToken cancellationToken)
     {
-        var exam = await _unitOfWork.Exam.GetAsync(command.Id, cancellationToken);
+        var exam = await _unitOfWork.Exam.GetAsync(command.ExamId, cancellationToken);
 
         if (exam is null)
             return Error.NotFound();
@@ -50,7 +50,7 @@ public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
 {
     public UpdateExamCommandValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.ExamId)
             .NotEmpty()
             .Must(id => Guid.TryParse(id.ToString(), out _));
 
