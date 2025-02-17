@@ -8,13 +8,18 @@ public class BaseEntityConfig<T> : IEntityTypeConfiguration<T> where T : BaseEnt
 {
     public void Configure(EntityTypeBuilder<T> builder)
     {
+        builder.Property(e => e.Id)
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("NewId()");
+
         builder.Property(e => e.CreatedAt)
             .HasDefaultValueSql("GetUtcDate()")
             .HasColumnType("DateTime")
             .ValueGeneratedOnAdd();
 
         builder.Property(e => e.UpdatedAt)
-            .HasDefaultValueSql("GetUtcDate()")
+            .HasDefaultValueSql(null)
             .HasColumnType("DateTime")
             .ValueGeneratedOnAddOrUpdate();
     }

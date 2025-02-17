@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using ErrorOr;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+using FluentValidation;
+using OPS.Application.Contracts.DtoExtensions;
+using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Queries;
 
-public record GetExamByIdQuery(Guid Id) : IRequest<ErrorOr<ExamResponse>>;
+public record GetExamByIdQuery(Guid ExamId) : IRequest<ErrorOr<ExamResponse>>;
 
 public class GetExamByIdQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetExamByIdQuery, ErrorOr<ExamResponse>>
@@ -15,10 +16,20 @@ public class GetExamByIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<ExamResponse>> Handle(GetExamByIdQuery request, CancellationToken cancellationToken)
     {
-        var exam = await _unitOfWork.Exam.GetAsync(request.Id, cancellationToken);
+        var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
 
         return exam is null
-            ? Error.NotFound("Exam not found.")
+            ? Error.NotFound()
             : exam.ToDto();
+    }
+}
+
+public class GetExamByIdQueryValidator : AbstractValidator<GetExamByIdQuery>
+{
+    public GetExamByIdQueryValidator()
+    {
+        RuleFor(x => x.ExamId)
+            .NotEmpty()
+            .Must(id => Guid.TryParse(id.ToString(), out _));
     }
 }
