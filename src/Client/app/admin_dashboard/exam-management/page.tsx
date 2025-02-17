@@ -3,6 +3,8 @@ import React, {SVGProps} from "react";
 import {Icon} from "@iconify/react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import '../../../styles/globals.css'
+
 import {
     Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination,
     Selection,
@@ -13,9 +15,6 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };
 
-function capitalize(s: string) {
-    return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
-}
 const SearchIcon = (props: IconSvgProps) => {
     return (
         <svg
@@ -41,30 +40,6 @@ const SearchIcon = (props: IconSvgProps) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-            />
-        </svg>
-    );
-};
-
-const ChevronDownIcon = ({strokeWidth = 1.5, ...otherProps}: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height="1em"
-            role="presentation"
-            viewBox="0 0 24 24"
-            width="1em"
-            {...otherProps}
-        >
-            <path
-                d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeMiterlimit={10}
-                strokeWidth={strokeWidth}
             />
         </svg>
     );
@@ -157,7 +132,7 @@ export default function Component() {
             case "action":
                 return(
                     <>
-                    <div className='flex gap-4 ml-20'>
+                    <div className='flex gap-4 ml-28'>
                         <button onClick={()=>handleOpen('edit')}><FaEdit className={'text-xl'}/></button>
                         <button onClick={()=>handleOpen('delete')}><MdDelete className={'text-xl'} /></button>
                     </div>

@@ -1,81 +1,107 @@
 "use client"
-import React, {SVGProps} from "react";
-import {Icon} from "@iconify/react";
-import { MdDelete } from "react-icons/md";
-import { FaEdit } from "react-icons/fa";
-
 import {
-    Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination,
-    Selection,
-    SortDescriptor, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure,
+    Button,
+    Card,
+    Pagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow, SortDescriptor,  Selection,
 } from "@heroui/react";
 
-export type IconSvgProps = SVGProps<SVGSVGElement> & {
-    size?: number;
+import CountUp from 'react-countup';
+import {Chip} from "@nextui-org/react";
+import React from "react";
+
+import {useRouter} from "next/navigation";
+type TrendCardProps = {
+    title: string;
+    value: number;
 };
 
-const SearchIcon = (props: IconSvgProps) => {
+const data: TrendCardProps[] = [  {
+    title: "Total Exam",
+    value: 2284,
+},
+    {
+        title: "Completed Reviewes",
+        value: 718,
+    },
+    {
+        title: "Flagged Event",
+        value: 150,
+    },
+];
+const TrendCard = ({
+                       title,
+                       value
+                   }: TrendCardProps) => {
     return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height="1em"
-            role="presentation"
-            viewBox="0 0 24 24"
-            width="1em"
-            {...props}
-        >
-            <path
-                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-            />
-            <path
-                d="M22 22L20 20"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-            />
-        </svg>
+        <Card className=" border border-transparent dark:border-default-100 mt-2 ml-8">
+            <div className="flex p-4">
+                <div className="flex flex-col gap-y-2">
+                    <dt className="text-small font-medium text-default-500">{title}</dt>
+                    <dd className="text-2xl font-semibold text-default-700"><CountUp start={0} duration={2} end={value} /></dd>
+                </div>
+
+            </div>
+        </Card>
     );
 };
 
 const columns = [
     {name: "Exam ID", uid: "ExamId"},
     {name: "Exam Name", uid: "ExamName"},
-    {name: "Candidate Id", uid: "CandidateId"},
-    {name: "Candidate Name", uid: "CandidateName"},
+    {name: "Total Time", uid: "TotalTime"},
+    {name: "Total Score", uid: "TotalScore"},
     {name: "Date", uid: "Date",sortable: true},
-    {name: "Time", uid: "Time"},
-    {name: "Action", uid: "Action"},
+    {name: "Start Time", uid: "StartTime"},
+    {name:"Status",uid:"Status",sortable: true},
 ];
 const users = [{
-        ExamId: 1,
-        ExamName: "QA engineer intern",
-        CandidateId:1,
-        CandidateName:"aa",
-        Date:"25-02-2025",
-        Time:"08:20",
-        Action:"Edit Delete"
-},];
-const INITIAL_VISIBLE_COLUMNS = ["ExamId","ExamName","CandidateId", "CandidateName", "Date","Time","Action"];
-
+    ExamId: 1,
+    ExamName: "QA engineer intern",
+    TotalTime:"2hr",
+    TotalScore:"100",
+    Date:"23-02-2025",
+    StartTime:"08:20",
+    Status:"Review",
+},{
+    ExamId: 2,
+    ExamName: "QA engineer intern",
+    TotalTime:"2hr",
+    TotalScore:"100",
+    Date:"25-02-2025",
+    StartTime:"08:20",
+    Status:"Reviewed",
+},{
+    ExamId: 3,
+    ExamName: "QA engineer intern",
+    TotalTime:"2hr",
+    TotalScore:"100",
+    Date:"26-02-2025",
+    StartTime:"08:20",
+    Status:"Review",
+}
+];
+const INITIAL_VISIBLE_COLUMNS = ["ExamId","ExamName","TotalTime","TotalScore","Date","StartTime","Status"];
 type User = (typeof users)[0];
-
-export default function Component() {
+export default function Component(){
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS),
     );
+    const router=useRouter();
+    const handlereview=(ExamId:number)=>{
+        router.push(`/reviewer_dashboard/exam-review/${ExamId}`);
+    }
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-        column:"datetime",
+        column:"Date",
         direction: "ascending",
     });
     const [page, setPage] = React.useState(1);
@@ -110,24 +136,15 @@ export default function Component() {
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
     }, [sortDescriptor, items]);
-    const {isOpen, onOpen, onClose} = useDisclosure();
-    const [state, setState] = React.useState("");
-    const handleOpen = (word:string) => {
-        setState(word);
-        onOpen();
-    };
-    const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
+    const renderCell = React.useCallback((user: User, columnKey: React.Key,ExamId:number) => {
         const cellValue = user[columnKey as keyof User];
         switch (columnKey) {
-
-            case "Action":
+            case "Status":
                 return(
-                    <>
-                        <div className='flex gap-4 ml-28'>
-                            <button onClick={()=>handleOpen('edit')}><FaEdit className={'text-xl'}/></button>
-                            <button onClick={()=>handleOpen('delete')}><MdDelete className={'text-xl'} /></button>
-                        </div>
-                    </>
+                    <div>
+                        {cellValue==='Review'?<Button onPress={()=>handlereview(ExamId)} radius="full" className={'text-white text-md bg-primary'}>Review</Button>
+                            :<Chip color="default"  className={'text-white text-md'}>Reviewed</Chip>}
+                    </div>
                 );
             default:
                 return cellValue;
@@ -138,58 +155,26 @@ export default function Component() {
             setPage(page + 1);
         }
     }, [page, pages]);
-
     const onPreviousPage = React.useCallback(() => {
         if (page > 1) {
             setPage(page - 1);
         }
     }, [page]);
-
     const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
 
-    const onSearchChange = React.useCallback((value?: string) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue("");
-        }
-    }, []);
-
-    const onClear = React.useCallback(() => {
-        setFilterValue("");
-        setPage(1);
-    }, []);
-
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4 mt-8 w-full">
-                <h3 className="text-2xl text-center font-bold">Candidate Management</h3>
-                <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[30%]"
-                        placeholder="Search by name..."
-                        startContent={<SearchIcon />}
-                        value={filterValue}
-                        onClear={() => onClear()}
-                        onValueChange={onSearchChange}
-                    />
-                    <Button color="primary" startContent={<Icon icon="solar:add-circle-bold" width={20} />}>
-                        Add
-                    </Button>
-                </div>
+            <div className="flex flex-col gap-4 mt-8 w-full ">
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">Total {users.length} users</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
                             className="bg-transparent outline-none text-default-400 text-small"
-                            onChange={onRowsPerPageChange}
-                        >
+                            onChange={onRowsPerPageChange}>
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>
@@ -202,17 +187,14 @@ export default function Component() {
         filterValue,
         statusFilter,
         visibleColumns,
-        onSearchChange,
         onRowsPerPageChange,
         users.length,
         hasSearchFilter,
     ]);
-
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
-
         </span>
                 <Pagination
                     isCompact
@@ -234,21 +216,22 @@ export default function Component() {
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-
-    return (
+    return(
         <>
+            <dl className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {data.map((props, index) => (
+                    <TrendCard key={index} {...props} />
+                ))}
+            </dl>
             <Table className="px-10 mx-2"
                    isHeaderSticky
                    aria-label="Example table with custom cells, pagination and sorting"
                    bottomContent={bottomContent}
                    bottomContentPlacement="outside"
-                   classNames={{
-                       wrapper: "max-h-[382px]",
-                   }}
+                   classNames={{wrapper: "max-h-[382px]"}}
                    sortDescriptor={sortDescriptor}
                    topContent={topContent}
                    topContentPlacement="outside"
-                   onSelectionChange={setSelectedKeys}
                    onSortChange={setSortDescriptor}>
                 <TableHeader columns={headerColumns}>
                     {(column) => (
@@ -260,33 +243,14 @@ export default function Component() {
                         </TableColumn>
                     )}
                 </TableHeader>
-
                 <TableBody emptyContent={"No exam found"} items={sortedItems}>
                     {(item) => (
                         <TableRow key={item.ExamId}>
-                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey,item.ExamId)}</TableCell>}
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
-            <Modal isOpen={isOpen} onClose={onClose} >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">{state==='edit'?"Edit Confirmation":"Delete Confirmation"}</ModalHeader>
-                            <ModalBody>
-                                <p>
-                                    {`Do you want to ${state==='edit'?"edit this candidate record":"delete this candidate record"}?`}
-                                </p>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="primary" variant="light" onPress={onClose}>Close</Button>
-                                <Button color="danger" onPress={onClose}>{state==='edit'?"Edit":"Delete"}</Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
         </>
-    );
+    )
 }

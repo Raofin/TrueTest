@@ -26,7 +26,7 @@ const notifications: Record<NotificationTabs, Notification[]> = {
     {
       id: "1",
       isRead: false,
-      avatar: "https://i.pravatar.cc/150?u=a04258114e29026708c",
+      avatar: "",
       description: "requested to join your Acme organization.",
       name: "Ben Berman",
       time: "2 hours ago",
@@ -37,7 +37,7 @@ const notifications: Record<NotificationTabs, Notification[]> = {
     {
       id: "1",
       isRead: false,
-      avatar: "https://i.pravatar.cc/150?u=a04258114e29026708c",
+      avatar: "",
       description: "requested to join your Acme organization.",
       name: "Tony Reichert",
       time: "2 hours ago",
@@ -55,9 +55,6 @@ export default function Component(props: CardProps) {
         <div className="flex w-full items-center justify-between px-5 py-2">
           <div className="inline-flex items-center gap-1">
             <h4 className="inline-block align-middle text-large font-medium">Notifications</h4>
-            <Chip size="sm" variant="flat">
-              12
-            </Chip>
           </div>
           <Button className="h-8 px-3" color="primary" radius="full" variant="light">
             Mark all as read
@@ -80,21 +77,20 @@ export default function Component(props: CardProps) {
             title={
               <div className="flex items-center space-x-2">
                 <span>All</span>
-                <Chip size="sm" variant="flat">9</Chip>
               </div>
             }
           />
-          <Tab
-            key="unread"
-            title={
-              <div className="flex items-center space-x-2">
-                <span>Unread</span>
-                <Chip size="sm" variant="flat">
-                  3
-                </Chip>
-              </div>
-            }
-          />
+          {/*<Tab*/}
+          {/*  key="unread"*/}
+          {/*  title={*/}
+          {/*    <div className="flex items-center space-x-2">*/}
+          {/*      <span>Unread</span>*/}
+          {/*      <Chip size="sm" variant="flat">*/}
+          {/*        3*/}
+          {/*      </Chip>*/}
+          {/*    </div>*/}
+          {/*  }*/}
+          {/*/>*/}
         </Tabs>
       </CardHeader>
       <CardBody className="w-full gap-0 p-0">

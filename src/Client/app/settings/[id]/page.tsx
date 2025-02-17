@@ -31,7 +31,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                         placement="bottom-right"
                         shape="circle"
                     >
-                        <Avatar className="h-14 w-14" src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+                        <Avatar className="h-14 w-14" src="" />
                     </Badge>
                     <div className="flex flex-col items-start justify-center">
                         <p className="font-medium">Tony Reichert</p>
