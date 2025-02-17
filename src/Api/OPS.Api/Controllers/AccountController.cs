@@ -11,11 +11,11 @@ namespace OPS.Api.Controllers;
 public class AccountController(
     IMediator mediator,
     IValidator<CreateAccountCommand> createAccountValidator,
-    IValidator<UpdateProfileCommand> updateAccountValidator) : ApiController
+    IValidator<UpdateAccountCommand> updateAccountValidator) : ApiController
 {
     private readonly IMediator _mediator = mediator;
     private readonly IValidator<CreateAccountCommand> _createAccountValidator = createAccountValidator;
-    private readonly IValidator<UpdateProfileCommand> _updateAccountValidator = updateAccountValidator;
+    private readonly IValidator<UpdateAccountCommand> _updateAccountValidator = updateAccountValidator;
 
     [HttpGet("All")]
     public async Task<IActionResult> GetAllAccountsAsync()
@@ -63,7 +63,7 @@ public class AccountController(
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateAsync(UpdateProfileCommand command)
+    public async Task<IActionResult> UpdateAsync(UpdateAccountCommand command)
     {
         var validation = await _updateAccountValidator.ValidateAsync(command);
 

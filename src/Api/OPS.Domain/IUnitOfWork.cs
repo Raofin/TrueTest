@@ -9,5 +9,7 @@ public interface IUnitOfWork : IDisposable
     IExamCandidatesRepository ExamCandiates { get; }
     IQuestionRepository Question { get; }   
 
+    IWrittenSubmissionRepository WrittenSubmission { get; }     
+
     Task<int> CommitAsync(CancellationToken cancellationToken = default);
 }

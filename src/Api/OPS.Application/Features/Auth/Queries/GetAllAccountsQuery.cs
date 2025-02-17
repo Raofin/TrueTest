@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿
+using ErrorOr;
 using MediatR;
 using OPS.Application.Contracts.Auth;
 using OPS.Application.Extensions;
@@ -8,7 +9,7 @@ namespace OPS.Application.Features.Auth.Queries;
 
 public record GetAllAccountsQuery : IRequest<ErrorOr<List<AccountResponse>>>;
 
-public class GetAllAccountsQueryHandler(IUnitOfWork unitOfWork) 
+public class GetAllAccountsQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetAllAccountsQuery, ErrorOr<List<AccountResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
