@@ -6,7 +6,7 @@ using OPS.Persistence.Repositories;
 
 namespace OPS.Persistence;
 
-internal class UnitOfWork(AppDbContext dbContext, IExamRepository examRepository, IAccountRepository accountRepository, IExamCandidatesRepository examCandidateRepository)
+internal class UnitOfWork(AppDbContext dbContext, IExamRepository examRepository, IAccountRepository accountRepository, IExamCandidatesRepository examCandidateRepository,IQuestionRepository questionRepository)
     : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
@@ -14,6 +14,8 @@ internal class UnitOfWork(AppDbContext dbContext, IExamRepository examRepository
     public IExamRepository Exam { get; } = examRepository;
     public IAccountRepository Account { get; } = accountRepository;
     public IExamCandidatesRepository ExamCandiates { get; } = examCandidateRepository;
+
+    public IQuestionRepository Question { get; } = questionRepository; 
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
