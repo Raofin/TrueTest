@@ -3,24 +3,20 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Questions.Queries;
 using OPS.Application.Features.Exams.Commands;
-using OPS.Application.Features.Exam.Commands;
-
-
+using OPS.Application.Features.Exams.Queries;
 
 namespace OPS.Api.Controllers;
 
 public class QuestionController(
     IMediator mediator,
     IValidator<CreateQuestionCommand> createQuestionValidator,
-    IValidator<UpdateQuestionCommand> updateQuestionValidator) : ApiController
+    IValidator<UpdateQuestionCommand> updateQuestionValidator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
     private readonly IValidator<CreateQuestionCommand> _createQuestionValidator = createQuestionValidator;
     private readonly IValidator<UpdateQuestionCommand> _updateQuestionValidator = updateQuestionValidator;
 
-    
     [HttpGet]
     public async Task<IActionResult> GetAllQuestionsAsync()
     {

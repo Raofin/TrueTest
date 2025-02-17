@@ -3,7 +3,6 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Auth.Commands;
 using OPS.Application.Features.Submit.Commands;
 using OPS.Application.Features.Submit.Queries;
 
@@ -12,7 +11,7 @@ namespace OPS.Api.Controllers;
 public class WrittenSubmissionController(
     IMediator mediator,
     IValidator<CreateWrittenSubmissionCommand> createWrittenSubmissionValidator,
-    IValidator<UpdateWrittenSubmissionCommand> updateWrittenSubmissionValidator) : ApiController
+    IValidator<UpdateWrittenSubmissionCommand> updateWrittenSubmissionValidator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
     private readonly IValidator<CreateWrittenSubmissionCommand> _createWrittenSubmissionValidator = createWrittenSubmissionValidator;
@@ -95,6 +94,4 @@ public class WrittenSubmissionController(
             ? Ok(result.Value)
             : Problem(result.FirstError.Description);
     }
-
-   
 }

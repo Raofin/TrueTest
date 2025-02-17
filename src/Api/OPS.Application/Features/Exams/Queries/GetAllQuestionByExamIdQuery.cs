@@ -1,12 +1,12 @@
-﻿using MediatR;
-using ErrorOr;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+﻿using ErrorOr;
+using MediatR;
+using OPS.Application.Contracts.DtoExtensions;
+using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Questions.Queries;
+namespace OPS.Application.Features.Exams.Queries;
 
-public record GetAllQuestionByExamIdQuery(Guid Id) : IRequest<ErrorOr<List<QuestionResponse>>>;
+public record GetAllQuestionByExamIdQuery(Guid ExamId) : IRequest<ErrorOr<List<QuestionResponse>>>;
 
 public class GetAllQuestionByExamIdQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetAllQuestionByExamIdQuery, ErrorOr<List<QuestionResponse>>>
@@ -15,7 +15,7 @@ public class GetAllQuestionByExamIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<List<QuestionResponse>>> Handle(GetAllQuestionByExamIdQuery request, CancellationToken cancellationToken)
     {
-        var questions = await _unitOfWork.Question.GetAllQuestionByExamIdAsync(request.Id, cancellationToken);
+        var questions = await _unitOfWork.Question.GetAllQuestionByExamIdAsync(request.ExamId, cancellationToken);
 
         return questions.Select(e => e.ToDto()).ToList();
     }

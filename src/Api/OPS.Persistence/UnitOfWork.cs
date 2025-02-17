@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain;
 using OPS.Domain.Contracts;
+using OPS.Domain.Contracts.Repository;
 using OPS.Domain.Entities.Common;
 
 namespace OPS.Persistence;
@@ -9,17 +10,19 @@ internal class UnitOfWork(
     AppDbContext dbContext,
     IAccountRepository accountRepository,
     IOtpRepository otpRepository,
-    IExamRepository examRepository) : IUnitOfWork
+    IExamRepository examRepository,
+    IExamCandidatesRepository examCandidatesRepository,
+    IQuestionRepository questionRepository,
+    IWrittenSubmissionRepository writtenSubmissionRepository) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
     public IAccountRepository Account { get; } = accountRepository;
     public IOtpRepository Otp { get; } = otpRepository;
     public IExamRepository Exam { get; } = examRepository;
-    public IExamCandidatesRepository ExamCandiates { get; } = examCandidateRepository;
+    public IExamCandidatesRepository ExamCandidate { get; } = examCandidatesRepository;
     public IQuestionRepository Question { get; } = questionRepository;
-    public IWrittenSubmissionRepository WrittenSubmission { get; } = writtenSubmissionRepository; 
-
+    public IWrittenSubmissionRepository WrittenSubmission { get; } = writtenSubmissionRepository;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {

@@ -1,10 +1,10 @@
 ﻿using ErrorOr;
 using MediatR;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+using OPS.Application.Contracts.DtoExtensions;
+using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Questions.Queries;
+namespace OPS.Application.Features.Exams.Queries;
 
 public record GetAllQuestionsQuery : IRequest<ErrorOr<List<QuestionResponse>>>;
 

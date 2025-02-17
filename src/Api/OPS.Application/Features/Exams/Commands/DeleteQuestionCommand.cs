@@ -12,14 +12,11 @@ public class DeleteQuestionCommandHandler(IUnitOfWork unitOfWork) : IRequestHand
 
     public async Task<ErrorOr<Success>> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
     {
-        var Question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
+        var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
 
-        if (Question is null)
-        {
-            return Error.NotFound("Question was not found");
-        }
+        if (question is null) return Error.NotFound("Question was not found");
 
-        _unitOfWork.Question.Remove(Question);
+        _unitOfWork.Question.Remove(question);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0

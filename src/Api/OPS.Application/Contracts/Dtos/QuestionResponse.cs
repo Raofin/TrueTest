@@ -1,14 +1,13 @@
-﻿namespace OPS.Application.Contracts.Exams;
+﻿namespace OPS.Application.Contracts.Dtos;
 
 public record QuestionResponse(
     Guid Id,
     string StatementMarkdown,
     decimal Score,
     Guid ExaminationId,
-    Guid DifficultyId,
-    Guid QuestionTypeId,
+    int DifficultyId,
+    int QuestionTypeId,
     DateTime CreatedAt,
-    DateTime UpdatedAt,
-    bool IsActive,
-    bool IsDeleted
+    DateTime? UpdatedAt,
+    bool IsActive
 );

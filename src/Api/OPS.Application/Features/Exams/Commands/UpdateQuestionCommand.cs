@@ -1,14 +1,9 @@
-﻿
-using Azure.Core;
-using ErrorOr;
+﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+using OPS.Application.Contracts.DtoExtensions;
+using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
-using OPS.Domain.Entities.Enum;
-using OPS.Domain.Entities.Exam;
 
 namespace OPS.Application.Features.Exams.Commands;
 
@@ -16,12 +11,10 @@ public record UpdateQuestionCommand(
     Guid QuestionId,
     string? StatementMarkdown,
     decimal? Score,
-    Guid ExaminationId,  
-    Guid DifficultyId,
-    Guid QuestionTypeId,
-    bool IsActive,
-    bool IsDeleted
-) : IRequest<ErrorOr<QuestionResponse>>;
+    int? DifficultyId,
+    int? QuestionTypeId,
+    bool? IsActive,
+    bool? IsDeleted) : IRequest<ErrorOr<QuestionResponse>>;
 
 public class UpdateQuestionCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateQuestionCommand, ErrorOr<QuestionResponse>>
@@ -34,19 +27,18 @@ public class UpdateQuestionCommandHandler(IUnitOfWork unitOfWork)
 
         if (question is null) return Error.NotFound("Question was not found");
 
-        question.StatementMarkdown = command.StatementMarkdown;
-        question.Score = (decimal)command.Score;
-        question.ExaminationId = command.ExaminationId;
-        question.DifficultyId = command.DifficultyId;
-        question.QuestionTypeId = command.QuestionTypeId;
-        question.UpdatedAt = DateTime.UtcNow;
-        question.IsActive = command.IsActive;
-        question.IsDeleted = false;
+        question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
+        question.Score = command.Score ?? question.Score;
+        question.DifficultyId = command.DifficultyId ?? question.DifficultyId;
+        question.QuestionTypeId = command.QuestionTypeId ?? question.QuestionTypeId;
+        question.IsActive = command.IsActive ?? question.IsActive;
+        question.IsDeleted = command.IsDeleted ?? question.IsDeleted;
+
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
             ? question.ToDto()
-            : Error.Failure("The Question could not be saved.");
+            : Error.Failure();
     }
 }
 
@@ -54,22 +46,13 @@ public class UpdateQuestionCommandValidator : AbstractValidator<UpdateQuestionCo
 {
     public UpdateQuestionCommandValidator()
     {
-        RuleFor(x => x.StatementMarkdown)
-             .NotEmpty().WithMessage("Statement Markdown is required.")
-             .Length(10, 2000).WithMessage("Statement Markdown must be between 10 and 2000 characters."); // Adjust max length as needed
+        RuleFor(x => x.StatementMarkdown).NotEmpty();
 
-        RuleFor(x => x.Score)
-            .NotEmpty().WithMessage("Score is required.")
-            .GreaterThanOrEqualTo(0).WithMessage("Score must be a non-negative number."); // Or set an appropriate max value
+        RuleFor(x => x.Score).NotEmpty();
 
-        RuleFor(x => x.ExaminationId)
-            .NotEmpty().WithMessage("ExaminationId is required.");
+        RuleFor(x => x.DifficultyId).NotEmpty();
 
-        RuleFor(x => x.DifficultyId)
-            .NotEmpty().WithMessage("DifficultyId is required.");
-
-        RuleFor(x => x.QuestionTypeId)
-            .NotEmpty().WithMessage("QuestionTypeId is required.");
+        RuleFor(x => x.QuestionTypeId).NotEmpty();
 
         RuleFor(x => x.IsActive)
             .NotNull().WithMessage("IsActive is required.");

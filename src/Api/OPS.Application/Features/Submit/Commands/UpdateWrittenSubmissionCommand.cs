@@ -1,11 +1,11 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Submit;
-using OPS.Application.Extensions;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Auth.Commands;
+namespace OPS.Application.Features.Submit.Commands;
 
 public record UpdateWrittenSubmissionCommand(
     Guid Id,

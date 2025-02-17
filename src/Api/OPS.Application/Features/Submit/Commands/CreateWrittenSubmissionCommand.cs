@@ -1,9 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Submit;
-using OPS.Application.Extensions;
 using OPS.Domain;
 using OPS.Domain.Entities.Submit;
 
@@ -24,34 +23,27 @@ public class CreateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<WrittenSubmissionResponse>> Handle(CreateWrittenSubmissionCommand request,
         CancellationToken cancellationToken)
     {
-
-        var questionExists = await _unitOfWork.Question.GetAsync(request.QuestionId,cancellationToken);
-        if (questionExists == null)
-        {
-            return Error.NotFound("Question not found."); 
-        }
+        var questionExists = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
+        if (questionExists == null) return Error.NotFound("Question not found.");
 
         var accountExists = await _unitOfWork.Account.GetAsync(request.AccountId, cancellationToken);
-        if (accountExists == null)
-        {
-            return Error.NotFound("Account not found."); 
-        }
+        if (accountExists == null) return Error.NotFound("Account not found.");
 
-        var WrittenSubmission = new WrittenSubmission
+        var writtenSubmission = new WrittenSubmission
         {
-            QuestionId = request.QuestionId, 
-            AccountId = request.AccountId,   
-            Answer = request.Answer,         
-            Score = request.Score,         
+            QuestionId = request.QuestionId,
+            AccountId = request.AccountId,
+            Answer = request.Answer,
+            Score = request.Score,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
 
-        _unitOfWork.WrittenSubmission.Add(WrittenSubmission);
+        _unitOfWork.WrittenSubmission.Add(writtenSubmission);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? WrittenSubmission.ToDto()
+            ? writtenSubmission.ToDto()
             : Error.Failure("The WrittenSubmission could not be saved.");
     }
 }
@@ -61,16 +53,16 @@ public class CreateWrittenSubmissionCommandValidator : AbstractValidator<CreateW
     public CreateWrittenSubmissionCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-        .NotEmpty().WithMessage("QuestionId is required.");
+            .NotEmpty().WithMessage("QuestionId is required.");
 
         RuleFor(x => x.AccountId)
             .NotEmpty().WithMessage("AccountId is required.");
 
         RuleFor(x => x.Answer)
             .NotEmpty().WithMessage("Answer is required.")
-            .MaximumLength(5000).WithMessage("Answer cannot exceed 5000 characters."); 
+            .MaximumLength(5000).WithMessage("Answer cannot exceed 5000 characters.");
 
         RuleFor(x => x.Score)
-            .InclusiveBetween(0, 100).WithMessage("Score must be between 0 and 100."); 
+            .InclusiveBetween(0, 100).WithMessage("Score must be between 0 and 100.");
     }
 }

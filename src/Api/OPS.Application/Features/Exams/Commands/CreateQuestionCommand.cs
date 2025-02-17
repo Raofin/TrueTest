@@ -1,23 +1,20 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+using OPS.Application.Contracts.DtoExtensions;
+using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
-using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Exam;
-using OPS.Domain.Entities.Submit;
 
-namespace OPS.Application.Features.Exam.Commands;
+namespace OPS.Application.Features.Exams.Commands;
 
 public record CreateQuestionCommand(
     string StatementMarkdown,
     decimal Score,
     Guid ExaminationId,
-    Guid DifficultyId,
-    Guid QuestionTypeId,
-    bool IsActive
-) : IRequest<ErrorOr<QuestionResponse>>;
+    int DifficultyId,
+    int QuestionTypeId,
+    bool IsActive) : IRequest<ErrorOr<QuestionResponse>>;
 
 public class CreateQuestionCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<CreateQuestionCommand, ErrorOr<QuestionResponse>>
@@ -32,10 +29,7 @@ public class CreateQuestionCommandHandler(IUnitOfWork unitOfWork)
             Score = request.Score,
             ExaminationId = request.ExaminationId,
             DifficultyId = request.DifficultyId,
-            QuestionTypeId = request.QuestionTypeId,
-            CreatedAt = DateTime.UtcNow,
-            IsActive = request.IsActive,
-            IsDeleted = false
+            QuestionTypeId = request.QuestionTypeId
         };
 
         _unitOfWork.Question.Add(question);
@@ -67,7 +61,7 @@ public class CreateQuestionCommandValidator : AbstractValidator<CreateQuestionCo
 
         RuleFor(x => x.QuestionTypeId)
             .NotEmpty().WithMessage("QuestionTypeId is required.");
-            
+
         RuleFor(x => x.IsActive)
             .NotNull().WithMessage("IsActive is required.");
     }

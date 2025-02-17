@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using OPS.Domain.Contracts;
-using OPS.Domain.Entities.Auth;
 using OPS.Domain.Entities.Exam;
 
 namespace OPS.Persistence.Repositories;

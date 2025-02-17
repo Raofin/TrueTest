@@ -1,10 +1,10 @@
-﻿using MediatR;
-using ErrorOr;
-using OPS.Application.Contracts.Exams;
-using OPS.Application.Extensions;
+﻿using ErrorOr;
+using MediatR;
+using OPS.Application.Contracts.DtoExtensions;
+using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Questions.Queries;
+namespace OPS.Application.Features.Exams.Queries;
 
 public record GetQuestionByIdQuery(Guid Id) : IRequest<ErrorOr<QuestionResponse>>;
 

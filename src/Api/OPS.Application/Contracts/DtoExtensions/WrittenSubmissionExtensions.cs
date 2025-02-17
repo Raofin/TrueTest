@@ -1,7 +1,7 @@
 ﻿using OPS.Application.Contracts.Submit;
 using OPS.Domain.Entities.Submit;
 
-namespace OPS.Application.Extensions;
+namespace OPS.Application.Contracts.DtoExtensions;
 
 public static class WrittenSubmissionExtensions
 {
@@ -9,9 +9,9 @@ public static class WrittenSubmissionExtensions
     {
         return new WrittenSubmissionResponse(
             writtenSubmission.Id,
-            writtenSubmission.QuestionId, 
-            writtenSubmission.AccountId,  
-            writtenSubmission.Answer,      
+            writtenSubmission.QuestionId,
+            writtenSubmission.AccountId,
+            writtenSubmission.Answer,
             writtenSubmission.Score
         );
     }
