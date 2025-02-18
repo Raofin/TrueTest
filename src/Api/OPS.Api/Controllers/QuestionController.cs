@@ -38,8 +38,8 @@ public class QuestionController(
             ? Ok(result.Value)
             : result.FirstError.Type switch
             {
-                ErrorType.NotFound => NotFound("Question was not found."),
-                _ => Problem("An unexpected error occurred.")
+                ErrorType.NotFound => NotFound(),
+                _ => Problem()
             };
     }
 
@@ -97,11 +97,11 @@ public class QuestionController(
         var result = await _mediator.Send(command);
 
         return !result.IsError
-            ? Ok("Question was deleted.")
+            ? Ok()
             : result.FirstError.Type switch
             {
-                ErrorType.NotFound => NotFound("Question was not found."),
-                _ => Problem("An unexpected error occurred.")
+                ErrorType.NotFound => NotFound(),
+                _ => Problem()
             };
     }
 }

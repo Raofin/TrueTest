@@ -15,14 +15,14 @@ public class DeleteQuestionCommandHandler(IUnitOfWork unitOfWork) : IRequestHand
     {
         var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
 
-        if (question is null) return Error.NotFound("Question was not found");
+        if (question is null) return Error.NotFound();
 
         _unitOfWork.Question.Remove(question);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
             ? Result.Success
-            : Error.Failure("The Question could not be deleted.");
+            : Error.Failure();
     }
 }
 

@@ -26,7 +26,7 @@ public class UpdateQuestionCommandHandler(IUnitOfWork unitOfWork)
     {
         var question = await _unitOfWork.Question.GetAsync(command.QuestionId, cancellationToken);
 
-        if (question is null) return Error.NotFound("Question was not found");
+        if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
         question.Score = command.Score ?? question.Score;

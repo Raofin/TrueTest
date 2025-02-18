@@ -19,7 +19,7 @@ public class GetQuestionByIdQueryHandler(IUnitOfWork unitOfWork)
         var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
 
         return question is null
-            ? Error.NotFound("Question not found.")
+            ? Error.NotFound()
             : question.ToDto();
     }
 }

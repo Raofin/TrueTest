@@ -38,8 +38,8 @@ public class WrittenSubmissionController(
             ? Ok(result.Value)
             : result.FirstError.Type switch
             {
-                ErrorType.NotFound => NotFound("WrittenSubmission was not found."),
-                _ => Problem("An unexpected error occurred.")
+                ErrorType.NotFound => NotFound(),
+                _ => Problem()
             };
     }
 
@@ -54,8 +54,8 @@ public class WrittenSubmissionController(
             ? Ok(result.Value)
             : result.FirstError.Type switch
             {
-                ErrorType.NotFound => NotFound("WrittenSubmission was not found."),
-                _ => Problem("An unexpected error occurred.")
+                ErrorType.NotFound => NotFound(),
+                _ => Problem()
             };
     }
 

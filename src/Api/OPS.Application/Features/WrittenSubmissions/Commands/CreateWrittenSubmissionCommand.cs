@@ -23,10 +23,10 @@ public class CreateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
         CancellationToken cancellationToken)
     {
         var questionExists = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
-        if (questionExists == null) return Error.NotFound("Question not found.");
+        if (questionExists == null) return Error.NotFound();
 
         var accountExists = await _unitOfWork.Account.GetAsync(request.AccountId, cancellationToken);
-        if (accountExists == null) return Error.NotFound("Account not found.");
+        if (accountExists == null) return Error.NotFound();
 
         var writtenSubmission = new WrittenSubmission
         {
@@ -41,7 +41,7 @@ public class CreateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? writtenSubmission.ToDto()
-            : Error.Failure("The WrittenSubmission could not be saved.");
+            : Error.Failure();
     }
 }
 

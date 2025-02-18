@@ -12,7 +12,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
         string? username, string? email, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(username) && string.IsNullOrWhiteSpace(email))
-            throw new ArgumentException("At least one of username or email must be provided.");
+            throw new ArgumentException();
 
         var exists = await _dbContext.Accounts
             .AsNoTracking()
