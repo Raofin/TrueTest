@@ -13,13 +13,12 @@ export type NotificationItem = {
   description: string;
   name: string;
   time: string;
-  type?: NotificationType;
 };
 
 export type NotificationItemProps = React.HTMLAttributes<HTMLDivElement> & NotificationItem;
 
 const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>(
-  ({children, avatar, name, description, type, time, isRead, className, ...props}, ref) => {
+  ({children, avatar, name, description, time, isRead, className, ...props}, ref) => {
 
     return (
       <div

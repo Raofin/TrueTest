@@ -22,11 +22,23 @@ import ViewResult from '../candidate_dashboard/view-result/page'
 import Review from '../reviewer_dashboard/review-list/page'
 import NotificationsCard from "./notifications-card";
 import GoTo from '../goto'
-
-export default function Component() {
+interface PageProps  {
+  onThemeToggle?: (theme: string) => void | undefined ; 
+}
+export default function Component({ onThemeToggle }: PageProps ) {
   const {dashboardType} = useDashboard();
 
   const [selected, setSelected] = useState<string>("home");
+  const [isDarkMode, setIsDarkMode] = useState(false); 
+  const handleThemeChange = () => {
+    setIsDarkMode((prev) => !prev);
+    const newTheme = !isDarkMode ? "dark" : "light";
+    localStorage.setItem("theme", newTheme);
+    if (onThemeToggle) {
+      onThemeToggle(newTheme);
+    }
+  };
+  
   return (
       <>
           { dashboardType?
@@ -113,8 +125,21 @@ export default function Component() {
                   </>
                       : ""
           }
-
-            <Tab className={'ml-16'}>
+                 <Tab className={'ml-16'}>
+                        <Button
+                            isIconOnly
+                            radius="full"
+                            variant="light"
+                            onPress={handleThemeChange} 
+                        >
+                            <Icon
+                                className="text-default-500"
+                                icon={isDarkMode ? "solar:moon-linear" : "solar:sun-linear"} 
+                                width={24}
+                            />
+                        </Button>
+                    </Tab>
+            <Tab >
                 <Link href="/settings/1"> <Icon className="text-default-500" icon="solar:settings-linear" width={24} />
                 </Link>
             </Tab>
@@ -179,8 +204,19 @@ export default function Component() {
                           </Link>
                       </NavbarItem>
                   </NavbarContent>
-
                       <NavbarContent justify="end">
+                      <NavbarItem>
+                            <Button
+                                isIconOnly
+                                radius="full"
+                                variant="light"
+                                onPress={handleThemeChange} >
+                                <Icon
+                                    className="text-default-500"
+                                    icon={isDarkMode ? "solar:moon-linear" : "solar:sun-linear"} 
+                                    width={24} />
+                            </Button>
+                        </NavbarItem>
                           <NavbarItem className="hidden lg:flex">
                               <Link href="/login">
                                   <Button color="primary" variant="shadow">
