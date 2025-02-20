@@ -98,56 +98,151 @@ const statusOptions = [
 ];
 const users = [
     {
-        id: 1,
-        name: "Tony Reichert",
-        email: "tony.reichert@example.com",
-        role: "Software Engineer",
-        date:"25-02-2025",
-        status: "upcoming",
+        "id": 1,
+        "name": "Alice Johnson",
+        "email": "alice.johnson@example.com",
+        "role": "Project Manager",
+        "date": "20-02-2025",
+        "status": "finished"
     },
     {
-        id: 2,
-        name: "Tony Reichert",
-        email: "tony.reichert@example.com",
-        role: "Software Engineer",
-        date:"25-02-2025",
-        status: "finished",
+        "id": 2,
+        "name": "Tony Reichert",
+        "email": "tony.reichert@example.com",
+        "role": "Software Engineer",
+        "date": "25-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 3,
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "role": "UI/UX Designer",
+        "date": "22-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 4,
+        "name": "Emma Brown",
+        "email": "emma.brown@example.com",
+        "role": "QA Engineer",
+        "date": "18-02-2025",
+        "status": "running"
+    },
+    {
+        "id": 5,
+        "name": "David Wilson",
+        "email": "david.wilson@example.com",
+        "role": "Backend Developer",
+        "date": "27-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 6,
+        "name": "Sophia Martinez",
+        "email": "sophia.martinez@example.com",
+        "role": "Frontend Developer",
+        "date": "15-02-2025",
+        "status": "running"
+    },
+    {
+        "id": 7,
+        "name": "James Anderson",
+        "email": "james.anderson@example.com",
+        "role": "Software Engineer",
+        "date": "10-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 8,
+        "name": "Olivia Taylor",
+        "email": "olivia.taylor@example.com",
+        "role": "DevOps Engineer",
+        "date": "05-02-2025",
+        "status": "running"
+    },
+    {
+        "id": 9,
+        "name": "Michael Scott",
+        "email": "michael.scott@example.com",
+        "role": "Product Owner",
+        "date": "28-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 10,
+        "name": "William Brown",
+        "email": "william.brown@example.com",
+        "role": "Security Analyst",
+        "date": "21-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 11,
+        "name": "Charlotte Green",
+        "email": "charlotte.green@example.com",
+        "role": "Database Administrator",
+        "date": "12-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 12,
+        "name": "Daniel White",
+        "email": "daniel.white@example.com",
+        "role": "Cloud Engineer",
+        "date": "14-02-2025",
+        "status": "running"
+    },
+    {
+        "id": 13,
+        "name": "Amelia Harris",
+        "email": "amelia.harris@example.com",
+        "role": "Software Architect",
+        "date": "16-02-2025",
+        "status": "running"
+    },
+    {
+        "id": 14,
+        "name": "Benjamin Lewis",
+        "email": "benjamin.lewis@example.com",
+        "role": "Full Stack Developer",
+        "date": "24-02-2025",
+        "status": "finished"
+    },
+    {
+        "id": 15,
+        "name": "Mia Robinson",
+        "email": "mia.robinson@example.com",
+        "role": "Business Analyst",
+        "date": "19-02-2025",
+        "status": "finished"
     }
 ];
-
 const statusColorMap: Record<string, ChipProps["color"]> = {
     active: "success",
     paused: "danger",
     vacation: "warning",
 };
-
 const INITIAL_VISIBLE_COLUMNS = ["id","name","email", "role", "date","status"];
-
 type User = (typeof users)[0];
-
 export default function Component() {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-        new Set(INITIAL_VISIBLE_COLUMNS),
-    );
+        new Set(INITIAL_VISIBLE_COLUMNS),);
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column:"date",
         direction: "ascending",
     });
-
     const [page, setPage] = React.useState(1);
-
     const hasSearchFilter = Boolean(filterValue);
-
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
+        if (visibleColumns === "all"){ setVisibleColumns("all"); return columns;}
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
-
     const filteredItems = React.useMemo(() => {
         let filteredUsers = [...users];
 
@@ -163,7 +258,7 @@ export default function Component() {
         }
 
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [ filterValue, statusFilter,hasSearchFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -297,11 +392,8 @@ export default function Component() {
     }, [
         filterValue,
         statusFilter,
-        visibleColumns,
         onSearchChange,
-        onRowsPerPageChange,
-        users.length,
-        hasSearchFilter,
+        onRowsPerPageChange,onClear
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -331,7 +423,7 @@ export default function Component() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [selectedKeys, page, pages, filteredItems.length, onNextPage ,onPreviousPage]);
 
     return (
         <Table

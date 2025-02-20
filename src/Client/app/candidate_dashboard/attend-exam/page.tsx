@@ -14,8 +14,7 @@ export default function Component() {
                             color="warning"
                             label="Permissions for camera , audio,screen record"
                             value={selected}
-                            onValueChange={setSelected}
-                        >
+                            onValueChange={setSelected}>
                             <Checkbox value="Allow Camera">Allow Camera</Checkbox>
                             <Checkbox value="Allow audio of your device">Allow audio of your device</Checkbox>
                             <Checkbox value="Allow screen record"> Allow screen record</Checkbox>
