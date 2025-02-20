@@ -3,6 +3,8 @@ import React, {SVGProps} from "react";
 import {Icon} from "@iconify/react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import '../../../styles/globals.css'
+
 import {
     Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination,
     Selection,
@@ -13,9 +15,6 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };
 
-function capitalize(s: string) {
-    return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
-}
 const SearchIcon = (props: IconSvgProps) => {
     return (
         <svg
@@ -41,30 +40,6 @@ const SearchIcon = (props: IconSvgProps) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-            />
-        </svg>
-    );
-};
-
-const ChevronDownIcon = ({strokeWidth = 1.5, ...otherProps}: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height="1em"
-            role="presentation"
-            viewBox="0 0 24 24"
-            width="1em"
-            {...otherProps}
-        >
-            <path
-                d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeMiterlimit={10}
-                strokeWidth={strokeWidth}
             />
         </svg>
     );
@@ -97,11 +72,10 @@ type User = (typeof users)[0];
 
 export default function Component() {
     const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS),
     );
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+   
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column:"datetime",
@@ -109,11 +83,13 @@ export default function Component() {
     });
     const [page, setPage] = React.useState(1);
     const hasSearchFilter = Boolean(filterValue);
+   
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
-
-        return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
-    }, [visibleColumns]);
+            if (visibleColumns === "all"){setVisibleColumns("all"); return columns;}
+    
+            return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+        }, [visibleColumns]);
+        
     const filteredItems = React.useMemo(() => {
         let filteredUsers = [...users];
 
@@ -123,7 +99,7 @@ export default function Component() {
             );
         }
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [ filterValue, hasSearchFilter]);
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
@@ -141,10 +117,12 @@ export default function Component() {
     }, [sortDescriptor, items]);
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [state, setState] = React.useState("");
-    const handleOpen = (word:string) => {
+    
+    const handleOpen = React.useCallback((word: string) => {
         setState(word);
         onOpen();
-    };
+    }, [onOpen]); 
+
     const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
         const cellValue = user[columnKey as keyof User];
         switch (columnKey) {
@@ -157,7 +135,7 @@ export default function Component() {
             case "action":
                 return(
                     <>
-                    <div className='flex gap-4 ml-20'>
+                    <div className='flex gap-4 ml-28'>
                         <button onClick={()=>handleOpen('edit')}><FaEdit className={'text-xl'}/></button>
                         <button onClick={()=>handleOpen('delete')}><MdDelete className={'text-xl'} /></button>
                     </div>
@@ -166,7 +144,7 @@ export default function Component() {
             default:
                 return cellValue;
         }
-    }, []);
+    }, [handleOpen]);
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
@@ -233,13 +211,7 @@ export default function Component() {
             </div>
         );
     }, [
-        filterValue,
-        statusFilter,
-        visibleColumns,
-        onSearchChange,
-        onRowsPerPageChange,
-        users.length,
-        hasSearchFilter,
+        filterValue, onSearchChange,onRowsPerPageChange,onClear
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -267,7 +239,7 @@ export default function Component() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [ page, pages, onNextPage,onPreviousPage]);
 
     return (
         <>
@@ -282,7 +254,7 @@ export default function Component() {
             sortDescriptor={sortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
+         
             onSortChange={setSortDescriptor}>
             <TableHeader columns={headerColumns}>
                 {(column) => (

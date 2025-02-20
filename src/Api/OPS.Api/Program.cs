@@ -1,41 +1,27 @@
+using OPS.Api;
 using OPS.Application;
 using OPS.Infrastructure;
 using OPS.Persistence;
-using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-{
-    builder.Services
-        .AddInfrastructure(builder.Configuration, builder.Environment)
-        .AddPersistence()
-        .AddService();
-}
 
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-
-builder.Host.AddSerilog(builder.Configuration, builder.Environment);
+builder.Services
+    .AddInfrastructure(builder.Configuration, builder.Environment, builder.Host)
+    .AddPersistence()
+    .AddApplication()
+    .AddApi(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseInfrastructure(app.Environment);
-app.MapHealthChecks("health");
+app.UseInfrastructure();
+app.UseControllers();
+app.ApplyMigration();
 
-if (app.Environment.IsDevelopment())
+if (true /*app.Environment.IsDevelopment()*/)
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference(options =>
-    {
-        options
-            .WithTitle("Online Proctoring System")
-            .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios)
-            .WithDefaultOpenAllTags(true)
-            .WithLayout(ScalarLayout.Classic);
-    });
+    app.UseScalar();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
 
 app.Run();

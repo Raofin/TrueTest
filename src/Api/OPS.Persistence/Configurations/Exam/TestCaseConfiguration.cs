@@ -16,7 +16,6 @@ public class TestCaseConfiguration : IEntityTypeConfiguration<TestCase>
         entity.Property(e => e.Output).IsRequired();
 
         new BaseEntityConfig<TestCase>().Configure(entity);
-        new SoftDeletableEntityConfig<TestCase>().Configure(entity);
 
         entity.HasOne(d => d.Question)
             .WithMany(q => q.TestCases)

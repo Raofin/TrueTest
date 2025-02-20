@@ -12,7 +12,9 @@ public class McqOptionConfiguration : IEntityTypeConfiguration<McqOption>
         entity.ToTable("McqOptions", "Exam");
         entity.HasKey(e => e.Id);
 
-        entity.Property(e => e.OptionMarkdown).IsRequired();
+        entity.Property(e => e.Option1).IsRequired();
+        entity.Property(e => e.Option2).IsRequired();
+        entity.Property(e => e.AnswerOptions).IsRequired().HasMaxLength(50);
 
         new BaseEntityConfig<McqOption>().Configure(entity);
 

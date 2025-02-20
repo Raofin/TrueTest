@@ -14,6 +14,7 @@ public class WrittenSubmissionConfiguration : IEntityTypeConfiguration<WrittenSu
 
         entity.Property(e => e.Answer).IsRequired();
         entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.IsFlagged).HasDefaultValue(false);
 
         new BaseEntityConfig<WrittenSubmission>().Configure(entity);
 

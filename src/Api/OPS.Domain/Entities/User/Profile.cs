@@ -1,5 +1,4 @@
-﻿using OPS.Domain.Entities.Auth;
-using OPS.Domain.Entities.Common;
+﻿using OPS.Domain.Entities.Common;
 using OPS.Domain.Entities.Core;
 
 namespace OPS.Domain.Entities.User;

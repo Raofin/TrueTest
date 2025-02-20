@@ -11,16 +11,13 @@ public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission
     {
         entity.ToTable("McqSubmissions", "Submit");
         entity.HasKey(e => e.Id);
+        entity.Property(e => e.AnswerOptions).IsRequired().HasMaxLength(50);
 
         new BaseEntityConfig<McqSubmission>().Configure(entity);
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.McqSubmissions)
             .HasForeignKey(d => d.AccountId)
-            .OnDelete(DeleteBehavior.Restrict);
-        entity.HasOne(d => d.Question)
-            .WithMany(p => p.McqSubmissions)
-            .HasForeignKey(d => d.QuestionId)
             .OnDelete(DeleteBehavior.Restrict);
         entity.HasOne(d => d.McqOption)
             .WithMany(p => p.McqSubmissions)
