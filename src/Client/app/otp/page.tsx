@@ -2,20 +2,24 @@
 import React, { useState } from "react";
 import '../../styles/globals.css';
 import { Modal, ModalContent, ModalBody, Button, useDisclosure } from "@heroui/react";
-import { useRouter } from 'next/navigation';
+import { useRouter,useSearchParams } from 'next/navigation';
 import toast, { Toaster } from "react-hot-toast";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { InputOtp } from "@heroui/input-otp";
+import axios from "axios";
 
 const OtpPage: React.FC = () => {
     const [contactInfo, setContactInfo] = useState("");
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [isOtpVerified, setIsOtpVerified] = useState(false);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const router = useRouter();
-
+    const searchParams = useSearchParams();
+    const username = searchParams.get("username") || "";
+    const email = searchParams.get("email") || "";
+    const password = searchParams.get("password") || "";
+    const router=useRouter();
     const validateContactInfo = (info: string): boolean => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return re.test(info);
     };
 
@@ -28,29 +32,31 @@ const OtpPage: React.FC = () => {
             toast.error("Invalid email format");
             return;
         }
-
         try {
-            const response = await fetch("https://localhost:9998/api/Auth/SendOtp", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: contactInfo }),
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/SendOtp`, 
+              JSON.stringify({ email: contactInfo}), {
+                headers: { 'Content-Type': 'application/json' }
             });
-            const result = await response.json();
             if (response.status === 200) {
                 toast.success("OTP sent to your email. Please check your inbox.");
                 setIsOtpSent(true);
                 onOpen();
             } else {
-                toast.error(result.message || "Failed to send OTP.");
+                toast.error(response.data?.message || "Failed to send OTP.");
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error sending OTP:", error);
-            toast.error("An error occurred while sending OTP.");
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message || "Failed to send OTP.");
+            } else {
+                toast.error("An unexpected error occurred while sending OTP.");
+            }
         }
     };
 
     interface FormValues {
         otp: string;
+        email: string; 
     }
 
     const { handleSubmit, control, formState: { errors } } = useForm<FormValues>({
@@ -59,27 +65,40 @@ const OtpPage: React.FC = () => {
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         try {
-            const response = await fetch("https://localhost:9998/api/Auth/IsValidOtp", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: contactInfo, otp: data.otp }),
-            });
-
-            const result = await response.json();
-
-            if (response.status === 200) {
+            const verifyResponse = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/IsValidOtp`,
+                JSON.stringify({ email: contactInfo, otp: data.otp }),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+        
+            console.log(contactInfo, data.otp,verifyResponse.status); 
+        
+            if (verifyResponse.status === 200) {
                 toast.success("OTP verified successfully!");
                 setIsOtpVerified(true);
-                router.push("/admin_dashboard");
+                console.log("enter 1");
+                await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/Register`, {
+                    username,
+                    email: contactInfo,  
+                    password,
+                    otp: data.otp
+                });
+                const userData = {
+                    username,
+                    email: contactInfo
+                };            
+                console.log("enter 2");
+                toast.success("Signup successful!");
+                router.push('/login');
+
             } else {
-                toast.error(result.message || "Invalid OTP. Please try again.");
+                toast.error(verifyResponse.data?.message || "Invalid OTP. Please try again.");
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error verifying OTP:", error);
-            toast.error("An error occurred while verifying OTP.");
+            toast.error(error.response?.data?.message || "Failed to verify OTP.");
         }
     };
-
+    
     return (
         <div className="flex items-center justify-center h-[600px] bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">

@@ -22,13 +22,23 @@ import ViewResult from '../candidate_dashboard/view-result/page'
 import Review from '../reviewer_dashboard/review-list/page'
 import NotificationsCard from "./notifications-card";
 import GoTo from '../goto'
+import { useAuth } from "../hook/useAuth";
+import { useRouter } from "next/navigation";
 interface PageProps  {
   onThemeToggle?: (theme: string) => void | undefined ; 
 }
+
 export default function Component({ onThemeToggle }: PageProps ) {
   const {dashboardType} = useDashboard();
-
+  type User = {
+    email: string;
+    username: string;
+  };
+  
+  const user: User | null = useAuth();
+  console.log(user);
   const [selected, setSelected] = useState<string>("home");
+  const router=useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false); 
   const handleThemeChange = () => {
     setIsDarkMode((prev) => !prev);
@@ -38,7 +48,10 @@ export default function Component({ onThemeToggle }: PageProps ) {
       onThemeToggle(newTheme);
     }
   };
-  
+  const logout = () => {
+    localStorage.removeItem("user");
+    router.push('/login');
+};
   return (
       <>
           { dashboardType?
@@ -170,12 +183,13 @@ export default function Component({ onThemeToggle }: PageProps ) {
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="flat">
                   <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold">Signed in as</p>
-                    <p className="font-semibold">johndoe@example.com</p>
+                    <p className="font-semibold">Signed in as <br/> {user}</p>
                   </DropdownItem>
                   <DropdownItem key="settings"><Link href="/myprofile/1">My Profile</Link></DropdownItem>
                   <DropdownItem key="logout" color="danger">
-                    <Link href="/"> Log Out</Link>
+                    <button onClick={() => logout()} className="bg-red-500 text-white px-3 py-2 rounded">
+                            Logout
+                        </button>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -229,4 +243,4 @@ export default function Component({ onThemeToggle }: PageProps ) {
           }
       </>
   )
-}
+  }

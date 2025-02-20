@@ -6,6 +6,8 @@ import { Button, Input, Checkbox, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import '../../styles/globals.css';
 
+import { useRouter } from "next/navigation";
+
 interface FormData {
     username: string;
     email: string;
@@ -22,7 +24,7 @@ export default function Signup() {
         confirmPassword: "",
         agreeTerms: false,
     });
-
+    const router=useRouter();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -49,8 +51,8 @@ export default function Signup() {
             if (!formData.email) return;
             setCheckingEmail(true);
             try {
-                const response = await axios.post("https://localhost:9998/api/Auth/IsUserUnique",
-                    JSON.stringify({ email: formData.email }),
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/IsUserUnique`,
+                    JSON.stringify({ username:formData.username, email: formData.email }),
                     {
                         headers: { 'Content-Type': 'application/json' }
                     }
@@ -91,31 +93,10 @@ export default function Signup() {
             return;
         }
         setLoading(true);
-        try {
-            const response = await axios.post("https://localhost:9998/api/Auth/Register",
-                JSON.stringify({
-                    Username: formData.username,
-                    Email: formData.email,
-                    Password: formData.password
-                }),
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            setMessage(response.data.message || "Signup successful!");
-        } 
-        catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                setMessage(error.response?.data?.error || "Signup failed.");
-            } else {
-                setMessage("An unexpected error occurred.");
-            }
-        }
-         finally {
-            setLoading(false);
-        }
+      
+        router.push(`/otp?username=${encodeURIComponent(formData.username)}&email=${encodeURIComponent(formData.email)}&password=${encodeURIComponent(formData.password)}`);
+
+          
     };
 
     return (
