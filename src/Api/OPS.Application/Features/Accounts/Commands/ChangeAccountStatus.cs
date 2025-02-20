@@ -36,6 +36,6 @@ public class ChangeAccountStatusValidator : AbstractValidator<ChangeAccountStatu
     {
         RuleFor(x => x.AccountId)
             .NotEmpty()
-            .Must(id => Guid.TryParse(id.ToString(), out _));
+            .Must(id => id != Guid.Empty);
     }
 }

@@ -1,18 +1,46 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
-import { Icon } from '@iconify/react'
-import '../../styles/globals.css'
-export default function Component() {
-  const [isVisible, setIsVisible] = React.useState(false)
-  const toggleVisibility = () => setIsVisible(!isVisible)
-  const [user,setUser]=React.useState({
-    email:"",password:"",
-  })
-  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+import React, { useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react';
+import { Icon } from '@iconify/react';
+import '../../styles/globals.css';
+import { useRouter } from 'next/navigation';
+
+export default function LoginComponent() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [user, setUser] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const toggleVisibility = () => setIsVisible((prev) => !prev);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  }
+    setError('');
+
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/Login`, {
+        usernameOrEmail: user.email,
+        password: user.password,
+      });
+
+      if (response.data?.token) {
+        Cookies.set('authToken', response.data.token, { secure: true, httpOnly: false });
+        localStorage.setItem("user", JSON.stringify(user.email));
+        router.push('/admin_dashboard');
+      } else {
+        setError('Invalid email or password');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setError(error.response.data.message || 'Invalid credentials');
+      } else {
+        setError('An unexpected error occurred');
+      }
+    }
+  };
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -20,9 +48,30 @@ export default function Component() {
         <div className="flex flex-col gap-1">
           <h1 className="text-large font-medium">Sign in to your account</h1>
         </div>
-        <Form className="flex w-full flex-wrap md:flex-nowrap gap-4 flex-col" validationBehavior="native" onSubmit={handleSubmit}>
-          <Input isRequired label="Email" name="email" type="email" variant="bordered" />
-          <Input isRequired endContent={
+        <Form
+          className="flex w-full flex-wrap md:flex-nowrap gap-4 flex-col"
+          validationBehavior="native"
+          onSubmit={handleSubmit}
+        >
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          <Input
+            isRequired
+            label="Email"
+            name="email"
+            type="email"
+            variant="bordered"
+            value={user.email}
+            onChange={(e) => setUser((prev) => ({ ...prev, email: e.target.value }))}
+          />
+          <Input
+            isRequired
+            label="Password"
+            name="password"
+            type={isVisible ? 'text' : 'password'}
+            variant="bordered"
+            value={user.password}
+            onChange={(e) => setUser((prev) => ({ ...prev, password: e.target.value }))}
+            endContent={
               <button type="button" onClick={toggleVisibility}>
                 {isVisible ? (
                   <Icon className="pointer-events-none text-2xl text-default-400" icon="solar:eye-closed-linear" />
@@ -31,7 +80,7 @@ export default function Component() {
                 )}
               </button>
             }
-            label="Password" name="password" type={isVisible ? 'text' : 'password'} variant="bordered"/>
+          />
           <div className="flex w-full items-center justify-between px-1 py-2">
             <Checkbox name="remember" size="sm">
               Remember me
@@ -50,9 +99,11 @@ export default function Component() {
           <Divider className="flex-1" />
         </div>
         <div className="flex flex-col gap-2">
-          <Link href='#'><Button className='w-full' startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
-            Continue with Google
-          </Button></Link>
+          <Link href="#">
+            <Button className="w-full" startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
+              Continue with Google
+            </Button>
+          </Link>
           <Button startContent={<Icon className="text-default-500" icon="fe:github" width={24} />} variant="bordered">
             Continue with Github
           </Button>
@@ -65,5 +116,5 @@ export default function Component() {
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Auth.Commands;
-using OPS.Application.Features.Auth.Queries;
+using OPS.Application.Features.Authentication.Commands;
+using OPS.Application.Features.Authentication.Queries;
 
 namespace OPS.Api.Controllers;
 

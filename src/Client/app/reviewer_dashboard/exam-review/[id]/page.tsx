@@ -2,7 +2,7 @@
 import React, {SVGProps} from "react";
 import {
     Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination,
-    Selection, SortDescriptor, useDisclosure,
+    Selection, SortDescriptor,
 } from "@heroui/react";
 import {Link} from "@nextui-org/react";
 
@@ -60,15 +60,12 @@ type User = (typeof users)[0];
 export default function Component({ params }: { params: Promise<{ id: string }> }) {
     const paramsId=React.use(params);
     const [filterValue, setFilterValue] = React.useState("");
-    const {isOpen, onOpen, onClose} = useDisclosure();
-    const [size, setSize] = React.useState("sm");
-    const [state, setState] = React.useState("");
 
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS),
     );
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+  
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column:"Date",
@@ -77,7 +74,7 @@ export default function Component({ params }: { params: Promise<{ id: string }> 
     const [page, setPage] = React.useState(1);
     const hasSearchFilter = Boolean(filterValue);
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
+        if (visibleColumns === "all") { setVisibleColumns("all"); return columns;}
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
@@ -90,7 +87,7 @@ export default function Component({ params }: { params: Promise<{ id: string }> 
             );
         }
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [ filterValue,hasSearchFilter]);
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
@@ -118,7 +115,7 @@ export default function Component({ params }: { params: Promise<{ id: string }> 
             default:
                 return cellValue;
         }
-    }, []);
+    }, [paramsId.id]);
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
@@ -179,16 +176,15 @@ export default function Component({ params }: { params: Promise<{ id: string }> 
         );
     }, [
         filterValue,
-        statusFilter,
-        visibleColumns,
+        onClear,paramsId.id,
         onSearchChange,
         onRowsPerPageChange,
-        users.length,
-        hasSearchFilter,
+
     ]);
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
+                <span className="w-[30%] text-small text-default-400"></span>
                 <Pagination
                     isCompact
                     showControls
@@ -208,7 +204,7 @@ export default function Component({ params }: { params: Promise<{ id: string }> 
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [ page, pages,onNextPage,onPreviousPage]);
     return (
         <>
             <Table className="px-10 mx-2"
