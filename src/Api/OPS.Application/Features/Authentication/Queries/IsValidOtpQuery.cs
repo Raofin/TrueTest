@@ -4,7 +4,7 @@ using MediatR;
 using OPS.Application.CrossCutting.Constants;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Auth.Queries;
+namespace OPS.Application.Features.Authentication.Queries;
 
 public record IsValidOtpQuery(string Email, string Otp) : IRequest<ErrorOr<bool>>;
 

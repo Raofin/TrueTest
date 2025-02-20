@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Exams.Commands;
+namespace OPS.Application.Features.Examinations.Commands;
 
 public record DeleteExamCommand(Guid ExamId) : IRequest<ErrorOr<Success>>;
 
@@ -15,15 +15,14 @@ public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
     {
         var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
 
-        if (exam is null)
-            return Error.NotFound();
+        if (exam is null) return Error.NotFound("Exam was not found");
 
         _unitOfWork.Exam.Remove(exam);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
             ? Result.Success
-            : Error.Failure();
+            : Error.Failure("The exam could not be deleted.");
     }
 }
 
@@ -33,6 +32,6 @@ public class DeleteExamCommandValidator : AbstractValidator<DeleteExamCommand>
     {
         RuleFor(x => x.ExamId)
             .NotEmpty()
-            .Must(id => Guid.TryParse(id.ToString(), out _));
+            .Must(id => id != Guid.Empty);
     }
 }

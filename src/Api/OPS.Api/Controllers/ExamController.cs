@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Exams.Commands;
-using OPS.Application.Features.Exams.Queries;
+using OPS.Application.Features.Examinations.Commands;
+using OPS.Application.Features.Examinations.Queries;
 
 namespace OPS.Api.Controllers;
 
@@ -60,5 +60,29 @@ public class ExamController(IMediator mediator) : BaseApiController
         var deleteResult = await _mediator.Send(command);
 
         return ToResult(deleteResult);
+    }
+    
+    [HttpGet("UpcomingExams/{accountId:guid}")]
+    public async Task<IActionResult> GetUpcomingExamsByAccountIdAsync(Guid accountId)
+    {
+        var query = new GetUpcomingExamsByAccountIdQuery(accountId);
+
+        var result = await _mediator.Send(query);
+
+        return !result.IsError
+            ? Ok(result.Value)
+            : Problem(result.FirstError.Description);
+    }
+
+    [HttpGet("PreviousExams/{accountId:guid}")]
+    public async Task<IActionResult> GetPreviousExamsByAccountIdAsync(Guid accountId)
+    {
+        var query = new GetPreviousExamsByAccountIdQuery(accountId);
+
+        var result = await _mediator.Send(query);
+
+        return !result.IsError
+            ? Ok(result.Value)
+            : Problem(result.FirstError.Description);
     }
 }

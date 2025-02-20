@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OPS.Domain;
+using OPS.Domain.Contracts;
 using OPS.Domain.Contracts.Repository;
 using OPS.Persistence.Repositories;
 
@@ -14,6 +15,9 @@ public static class DependencyInjection
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IOtpRepository, OtpRepository>();
         services.AddScoped<IExamRepository, ExamRepository>();
+        services.AddScoped<IExamCandidatesRepository, ExamCandidatesRepository>();
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<IWrittenSubmissionRepository, WrittenSubmissionRepository>();
 
         return services;
     }

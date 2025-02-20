@@ -5,7 +5,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Exams.Commands;
+namespace OPS.Application.Features.Examinations.Commands;
 
 public record UpdateExamCommand(
     Guid ExamId,
@@ -52,14 +52,14 @@ public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
     {
         RuleFor(x => x.ExamId)
             .NotEmpty()
-            .Must(id => Guid.TryParse(id.ToString(), out _));
+            .Must(id => id != Guid.Empty);
 
         RuleFor(x => x.Title)
-            .MaximumLength(100)
+            .MaximumLength(10)
             .When(x => !string.IsNullOrEmpty(x.Title));
 
         RuleFor(x => x.Description)
-            .MaximumLength(500)
+            .MaximumLength(100)
             .When(x => !string.IsNullOrEmpty(x.Description));
 
         RuleFor(x => x.DurationMinutes)

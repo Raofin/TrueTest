@@ -1,11 +1,11 @@
-﻿using MediatR;
-using ErrorOr;
+﻿using ErrorOr;
 using FluentValidation;
+using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Exams.Queries;
+namespace OPS.Application.Features.Examinations.Queries;
 
 public record GetExamByIdQuery(Guid ExamId) : IRequest<ErrorOr<ExamResponse>>;
 
@@ -30,6 +30,6 @@ public class GetExamByIdQueryValidator : AbstractValidator<GetExamByIdQuery>
     {
         RuleFor(x => x.ExamId)
             .NotEmpty()
-            .Must(id => Guid.TryParse(id.ToString(), out _));
+            .Must(id => id != Guid.Empty);
     }
 }

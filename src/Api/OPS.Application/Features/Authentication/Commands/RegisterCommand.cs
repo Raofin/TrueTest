@@ -3,13 +3,13 @@ using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
+using OPS.Application.CrossCutting.Constants;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Application.CrossCutting.Constants;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
-namespace OPS.Application.Features.Auth.Commands;
+namespace OPS.Application.Features.Authentication.Commands;
 
 public record RegisterCommand(
     string Username,

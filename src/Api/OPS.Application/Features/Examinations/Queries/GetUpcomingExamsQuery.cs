@@ -4,7 +4,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Exams.Queries;
+namespace OPS.Application.Features.Examinations.Queries;
 
 public record GetUpcomingExams : IRequest<ErrorOr<List<ExamResponse>>>;
 

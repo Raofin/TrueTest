@@ -18,6 +18,11 @@ internal class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEnti
         return await _entities.ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<TEntity>> GetAllAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _entities.Where(e => EF.Property<Guid>(e, "Id").Equals(id)).ToListAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken)
     {
