@@ -35,7 +35,7 @@ export default function LoginComponent() {
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        setError(error.response.data.message || 'Invalid credentials');
+        setError(error.response.data.message || 'Invalid email or password');
       } else {
         setError('An unexpected error occurred');
       }

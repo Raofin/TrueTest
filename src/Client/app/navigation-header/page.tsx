@@ -1,5 +1,5 @@
 "use client";
-
+import Cookies from 'js-cookie';
 import { useDashboard } from "../DashboardContext";
 import {Card, CardBody, Tab, Tabs} from "@heroui/react";
 import {
@@ -49,6 +49,7 @@ export default function Component({ onThemeToggle }: PageProps ) {
     }
   };
   const logout = () => {
+    Cookies.remove('authToken');
     localStorage.removeItem("user");
     router.push('/login');
 };
