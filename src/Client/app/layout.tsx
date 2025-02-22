@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className={theme === 'dark' ? 'dark' : ''}> 
                 <Providers>
                     {!path.includes('login') && !path.includes('registration')
-                        && !path.includes('settings') && !path.includes('myprofile') && !path.includes('otp') && !path.includes('exam-review') && <NavBar onThemeToggle={handleThemeToggle} />} {/* Pass callback to NavBar */}
+                        && !path.includes('settings') && !path.includes('myprofile') && !path.includes('exam-review') && <NavBar onThemeToggle={handleThemeToggle} />}
                     <main className="h-screen">{children}</main> 
                 </Providers>
             </body>

@@ -1,5 +1,5 @@
 "use client"
-import React, { SVGProps, useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";

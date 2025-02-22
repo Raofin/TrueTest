@@ -1,12 +1,12 @@
 "use client"
-import React, {SVGProps} from "react";
+import React from "react";
 import { FiFlag } from "react-icons/fi";
 import { FaHourglassEnd } from "react-icons/fa";
 import {
     Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination, Chip,
     Selection, SortDescriptor, Tooltip, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure,
 } from "@heroui/react";
-import SearchIcon from "@/app/table/search_icon/page";
+import SearchIcon from "../../table/search_icon/page";
 
 const columns = [
     {name: "Exam ID", uid: "ExamId"},
