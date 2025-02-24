@@ -3,6 +3,7 @@ using OPS.Domain;
 using OPS.Domain.Contracts;
 using OPS.Domain.Contracts.Repository;
 using OPS.Domain.Entities.Common;
+using OPS.Persistence.Repositories;
 
 namespace OPS.Persistence;
 
@@ -13,7 +14,10 @@ internal class UnitOfWork(
     IExamRepository examRepository,
     IExamCandidatesRepository examCandidatesRepository,
     IQuestionRepository questionRepository,
-    IWrittenSubmissionRepository writtenSubmissionRepository) : IUnitOfWork
+    IWrittenSubmissionRepository writtenSubmissionRepository,
+    IMcqSubmissionRepository mcqSubmissionRepository,
+    IMcqOptionRepository mcqOptionRepository
+    ) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
@@ -23,7 +27,8 @@ internal class UnitOfWork(
     public IExamCandidatesRepository ExamCandidate { get; } = examCandidatesRepository;
     public IQuestionRepository Question { get; } = questionRepository;
     public IWrittenSubmissionRepository WrittenSubmission { get; } = writtenSubmissionRepository;
-
+    public IMcqSubmissionRepository McqSubmission { get; } = mcqSubmissionRepository;
+    public IMcqOptionRepository McqOption { get; } = mcqOptionRepository;
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
         var softDeletableEntities = _dbContext.ChangeTracker

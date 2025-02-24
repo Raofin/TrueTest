@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
+using OPS.Application.CrossCutting.Attributes;
 using OPS.Application.Features.Examinations.Commands;
 using OPS.Application.Features.Examinations.Queries;
+using OPS.Domain.Enums;
 
 namespace OPS.Api.Controllers;
 
@@ -13,9 +15,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     [HttpGet]
     public async Task<IActionResult> GetAllExamsAsync()
     {
-        var query = new GetAllExamsQuery();
-
-        var exams = await _mediator.Send(query);
+        var exams = await _mediator.Send(new GetAllExamsQuery());
 
         return ToResult(exams);
     }
@@ -31,9 +31,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     [HttpGet("UpcomingExams")]
     public async Task<IActionResult> GetUpcomingExamsAsync()
     {
-        var query = new GetUpcomingExams();
-
-        var upcomingExams = await _mediator.Send(query);
+        var upcomingExams = await _mediator.Send(new GetUpcomingExams());
 
         return ToResult(upcomingExams);
     }
@@ -65,24 +63,16 @@ public class ExamController(IMediator mediator) : BaseApiController
     [HttpGet("UpcomingExams/{accountId:guid}")]
     public async Task<IActionResult> GetUpcomingExamsByAccountIdAsync(Guid accountId)
     {
-        var query = new GetUpcomingExamsByAccountIdQuery(accountId);
+        var result = await _mediator.Send(new GetUpcomingExamsByAccountIdQuery(accountId));
 
-        var result = await _mediator.Send(query);
-
-        return !result.IsError
-            ? Ok(result.Value)
-            : Problem(result.FirstError.Description);
+        return ToResult(result);   
     }
 
     [HttpGet("PreviousExams/{accountId:guid}")]
     public async Task<IActionResult> GetPreviousExamsByAccountIdAsync(Guid accountId)
     {
-        var query = new GetPreviousExamsByAccountIdQuery(accountId);
+        var result = await _mediator.Send(new GetPreviousExamsByAccountIdQuery(accountId));
 
-        var result = await _mediator.Send(query);
-
-        return !result.IsError
-            ? Ok(result.Value)
-            : Problem(result.FirstError.Description);
+        return ToResult(result);    
     }
 }
