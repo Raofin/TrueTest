@@ -20,6 +20,8 @@ public static class DependencyInjection
         services.AddScoped<IWrittenSubmissionRepository, WrittenSubmissionRepository>();
         services.AddScoped<IMcqSubmissionRepository, McqSubmissionRepository>();
         services.AddScoped<IMcqOptionRepository, McqOptionRepository>();
+        services.AddScoped<IProfileRepository, ProfileRepository>();
+        services.AddScoped<IProfileSocialRepository, ProfileSocialRepository>();
 
         return services;
     }

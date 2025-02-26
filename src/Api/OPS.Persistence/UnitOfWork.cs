@@ -16,7 +16,9 @@ internal class UnitOfWork(
     IQuestionRepository questionRepository,
     IWrittenSubmissionRepository writtenSubmissionRepository,
     IMcqSubmissionRepository mcqSubmissionRepository,
-    IMcqOptionRepository mcqOptionRepository
+    IMcqOptionRepository mcqOptionRepository,
+    IProfileRepository profileRepository,
+    IProfileSocialRepository profileSocialRepository    
     ) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
@@ -29,6 +31,9 @@ internal class UnitOfWork(
     public IWrittenSubmissionRepository WrittenSubmission { get; } = writtenSubmissionRepository;
     public IMcqSubmissionRepository McqSubmission { get; } = mcqSubmissionRepository;
     public IMcqOptionRepository McqOption { get; } = mcqOptionRepository;
+    public IProfileRepository Profile { get; } = profileRepository;
+    public IProfileSocialRepository ProfileSocial { get; } = profileSocialRepository;
+
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
         var softDeletableEntities = _dbContext.ChangeTracker
