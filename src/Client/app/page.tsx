@@ -14,8 +14,7 @@ export default function Component(){
                         prevents cheating conducted via online software that enables students to sit for tests from any
                         location.</p>
                 </div>
-                <a href="https://imgbb.com/"><img src="https://i.ibb.co.com/21PXzN7q/download.png" 
-                     alt="ops-banner" className={"mt-12 w-[1000px] h-[500px]"}/></a>
+               
             </div>
         </>
 

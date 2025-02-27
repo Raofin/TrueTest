@@ -1,7 +1,8 @@
 'use client'
 
-import {DashboardProvider} from "./DashboardContext";
+import { AuthProvider } from "./context/AuthProvider";
+import {DashboardProvider} from "./context/DashboardContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return  <DashboardProvider>{children}</DashboardProvider>
+  return  <AuthProvider><DashboardProvider>{children}</DashboardProvider></AuthProvider>
 }

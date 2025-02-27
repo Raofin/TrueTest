@@ -1,11 +1,15 @@
 'use client'
 import { Providers } from './providers'
-import NavBar from './navigation-header/page'
+import NavBar from './navigation-header/NavBar'
 import { usePathname } from "next/navigation";
 import '../styles/globals.css'
 import React, { useState,useEffect } from 'react'; 
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+interface RootLayoutProps {
+    children: React.ReactNode;
+  }
+  
+  export default function RootLayout({ children }: RootLayoutProps) {
     const path = usePathname();
     const [theme, setTheme] = useState('light'); 
     useEffect(() => {
