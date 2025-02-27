@@ -10,14 +10,14 @@ using OPS.Domain.Entities.Submit;
 
 namespace OPS.Application.Features.McqSubmissions.Queries;
 
-public record GetMcqSubmissionByIdQuery(Guid McqSubmissionId) : IRequest<ErrorOr<McqSubmissionResponse>>;
+public record GetProblemSubmissionByIdQuery(Guid McqSubmissionId) : IRequest<ErrorOr<McqSubmissionResponse>>;
 
 public class GetMcqSubmissionByIdQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetMcqSubmissionByIdQuery, ErrorOr<McqSubmissionResponse>>
+    : IRequestHandler<GetProblemSubmissionByIdQuery, ErrorOr<McqSubmissionResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<McqSubmissionResponse>> Handle(GetMcqSubmissionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<McqSubmissionResponse>> Handle(GetProblemSubmissionByIdQuery request, CancellationToken cancellationToken)
     {
         var mcqSubmission = await _unitOfWork.McqSubmission.GetAsync(request.McqSubmissionId, cancellationToken);
 
@@ -27,7 +27,7 @@ public class GetMcqSubmissionByIdQueryHandler(IUnitOfWork unitOfWork)
     }
 }
 
-public class GetMcqSubmissionByIdQueryValidator : AbstractValidator<GetMcqSubmissionByIdQuery>
+public class GetMcqSubmissionByIdQueryValidator : AbstractValidator<GetProblemSubmissionByIdQuery>
 {
     public GetMcqSubmissionByIdQueryValidator()
     {

@@ -17,6 +17,7 @@ public interface IUnitOfWork : IDisposable
     IMcqOptionRepository McqOption { get; } 
     IProfileRepository Profile { get; }
     IProfileSocialRepository ProfileSocial { get; }
+    IProblemSubmissionRepository ProblemSubmission { get; }
 
     Task<int> CommitAsync(CancellationToken cancellationToken = default);
 }

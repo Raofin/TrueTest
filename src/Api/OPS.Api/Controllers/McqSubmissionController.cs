@@ -25,11 +25,11 @@ public class McqSubmissionController(IMediator mediator) : BaseApiController
     [HttpGet("{mcqSubmissionId:guid}")]
     public async Task<IActionResult> GetExamByIdAsync(Guid mcqSubmissionId)
     {
-        var result = await _mediator.Send(new GetMcqSubmissionByIdQuery(mcqSubmissionId));
+        var result = await _mediator.Send(new GetProblemSubmissionByIdQuery(mcqSubmissionId));
 
         return ToResult(result);
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> CreateAsync(CreateMcqSubmissionCommand command)
     {

@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IMcqOptionRepository, McqOptionRepository>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
         services.AddScoped<IProfileSocialRepository, ProfileSocialRepository>();
+        services.AddScoped<IProblemSubmissionRepository, ProblemSubmissionRepository>();
 
         return services;
     }
