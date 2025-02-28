@@ -12,7 +12,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
         string? username, string? email, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(username) && string.IsNullOrWhiteSpace(email))
-            throw new ArgumentException();
+            throw new ArgumentException("Both username and email cannot be null or empty.");
 
         var exists = await _dbContext.Accounts
             .AsNoTracking()
@@ -22,6 +22,13 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .AnyAsync(cancellationToken);
 
         return !exists;
+    }
+
+    public async Task<Account?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Accounts
+            .Where(a => a.Email == email)
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<bool> IsExistsAsync(string? username, string? email, CancellationToken cancellationToken)
@@ -37,7 +44,6 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
     public async Task<Account?> GetWithDetails(string usernameOrEmail, CancellationToken cancellationToken)
     {
         return await _dbContext.Accounts
-            .AsNoTracking()
             .Include(a => a.AccountRoles)
             .ThenInclude(ar => ar.Role)
             .Include(a => a.Profile)
