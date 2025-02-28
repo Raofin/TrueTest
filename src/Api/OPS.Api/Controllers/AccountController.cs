@@ -29,16 +29,16 @@ public class AccountController(IMediator mediator) : BaseApiController
     //     return ToResult(accounts);
     // }
 
-    [HttpPatch("ToggleActiveStatus")]
-    public async Task<IActionResult> ToggleActiveStatus(ToggleActiveStatusCommand command)
+    [HttpPatch("ChangeStatus")]
+    public async Task<IActionResult> ChangeStatus(ChangeAccountStatusCommand command)
     {
-        var status = await _mediator.Send(command);
+        var account = await _mediator.Send(command);
 
-        return ToResult(status);
+        return ToResult(account);
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateAccount(UpdateAccountCommand command)
+    public async Task<IActionResult> Update(UpdateAccountCommand command)
     {
         var updatedAccount = await _mediator.Send(command);
 

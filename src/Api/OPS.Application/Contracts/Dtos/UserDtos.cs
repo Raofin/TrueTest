@@ -1,4 +1,6 @@
-﻿namespace OPS.Application.Contracts.Dtos;
+﻿using OPS.Domain.Enums;
+
+namespace OPS.Application.Contracts.Dtos;
 
 public record AuthenticationResult(
     string Token,
@@ -11,5 +13,6 @@ public record AccountResponse(
     string Email,
     DateTime CreatedAt,
     DateTime? UpdatedAt,
-    bool IsActive
+    bool IsActive,
+    List<RoleType> Roles
 );

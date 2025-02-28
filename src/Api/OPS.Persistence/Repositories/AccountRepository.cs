@@ -41,7 +41,15 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .AnyAsync(cancellationToken);
     }
 
-    public async Task<Account?> GetWithDetails(string usernameOrEmail, CancellationToken cancellationToken)
+    public async Task<List<Account>> GetAllWithDetails(CancellationToken cancellationToken)
+    {
+        return await _dbContext.Accounts
+            .AsNoTracking()
+            .Include(a => a.AccountRoles)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Account?> GetWithProfile(string usernameOrEmail, CancellationToken cancellationToken)
     {
         return await _dbContext.Accounts
             .Include(a => a.AccountRoles)

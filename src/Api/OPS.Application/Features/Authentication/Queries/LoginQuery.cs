@@ -22,7 +22,7 @@ public class LoginQueryHandler(
 
     public async Task<ErrorOr<AuthenticationResult>> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-        var account = await _unitOfWork.Account.GetWithDetails(request.UsernameOrEmail, cancellationToken);
+        var account = await _unitOfWork.Account.GetWithProfile(request.UsernameOrEmail, cancellationToken);
 
         if (account == null) return Error.NotFound();
 
