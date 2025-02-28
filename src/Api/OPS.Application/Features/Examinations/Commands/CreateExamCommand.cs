@@ -36,7 +36,7 @@ public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? exam.ToDto()
-            : Error.Failure("The exam could not be saved.");
+            : Error.Failure();
     }
 }
 
@@ -45,21 +45,18 @@ public class CreateExamCommandValidator : AbstractValidator<CreateExamCommand>
     public CreateExamCommandValidator()
     {
         RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("Title is required.")
-            .Length(3, 100).WithMessage("Title must be between 3 and 100 characters.");
+            .NotEmpty();
 
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("Description is required.")
-            .Length(10, 500).WithMessage("Description must be between 10 and 500 characters.");
+            .NotEmpty();
 
         RuleFor(x => x.DurationMinutes)
-            .GreaterThan(10)
-            .WithMessage("Duration must be more than 10 minutes.");
+            .GreaterThan(0);
 
         RuleFor(x => x.OpensAt)
-            .GreaterThan(DateTime.UtcNow).WithMessage("OpensAt must be in the future.");
+            .GreaterThan(DateTime.UtcNow);
 
         RuleFor(x => x.ClosesAt)
-            .GreaterThan(x => x.OpensAt).WithMessage("ClosesAt must be later than OpensAt.");
+            .GreaterThan(x => x.OpensAt);
     }
 }

@@ -22,7 +22,7 @@ public class UpdateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
     {
         var writtenSubmission = await _unitOfWork.WrittenSubmission.GetAsync(command.WrittenSubmissionId, cancellationToken);
 
-        if (writtenSubmission is null) return Error.NotFound("WrittenSubmission was not found");
+        if (writtenSubmission is null) return Error.NotFound();
 
         writtenSubmission.Answer = command.Answer ?? writtenSubmission.Answer;
         writtenSubmission.Score = command.Score ?? writtenSubmission.Score;
@@ -32,7 +32,7 @@ public class UpdateWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? writtenSubmission.ToDto()
-            : Error.Failure("The WrittenSubmission could not be saved.");
+            : Error.Failure();
     }
 }
 

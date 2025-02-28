@@ -29,7 +29,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<WrittenSubmission> WrittenSubmissions { get; set; } = null!;
     public DbSet<CloudFile> CloudFiles { get; set; } = null!;
     public DbSet<LogEvent> LogEvents { get; set; } = null!;
-
+  
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
