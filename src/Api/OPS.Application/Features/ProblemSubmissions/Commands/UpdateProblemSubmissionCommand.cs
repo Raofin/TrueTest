@@ -36,6 +36,8 @@ public class UpdateProblemSubmissionCommandHandler(IUnitOfWork unitOfWork)
         problemSubmission.IsFlagged = command.IsFlagged;
         problemSubmission.FlagReason = command.FlagReason ?? problemSubmission.FlagReason;
         problemSubmission.ProgLanguageId = command.ProgLanguageId;
+        problemSubmission.UpdatedAt = DateTime.Now;
+
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 

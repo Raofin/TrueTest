@@ -21,6 +21,14 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(accounts);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllAccountsByThisMonth()
+    {
+        var accounts = await _mediator.Send(new GetAllAccountsByThisMonthQuery());
+
+        return ToResult(accounts);
+    }
+
     [HttpPatch("ToggleActiveStatus")]
     public async Task<IActionResult> ToggleActiveStatus(ToggleActiveStatusCommand command)
     {

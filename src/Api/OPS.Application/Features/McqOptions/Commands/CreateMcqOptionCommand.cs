@@ -38,9 +38,7 @@ public class CreateMcqOptionCommandHandler(IUnitOfWork unitOfWork)
             Option3 = request.Option3,
             Option4 = request.Option4,
             IsMultiSelect = request.isMultiSelect,
-            AnswerOptions = request.AnswerOptions,  
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
+            AnswerOptions = request.AnswerOptions
         };
 
         _unitOfWork.McqOption.Add(mcqOption);

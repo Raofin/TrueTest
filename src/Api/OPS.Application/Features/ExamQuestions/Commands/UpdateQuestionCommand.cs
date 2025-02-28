@@ -34,6 +34,7 @@ public class UpdateQuestionCommandHandler(IUnitOfWork unitOfWork)
         question.QuestionTypeId = command.QuestionTypeId.HasValue ? (int)command.QuestionTypeId.Value : question.QuestionTypeId;
         question.IsActive = command.IsActive ?? question.IsActive;
         question.IsDeleted = command.IsDeleted ?? question.IsDeleted;
+        question.UpdatedAt = DateTime.UtcNow;
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 

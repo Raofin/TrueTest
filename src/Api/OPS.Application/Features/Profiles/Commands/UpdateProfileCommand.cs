@@ -41,6 +41,7 @@ public class UpdateProfileCommandHandler(IUnitOfWork unitOfWork)
         profile.ImageFileId = command.ImageFileId == Guid.Empty ? null : command.ImageFileId;
         profile.ImageFile = null;
         profile.AccountId = Guid.Parse("41FA5C6E-AC17-4C63-9BED-AF6FECE20990");
+        profile.UpdatedAt = DateTime.UtcNow;                
 
 
         if (command.ProfileSocials != null)

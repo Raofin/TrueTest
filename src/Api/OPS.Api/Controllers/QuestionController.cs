@@ -35,6 +35,13 @@ public class QuestionController(IMediator mediator) : BaseApiController
         return ToResult(result);
     }
 
+    [HttpGet("{examId:guid}/{questionTypeId:int}")]
+    public async Task<IActionResult> GetAllQuestionsByExamIdQuestionTypeIdAsync(Guid examId,int questionTypeId)
+    {
+        var result = await _mediator.Send(new GetAllQuestionByExamIdQuestionTypeIdQuery(examId,questionTypeId));
+        return ToResult(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateAsync(CreateQuestionCommand command)
     {

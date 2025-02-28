@@ -33,9 +33,7 @@ public class CreateMcqSubmissionCommandHandler(IUnitOfWork unitOfWork)
         {
             AccountId = request.AccountId,
             AnswerOptions = request.AnswerOptions,
-            McqOptionId = request.McqOptionId,
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
+            McqOptionId = request.McqOptionId
         };
 
         _unitOfWork.McqSubmission.Add(mcqSubmission);
