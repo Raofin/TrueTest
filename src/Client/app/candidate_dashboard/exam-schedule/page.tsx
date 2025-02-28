@@ -239,7 +239,7 @@ export default function Component() {
     const [page, setPage] = React.useState(1);
     const hasSearchFilter = Boolean(filterValue);
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
+        if (visibleColumns === "all"){ setVisibleColumns("all"); return columns;}
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
@@ -258,7 +258,7 @@ export default function Component() {
         }
 
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [ filterValue, statusFilter,hasSearchFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -392,11 +392,8 @@ export default function Component() {
     }, [
         filterValue,
         statusFilter,
-        visibleColumns,
         onSearchChange,
-        onRowsPerPageChange,
-        users.length,
-        hasSearchFilter,
+        onRowsPerPageChange,onClear
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -426,7 +423,7 @@ export default function Component() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [selectedKeys, page, pages, filteredItems.length, onNextPage ,onPreviousPage]);
 
     return (
         <Table

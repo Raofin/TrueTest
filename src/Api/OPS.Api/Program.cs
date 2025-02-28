@@ -9,7 +9,7 @@ builder.Services
     .AddInfrastructure(builder.Configuration, builder.Environment, builder.Host)
     .AddPersistence()
     .AddApplication()
-    .AddApi();
+    .AddApi(builder.Configuration);
 
 var app = builder.Build();
 

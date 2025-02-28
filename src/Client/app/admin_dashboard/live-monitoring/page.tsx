@@ -6,41 +6,7 @@ import {
     Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Button, User, Pagination, Chip,
     Selection, SortDescriptor, Tooltip, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure,
 } from "@heroui/react";
-
-export type IconSvgProps = SVGProps<SVGSVGElement> & {
-    size?: number;
-};
-
-const SearchIcon = (props: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height="1em"
-            role="presentation"
-            viewBox="0 0 24 24"
-            width="1em"
-            {...props}
-        >
-            <path
-                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-            />
-            <path
-                d="M22 22L20 20"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-            />
-        </svg>
-    );
-};
-
+import SearchIcon from "@/app/table/search_icon/page";
 
 const columns = [
     {name: "Exam ID", uid: "ExamId"},
@@ -64,24 +30,18 @@ const users = [{
     Webcam:"Visible",
     Action:"Edit Delete"
 },];
-const INITIAL_VISIBLE_COLUMNS = ["ExamId","ExamName","CandidateId", "CandidateName", "Date","Time","Status","Webcam","Action"];
 type User = (typeof users)[0];
 
 export default function Component() {
     const [filterValue, setFilterValue] = React.useState("");
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const [size, setSize] = React.useState("sm");
     const [state, setState] = React.useState("");
-    const handleOpen = (word:string) => {
-        setSize("sm");
+    const handleOpen = React.useCallback((word: string) => {
         setState(word);
         onOpen();
-    };
+    }, [onOpen]); 
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
-    const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-        new Set(INITIAL_VISIBLE_COLUMNS),
-    );
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column:"Date",
@@ -89,11 +49,10 @@ export default function Component() {
     });
     const [page, setPage] = React.useState(1);
     const hasSearchFilter = Boolean(filterValue);
-    const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
 
-        return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
-    }, [visibleColumns]);
+    const headerColumns = React.useMemo(() => {
+    return columns;}, []);
+    
     const filteredItems = React.useMemo(() => {
         let filteredUsers = [...users];
 
@@ -103,7 +62,7 @@ export default function Component() {
             );
         }
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [ filterValue, hasSearchFilter]);
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
@@ -148,7 +107,7 @@ export default function Component() {
             default:
                 return cellValue;
         }
-    }, []);
+    }, [handleOpen]);
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
@@ -209,12 +168,9 @@ export default function Component() {
         );
     }, [
         filterValue,
-        statusFilter,
-        visibleColumns,
         onSearchChange,
         onRowsPerPageChange,
-        users.length,
-        hasSearchFilter,
+        onClear      
     ]);
     const bottomContent = React.useMemo(() => {
         return (
@@ -241,7 +197,7 @@ export default function Component() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [ page, pages,onNextPage,onPreviousPage ]);
     return (
         <>
             <Table className="px-10 mx-2"
