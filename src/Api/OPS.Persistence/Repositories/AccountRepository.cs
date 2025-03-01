@@ -51,11 +51,32 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
 
     public async Task<Account?> GetWithProfile(string usernameOrEmail, CancellationToken cancellationToken)
     {
-        return await _dbContext.Accounts
+        return await GetWithProfileQuery()
+            .Where(a => a.Username == usernameOrEmail || a.Email == usernameOrEmail)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<Account?> GetWithProfile(Guid accountId, CancellationToken cancellationToken)
+    {
+        return await GetWithProfileQuery()
+            .Where(a => a.Id == accountId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    private IQueryable<Account> GetWithProfileQuery()
+    {
+        return _dbContext.Accounts
             .Include(a => a.AccountRoles)
             .ThenInclude(ar => ar.Role)
             .Include(a => a.Profile)
-            .Where(a => a.Username == usernameOrEmail || a.Email == usernameOrEmail)
+            .ThenInclude(p => p!.ProfileSocials);
+    }
+    
+    public  async Task<Profile?> GetProfile(Guid accountId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Profiles
+            .Where(p => p.AccountId == accountId)
+            .Include(p => p.ProfileSocials)
             .SingleOrDefaultAsync(cancellationToken);
     }
 }

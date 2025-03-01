@@ -21,16 +21,8 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(accounts);
     }
 
-    // [HttpGet]
-    // public async Task<IActionResult> GetAllAccountsByThisMonth()
-    // {
-    //     var accounts = await _mediator.Send(new GetAllAccountsByThisMonthQuery());
-    //
-    //     return ToResult(accounts);
-    // }
-
-    [HttpPatch("ChangeStatus")]
-    public async Task<IActionResult> ChangeStatus(ChangeAccountStatusCommand command)
+    [HttpPatch("ChangeActiveStatus")]
+    public async Task<IActionResult> ChangeActiveStatus(ChangeActiveStatusCommand command)
     {
         var account = await _mediator.Send(command);
 
@@ -38,7 +30,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(UpdateAccountCommand command)
+    public async Task<IActionResult> UpdateAccount(UpdateAccountCommand command)
     {
         var updatedAccount = await _mediator.Send(command);
 

@@ -9,4 +9,6 @@ public interface IAccountRepository : IBaseRepository<Account>
     Task<List<Account>> GetAllWithDetails(CancellationToken cancellationToken);
     Task<bool> IsExistsAsync(string? username, string? email, CancellationToken cancellationToken);
     Task<Account?> GetWithProfile(string usernameOrEmail, CancellationToken cancellationToken);
+    Task<Account?> GetWithProfile(Guid accountId, CancellationToken cancellationToken);
+    Task<Profile?> GetProfile(Guid accountId, CancellationToken cancellationToken);
 }

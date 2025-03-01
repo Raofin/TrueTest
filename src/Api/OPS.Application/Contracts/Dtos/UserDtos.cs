@@ -14,5 +14,23 @@ public record AccountResponse(
     DateTime CreatedAt,
     DateTime? UpdatedAt,
     bool IsActive,
-    List<RoleType> Roles
+    List<RoleType> Roles,
+    ProfileResponse? Profile
+);
+
+public record ProfileResponse(
+    Guid ProfileId,
+    string? FirstName,
+    string? LastName,
+    string? BioMarkdown,
+    string? InstituteName,
+    string? PhoneNumber,
+    Guid? ImageFileId,
+    List<ProfileSocialRequest> ProfileSocials
+);
+
+public record ProfileSocialRequest(
+    Guid? Id,
+    string? Name,
+    string? Link
 );
