@@ -18,6 +18,7 @@ public interface IUnitOfWork : IDisposable
     IProfileRepository Profile { get; }
     IProfileSocialRepository ProfileSocial { get; }
     IProblemSubmissionRepository ProblemSubmission { get; }
+    ITestCaseRepository TestCase { get; }
 
     Task<int> CommitAsync(CancellationToken cancellationToken = default);
 }

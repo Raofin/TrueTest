@@ -17,6 +17,11 @@ public class GetAllAccountsByThisMonthQueryHandler(IUnitOfWork unitOfWork)
     {
         var accounts = await _unitOfWork.Account.GetAsync(cancellationToken);
 
-        return accounts.Select(a => a.ToDto()).ToList();
+        var currentMonth = DateTime.UtcNow.Month;
+        var currentYear = DateTime.UtcNow.Year;
+        return  accounts
+            .Where(a => a.CreatedAt.Year == currentYear && a.CreatedAt.Month == currentMonth)
+            .Select(a => a.ToDto())
+            .ToList();
     }
 }

@@ -20,8 +20,8 @@ public class AccountController(IMediator mediator) : BaseApiController
 
         return ToResult(accounts);
     }
-
-    [HttpGet]
+    
+    [HttpGet("GetAllAccountsByThisMonth")]
     public async Task<IActionResult> GetAllAccountsByThisMonth()
     {
         var accounts = await _mediator.Send(new GetAllAccountsByThisMonthQuery());
