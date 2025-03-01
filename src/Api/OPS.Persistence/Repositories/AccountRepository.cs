@@ -71,8 +71,8 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .Include(a => a.Profile)
             .ThenInclude(p => p!.ProfileSocials);
     }
-    
-    public  async Task<Profile?> GetProfile(Guid accountId, CancellationToken cancellationToken)
+
+    public async Task<Profile?> GetProfile(Guid accountId, CancellationToken cancellationToken)
     {
         return await _dbContext.Profiles
             .Where(p => p.AccountId == accountId)
