@@ -35,7 +35,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
             if (!isExists) throw new ArgumentNullException(nameof(request.ImageFileId), "Image file does not exist.");
         }
 
-        var profile = await _unitOfWork.Account.GetProfile(accountId, cancellationToken);
+        var profile = await _unitOfWork.Profile.GetByAccountId(accountId, cancellationToken);
 
         if (profile is null)
         {
@@ -95,7 +95,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         if (result <= 0) return Error.Failure();
-        profile = await _unitOfWork.Account.GetProfile(accountId, cancellationToken);
+        profile = await _unitOfWork.Profile.GetByAccountId(accountId, cancellationToken);
 
         return profile.ToDto()!;
 
