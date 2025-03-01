@@ -21,7 +21,7 @@ export default function ProblemSolvingFormp() {
     { question: "", testCases: [{ input: "", output: "" }] },
   ]);
   const [currentPage, setCurrentPage] = useState(0);
-  const problemsPerPage = 1; // Adjust as needed
+  const problemsPerPage = 1; 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const addTestCase = (problemIndex: number) => {
@@ -62,7 +62,7 @@ export default function ProblemSolvingFormp() {
     setProblems(prevProblems => {
       const newProblems = [...prevProblems, { question: "", testCases: [{ input: "", output: "" }] }];
       const newTotalPages = Math.ceil(newProblems.length / problemsPerPage);
-      setCurrentPage(newTotalPages - 1); // Go to the last page
+      setCurrentPage(newTotalPages - 1); 
       return newProblems;
     });
   };
@@ -114,17 +114,6 @@ export default function ProblemSolvingFormp() {
 
   const handleSaveAll = () => {
     setIsModalOpen(true);
-  };
-
-  const handleConfirmSave = () => {
-    // Implement your save logic here
-    console.log("Saving all problems:", problems);
-    toast.success("All problems saved successfully");
-    setIsModalOpen(false);
-  };
-
-  const handleCancelSave = () => {
-    setIsModalOpen(false);
   };
 
   return (

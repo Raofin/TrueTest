@@ -7,7 +7,7 @@ import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import '../../../styles/globals.css';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthProvider';
+// import { useAuth } from '../../context/AuthProvider';
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false);
@@ -84,7 +84,7 @@ export default function LoginComponent() {
             <Checkbox name="remember" size="sm">
               Remember me
             </Checkbox>
-            <Link className="text-default-500" href="#" size="sm">
+            <Link className="text-default-500" href="/auth/forgot-password" size="sm">
               Forgot password?
             </Link>
           </div>

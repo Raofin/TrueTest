@@ -28,7 +28,8 @@ interface RootLayoutProps {
         <html lang="en">
             <body className={theme === 'dark' ? 'dark' : ''}> 
                 <Providers>
-                        <main>{children}</main> 
+                    <NavBar/>
+                      <main>{children}</main> 
                 </Providers>
             </body>
         </html>

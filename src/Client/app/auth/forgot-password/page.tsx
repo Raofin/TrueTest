@@ -1,8 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import '../../styles/globals.css'
-import {Link} from "@nextui-org/react";
-import toast, {Toaster} from "react-hot-toast";
+import '../../../styles/globals.css'
+
+import toast, { Toaster } from "react-hot-toast";
+import { InputOtp } from "@heroui/input-otp";
+import { Button } from "@heroui/react";
+import Link from "next/link";
 const ForgotPasswordPage: React.FC = () => {
     const [contactInfo, setContactInfo] = useState("");
     const [mail, setEmail] = useState("");
@@ -12,8 +15,8 @@ const ForgotPasswordPage: React.FC = () => {
     const [isSuccess, setIsSuccess] = useState(true);
 
     const validateContactInfo = (info: string): boolean => {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(info);
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(info);
     };
     const handleGenerateEmail = async () => {
         if (!contactInfo) {
@@ -26,96 +29,32 @@ const ForgotPasswordPage: React.FC = () => {
             setIsSuccess(false);
             return;
         }
-        if(isSuccess) toast.success('Check your email');
-        const res = await fetch("", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({email: contactInfo}),
-        });
-        const result = await res.json();
-        setMessage(result.message);
-        if (res.status === 200) {
-            setIsEmailSent(true);
-            setIsSuccess(true);
-        } else {
-            setIsSuccess(false);
-        }
     };
-
-    const handleVerifyEmail = async () => {
-        const res = await fetch("/api/auth/forgotpassword/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: contactInfo , mail,
-            }),
-        });
-        const result = await res.json();
-        setMessage(result.message);
-        if (res.status === 200) {
-            setIsEmailVerified(true);
-            setIsSuccess(true);
-        } else {
-            setIsSuccess(false);
-            console.log(message);
-        }
-    };
-
+    const [value, setValue] = React.useState("");
     return (
         <div className="flex items-center justify-center h-[600px] bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+            <form className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
                 <h1 className="text-2xl font-semibold mb-6 text-center">
-                    Forgot Password
+                    Password Recovery
                 </h1>
-                {!isEmailSent ? (
-                    <>
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            value={contactInfo}
-                            onChange={(e) => setContactInfo(e.target.value)}
-                            required
-                            className="w-full p-3 border border-gray-300 rounded mb-4"
-                        />
-                        <button
-                            onClick={handleGenerateEmail}
-                            className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600">
-                            Send
-                        </button>
-                        {isSuccess?<Toaster
-                            position="top-right" toastOptions={{ duration: 3000}}
-                            reverseOrder={false}
-                        />: <Toaster
-                            position="top-center" toastOptions={{ duration: 2000}}
-                            reverseOrder={false}
-                        />}
-                    </>
-                ) : (
-                    <div>
-                        {!isEmailVerified ? (
-                            <div>
-                                <input
-                                    type="text"
-                                    placeholder="Enter Email"
-                                    value={mail}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded mb-4"
-                                />
-                                <button onClick={handleVerifyEmail}
-                                    className="w-full bg-blue-500 text-white p-3 rounded">
-                                   Send
-                                </button>
-
-                            </div>
-                        ) : (
-                            <div className="text-center">
-                                <Link href="/forgot_password/reset_password" className="text-xl font-semibold">Reset Password</Link>
-                            </div>
-                        )}
+                <>
+                    <input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={contactInfo}
+                        onChange={(e) => setContactInfo(e.target.value)}
+                        required
+                        className="w-full p-3 border border-gray-300 rounded mb-4" />
+                    <div className="flex  items-center gap-2">
+                        <div className="text-small text-default-500">
+                           Enter OTP code : 
+                        </div>
+                        <InputOtp length={4} value={value} onValueChange={setValue} />
                     </div>
-                )}
-            </div>
+                   <Button className="my-4 w-full" color="primary"><Link href="/auth/forgot-password/reset-password">Verify Email</Link></Button>
+                   <p>Want to create a new account? <Link className="text-blue-500 ml-2" href="/auth/registration">Sign Up</Link></p>
+                </>
+            </form>
         </div>
     );
 };

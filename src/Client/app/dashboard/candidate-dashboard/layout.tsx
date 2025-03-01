@@ -1,5 +1,10 @@
-import '../../styles/globals.css'
-export default function Layout({ children }: { children: React.ReactNode }) {
+'use client'
+import '../../../styles/globals.css'
+interface RootLayoutProps {
+    children: React.ReactNode;
+  }
+  
+export default function Layout({ children }: RootLayoutProps) {
     return (
         <div>
             <main>{children}</main>

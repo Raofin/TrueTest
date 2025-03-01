@@ -61,12 +61,12 @@ export default function App() {
       ],
       correctOption: 1
     }]);
-    setCurrentPage(questions.length); // Navigate to the new question
+    setCurrentPage(questions.length); 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(questions); // Handle saving logic here
+    console.log(questions);
   };
 
   return (
