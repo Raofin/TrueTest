@@ -3,7 +3,7 @@
 import type {CardProps} from "@nextui-org/react";
 
 import React from "react";
-import {Button, Card, CardBody, CardHeader, Chip, Tabs, Tab, ScrollShadow} from "@nextui-org/react";
+import {Button, Card, CardBody, CardHeader, Tabs, Tab, ScrollShadow} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
 import NotificationItem from "./notification-item";
@@ -15,7 +15,7 @@ type Notification = {
   description: string;
   name: string;
   time: string;
-  type?: "default"|"request";
+ 
 };
 enum NotificationTabs {
   All = "all",
@@ -30,7 +30,7 @@ const notifications: Record<NotificationTabs, Notification[]> = {
       description: "requested to join your Acme organization.",
       name: "Ben Berman",
       time: "2 hours ago",
-      type: "request",
+     
     },
   ],
   unread: [
@@ -41,7 +41,6 @@ const notifications: Record<NotificationTabs, Notification[]> = {
       description: "requested to join your Acme organization.",
       name: "Tony Reichert",
       time: "2 hours ago",
-      type: "request",
     },
   ]
 };

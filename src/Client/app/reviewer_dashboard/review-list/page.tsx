@@ -89,16 +89,16 @@ const users = [{
 const INITIAL_VISIBLE_COLUMNS = ["ExamId","ExamName","TotalTime","TotalScore","Date","StartTime","Status"];
 type User = (typeof users)[0];
 export default function Component(){
-    const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
+    const filterValue = "";
+  
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS),
     );
     const router=useRouter();
-    const handlereview=(ExamId:number)=>{
+    const handlereview = React.useCallback((ExamId: number) => {
         router.push(`/reviewer_dashboard/exam-review/${ExamId}`);
-    }
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+    }, [router]);
+ 
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column:"Date",
@@ -107,7 +107,7 @@ export default function Component(){
     const [page, setPage] = React.useState(1);
     const hasSearchFilter = Boolean(filterValue);
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
+        if (visibleColumns === "all") {setVisibleColumns("all") ; return columns;}
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
@@ -120,7 +120,7 @@ export default function Component(){
             );
         }
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [ filterValue,hasSearchFilter]);
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
@@ -149,7 +149,7 @@ export default function Component(){
             default:
                 return cellValue;
         }
-    }, []);
+    }, [handlereview]);
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
             setPage(page + 1);
@@ -184,12 +184,7 @@ export default function Component(){
             </div>
         );
     }, [
-        filterValue,
-        statusFilter,
-        visibleColumns,
         onRowsPerPageChange,
-        users.length,
-        hasSearchFilter,
     ]);
     const bottomContent = React.useMemo(() => {
         return (
@@ -215,7 +210,7 @@ export default function Component(){
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [ page, pages,onNextPage,onPreviousPage]);
     return(
         <>
             <dl className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

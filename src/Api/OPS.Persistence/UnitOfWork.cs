@@ -13,7 +13,13 @@ internal class UnitOfWork(
     IExamRepository examRepository,
     IExamCandidatesRepository examCandidatesRepository,
     IQuestionRepository questionRepository,
-    IWrittenSubmissionRepository writtenSubmissionRepository) : IUnitOfWork
+    IWrittenSubmissionRepository writtenSubmissionRepository,
+    IMcqSubmissionRepository mcqSubmissionRepository,
+    IMcqOptionRepository mcqOptionRepository,
+    IProfileRepository profileRepository,
+    IProfileSocialRepository profileSocialRepository,
+    IProblemSubmissionRepository problemSubmissionRepository,
+    ICloudFileRepository cloudFileRepository) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
@@ -23,6 +29,12 @@ internal class UnitOfWork(
     public IExamCandidatesRepository ExamCandidate { get; } = examCandidatesRepository;
     public IQuestionRepository Question { get; } = questionRepository;
     public IWrittenSubmissionRepository WrittenSubmission { get; } = writtenSubmissionRepository;
+    public IMcqSubmissionRepository McqSubmission { get; } = mcqSubmissionRepository;
+    public IMcqOptionRepository McqOption { get; } = mcqOptionRepository;
+    public IProfileRepository Profile { get; } = profileRepository;
+    public IProfileSocialRepository ProfileSocial { get; } = profileSocialRepository;
+    public IProblemSubmissionRepository ProblemSubmission { get; } = problemSubmissionRepository;
+    public ICloudFileRepository CloudFile { get; } = cloudFileRepository;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {

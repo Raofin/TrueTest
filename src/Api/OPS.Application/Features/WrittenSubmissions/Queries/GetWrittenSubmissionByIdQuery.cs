@@ -19,7 +19,7 @@ public class GetWrittenSubmissionByIdQueryHandler(IUnitOfWork unitOfWork)
         var writtenSubmission = await _unitOfWork.WrittenSubmission.GetAsync(request.WrittenSubmissionId, cancellationToken);
 
         return writtenSubmission is null
-            ? Error.NotFound("WrittenSubmission not found.")
+            ? Error.NotFound()
             : writtenSubmission.ToDto();
     }
 }

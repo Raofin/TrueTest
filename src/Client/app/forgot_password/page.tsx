@@ -57,6 +57,7 @@ const ForgotPasswordPage: React.FC = () => {
             setIsSuccess(true);
         } else {
             setIsSuccess(false);
+            console.log(message);
         }
     };
 

@@ -28,6 +28,14 @@ public class AuthController(IMediator mediator) : BaseApiController
         return ToResult(registration);
     }
 
+    [HttpPost("PasswordRecovery")]
+    public async Task<IActionResult> PasswordRecoveryAsync(PasswordRecoveryCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        return ToResult(result);
+    }
+
     [HttpPost("IsUserUnique")]
     public async Task<IActionResult> IsUserUniqueAsync(IsUserUniqueQuery query)
     {
