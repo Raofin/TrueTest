@@ -1,22 +1,28 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useEffect } from 'react';
 
-const ThemeContext = createContext({
-    theme: true,
-    toggleTheme: () => {},
+export const ThemeContext = createContext({
+  theme: 'light',
+  toggleTheme: () => {},
 });
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-    const [theme, setTheme] = useState(true);
+  const [theme, setTheme] = useState(() => {
+    const storedTheme = localStorage.getItem('theme');
+    return storedTheme ? storedTheme : 'light';
+  });
 
-    const toggleTheme = () => {
-        setTheme((prevTheme) => !prevTheme);
-    };
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
-    return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            {children}
-        </ThemeContext.Provider>
-    );
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 };
-
-export const useTheme = () => useContext(ThemeContext);

@@ -1,125 +1,176 @@
 import React from "react";
 import { Tabs, Tab, Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import Candidate from '../users-management/page'
-import Exams from '../view-exams/page'
-import Admin from '../admin-management/page'
-import InviteCandidates from '../invite-candidates/page'
-import CreateExams from '../create-exams/page'
-import Home from '../home/page'
+import Candidate from '../users-management/page';
+import Exams from '../view-exams/page';
+import Admin from '../admin-management/page';
+import InviteCandidates from '../invite-candidates/page';
+import CreateExams from '../create-exams/page';
+import Home from '../home/page';
+import ModerateExam from '../moderate-exam/page'
 export default function App() {
   const [selected, setSelected] = React.useState("dashboard");
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   return (
-    <div className="flex flex-col w-full h-screen bg-default-50 mt-12 text-left shadow">
-       {/* <div className="flex items-center gap-2 text-sm ml-3" >
-            <Icon icon="lucide:user" width={32} height={32} />
-            <div className="text-left gap-1">
-                <h3 className="font-semibold">Name</h3>
-                <p className="text-small text-default-500">Customer Support</p>
-              </div>
-          </div> */}
-        <Tabs  
+    <div className="flex h-screen">
+    <div className={`flex flex-col ${isCollapsed ? "w-20" : "w-64"} h-screen transition-all duration-300  border-r border-white/10`}>
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
+          {!isCollapsed && (
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-xl">OPS</span>
+            </div>
+          )}
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-2 hover:bg-white/10 rounded-lg"
+          >
+            <Icon icon={isCollapsed ? "lucide:chevron-right" : "lucide:chevron-left"} width={20} />
+          </button>
+        </div>
+
+    
+        <Tabs
           aria-label="Navigation"
           selectedKey={selected}
           onSelectionChange={(key) => setSelected(key.toString())}
-          className="w-56 p-4 bg-content1 flex flex-col text-left h-screen items-start"
+          className="flex-1 p-2"
           variant="light"
-          isVertical >
-          <Tab  key="dashboard"
+          isVertical
+          classNames={{
+            tab: "flex items-center gap-3 h-12 px-4 rounded-lg hover:bg-white/10 data-[selected=true]:bg-primary/20 data-[selected=true]:text-primary",
+            tabList: "flex flex-col gap-1",
+            cursor: "bg-transparent",
+          }}
+        >
+          <Tab
+            key="dashboard"
             title={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Icon icon="lucide:layout-dashboard" width={20} />
-                <span>Dashboard</span>
+                {!isCollapsed && <span>Dashboard</span>}
               </div>
-            } >
-            <Card>
-              <CardBody>
-                <h2 className="text-2xl font-bold mb-4 text-center w-full">Overview</h2>
-                <Home/>
-              </CardBody>
-            </Card>
+            }
+          >
           </Tab>
-          <Tab key="viewexams"
+          <Tab
+            key="viewexams"
             title={
-              <div className="flex items-center gap-2">
-                <Icon icon="lucide:book-open" width={20}/>
-                <span>View Exams</span>
+              <div className="flex items-center gap-3">
+                <Icon icon="lucide:book-open" width={20} />
+                {!isCollapsed && <span>View Exams</span>}
               </div>
             }>
-            <Card  className="w-[1070px] ">
-              <CardBody>
-                <Exams/>
-              </CardBody>
-            </Card>
           </Tab>
-          <Tab key="createexams"
+          <Tab
+            key="createexams"
             title={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Icon icon="lucide:plus-circle" width={20} />
-                <span>Create Exams</span>
+                {!isCollapsed && <span>Create Exams</span>}
               </div>
             }>
-            <Card  className="w-[1070px] ">
-              <CardBody>
-                <h2 className="text-xl font-bold mb-4">Create Exams</h2>
-                <CreateExams/>
-              </CardBody>
-            </Card>
           </Tab>
-          <Tab key="invitecandidates"
+          <Tab
+            key="invitecandidates"
             title={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Icon icon="lucide:users" width={20} />
-                <span>Invite Candidates</span>
+                {!isCollapsed && <span>Invite Candidates</span>}
               </div>
             }>
-            <Card  className="w-[1070px] ">
-              <CardBody>
-                <InviteCandidates/>
-              </CardBody>
-            </Card>
           </Tab>
-          <Tab key="moderateexam"
+
+          <Tab
+            key="moderateexam"
             title={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Icon icon="lucide:shield" width={20} />
-                <span>Moderate Exams</span>
+                {!isCollapsed && <span>Moderate Exams</span>}
               </div>
-            } >
-            <Card  className="w-[1070px] ">
-              <CardBody>
-                
-              </CardBody>
-            </Card>
+            }
+          >
           </Tab>
-          <Tab  key="users"
+
+          <Tab
+            key="users"
             title={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Icon icon="lucide:user" width={20} />
-                <span>Users Management</span>
+                {!isCollapsed && <span>Users Management</span>}
               </div>
-            }>
-            <Card  className="w-[1070px] ">
-              <CardBody>
-               <Candidate/>
-              </CardBody>
-            </Card>
+            }
+          >
+          
           </Tab>
-          <Tab key="admins"
+
+          <Tab
+            key="admins"
             title={
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Icon icon="lucide:settings" width={20} />
-                <span>Admin Management</span>
+                {!isCollapsed && <span>Admin Management</span>}
               </div>
             }>
-            <Card className="w-[1070px] ">
-              <CardBody className="w-full">
-              <Admin/>
-              </CardBody>
-            </Card>
           </Tab>
         </Tabs>
+        <div className="border-t border-white/10 p-2">
+          <div className="flex flex-col gap-2">
+           <div className="flex items-center gap-2">
+           <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <Icon icon="lucide:user" className="text-primary" width={16} />
+            </div>
+            {!isCollapsed && (
+              <div>
+                <p className="text-sm font-medium">Administrator</p>
+                <p className="text-xs">admin@truetest.com</p>
+              </div>
+            )}
+           </div>
+              <div className="flex items-center gap-2">
+             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <Icon icon="lucide:settings" className="text-primary" width={16} />
+            </div>
+             {!isCollapsed && (
+              <div>
+                <p className="text-sm font-medium">settings</p>
+              </div>
+            )}</div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <Icon icon="lucide:sun-moon" className="text-primary" width={16} />
+            </div>
+             {!isCollapsed && (
+              <div>
+                <p className="text-sm font-medium">Theme</p>
+              </div>
+            )}</div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <Icon icon="lucide:log-out" className="text-primary" width={16} />
+            </div>
+             {!isCollapsed && (
+              <div>
+                <p className="text-sm font-medium">log out</p>
+              </div>
+            )}</div>
+          </div>
+        </div>
+        </div>
+
+      <div className="flex-1 overflow-auto">
+        <Card className="m-4 border-none">
+          <CardBody>
+            {selected === "dashboard" && <Home />}
+            {selected === "viewexams" && <Exams />}
+            {selected === "createexams" && <CreateExams />}
+            {selected === "invitecandidates" && <InviteCandidates />}
+            {selected === "moderateexam" && <ModerateExam />}
+            {selected === "users" && <Candidate />}
+            {selected === "admins" && <Admin />}
+          </CardBody>
+        </Card>
       </div>
+    </div>
   );
 }

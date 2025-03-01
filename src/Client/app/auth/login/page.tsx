@@ -11,10 +11,10 @@ import { useAuth } from '../../context/AuthProvider';
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false);
-  const [user, setUser] = useState({ email: '', password: '' });
+  const [User, setUser] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const router = useRouter();
-  const {setUser: setAuthUser } = useAuth();
+
   const toggleVisibility = () => setIsVisible((prev) => !prev);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -23,13 +23,11 @@ export default function LoginComponent() {
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/Login`, {
-        usernameOrEmail: user.email,
-        password: user.password,
+        usernameOrEmail: User.email,
+        password: User.password,
       });
 
       if (response.data?.token) {
-        Cookies.set('authToken', response.data.token, { secure: true, httpOnly: false });
-        Cookies.set('userEmail', user.email, { secure: true, httpOnly: false }); 
         router.push('/dashboard/admin-dashboard');
       } else {
         setError('Invalid email or password');
@@ -61,7 +59,7 @@ export default function LoginComponent() {
             name="email"
             type="email"
             variant="bordered"
-            value={user.email}
+            value={User.email}
             onChange={(e) => setUser((prev) => ({ ...prev, email: e.target.value }))}
           />
           <Input
@@ -70,7 +68,7 @@ export default function LoginComponent() {
             name="password"
             type={isVisible ? 'text' : 'password'}
             variant="bordered"
-            value={user.password}
+            value={User.password}
             onChange={(e) => setUser((prev) => ({ ...prev, password: e.target.value }))}
             endContent={
               <button type="button" onClick={toggleVisibility}>

@@ -12,20 +12,17 @@ import {
     ModalBody,
     ModalFooter,
 } from '@heroui/react';
-import axios from 'axios';
-import Link from 'next/link';
+
 import React, { FormEvent, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { CalendarDate, parseDate, Time } from "@internationalized/date";
+import { CalendarDate,Time } from "@internationalized/date";
+import { useRouter } from 'next/navigation';
 
 interface FormData {
     title: string;
     description: string;
-    durationMinutes: string;
-    // date: string;
+    durationMinutes: number; 
     opensAt: string;
     closesAt: string;
-    // totalpoints: string;
 }
 
 function parseTime(time: string): Time | null {
@@ -37,10 +34,21 @@ function parseTime(time: string): Time | null {
 export default function Component() {
     const [loading, setLoading] = useState<boolean>(false);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const router=useRouter();
+    const [date, setDate] = useState<CalendarDate | null>(null);
+    const handleProblemSolve = () => {
+        window.open('/problem-solving-ques', '_blank');
+    }
+    const handleWrittenQues = () => {
+        window.open('/written-ques', '_blank');
+    }
+    const handleMCQ = () => {
+        window.open('/mcq-ques', '_blank');
+    }
     const [formData, setFormData] = useState<FormData>({
         title: "",
         description: "",
-        durationMinutes: "",
+        durationMinutes: 0, 
         opensAt: "",
         closesAt: "",
     });
@@ -50,66 +58,37 @@ export default function Component() {
         setFormData({ ...formData, [name]: value });
     };
 
-    // const handleDateChange = (date: CalendarDate | null) => {
-    //     setFormData({ ...formData, date: date ? date.toString() : "" });
-    // };
+    const handleDateChange = (date: CalendarDate | null) => {
+        setDate(date);
+    };
 
     const handleTimeChange = (name: "opensAt" | "closesAt", value: Time | null) => {
         setFormData(prevState => {
-            const updatedFormData = { ...prevState, [name]: value ? `${value.hour}:${value.minute}` : "" };
+            if (value) {
+                const updatedFormData = { ...prevState, [name]: value.toString() }; 
+                if (updatedFormData.opensAt && updatedFormData.closesAt) {
+                    const opensAtTime = parseTime(updatedFormData.opensAt);
+                    const closesAtTime = parseTime(updatedFormData.closesAt);
 
-            if (updatedFormData.opensAt && updatedFormData.closesAt) {
-                const opensAtTime = parseTime(updatedFormData.opensAt);
-                const closesAtTime = parseTime(updatedFormData.closesAt);
+                    if (opensAtTime && closesAtTime) {
+                        const startMinutes = opensAtTime.hour * 60 + opensAtTime.minute;
+                        const endMinutes = closesAtTime.hour * 60 + closesAtTime.minute;
+                        const duration = endMinutes - startMinutes;
 
-                if (opensAtTime && closesAtTime) {
-                    const startMinutes = opensAtTime.hour * 60 + opensAtTime.minute;
-                    const endMinutes = closesAtTime.hour * 60 + closesAtTime.minute;
-                    const duration = endMinutes - startMinutes;
-
-                    updatedFormData.durationMinutes = duration > 0 ? duration.toString() : "0";
+                        updatedFormData.durationMinutes = duration > 0 ? duration : 0;
+                    }
+                    console.log("duration ", updatedFormData.durationMinutes);
                 }
+                return updatedFormData;
+            } else {
+                return { ...prevState, [name]: "" };
             }
-            return updatedFormData;
         });
-    };
-
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
-        try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/Exam`,
-                formData
-            );
-            if (response.status === 200) {
-                onOpen();
-                setFormData({
-                    title: '',
-                    description: '',
-                    durationMinutes: '',
-                    // date: '',
-                    opensAt: '',
-                    closesAt: '',
-                    // totalpoints: '',
-                });
-            } else {
-                toast.error(response.data?.message || 'Failed to create exam.');
-            }
-        } catch (error) {
-            console.error('Error creating exam:', error);
-            if (axios.isAxiosError(error)) {
-                toast.error(error.response?.data?.message || 'Failed to create exam.');
-            } else {
-                toast.error('An unexpected error occurred.');
-            }
-        } finally {
-            setLoading(false);
-        }
     };
 
     return (
         <>
-            <form className="flex gap-4 flex-wrap flex-col" onSubmit={handleSubmit}>
+            <form className="flex gap-4 flex-wrap flex-col">
                 <Input
                     isRequired
                     label="Title"
@@ -134,18 +113,16 @@ export default function Component() {
                         isRequired
                         label="Date"
                         name="date"
-                     //   value={formData.date ? parseDate(formData.date) : undefined}
-                     //   onChange={handleDateChange}
+                        value={date}
+                        onChange={handleDateChange}
                     />
                     <Input
                         className="flex-1"
                         isRequired
                         label="Total Points"
                         name="totalpoints"
-                        type={'text'}
+                        type="text"
                         variant="bordered"
-                        //value={formData.totalpoints}
-                      //  onChange={handleChange}
                     />
                 </div>
                 <div className="flex gap-5">
@@ -154,31 +131,24 @@ export default function Component() {
                         name="opensAt"
                         value={parseTime(formData.opensAt)}
                         onChange={(value) => handleTimeChange("opensAt", value as Time)}
-                        isRequired
-                    />
+                        isRequired/>
                     <TimeInput
                         label="End Time"
                         name="closesAt"
                         value={parseTime(formData.closesAt)}
                         onChange={(value) => handleTimeChange("closesAt", value as Time)}
-                        isRequired
-                    />
+                        isRequired />
                 </div>
                 <div className="flex-1 mt-2 ml-96 pl-96">
                     <Button color="success">Publish</Button>
-                    <Button color="danger" className="mx-3">
-                        Delete
-                    </Button>
-                    <Button color="primary" type="submit"> Save
-                    </Button>
+                    <Button color="danger" className="mx-3"> Delete</Button>
+                    <Button color="primary" type="submit"> Save </Button>
                 </div>
             </form>
-            <div className="flex gap-3 my-7 ml-44">
-                <Link href="">
-                    <Button color="primary">Add Problem Solving Question</Button>
-                </Link>
-                <Button color="primary">Add Written Question</Button>
-                <Button color="primary">Add MCQ Question</Button>
+            <div className="flex gap-3 my-12 ml-44">
+                <Button color="primary" onPress={handleProblemSolve}>Add Problem Solving Question</Button>
+                <Button color="primary" onPress={handleWrittenQues}>Add Written Question</Button>
+                <Button color="primary" onPress={handleMCQ}>Add MCQ Question</Button>
             </div>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
@@ -196,7 +166,6 @@ export default function Component() {
                     )}
                 </ModalContent>
             </Modal>
-            <Toaster />
         </>
     );
 }

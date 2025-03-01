@@ -21,7 +21,7 @@ import Review from '../dashboard/reviewer-dashboard/review-list/page'
 import NotificationsCard from "./notifications-card";
 import GoTo from '../goto'
 import { useRouter } from "next/navigation";
-import { useAuth } from '../context/AuthProvider';
+
 
 interface PageProps {
   onThemeToggle?: (theme: string) => void | undefined;
@@ -29,14 +29,7 @@ interface PageProps {
 
 export default function Component({ onThemeToggle }: PageProps) {
   const { dashboardType } = useDashboard();
-  // type User = {
-  //   email: string;
-  //   username: string;
-  // };
-
-  // const user: User | null = useAuth();
-  const {user,logout}=useAuth();
-  console.log(user);
+  // const {user,logout}=useAuth();
   const [selected, setSelected] = useState<string>("home");
   const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -49,14 +42,17 @@ export default function Component({ onThemeToggle }: PageProps) {
     }
   };
   const handlelogout = () => {
-   logout();
+  //  logout();
     router.push('/auth/login');
   };
   return (
     <>
       {dashboardType ? 
       <>
-       <h2 className='flex absolute ml-24 text-3xl font-extrabold'>OPS</h2>
+      {
+        dashboardType!=='admin' && 
+        <>
+          <h2 className='flex absolute ml-24 text-3xl font-extrabold'>OPS</h2>
         <div className="flex gap-5 absolute justify-center items-center ml-[1060px]">
           <Button
             isIconOnly
@@ -97,7 +93,7 @@ export default function Component({ onThemeToggle }: PageProps) {
               </DropdownTrigger>
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
-                  <p className="font-semibold">Signed in as <br /> {user}</p>
+                  <p className="font-semibold">Signed in as <br /></p>
                 </DropdownItem>
                 <DropdownItem key="settings"><Link href="/myprofile/1">My Profile</Link></DropdownItem>
                 <DropdownItem key="logout" color="danger" onPress={handlelogout} className="bg-red-500 text-white px-3 py-2 rounded">
@@ -107,6 +103,8 @@ export default function Component({ onThemeToggle }: PageProps) {
             </Dropdown>
           </button>
         </div>
+        </>
+      }
         <Tabs className={'flex justify-center space-x-7'} aria-label="Options" selectedKey={selected} onSelectionChange={(key) => setSelected(key as string)}>
 
           {

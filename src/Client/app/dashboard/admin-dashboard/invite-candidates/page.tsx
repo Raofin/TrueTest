@@ -195,7 +195,6 @@ export default function Component() {
    
     return (
         <div>
-            <h2 className="text-2xl font-bold my-4 text-center flex justify-center">Invite Candidates </h2>
             <div>
             <Select className="max-w-xs mb-5" label="Select an exam">
         {exams.map((exam) => (

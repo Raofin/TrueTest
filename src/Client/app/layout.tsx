@@ -28,9 +28,7 @@ interface RootLayoutProps {
         <html lang="en">
             <body className={theme === 'dark' ? 'dark' : ''}> 
                 <Providers>
-                    {!path.includes('login') && !path.includes('registration')
-                        && !path.includes('settings') && !path.includes('myprofile') && !path.includes('exam-review') && <NavBar onThemeToggle={handleThemeToggle} />}
-                    <main className="h-screen">{children}</main> 
+                        <main>{children}</main> 
                 </Providers>
             </body>
         </html>
