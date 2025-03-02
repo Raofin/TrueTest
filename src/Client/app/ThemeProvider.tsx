@@ -1,28 +1,24 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext } from "react";
 
-export const ThemeContext = createContext({
-  theme: 'light',
-  toggleTheme: () => {},
+const ThemeContext = createContext({
+    theme: true,
+    toggleTheme: () => {},
 });
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState(() => {
-    const storedTheme = localStorage.getItem('theme');
-    return storedTheme ? storedTheme : 'light';
-  });
+    const [theme, setTheme] = useState(true);
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    const toggleTheme = () => {
+        setTheme((prevTheme) => !prevTheme);
+    };
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
-
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+    return (
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+           <div className={`${theme ? "bg-black text-white" : "bg-white text-black"} min-h-screen`}>
+           {children}
+           </div>
+        </ThemeContext.Provider>
+    );
 };
+
+export const useTheme = () => useContext(ThemeContext);

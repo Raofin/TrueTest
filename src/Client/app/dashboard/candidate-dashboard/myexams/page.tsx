@@ -55,7 +55,7 @@ const Exams: Exam[] = [
   },
 ];
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 2;
 
 export default function ExamList() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,7 +67,7 @@ export default function ExamList() {
   );
 
   return (
-    <div className="mx-10">
+    <div className="mx-10 mt-10 dark:bg-gray-900 dark:text-white">
       {paginatedExams.map((exam, index) => (
         <Card key={index} className="relative w-full border-small mb-3 p-2">
           <CardHeader>

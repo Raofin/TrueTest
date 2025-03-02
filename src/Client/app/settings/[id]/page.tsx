@@ -7,8 +7,8 @@ import { Button ,Link} from "@heroui/react";
 const Component: React.FC = () => {
 
   return (
-    <div className="flex items-center justify-center h-[600px] bg-gray-100">
-      <form className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+    <div className="flex dark:bg-gray-900 dark:text-white items-center justify-center h-[600px] bg-gray-100">
+      <form className=" p-8 rounded-lg shadow-lg max-w-md w-full">
         <h1 className="text-2xl font-semibold mb-6 text-center">
           Account Settings
         </h1>

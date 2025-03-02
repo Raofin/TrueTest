@@ -21,7 +21,6 @@ interface PageProps {
   onThemeToggle?: (theme: string) => void;
 }
 
-type DashboardType = 'candidate' | 'reviewer' | 'admin' | null;
 
 export default function Component({ onThemeToggle }: PageProps) {
   const { dashboardType } = useDashboard();
@@ -52,11 +51,11 @@ export default function Component({ onThemeToggle }: PageProps) {
   const pathname = usePathname();
 
   return (
-    <div className='mt-4'>
-      {dashboardType ? (
+    <div className='pt-4'>
+      {(dashboardType || pathname.includes("exam")) ? (
         <>
           {dashboardType !== 'admin' && (
-            <>
+            <div className="shadow">
               <h2 className='flex absolute ml-24 text-3xl font-extrabold'>OPS</h2>
               <div className="flex gap-5 absolute justify-center items-center ml-[1060px]">
                 <Button
@@ -132,7 +131,7 @@ export default function Component({ onThemeToggle }: PageProps) {
                   </Dropdown>
                 </button>
               </div>
-            </>
+            </div>
           )}
           <Tabs className={'flex justify-center space-x-7 mx-4'} aria-label="Options" selectedKey={selected} onSelectionChange={(key) => setSelected(key as string)}>
             {dashboardType === 'candidate' ? (
@@ -168,7 +167,7 @@ export default function Component({ onThemeToggle }: PageProps) {
         </>
       ) : (
         <>
-          {!pathname.includes('myprofile') && !pathname.includes('settings') &&  <Navbar
+          {!pathname.includes('myprofile') && !pathname.includes('settings') &&  !pathname.includes('exam') &&<Navbar
             classNames={{
               base: "shadow lg:backdrop-filter-none",
               item: "data-[active=true]:text-primary",
