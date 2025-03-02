@@ -43,4 +43,12 @@ public class ProblemQuestionController(IMediator mediator) : BaseApiController
 
         return ToResult(result);
     }
+
+    [HttpDelete("{ProblemQuestionId:guid}")]
+    public async Task<IActionResult> DeleteAsync(Guid ProblemQuestionId)
+    {
+        var result = await _mediator.Send(new DeleteProblemQuestionCommand(ProblemQuestionId));
+
+        return ToResult(result);
+    }
 }
