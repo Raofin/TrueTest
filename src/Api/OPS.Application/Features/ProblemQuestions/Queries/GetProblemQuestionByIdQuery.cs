@@ -35,7 +35,7 @@ public class GetProblemQuestionByIdQueryHandler(IUnitOfWork unitOfWork)
             CreatedAt: question.CreatedAt,
             UpdatedAt: question.UpdatedAt,
             IsActive: question.IsActive,
-            TestCases: testCases.Select(x => new TestCaseResponse(x.Id, question.Id, x.Input, x.Output)).ToList() // ✅ Added test cases mapping
+            TestCases: testCases.Select(x => new TestCaseResponse(x.Id, question.Id, x.Input, x.Output)).ToList() 
         );
 
         return result;
