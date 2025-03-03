@@ -202,7 +202,7 @@ export default function Component() {
         ))}
       </Select>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 px-3">
                 <Textarea label="Type candidate email to import"></Textarea>
                 <div className="flex flex-col gap-4">
                     <Button>Upload CSV</Button>
@@ -255,7 +255,7 @@ export default function Component() {
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="primary" variant="light" onPress={onClose}>Close</Button>
-                                <Button color="danger" onPress={onClose}>{state === 'edit' ? "Edit" : "Delete"}</Button>
+                                <Button color="primary" onPress={onClose}>{state === 'edit' ? "Edit" : "Delete"}</Button>
                             </ModalFooter>
                         </>
                     )}

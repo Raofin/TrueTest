@@ -1,7 +1,6 @@
 'use client'
 import React, { useState } from "react";
-import { Card, CardBody, Button, Checkbox, Pagination, Progress } from "@heroui/react";
-import NavBar from './navbar/page'
+import { Card, CardBody, Button, Checkbox, Pagination } from "@heroui/react";
 import CodeEditor from './code-editor/page'
 interface Question {
   id: number;
@@ -87,16 +86,16 @@ export default function Component() {
 
   if (!examStarted) {
     return (
-      <div className="min-h-screen p-6">
+      <div className="pt-12 dark:bg-black dark:h-screen">
         <Card className="max-w-3xl mx-auto  border-none">
           <CardBody>
-            <div className="space-y-6">
+            <div className="space-y-3">
               <div>
                 <h1 className="text-2xl font-bold">{examData.title}</h1>
                 <span className="text-sm text-default-500">Running</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>Date: Friday, 21 Nov 2026</div>
                 <div className="text-right">Problem Solving: {examData.problemSolving}</div>
                 <div>Starts at: 9:00 PM</div>
@@ -106,22 +105,19 @@ export default function Component() {
                 <div>Duration: {examData.duration}</div>
                 <div className="text-right">Score: {examData.totalScore}</div>
               </div>
-
-              <div className="space-y-4">
+             <hr className="my-2"/>
+              <div className="space-y-2 ">
                 <h2 className="text-lg font-semibold">Instructions</h2>
                 <ol className="list-decimal list-inside space-y-2 text-sm">
                   <li>Please ensure your webcam and microphone are enabled throughout the exam.</li>
                   <li>Your face must be clearly visible in the webcam at all times, and your eyes should remain on the screen.</li>
                   <li>There should be no one else visible in the webcam area during the exam.</li>
-                  <li>A stable internet connection is required. If disconnected for more than 2 minutes, your answers will be automatically submitted.</li>
-                  <li>The exam will automatically switch you to full-screen mode. Please do not try to change it.</li>
-                  <li>Do not attempt to copy or paste anything during the exam. It will be detected and flagged.</li>
-                </ol>
+                 </ol>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-1">
                 <h3 className="font-semibold">Please read and agree to the following terms to proceed with the exam:</h3>
-                <div className="space-y-2">
+                <div className="space-y-2 text-sm">
                   <Checkbox
                     isSelected={agreedToTerms.capture}
                     onValueChange={(value) => setAgreedToTerms(prev => ({...prev, capture: value}))}
@@ -168,7 +164,7 @@ export default function Component() {
 
   if (!currentQuestion) {
     return (
-      <div className="min-h-screen text-white">
+      <div className=" text-white">
         <div className="flex justify-center items-center h-full">
           <p>Loading questions...</p>
         </div>
@@ -177,22 +173,30 @@ export default function Component() {
   }
   return (
     <div className="">
-       {examStarted && (
-        <NavBar
-          title={examData.title}
-          totalQuestions={examData.totalQuestions}
-          currentPage={currentPage}
-          timeLeft={timeLeft}
-          formatTime={formatTime}
-        />
+       {examStarted && (  <div className="pt-14 border-b border-white/10 p-4 z-50 shadow "> 
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-2 ">
+          <span className="font-bold dark:text-white">{examData.title}</span>
+        </div>
+        <div className="flex items-center gap-4 dark:text-white">
+          <div>
+          Questions Left: {examData.totalQuestions - currentPage}/{examData.totalQuestions}
+          </div>
+          <div className={` font-mono ${timeLeft < 300 ? 'text-danger' : ''}`}>
+            Time Left: {formatTime(timeLeft)}
+          </div>
+          <Button color="primary" size="sm">
+            Submit Exam
+          </Button>
+        </div>
+      </div>
+    </div>
       )}
-      <div className="pt-16 p-6">
-      <Card className="w-7xl mx-auto border-none">
-          <CardBody className="space-y-6">
+      <div className="pt-5 dark:bg-black dark:h-screen">
+      <Card className="w-16xl px-5 border-none px-8">
+          <CardBody className="space-y-4">
            <div className="w-full flex justify-between"> <h2 className="text-lg font-semibold">{currentQuestion.title}</h2>
            <p>points : {currentQuestion.points}</p></div>
-          
-
             {currentQuestion.type === "mcq" && currentQuestion.options && (
               <div className="space-y-2">
                   <p>{currentQuestion.description}</p>
@@ -221,8 +225,8 @@ export default function Component() {
 
             {currentQuestion.type === "code" && <CodeEditor />}
           </CardBody>
-        </Card>
-        <div className="flex justify-center mt-6">
+       
+        <div className="flex justify-center py-6 ">
           <Pagination
             total={examData.totalQuestions}
             page={currentPage}
@@ -231,7 +235,7 @@ export default function Component() {
             showControls
             className="gap-2"
           />
-        </div>
+        </div></Card>
       </div>
     </div>
   );

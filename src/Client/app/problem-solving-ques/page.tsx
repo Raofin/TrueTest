@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from "react";
-import { Form, Button, Textarea, Modal } from "@heroui/react";
+import { Form, Button, Textarea } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 
@@ -21,8 +21,8 @@ export default function ProblemSolvingFormp() {
     { question: "", testCases: [{ input: "", output: "" }] },
   ]);
   const [currentPage, setCurrentPage] = useState(0);
-  const problemsPerPage = 1; 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const problemsPerPage = 1;
+  // const [isModalOpen, setIsModalOpen] = useState(false);
 
   const addTestCase = (problemIndex: number) => {
     setProblems(prevProblems => {
@@ -62,7 +62,7 @@ export default function ProblemSolvingFormp() {
     setProblems(prevProblems => {
       const newProblems = [...prevProblems, { question: "", testCases: [{ input: "", output: "" }] }];
       const newTotalPages = Math.ceil(newProblems.length / problemsPerPage);
-      setCurrentPage(newTotalPages - 1); 
+      setCurrentPage(newTotalPages - 1);
       return newProblems;
     });
   };
@@ -113,12 +113,12 @@ export default function ProblemSolvingFormp() {
   };
 
   const handleSaveAll = () => {
-    setIsModalOpen(true);
+    // setIsModalOpen(true);
   };
 
   return (
-    <>
-      <h2 className="flex justify-center text-2xl">Problem Solving Question : {currentPage+1}</h2>
+    <div className="dark:bg-black">
+      <h2 className="flex justify-center text-2xl pt-16 ">Problem Solving Question : {currentPage + 1}</h2>
       <div className="flex justify-center ml-44 p-4">
         <Form className="w-full flex flex-col gap-4 p-5">
           {currentProblems.map((problem, problemIndex) => (
@@ -126,7 +126,7 @@ export default function ProblemSolvingFormp() {
               <Textarea
                 label="Problem Description"
                 placeholder="Enter your problem description here..."
-                minRows={4}
+                minRows={5}
                 variant="bordered"
                 value={problem.question}
                 onChange={(e) => handleProblemDescriptionChange(currentPage * problemsPerPage + problemIndex, e.target.value)}
@@ -160,12 +160,13 @@ export default function ProblemSolvingFormp() {
                       label={`Test Case ${testCaseIndex + 1} Input`}
                       value={testCase.input}
                       variant="bordered"
+                      minRows={2}
                       onChange={(e) => handleTestCaseInputChange(currentPage * problemsPerPage + problemIndex, testCaseIndex, e.target.value)}
                     />
                     <Textarea
                       className="w-[400px]"
                       label={`Test Case ${testCaseIndex + 1} Output`}
-                      value={testCase.output}
+                      value={testCase.output} minRows={2}
                       variant="bordered"
                       onChange={(e) => handleTestCaseOutputChange(currentPage * problemsPerPage + problemIndex, testCaseIndex, e.target.value)}
                     />
@@ -183,35 +184,25 @@ export default function ProblemSolvingFormp() {
               </Button>
             </div>
           ))}
-
-          <div className="flex justify-between gap-2 mt-4">
-            <Button color="primary" onClick={handleSaveAll}>
-              Save All
-            </Button>
-          </div>
-          <div className="flex justify-center mt-6 ml-96">
-            <Button onPress={handleAddProblem} color="primary">
-              Add Problem Solving Question
-            </Button>
-          </div>
-          <div className="flex justify-center items-center mt-4 ml-96">
-            <Button onPress={goToPreviousPage} disabled={currentPage === 0}>Previous</Button>
-            <span className="mx-2">Page {currentPage + 1} of {totalPages}</span>
-            <Button onPress={goToNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+          <div className="flex justify-between gap-44 items-center mt-4 ">
+            <div>
+              <Button color="primary" onPress={handleSaveAll}>
+                Save All
+              </Button>
+            </div>
+            <div>
+              <Button onPress={goToPreviousPage} disabled={currentPage === 0}>Previous</Button>
+              <span className="mx-2">Page {currentPage + 1} of {totalPages}</span>
+              <Button onPress={goToNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+            </div>
+            <div >
+              <Button onPress={handleAddProblem} color="primary">
+                Add Problem Solving Question
+              </Button>
+            </div>
           </div>
         </Form>
       </div>
-
-      {/* <Modal isOpen={isModalOpen} onClose={handleCancelSave}>
-        <Modal.Header>Save All Problems</Modal.Header>
-        <Modal.Body>
-          Are you sure you want to save all problem-solving questions?
-        </ModalBod>
-        <ModalFooter>
-          <Button color="primary" onClick={handleConfirmSave}>Confirm</Button>
-          <Button color="default" onClick={handleCancelSave}>Cancel</Button>
-        </ModalFooter>
-      </Modal> */}
-    </>
+    </div>
   );
 }

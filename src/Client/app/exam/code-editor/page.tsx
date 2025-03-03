@@ -92,10 +92,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-gray-900 dark:text-white">
-      <div className="w-full">
         <div className="grid grid-cols-2">
-          <Card className=" border-none">
+          <Card className=" border-none ">
             <CardBody>
               <h2 className="text-xl font-bold">{question.title}</h2>
               <div className="space-y-4">
@@ -232,7 +230,5 @@ export default function App() {
             </CardBody>
           </Card>
         </div>
-      </div>
-    </div>
   );
 }

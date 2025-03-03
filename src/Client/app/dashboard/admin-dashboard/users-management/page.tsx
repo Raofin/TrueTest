@@ -43,9 +43,9 @@ export default function Component() {
   const [page, setPage] = useState(1);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [state, setState] = useState("");
-  const [userIdToEditOrDelete, setUserIdToEditOrDelete] = useState<string | null>(null);
   const hasSearchFilter = Boolean(filterValue);
-  const [users, setUsers] = useState<User[]>([
+  const users:User[]=useMemo(() => [
+  
     {
       username: "john_doe",
       email: "john.doe@example.com",
@@ -80,7 +80,7 @@ export default function Component() {
       createdAt: "2023-11-15T12:10:00Z",
       action: "ban",
     },
-  ]);
+  ],[]);
   const filteredItems = useMemo(() => {
     let filteredUsers = [...users];
     if (hasSearchFilter) {
@@ -99,16 +99,13 @@ export default function Component() {
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
-  const handleOpen = useCallback(
-    (action: string, userId: string) => {
-      setState(action);
-      setUserIdToEditOrDelete(userId);
-      onOpen();
-    },
-    [onOpen]
-  );
-
- 
+ const handleOpen= useCallback(
+        (word:string) => {
+          setState(word);
+          onOpen();
+        },
+        [onOpen] 
+      );
   const renderCell = useCallback(
     (user: User, columnKey: React.Key) => {
       const cellValue = user[columnKey as keyof User];
@@ -116,12 +113,8 @@ export default function Component() {
         case "action":
           return (
             <div className="flex gap-4 ml-16">
-              <button >
-                <FaEdit className={"text-xl"} />
-              </button>
-              <button >
-                <MdDelete className={"text-xl"} />
-              </button>
+               <button onClick={()=>handleOpen('edit')}><FaEdit className={'text-xl'}/></button>
+               <button onClick={()=>handleOpen('delete')}><MdDelete className={'text-xl'} /></button>           
             </div>
           );
         default:
@@ -179,7 +172,7 @@ export default function Component() {
 
   const bottomContent = useMemo(
     () => (
-      <div className="py-2 mt-20 px-2 flex justify-between items-center">
+      <div className="py-2 mt-14 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           Page {page} out of {pages}
         </span>
@@ -225,7 +218,7 @@ export default function Component() {
       </h2>
       <Table
         isStriped
-        className="px-10 mx-2"
+        className="px-4"
         isHeaderSticky
         aria-label="Example table with custom cells, pagination"
         bottomContent={bottomContent}
@@ -233,7 +226,8 @@ export default function Component() {
         classNames={{ wrapper: "max-h-[600px]" }}
         topContent={topContent}
         topContentPlacement="outside"
-        selectionMode="multiple">
+        // selectionMode="multiple"
+        >
 
         <TableHeader>
           {columns.map((column) => (
@@ -271,7 +265,7 @@ export default function Component() {
             <Button color="primary" variant="light" onPress={onClose}>
               Close
             </Button>
-            <Button color="danger">
+            <Button color="primary">
               {state === "edit" ? "Edit" : "Delete"}
             </Button>
           </ModalFooter>

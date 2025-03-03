@@ -70,7 +70,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex justify-center p-4">
+    <div className="flex justify-center pt-12 dark:bg-black">
       <Form className="w-full max-w-3xl flex flex-col gap-6" onSubmit={handleSubmit}>
         {questions.length > 0 && (
           <Card key={currentPage} className="w-full">
@@ -93,22 +93,23 @@ export default function App() {
                     key={option.id}
                     label={`Option ${option.id}`}
                     placeholder={`Enter option ${option.id}`}
-                    value={option.text}
+                    value={option.text} minRows={2}
                     variant="bordered"
                     onChange={(e) => handleOptionChange(currentPage, option.id, e.target.value)}
                   />
                 ))}
               </div>
 
-              <RadioGroup
+              <RadioGroup 
                 label="Correct Answer"
                 value={questions[currentPage].correctOption.toString()}
                 onValueChange={(value) => handleCorrectOptionChange(currentPage, parseInt(value))}
               >
                 {questions[currentPage].options.map((option) => (
-                  <Radio key={option.id} value={option.id.toString()}>
+                  <div key={option.id} className="flex flex-row flex-wrap items-center ">
+                  <Radio  value={option.id.toString()}>
                     Option {option.id}
-                  </Radio>
+                  </Radio></div>
                 ))}
               </RadioGroup>
             </CardBody>
@@ -126,9 +127,8 @@ export default function App() {
           </Button>
 
           <Button
-            variant="flat"
             startContent={<Icon icon="lucide:plus" />}
-            onPress={addNewQuestion}
+            onPress={addNewQuestion} color="primary"
           >
             Add New Question
           </Button>
@@ -142,7 +142,7 @@ export default function App() {
             Next
           </Button>
 
-          <Button color="primary" type="submit">
+          <Button className="ml-44 mb-10" color="primary" type="submit">
             Save All Questions
           </Button>
         </div>

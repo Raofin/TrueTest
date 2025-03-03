@@ -5,17 +5,11 @@ import {
     DatePicker,
     Input,
     Textarea,
-    TimeInput,
-    useDisclosure,
-    Modal,
-    ModalContent,
-    ModalBody,
-    ModalFooter,
+    TimeInput
 } from '@heroui/react';
 
-import React, { FormEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { CalendarDate,Time } from "@internationalized/date";
-import { useRouter } from 'next/navigation';
 
 interface FormData {
     title: string;
@@ -32,9 +26,6 @@ function parseTime(time: string): Time | null {
 }
 
 export default function Component() {
-    const [loading, setLoading] = useState<boolean>(false);
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const router=useRouter();
     const [date, setDate] = useState<CalendarDate | null>(null);
     const handleProblemSolve = () => {
         window.open('/problem-solving-ques', '_blank');
@@ -150,7 +141,7 @@ export default function Component() {
                 <Button color="primary" onPress={handleWrittenQues}>Add Written Question</Button>
                 <Button color="primary" onPress={handleMCQ}>Add MCQ Question</Button>
             </div>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            {/* <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
@@ -165,7 +156,7 @@ export default function Component() {
                         </>
                     )}
                 </ModalContent>
-            </Modal>
+            </Modal> */}
         </>
     );
 }

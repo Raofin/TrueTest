@@ -1,5 +1,6 @@
-import React from "react";
-import { Tabs, Tab, Card, CardBody } from "@heroui/react";
+'use client'
+import React, { useEffect, useState } from "react";
+import { Tabs, Tab, Card, CardBody, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import Candidate from '../users-management/page';
 import Exams from '../view-exams/page';
@@ -8,16 +9,40 @@ import InviteCandidates from '../invite-candidates/page';
 import CreateExams from '../create-exams/page';
 import Home from '../home/page';
 import ModerateExam from '../moderate-exam/page'
-export default function App() {
-  const [selected, setSelected] = React.useState("dashboard");
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+
+
+export default function Component() {
+  // console.log(typeof onThemeToggle);
+  const [selected, setSelected] = useState("dashboard");
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === "dark");
+    }
+  }, []);
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
+  const handleThemeChange = () => {
+    setIsDarkMode((prev) => !prev);
+    const newTheme = !isDarkMode ? "dark" : "light";
+    localStorage.setItem("theme", newTheme);
+    // if (onThemeToggle) {
+    //   onThemeToggle.(newTheme);
+    // }
+  };
 
   return (
-    <div className="flex h-screen">
-    <div className={`flex flex-col ${isCollapsed ? "w-20" : "w-64"} h-screen transition-all duration-300  border-r border-white/10`}>
+    <div className="flex">
+    <div className={`flex flex-col ${isCollapsed ? "w-20" : "w-64"} transition-all duration-300 dark:bg-black border-r border-white/10`}>
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           {!isCollapsed && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <span className="font-bold text-xl">OPS</span>
             </div>
           )}
@@ -34,7 +59,7 @@ export default function App() {
           aria-label="Navigation"
           selectedKey={selected}
           onSelectionChange={(key) => setSelected(key.toString())}
-          className="flex-1 p-2"
+          className="flex-1 "
           variant="light"
           isVertical
           classNames={{
@@ -53,7 +78,7 @@ export default function App() {
             }
           >
           </Tab>
-          <Tab
+          <Tab 
             key="viewexams"
             title={
               <div className="flex items-center gap-3">
@@ -114,17 +139,18 @@ export default function App() {
             }>
           </Tab>
         </Tabs>
-        <div className="border-t border-white/10 p-2">
-          <div className="flex flex-col gap-2">
+        <hr className="my-3 text-xl"/>
+        <div className="border-t border-white/10 px-2 mb-5">
+          <div className="flex flex-col gap-1 ">
            <div className="flex items-center gap-2">
-           <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+           <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center ">
               <Icon icon="lucide:user" className="text-primary" width={16} />
             </div>
             {!isCollapsed && (
-              <div>
-                <p className="text-sm font-medium">Administrator</p>
-                <p className="text-xs">admin@truetest.com</p>
-              </div>
+             <Link href="/myprofile/1" className="text-black dark:text-white"> <div>
+             <p className="text-sm ">Administrator</p>
+             <p className="text-xs">admin@truetest.com</p>
+           </div></Link>
             )}
            </div>
               <div className="flex items-center gap-2">
@@ -133,25 +159,25 @@ export default function App() {
             </div>
              {!isCollapsed && (
               <div>
-                <p className="text-sm font-medium">settings</p>
+                <Link href="/settings/1" className="text-black dark:text-white"> 
+                 <p className="text-sm ">settings</p></Link>
               </div>
             )}</div>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <Icon icon="lucide:sun-moon" className="text-primary" width={16} />
+            <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} width={30} />
             </div>
-             {!isCollapsed && (
-              <div>
-                <p className="text-sm font-medium">Theme</p>
-              </div>
-            )}</div>
+             {!isCollapsed && (<>
+                 <button onClick={handleThemeChange} className="text-sm  text-black dark:text-white">Theme</button>
+            </>)}</div>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
               <Icon icon="lucide:log-out" className="text-primary" width={16} />
             </div>
              {!isCollapsed && (
               <div>
-                <p className="text-sm font-medium">log out</p>
+                 <Link href="/auth/login" className="text-black dark:text-white"> 
+                 <p className="text-sm ">log out</p></Link>
               </div>
             )}</div>
           </div>
@@ -159,7 +185,7 @@ export default function App() {
         </div>
 
       <div className="flex-1 overflow-auto">
-        <Card className="m-4 border-none">
+        <Card className="dark:bg-black dark:h-full border-none">
           <CardBody>
             {selected === "dashboard" && <Home />}
             {selected === "viewexams" && <Exams />}

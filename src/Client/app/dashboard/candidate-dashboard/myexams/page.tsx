@@ -67,7 +67,7 @@ export default function ExamList() {
   );
 
   return (
-    <div className="mx-10 mt-10 dark:bg-gray-900 dark:text-white">
+    <div className="mx-10 mt-10">
       {paginatedExams.map((exam, index) => (
         <Card key={index} className="relative w-full border-small mb-3 p-2">
           <CardHeader>
@@ -88,7 +88,7 @@ export default function ExamList() {
                   <p>Score: 100/100</p>
                   <p>Participants: 3068</p>
                 </div>
-                <p className="font-semibold mt-7">Result hasn't been published.</p>
+                <p className="font-semibold mt-7">Result hasn&apos;t been published.</p>
               </div>
             ) : (
               <div className="flex">

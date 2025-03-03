@@ -1,16 +1,11 @@
 'use client'
 import { Providers } from './providers'
 import NavBar from './navigation-header/NavBar'
-import { usePathname } from "next/navigation";
 import '../styles/globals.css'
 import React, { useState,useEffect } from 'react'; 
 
-interface RootLayoutProps {
-    children: React.ReactNode;
-  }
-  
-  export default function RootLayout({ children }: RootLayoutProps) {
-    const path = usePathname();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+   
     const [theme, setTheme] = useState('light'); 
     useEffect(() => {
       const storedTheme = localStorage.getItem('theme');
@@ -28,8 +23,8 @@ interface RootLayoutProps {
         <html lang="en">
             <body className={theme === 'dark' ? 'dark' : ''}> 
                 <Providers>
-                    <NavBar/>
-                      <main>{children}</main> 
+                   <NavBar onThemeToggle={handleThemeToggle} />
+                    <main>{children}</main> 
                 </Providers>
             </body>
         </html>

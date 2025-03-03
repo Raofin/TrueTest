@@ -10,8 +10,8 @@ export default function Component() {
 
     }
     return (
-        <div className="flex h-full w-full items-center justify-center mt-16">
-            <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
+        <div className="flex h-full w-full items-center justify-center">
+            <div className="flex w-full max-w-sm flex-col mt-16 gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
                 <div className="flex flex-col gap-3">
                     <h1 className="text-xl font-semibold text-center mb-6">Password Recovery</h1>
                 </div>

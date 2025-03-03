@@ -1,5 +1,6 @@
-import React from "react";
-import { Card, CardBody, Button, Progress, Divider } from "@heroui/react";
+'use client'
+import React, { useState } from "react";
+import { Card, CardBody, Button, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 interface TestCase {
@@ -23,7 +24,7 @@ interface Question {
 }
 
 export default function App() {
-  const [currentQuestion, setCurrentQuestion] = React.useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const examData = {
     title: "Learnathon 3.0",
@@ -83,27 +84,23 @@ int main() {
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen text-white p-6">
-      <Card className="max-w-5xl mx-auto  border-none">
+    <div className="">
+      <Card className="max-w-6xl mx-auto  border-none">
         <CardBody>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h1 className="text-xl font-bold">Exam: {examData.title}</h1>
               <div className="flex gap-2">
-                <Button
+                <Button color="primary"
                   size="sm"
-                  variant="flat"
                   isDisabled={currentQuestion === 0}
-                  onPress={() => setCurrentQuestion(prev => prev - 1)}
-                >
+                  onPress={() => setCurrentQuestion(prev => prev - 1)}>
                   Previous
                 </Button>
-                <Button
+                <Button color="primary"
                   size="sm"
-                  variant="flat"
                   isDisabled={currentQuestion === questions.length - 1}
-                  onClick={() => setCurrentQuestion(prev => prev + 1)}
-                >
+                  onPress={() => setCurrentQuestion(prev => prev + 1)}>
                   Next
                 </Button>
               </div>
@@ -137,8 +134,8 @@ int main() {
             </div>
           </div>
 
-          <Divider className="my-4" />
-          <div className="space-y-6">
+          <Divider className="my-3" />
+          <div className="space-y-6 h-[420px]">
             <h2 className="text-lg font-semibold">{currentQ.title}</h2>
             <p>{currentQ.description}</p>
 
@@ -169,7 +166,7 @@ int main() {
               <h3 className="font-semibold mb-2">
                 {currentQ.type === "code" ? "User Submission" : "User Answer"}
               </h3>
-              <div className="bg-[#1a1a1a] p-4 rounded-lg">
+              <div className=" p-4 rounded-lg">
                 <pre className="font-mono text-sm whitespace-pre-wrap">
                   {currentQ.userSubmission}
                 </pre>
@@ -181,7 +178,7 @@ int main() {
                 <h3 className="font-semibold mb-2">Test Cases (Passed {currentQ.testCases.length}/{currentQ.testCases.length})</h3>
                 <div className="space-y-2">
                   {currentQ.testCases.map((testCase, index) => (
-                    <div key={index} className="grid grid-cols-3 gap-4 bg-[#1a1a1a] p-3 rounded-lg">
+                    <div key={index} className="grid grid-cols-3 gap-4 p-3 rounded-lg">
                       <div>
                         <div className="text-xs text-default-500 mb-1">Input</div>
                         <div className="font-mono text-sm">{testCase.input}</div>
@@ -205,7 +202,7 @@ int main() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <span>Points</span>
-                  <div className="bg-[#1a1a1a] px-3 py-1 rounded">
+                  <div className=" px-3 py-1 rounded">
                     {currentQ.points}/{currentQ.maxPoints}
                   </div>
                 </div>
@@ -216,18 +213,18 @@ int main() {
               </div>
             </div>
 
-            <div className="flex justify-between pt-4">
+            <div className="flex justify-between py-4">
               <Button
                 size="sm"
-                variant="flat"
+                
                 isDisabled={currentQuestion === 0}
-                onClick={() => setCurrentQuestion(prev => prev - 1)}
+                onPress={() => setCurrentQuestion(prev => prev - 1)}
               >
                 Previous
               </Button>
               <Button
                 size="sm"
-                variant="flat"
+           
                 isDisabled={currentQuestion === questions.length - 1}
                 onPress={() => setCurrentQuestion(prev => prev + 1)}
               >

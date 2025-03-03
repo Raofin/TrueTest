@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import '../../../styles/globals.css';
@@ -43,8 +42,8 @@ export default function LoginComponent() {
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
-        <div className="flex flex-col gap-1">
+      <div className="mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
+        <div className="flex flex-col gap-1 ">
           <h1 className="text-large font-medium">Sign in to your account</h1>
         </div>
         <Form
