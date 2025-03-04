@@ -12,7 +12,7 @@ const stats = [
 
 export default function Component() {
   return (
-    <div className="flex flex-wrap gap-6 ml-12 text-center">
+    <div className="flex flex-wrap gap-6 h-screen w-full items-center justify-center">
       {stats.map((stat, index) => (
         <Card key={index} className="py-4 w-[300px] text-center">
           <CardHeader className="pb-0 pt-2 px-4 flex flex-col items-center">

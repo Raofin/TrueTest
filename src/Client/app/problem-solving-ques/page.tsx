@@ -117,7 +117,7 @@ export default function ProblemSolvingFormp() {
   };
 
   return (
-    <div className="dark:bg-black">
+    <div className="dark:bg-gray-900">
       <h2 className="flex justify-center text-2xl pt-16 ">Problem Solving Question : {currentPage + 1}</h2>
       <div className="flex justify-center ml-44 p-4">
         <Form className="w-full flex flex-col gap-4 p-5">

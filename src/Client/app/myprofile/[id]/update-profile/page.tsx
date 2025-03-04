@@ -19,7 +19,7 @@ export default function ProfileDetails() {
   const [socialLinks, setSocialLinks] = useState<string[]>([""]);
 
   const handleAddSocialLink = () => {
-    setSocialLinks([...socialLinks, ""]); // Adds a new empty input field
+    setSocialLinks([...socialLinks, ""]); 
   };
 
   const handleSocialLinkChange = (index: number, value: string) => {
@@ -51,8 +51,6 @@ export default function ProfileDetails() {
             <Input label="" placeholder="Enter institute name" />
             <Input label="" placeholder="Enter phone number" />
           </div>
-
-          {/* Social Links */}
           <div className="grid grid-cols-2 gap-2">
             {socialLinks.map((link, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -65,8 +63,6 @@ export default function ProfileDetails() {
               </div>
             ))}
           </div>
-
-          {/* Add New Social Link Button */}
           <div className="flex justify-start mt-2">
             <button
               onClick={handleAddSocialLink}

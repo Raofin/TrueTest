@@ -13,8 +13,8 @@ const stats = [
 export default function Component() {
     const [isPermit, setPermit] = useState(false);
     return (
-        <div className=" flex flex-col gap-6 h-full  text-center mt-20">
-            <div className="ml-56 gap-5 flex">
+        <div className=" flex flex-col gap-6 h-screen items-center justify-center text-center ">
+            <div className="gap-5 flex">
                 {stats.map((stat, index) => (
                     <Card key={index} className="py-4 w-[200px] text-center">
                         <CardHeader className="pb-0 pt-2 px-4 flex flex-col items-center">

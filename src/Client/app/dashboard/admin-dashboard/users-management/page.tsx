@@ -39,7 +39,7 @@ type User = {
 
 export default function Component() {
   const [filterValue, setFilterValue] = useState("");
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
   const [page, setPage] = useState(1);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [state, setState] = useState("");
@@ -172,7 +172,7 @@ export default function Component() {
 
   const bottomContent = useMemo(
     () => (
-      <div className="py-2 mt-14 px-2 flex justify-between items-center">
+      <div className="py-4 px-2 flex justify-between items-center">
         <span className="w-[30%] text-small text-default-400">
           Page {page} out of {pages}
         </span>
@@ -213,7 +213,8 @@ export default function Component() {
 
   return (
     <>
-      <h2 className="text-2xl font-bold my-4 text-center flex justify-center">
+     <div className="flex flex-col h-screen">
+     <h2 className="text-2xl font-bold my-4 text-center flex justify-center">
         Users Management
       </h2>
       <Table
@@ -250,6 +251,7 @@ export default function Component() {
           ))}
         </TableBody>
       </Table>
+     </div>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>

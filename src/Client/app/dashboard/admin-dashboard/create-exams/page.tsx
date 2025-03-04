@@ -5,11 +5,14 @@ import {
     DatePicker,
     Input,
     Textarea,
-    TimeInput
+    TimeInput,
+    useDisclosure
 } from '@heroui/react';
 
-import React, { useState } from 'react';
-import { CalendarDate,Time } from "@internationalized/date";
+import React, { useState ,FormEvent} from 'react';
+import { CalendarDate, parseDate, Time } from "@internationalized/date";
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface FormData {
     title: string;
@@ -27,6 +30,8 @@ function parseTime(time: string): Time | null {
 
 export default function Component() {
     const [date, setDate] = useState<CalendarDate | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const handleProblemSolve = () => {
         window.open('/problem-solving-ques', '_blank');
     }
@@ -76,10 +81,74 @@ export default function Component() {
             }
         });
     };
+    const handleCreateExam = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+        console.log(formData);
 
+        try {
+            const opensAtTime = parseTime(formData.opensAt);
+            const closesAtTime = parseTime(formData.closesAt);
+
+            if (!opensAtTime || !closesAtTime || !date) {
+                toast.error("Please fill in all required fields.");
+                setLoading(false);
+                return;
+            }
+            const dateObj = parseDate(date.toString());
+            const opensAtDate = new Date(
+                dateObj.year, 
+                dateObj.month - 1, 
+                dateObj.day, 
+                opensAtTime.hour,
+                opensAtTime.minute,0,0
+            );
+            const closesAtDate = new Date(
+                dateObj.year, 
+                dateObj.month - 1, 
+                dateObj.day, 
+                closesAtTime.hour,
+                closesAtTime.minute, 0, 0
+            );
+
+            const formattedOpensAt = opensAtDate.toISOString().replace(/\.000Z$/, ".983Z");
+            const formattedClosesAt = closesAtDate.toISOString().replace(/\.000Z$/, ".983Z");
+
+            console.log(formattedOpensAt, " ", formattedClosesAt);
+
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_URL}/Exam`, {
+                ...formData,
+                opensAt: formattedOpensAt,
+                closesAt: formattedClosesAt,
+            });
+
+            if (response.status === 200) {
+                onOpen();
+                setFormData({
+                    title: '',
+                    description: '',
+                    durationMinutes: 0,
+                    opensAt: '',
+                    closesAt: '',
+                });
+                setDate(null);
+            } else {
+                toast.error(response.data?.message || 'Failed to create exam.');
+            }
+        } catch (error) {
+            console.error('Error creating exam:', error);
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message || 'Failed to create exam.');
+            } else {
+                toast.error('An unexpected error occurred.');
+            }
+        } finally {
+            setLoading(false);
+        }
+   }
     return (
-        <>
-            <form className="flex gap-4 flex-wrap flex-col">
+        <div className='flex flex-col justify-between h-screen mx-auto items-center mt-12'>
+            <form className="flex gap-4 flex-wrap flex-col" onSubmit={handleCreateExam}>
                 <Input
                     isRequired
                     label="Title"
@@ -136,7 +205,7 @@ export default function Component() {
                     <Button color="primary" type="submit"> Save </Button>
                 </div>
             </form>
-            <div className="flex gap-3 my-12 ml-44">
+            <div className="flex gap-3 my-4">
                 <Button color="primary" onPress={handleProblemSolve}>Add Problem Solving Question</Button>
                 <Button color="primary" onPress={handleWrittenQues}>Add Written Question</Button>
                 <Button color="primary" onPress={handleMCQ}>Add MCQ Question</Button>
@@ -157,6 +226,7 @@ export default function Component() {
                     )}
                 </ModalContent>
             </Modal> */}
-        </>
+            <Toaster/>
+        </div >
     );
 }

@@ -11,7 +11,7 @@ import Home from '../home/page';
 import ModerateExam from '../moderate-exam/page'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
-
+import Logo from '../../../components/ui/logo/page'
 
 export default function Component() {
   // console.log(typeof onThemeToggle);
@@ -39,11 +39,13 @@ export default function Component() {
 
   return (
     <div className="flex">
-    <div className={`flex flex-col ${isCollapsed ? "w-20" : "w-64"} transition-all duration-300 dark:bg-black border-r border-white/10`}>
+    <div className={`flex flex-col justify-between h-screen ${isCollapsed ? "w-20" : "w-64"} transition-all duration-300 dark:bg-gray-900 border-r border-white/10`}>
+        <div>
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           {!isCollapsed && (
             <div className="flex items-center gap-1">
-              <span className="font-bold text-xl">OPS</span>
+            <Logo/>
+            {!isCollapsed && <span className="font-bold text-xl">OPS</span>}
             </div>
           )}
           <button 
@@ -53,18 +55,16 @@ export default function Component() {
             <Icon icon={isCollapsed ? "lucide:chevron-right" : "lucide:chevron-left"} width={20} />
           </button>
         </div>
-
-    
         <Tabs
           aria-label="Navigation"
           selectedKey={selected}
           onSelectionChange={(key) => setSelected(key.toString())}
-          className="flex-1 "
+          className=""
           variant="light"
           isVertical
           classNames={{
-            tab: "flex items-center gap-3 h-12 px-4 rounded-lg hover:bg-white/10 data-[selected=true]:bg-primary/20 data-[selected=true]:text-primary",
-            tabList: "flex flex-col gap-1",
+            tab: "flex items-center justify-start h-10 rounded-lg hover:bg-white/10 data-[selected=true]:bg-primary/20 data-[selected=true]:text-primary",
+            tabList: "flex flex-col ",
             cursor: "bg-transparent",
           }}
         >
@@ -124,11 +124,8 @@ export default function Component() {
                 <Icon icon="lucide:user" width={20} />
                 {!isCollapsed && <span>Users Management</span>}
               </div>
-            }
-          >
-          
+            }>
           </Tab>
-
           <Tab
             key="admins"
             title={
@@ -139,8 +136,10 @@ export default function Component() {
             }>
           </Tab>
         </Tabs>
-        <hr className="my-3 text-xl"/>
-        <div className="border-t border-white/10 px-2 mb-5">
+        </div>
+        <div>
+        <hr />
+        <div className="border-t border-white/10 px-2 py-4 mb-5">
           <div className="flex flex-col gap-1 ">
            <div className="flex items-center gap-2">
            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center ">
@@ -184,8 +183,10 @@ export default function Component() {
         </div>
         </div>
 
+        </div>
+
       <div className="flex-1 overflow-auto">
-        <Card className="dark:bg-black dark:h-full border-none">
+        <Card className="dark:bg-gray-900 border-none h-screen ">
           <CardBody>
             {selected === "dashboard" && <Home />}
             {selected === "viewexams" && <Exams />}

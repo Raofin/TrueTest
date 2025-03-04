@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className={theme === 'dark' ? 'dark' : ''}> 
                 <Providers>
                    <NavBar onThemeToggle={handleThemeToggle} />
-                    <main>{children}</main> 
+                    <main className='h-screen'>{children}</main> 
                 </Providers>
             </body>
         </html>

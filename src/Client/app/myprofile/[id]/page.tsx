@@ -5,7 +5,7 @@ import React from 'react';
 
 const ProfilePage = () => {
   return (
-    <div className="dark:bg-black min-h-screen flex items-center justify-center">
+    <div className="dark:bg-gray-900 min-h-screen flex items-center justify-center">
       <div className=" rounded-2xl shadow-lg p-8 w-[600px]">
         <div className="flex items-center gap-2 mb-6">
           <Avatar

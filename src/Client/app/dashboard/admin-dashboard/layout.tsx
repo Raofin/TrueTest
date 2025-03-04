@@ -9,7 +9,7 @@ interface RootLayoutProps {
     return (
         <div>
             <SideBar/>
-            <main>{children}</main>
+            <main >{children}</main>
         </div>
     );
 }

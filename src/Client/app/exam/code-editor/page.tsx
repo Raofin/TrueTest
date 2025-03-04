@@ -169,7 +169,7 @@ export default function App() {
                     </div>
                   }
                 >
-                  <div className="h-[600px] rounded-lg overflow-hidden">
+                  <div className="h-[600px] rounded-lg overflow-hidden shadow-xl">
                     <Editor
                       height="100%"
                       defaultLanguage={selectedLanguage}

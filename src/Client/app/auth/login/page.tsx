@@ -1,49 +1,62 @@
 'use client';
 
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import '../../../styles/globals.css';
 import { useRouter } from 'next/navigation';
-// import { useAuth } from '../../context/AuthProvider';
+import { useAuth } from '../../context/AuthProvider';
+import axios from '../../axios/page';
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false);
-  const [User, setUser] = useState({ email: '', password: '' });
+  const [user, setUser] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const router = useRouter();
+  const { setAuth } = useAuth();
 
   const toggleVisibility = () => setIsVisible((prev) => !prev);
-
+  const LoginURL = '/Auth/Login';
+  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
     event.preventDefault();
     setError('');
-
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/Login`, {
-        usernameOrEmail: User.email,
-        password: User.password,
+      setIsLoading(false);
+      const response = await axios.post(LoginURL, {
+        usernameOrEmail: user.email,
+        password: user.password,
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+       
       });
 
       if (response.data?.token) {
+        setAuth({ authToken: response.data.token });
         router.push('/dashboard/admin-dashboard');
       } else {
         setError('Invalid email or password');
       }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        setError(error.response.data.message || 'Invalid email or password');
-      } else {
-        setError('An unexpected error occurred');
-      }
+    } catch (error:any) {
+      setIsLoading(false);
+      if (error.response) {
+      console.error('Login error:', error.response?.data || error.message);
+      setError(error.response.data.message || 'Login failed');
+      }else if (error.request) {
+        console.error('Login error: Network error');
+        setError('Network error. Please check your connection.');
+    }else {
+      console.error('Login error:', error.message);
+      setError('An unexpected error occurred.');
     }
+   }
   };
 
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className="mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
-        <div className="flex flex-col gap-1 ">
+        <div className="flex flex-col gap-1">
           <h1 className="text-large font-medium">Sign in to your account</h1>
         </div>
         <Form
@@ -58,7 +71,7 @@ export default function LoginComponent() {
             name="email"
             type="email"
             variant="bordered"
-            value={User.email}
+            value={user.email}
             onChange={(e) => setUser((prev) => ({ ...prev, email: e.target.value }))}
           />
           <Input
@@ -67,15 +80,14 @@ export default function LoginComponent() {
             name="password"
             type={isVisible ? 'text' : 'password'}
             variant="bordered"
-            value={User.password}
+            value={user.password}
             onChange={(e) => setUser((prev) => ({ ...prev, password: e.target.value }))}
             endContent={
               <button type="button" onClick={toggleVisibility}>
-                {isVisible ? (
-                  <Icon className="pointer-events-none text-2xl text-default-400" icon="solar:eye-closed-linear" />
-                ) : (
-                  <Icon className="pointer-events-none text-2xl text-default-400" icon="solar:eye-bold" />
-                )}
+                <Icon
+                  className="pointer-events-none text-2xl text-default-400"
+                  icon={isVisible ? "solar:eye-closed-linear" : "solar:eye-bold"}
+                />
               </button>
             }
           />

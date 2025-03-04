@@ -26,7 +26,7 @@ type User = typeof users[0];
 
 export default function Component() {
   const [filterValue, setFilterValue] = useState("");
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
   const [page, setPage] = useState(1);
   const hasSearchFilter = Boolean(filterValue);
   const [allUsers, setAllUsers] = useState(users); 

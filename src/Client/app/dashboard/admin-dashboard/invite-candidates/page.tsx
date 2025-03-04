@@ -52,7 +52,7 @@ export default function Component() {
         {key: "c", label: "Learnathon 3.0"},
     ]
     const [filterValue, setFilterValue] = useState("");
-    const rowsPerPage = 3;
+    const rowsPerPage = 4;
     const [page, setPage] = useState(1);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [state, setState] = useState("");
@@ -151,12 +151,12 @@ export default function Component() {
     }, []);
 
     const topContent = useMemo(() => (
-        <div className="flex gap-8 mt-8 w-full justify-between">
+        <div className="flex gap-8 w-full justify-between">
             <h2>Candidates List</h2>
             <div className="flex items-end">
                 <Input
                     isClearable
-                    className="w-[400px] ml-44"
+                    className="w-[400px] "
                     placeholder="Search by name..."
                     startContent={<SearchIcon />}
                     value={filterValue}
@@ -194,7 +194,7 @@ export default function Component() {
     ), [page, pages, onPreviousPage, onNextPage]);
    
     return (
-        <div>
+        <div className="h-screen flex flex-col justify-between my-5 mx-5" >
             <div>
             <Select className="max-w-xs mb-5" label="Select an exam">
         {exams.map((exam) => (
@@ -202,7 +202,7 @@ export default function Component() {
         ))}
       </Select>
             </div>
-            <div className="flex gap-4 px-3">
+            <div className="flex gap-4">
                 <Textarea label="Type candidate email to import"></Textarea>
                 <div className="flex flex-col gap-4">
                     <Button>Upload CSV</Button>
@@ -211,12 +211,12 @@ export default function Component() {
             </div>
             <Table
                 isStriped
-                className="px-10 mx-2"
+                className=""
                 isHeaderSticky
                 aria-label="Example table with custom cells, pagination"
                 bottomContent={bottomContent}
                 bottomContentPlacement="outside"
-                classNames={{ wrapper: "max-h-[600px]" }}
+                classNames={{ wrapper: "" }}
                 topContent={topContent}
                 topContentPlacement="outside"
                 selectionMode="multiple">
@@ -231,7 +231,7 @@ export default function Component() {
                         </TableColumn>
                     ))}
                 </TableHeader>
-                <TableBody emptyContent="No admin found">
+                <TableBody emptyContent="No candidate found">
                     {items.map((item) => (
                         <TableRow key={item.key}>
                             {columns.map((column) => (

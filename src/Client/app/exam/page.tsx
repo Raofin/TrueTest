@@ -86,7 +86,7 @@ export default function Component() {
 
   if (!examStarted) {
     return (
-      <div className="pt-12 dark:bg-black dark:h-screen">
+      <div className="pt-12 dark:bg-gray-900 dark:h-screen">
         <Card className="max-w-3xl mx-auto  border-none">
           <CardBody>
             <div className="space-y-3">
@@ -192,13 +192,13 @@ export default function Component() {
       </div>
     </div>
       )}
-      <div className="pt-5 dark:bg-black dark:h-screen">
+      <div className="pt-5 dark:bg-gray-900 dark:h-screen">
       <Card className="w-16xl px-5 border-none px-8">
           <CardBody className="space-y-4">
            <div className="w-full flex justify-between"> <h2 className="text-lg font-semibold">{currentQuestion.title}</h2>
            <p>points : {currentQuestion.points}</p></div>
             {currentQuestion.type === "mcq" && currentQuestion.options && (
-              <div className="space-y-2">
+              <div className="space-y-2 dark:bg-[#27272a]">
                   <p>{currentQuestion.description}</p>
                 {currentQuestion.options.map((option, index) => (
                   <div key={index} className="flex items-center gap-2 p-3 rounded-lg hover:bg-white/5">
@@ -211,7 +211,7 @@ export default function Component() {
             {currentQuestion.type === "written" && (
               <>  <p>{currentQuestion.description}</p>
               <textarea
-                className="w-full h-32 border border-white/10 rounded-lg p-3"
+                className="w-full h-32 border border-white/10 rounded-lg p-3  dark:bg-[#27272a]"
                 placeholder="Type your answer here..."
                 value={answers[currentQuestion.id] || ""}  
                 onChange={(e) =>

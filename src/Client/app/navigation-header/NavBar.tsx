@@ -54,11 +54,11 @@ export default function Component({ onThemeToggle }: PageProps) {
               variant="light"
               onPress={handleThemeChange}
               className="hover:bg-gray-200 transition-colors duration-300 cursor-pointer ml-7">
-              <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} width={30} />
+              <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} width={50} />
             </Button>
             <Popover offset={12} placement="bottom-end">
               <PopoverTrigger className="rounded-full p-2 hover:bg-gray-200 transition-colors duration-300 cursor-pointer">
-                <Icon className="text-gray-600" icon="solar:bell-linear" width={35} />
+                <Icon className="text-gray-600" icon="solar:bell-linear" width={40} />
               </PopoverTrigger>
               <PopoverContent className="max-w-[90vw] p-0 sm:max-w-[380px]">
                 <NotificationsCard className="w-full shadow-none" />

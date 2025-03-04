@@ -86,9 +86,9 @@ export default function ExamList() {
   );
 
   return (
-    <div className="dark:bg-black w-full">
+    <div className="dark:bg-gray-900 w-full flex flex-col justify-between h-screen">
       {paginatedExams.map((exam, index) => (
-        <Card key={index} className="dark:bg-black relative w-full border-small mb-3 ">
+        <Card key={index} className="dark:bg-gray-900 relative w-full border-small">
           <CardHeader className="flex justify-between items-center w-full">
               <h1 className="text-2xl font-bold flex gap-1 items-end">
                 {exam.title}
@@ -132,7 +132,7 @@ export default function ExamList() {
           </CardBody>
         </Card>
       ))}
-      <div className="flex justify-center items-center mt-5">
+      <div className="flex justify-center items-center my-4">
         <Button disabled={currentPage === 1} onPress={() => setCurrentPage(currentPage - 1)}>Previous</Button>
         <span className="mx-4">Page {currentPage} of {totalPages}</span>
         <Button disabled={currentPage === totalPages} onPress={() => setCurrentPage(currentPage + 1)}>Next</Button>

@@ -85,7 +85,7 @@ int main() {
 
   return (
     <div className="">
-      <Card className="max-w-6xl mx-auto  border-none">
+      <Card className="max-w-6xl mx-auto  border-none h-[740px]">
         <CardBody>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -106,7 +106,7 @@ int main() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <span className="text-default-500">Candidate: </span>
                 {examData.candidate}
@@ -135,7 +135,7 @@ int main() {
           </div>
 
           <Divider className="my-3" />
-          <div className="space-y-6 h-[420px]">
+          <div className="space-y-4 h-[420px]">
             <h2 className="text-lg font-semibold">{currentQ.title}</h2>
             <p>{currentQ.description}</p>
 

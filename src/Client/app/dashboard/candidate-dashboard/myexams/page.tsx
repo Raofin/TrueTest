@@ -55,7 +55,7 @@ const Exams: Exam[] = [
   },
 ];
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 3;
 
 export default function ExamList() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,7 +67,7 @@ export default function ExamList() {
   );
 
   return (
-    <div className="mx-10 mt-10">
+    <div className="mx-auto flex flex-col items-center mt-3">
       {paginatedExams.map((exam, index) => (
         <Card key={index} className="relative w-full border-small mb-3 p-2">
           <CardHeader>
@@ -76,7 +76,7 @@ export default function ExamList() {
                 {exam.title} <span className={`text-sm ${exam.status === "Upcoming" ? "text-green-500" : exam.status === "Ended" ? "text-gray-500" : "text-red-500"}`}>{exam.description}</span>
               </h1>
               {exam.status === "Running" && (
-                <div className="ml-96"><Button color="primary" className="ml-96">View Exam</Button></div>
+                <div className="flex justify-end"><Button color="primary" className="ml-96">View Exam</Button></div>
               )}
             </div>
           </CardHeader>
@@ -109,7 +109,7 @@ export default function ExamList() {
           </CardBody>
         </Card>
       ))}
-      <div className="flex justify-center items-center mt-10">
+      <div className="flex justify-center items-center my-4">
         <Button disabled={currentPage === 1} onPress={() => setCurrentPage(currentPage - 1)}>Previous</Button>
         <span className="mx-4">Page {currentPage} of {totalPages}</span>
         <Button disabled={currentPage === totalPages} onPress={() => setCurrentPage(currentPage + 1)}>Next</Button>

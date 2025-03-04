@@ -70,7 +70,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex justify-center pt-12 dark:bg-black">
+    <div className="flex justify-center pt-12 dark:bg-gray-900">
       <Form className="w-full max-w-3xl flex flex-col gap-6" onSubmit={handleSubmit}>
         {questions.length > 0 && (
           <Card key={currentPage} className="w-full">
@@ -86,7 +86,7 @@ export default function App() {
                 onChange={(e) => handleQuestionChange(currentPage, e.target.value)}
               />
             </CardHeader>
-            <CardBody className="flex flex-col gap-4">
+            <CardBody className="flex flex-col gap-4 ">
               <div className="grid grid-cols-2 gap-4">
                 {questions[currentPage].options.map((option) => (
                   <Textarea
