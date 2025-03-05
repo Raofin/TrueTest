@@ -8,17 +8,17 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.McqSubmissions.Commands;
 
-public record UpdateMcqSubmissionCommand(
+public record UpdateMcqQuestionCommand(
     Guid McqSubmissionId,
     string AnswerOptions
     ) : IRequest<ErrorOr<McqSubmissionResponse>>;
 
 public class UpdateMcqSubmissionCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateMcqSubmissionCommand, ErrorOr<McqSubmissionResponse>>
+    : IRequestHandler<UpdateMcqQuestionCommand, ErrorOr<McqSubmissionResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<McqSubmissionResponse>> Handle(UpdateMcqSubmissionCommand command,
+    public async Task<ErrorOr<McqSubmissionResponse>> Handle(UpdateMcqQuestionCommand command,
         CancellationToken cancellationToken)
     {
         var mcqSubmission = await _unitOfWork.McqSubmission.GetAsync(command.McqSubmissionId, cancellationToken);
@@ -36,7 +36,7 @@ public class UpdateMcqSubmissionCommandHandler(IUnitOfWork unitOfWork)
     }
 }
 
-public class UpdateMcqSubmissionCommandValidator : AbstractValidator<UpdateMcqSubmissionCommand>
+public class UpdateMcqSubmissionCommandValidator : AbstractValidator<UpdateMcqQuestionCommand>
 {
     public UpdateMcqSubmissionCommandValidator()
     {
