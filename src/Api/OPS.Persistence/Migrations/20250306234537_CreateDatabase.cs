@@ -50,6 +50,7 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AdminInvites",
+                schema: "User",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
@@ -835,7 +836,8 @@ namespace OPS.Persistence.Migrations
                 schema: "User");
 
             migrationBuilder.DropTable(
-                name: "AdminInvites");
+                name: "AdminInvites",
+                schema: "User");
 
             migrationBuilder.DropTable(
                 name: "ExamCandidates",

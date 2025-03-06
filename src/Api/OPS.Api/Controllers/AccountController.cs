@@ -33,4 +33,20 @@ public class AccountController(IMediator mediator) : BaseApiController
 
         return ToResult(updatedAccount);
     }
+    
+    [HttpPost("MakeAdmin")]
+    public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
+    {
+        var account = await _mediator.Send(command);
+
+        return ToResult(account);
+    }
+    
+    [HttpPost("SendAdminInvite")]
+    public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
+    {
+        var invite = await _mediator.Send(command);
+
+        return ToResult(invite);
+    }
 }

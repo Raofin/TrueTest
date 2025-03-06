@@ -28,6 +28,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
     {
         return await _dbContext.Accounts
             .Where(a => a.Email == email)
+            .Include(a => a.AccountRoles)
             .SingleOrDefaultAsync(cancellationToken);
     }
 

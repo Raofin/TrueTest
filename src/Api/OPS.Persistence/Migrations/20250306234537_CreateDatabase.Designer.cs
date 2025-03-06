@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250306220706_CreateDatabase")]
+    [Migration("20250306234537_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -783,7 +783,7 @@ namespace OPS.Persistence.Migrations
                     b.ToTable("AccountRoles", "User");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.User.AdminInvites", b =>
+            modelBuilder.Entity("OPS.Domain.Entities.User.AdminInvite", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -805,7 +805,7 @@ namespace OPS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdminInvites");
+                    b.ToTable("AdminInvites", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.User.Otp", b =>

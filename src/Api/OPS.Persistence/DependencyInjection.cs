@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IProblemSubmissionRepository, ProblemSubmissionRepository>();
         services.AddScoped<ICloudFileRepository, CloudFIleRepository>();
         services.AddScoped<ITestCaseRepository, TestCaseRepository>();  
+        services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();
 
         return services;
     }

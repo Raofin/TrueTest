@@ -5,10 +5,13 @@ using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.User;
 
-public class AdminInvitesConfiguration : IEntityTypeConfiguration<AdminInvites>
+public class AdminInvitesConfiguration : IEntityTypeConfiguration<AdminInvite>
 {
-    public void Configure(EntityTypeBuilder<AdminInvites> entity)
+    public void Configure(EntityTypeBuilder<AdminInvite> entity)
     {
-        new BaseEntityConfig<AdminInvites>().Configure(entity);
+        entity.ToTable("AdminInvites", "User");
+        entity.HasKey(e => e.Id);
+        
+        new BaseEntityConfig<AdminInvite>().Configure(entity);
     }
 }
