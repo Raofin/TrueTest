@@ -11,6 +11,11 @@ builder.Services
     .AddApplication()
     .AddApi(builder.Configuration);
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(type => type.FullName?.Replace(".", "_")); // ? Uses unique names
+});
+
 var app = builder.Build();
 
 app.UseInfrastructure();

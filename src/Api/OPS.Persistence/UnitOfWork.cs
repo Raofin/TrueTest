@@ -20,6 +20,9 @@ internal class UnitOfWork(
     IProfileSocialRepository profileSocialRepository,
     IProblemSubmissionRepository problemSubmissionRepository,
     ICloudFileRepository cloudFileRepository) : IUnitOfWork
+    IProblemSubmissionRepository problemSubmissionRepository,
+    ITestCaseRepository testCaseRepository  
+    ) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
@@ -34,6 +37,7 @@ internal class UnitOfWork(
     public IProfileRepository Profile { get; } = profileRepository;
     public IProfileSocialRepository ProfileSocial { get; } = profileSocialRepository;
     public IProblemSubmissionRepository ProblemSubmission { get; } = problemSubmissionRepository;
+    public ITestCaseRepository TestCase { get; } = testCaseRepository;
     public ICloudFileRepository CloudFile { get; } = cloudFileRepository;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)

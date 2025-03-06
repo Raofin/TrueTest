@@ -39,7 +39,7 @@ public class McqSubmissionController(IMediator mediator) : BaseApiController
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateAccount(UpdateMcqSubmissionCommand command)
+    public async Task<IActionResult> UpdateAccount(UpdateMcqQuestionCommand command)
     {
         var mcqSubmission = await _mediator.Send(command);
 
