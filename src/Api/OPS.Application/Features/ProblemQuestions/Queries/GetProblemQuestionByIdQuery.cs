@@ -25,7 +25,7 @@ public class GetProblemQuestionByIdQueryHandler(IUnitOfWork unitOfWork)
         var result = new ProblemQuestionResponse(
             Id: question.Id,
             StatementMarkdown: question.StatementMarkdown,
-            Score: question.Score,
+            Score: question.Points,
             ExaminationId: question.ExaminationId, 
             DifficultyId: question.DifficultyId,
             QuestionTypeId: question.QuestionTypeId,

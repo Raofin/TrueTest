@@ -31,7 +31,7 @@ public class CreateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
         var question = new Question
         {
             StatementMarkdown = request.StatementMarkdown,
-            Score = request.Score,
+            Points = request.Score,
             DifficultyId = (int)request.DifficultyId,
             QuestionTypeId = 3,
             ExaminationId = request.ExaminationId

@@ -32,7 +32,7 @@ public class UpdateProblemQuestionCommandHandler(IUnitOfWork unitOfWork)
 
 
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
-        question.Score = request.Score;
+        question.Points = request.Score;
         question.DifficultyId = request.DifficultyId;  
         question.IsActive = request.IsActive;
         question.UpdatedAt = DateTime.UtcNow;
@@ -73,7 +73,7 @@ public class UpdateProblemQuestionCommandHandler(IUnitOfWork unitOfWork)
         var problemQuestion = new ProblemQuestionResponse(
             question.Id,
             question.StatementMarkdown,
-            question.Score,
+            question.Points,
             question.ExaminationId,
             question.DifficultyId,
             question.QuestionTypeId,

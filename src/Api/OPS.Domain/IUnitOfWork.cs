@@ -14,7 +14,7 @@ public interface IUnitOfWork : IDisposable
     IMcqSubmissionRepository McqSubmission { get; }
     IMcqOptionRepository McqOption { get; } 
     IProfileRepository Profile { get; }
-    IProfileSocialRepository ProfileSocial { get; }
+    IProfileLinkRepository ProfileLink { get; }
     IProblemSubmissionRepository ProblemSubmission { get; }
     ICloudFileRepository CloudFile { get; }
     ITestCaseRepository TestCase { get; }

@@ -30,7 +30,7 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
         if (mcqQuestion is null) return Error.NotFound(); 
 
         mcqQuestion.StatementMarkdown = command.StatementMarkdown ?? mcqQuestion.StatementMarkdown;
-        mcqQuestion.Score = command.Score;
+        mcqQuestion.Points = command.Score;
         mcqQuestion.DifficultyId = (int)command.DifficultyId;
 
         List<McqOptionResponse> options = new List<McqOptionResponse>();

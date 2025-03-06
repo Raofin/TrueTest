@@ -33,7 +33,7 @@ public class CreateProblemQuestionCommandHandler(IUnitOfWork unitOfWork)
         var question = new Question
         {
             StatementMarkdown = request.StatementMarkdown,
-            Score = request.Score,
+            Points = request.Score,
             ExaminationId = request.ExaminationId,
             DifficultyId = request.DifficultyId,
             QuestionTypeId = request.QuestionTypeId
@@ -61,7 +61,7 @@ public class CreateProblemQuestionCommandHandler(IUnitOfWork unitOfWork)
         var problemQuestion = new ProblemQuestionResponse(
             question.Id,
             question.StatementMarkdown,
-            question.Score,
+            question.Points,
             question.ExaminationId,
             question.DifficultyId,
             question.QuestionTypeId,

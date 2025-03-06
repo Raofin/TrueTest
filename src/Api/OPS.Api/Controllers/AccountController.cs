@@ -18,8 +18,8 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(accounts);
     }
 
-    [HttpPatch("ToggleActiveStatus")]
-    public async Task<IActionResult> ToggleActiveStatus(ChangeActiveStatusCommand command)
+    [HttpPatch("ChangeActiveStatus")]
+    public async Task<IActionResult> ChangeActiveStatus(ChangeActiveStatusCommand command)
     {
         var status = await _mediator.Send(command);
 

@@ -29,7 +29,7 @@ public class GetWrittenQuestionsByExamIdQueryHandler(IUnitOfWork unitOfWork)
                 Id: question.Id,
                 HasLongAnswer: question.HasLongAnswer,
                 StatementMarkdown: question.StatementMarkdown,
-                Score: question.Score,
+                Score: question.Points,
                 ExaminationId: question.ExaminationId,
                 DifficultyId: question.DifficultyId,
                 QuestionTypeId: question.QuestionTypeId,

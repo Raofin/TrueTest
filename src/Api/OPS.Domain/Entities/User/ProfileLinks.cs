@@ -2,7 +2,7 @@
 
 namespace OPS.Domain.Entities.User;
 
-public class ProfileSocial : BaseEntity
+public class ProfileLinks : BaseEntity
 {
     public string Name { get; set; } = null!;
     public string Link { get; set; } = null!;

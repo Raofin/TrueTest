@@ -4,13 +4,13 @@ using OPS.Domain.Entities.User;
 
 namespace OPS.Persistence.Repositories;
 
-internal class ProfileSocialRepository(AppDbContext dbContext) : Repository<ProfileSocial>(dbContext), IProfileSocialRepository
+internal class ProfileLinkRepository(AppDbContext dbContext) : Repository<ProfileLinks>(dbContext), IProfileLinkRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<List<ProfileSocial>> GetByProfileIdAsync(Guid profileId, CancellationToken cancellationToken)
+    public async Task<List<ProfileLinks>> GetByProfileIdAsync(Guid profileId, CancellationToken cancellationToken)
     {
-        return await _dbContext.ProfileSocials
+        return await _dbContext.ProfileLinks
             .Where(q => q.ProfileId == profileId)
             .ToListAsync(cancellationToken);
     }

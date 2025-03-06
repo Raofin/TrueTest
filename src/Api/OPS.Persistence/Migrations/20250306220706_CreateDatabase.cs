@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OPS.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class CreateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,6 +46,20 @@ namespace OPS.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Accounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdminInvites",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminInvites", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -234,7 +248,7 @@ namespace OPS.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     StatementMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Points = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     HasLongAnswer = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     QuestionTypeId = table.Column<int>(type: "int", nullable: false),
                     DifficultyId = table.Column<int>(type: "int", nullable: false),
@@ -305,7 +319,7 @@ namespace OPS.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    BioMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InstituteName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -463,7 +477,7 @@ namespace OPS.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProfileSocials",
+                name: "ProfileLinks",
                 schema: "User",
                 columns: table => new
                 {
@@ -476,9 +490,9 @@ namespace OPS.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProfileSocials", x => x.Id);
+                    table.PrimaryKey("PK_ProfileLinks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProfileSocials_Profiles_ProfileId",
+                        name: "FK_ProfileLinks_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalSchema: "User",
                         principalTable: "Profiles",
@@ -493,6 +507,7 @@ namespace OPS.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     AnswerOptions = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     McqOptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
@@ -706,6 +721,12 @@ namespace OPS.Persistence.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProfileLinks_ProfileId",
+                schema: "User",
+                table: "ProfileLinks",
+                column: "ProfileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Profiles_AccountId",
                 schema: "User",
                 table: "Profiles",
@@ -733,12 +754,6 @@ namespace OPS.Persistence.Migrations
                 table: "Profiles",
                 column: "IsDeleted",
                 filter: "[IsDeleted] = 0");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProfileSocials_ProfileId",
-                schema: "User",
-                table: "ProfileSocials",
-                column: "ProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProgLanguages_Language",
@@ -820,6 +835,9 @@ namespace OPS.Persistence.Migrations
                 schema: "User");
 
             migrationBuilder.DropTable(
+                name: "AdminInvites");
+
+            migrationBuilder.DropTable(
                 name: "ExamCandidates",
                 schema: "Exam");
 
@@ -840,7 +858,7 @@ namespace OPS.Persistence.Migrations
                 schema: "Submit");
 
             migrationBuilder.DropTable(
-                name: "ProfileSocials",
+                name: "ProfileLinks",
                 schema: "User");
 
             migrationBuilder.DropTable(

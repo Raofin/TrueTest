@@ -42,8 +42,8 @@ public class UserController(
         return ToResult(result);
     }
     
-    [HttpDelete("Socials")]
-    public async Task<IActionResult> DeleteSocialAsync(DeleteProfileSocialCommand command)
+    [HttpDelete("ProfileLink")]
+    public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command)
     {
         var result = await _mediator.Send(command);
 

@@ -10,7 +10,7 @@ public static class QuestionExtensions
         return new QuestionResponse(
             question.Id,
             question.StatementMarkdown,
-            question.Score,
+            question.Points,
             question.ExaminationId,
             question.DifficultyId,
             question.QuestionTypeId,

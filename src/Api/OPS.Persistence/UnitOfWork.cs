@@ -17,7 +17,7 @@ internal class UnitOfWork(
     IMcqSubmissionRepository mcqSubmissionRepository,
     IMcqOptionRepository mcqOptionRepository,
     IProfileRepository profileRepository,
-    IProfileSocialRepository profileSocialRepository,
+    IProfileLinkRepository profileLinkRepository,
     IProblemSubmissionRepository problemSubmissionRepository,
     ICloudFileRepository cloudFileRepository,
     ITestCaseRepository testCaseRepository) : IUnitOfWork
@@ -33,7 +33,7 @@ internal class UnitOfWork(
     public IMcqSubmissionRepository McqSubmission { get; } = mcqSubmissionRepository;
     public IMcqOptionRepository McqOption { get; } = mcqOptionRepository;
     public IProfileRepository Profile { get; } = profileRepository;
-    public IProfileSocialRepository ProfileSocial { get; } = profileSocialRepository;
+    public IProfileLinkRepository ProfileLink { get; } = profileLinkRepository;
     public IProblemSubmissionRepository ProblemSubmission { get; } = problemSubmissionRepository;
     public ITestCaseRepository TestCase { get; } = testCaseRepository;
     public ICloudFileRepository CloudFile { get; } = cloudFileRepository;

@@ -69,6 +69,6 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .Include(a => a.AccountRoles)
             .ThenInclude(ar => ar.Role)
             .Include(a => a.Profile)
-            .ThenInclude(p => p!.ProfileSocials);
+            .ThenInclude(p => p!.ProfileLinks);
     }
 }

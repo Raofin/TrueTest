@@ -29,7 +29,7 @@ public class UpdateQuestionCommandHandler(IUnitOfWork unitOfWork)
         if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
-        question.Score = command.Score ?? question.Score;
+        question.Points = command.Score ?? question.Points;
         question.DifficultyId = command.DifficultyId.HasValue ? (int)command.DifficultyId.Value : question.DifficultyId;
         question.QuestionTypeId = command.QuestionTypeId.HasValue ? (int)command.QuestionTypeId.Value : question.QuestionTypeId;
         question.IsActive = command.IsActive ?? question.IsActive;

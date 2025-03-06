@@ -14,7 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<AccountRole> AccountRoles { get; set; } = null!;
     public DbSet<Otp> Otps { get; set; } = null!;
     public DbSet<Profile> Profiles { get; set; } = null!;
-    public DbSet<ProfileSocial> ProfileSocials { get; set; } = null!;
+    public DbSet<ProfileLinks> ProfileLinks { get; set; } = null!;
     public DbSet<Difficulty> Difficulties { get; set; } = null!;
     public DbSet<ProgLanguage> ProgLanguages { get; set; } = null!;
     public DbSet<QuestionType> QuestionTypes { get; set; } = null!;
@@ -27,6 +27,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<McqSubmission> McqSubmissions { get; set; } = null!;
     public DbSet<ProblemSubmission> ProblemSubmissions { get; set; } = null!;
     public DbSet<WrittenSubmission> WrittenSubmissions { get; set; } = null!;
+    public DbSet<AdminInvites> AdminInvites { get; set; } = null!;
     public DbSet<CloudFile> CloudFiles { get; set; } = null!;
     public DbSet<LogEvent> LogEvents { get; set; } = null!;
   

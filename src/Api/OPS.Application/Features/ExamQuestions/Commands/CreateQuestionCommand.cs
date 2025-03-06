@@ -27,7 +27,7 @@ public class CreateQuestionCommandHandler(IUnitOfWork unitOfWork)
         var question = new Question
         {
             StatementMarkdown = request.StatementMarkdown,
-            Score = request.Score,
+            Points = request.Score,
             ExaminationId = request.ExaminationId,
             DifficultyId = (int)request.DifficultyId,
             QuestionTypeId = (int)request.QuestionTypeId

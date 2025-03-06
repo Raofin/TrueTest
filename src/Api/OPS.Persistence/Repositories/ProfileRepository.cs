@@ -12,7 +12,7 @@ internal class ProfileRepository(AppDbContext dbContext) : Repository<Profile>(d
     {
         return await _dbContext.Profiles
             .Where(p => p.AccountId == accountId)
-            .Include(p => p.ProfileSocials)
+            .Include(p => p.ProfileLinks)
             .SingleOrDefaultAsync(cancellationToken);
     }
 }
