@@ -1,16 +1,9 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Identity.Client;
-using Microsoft.VisualBasic;
-using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos    ;
 using OPS.Domain;
-using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Exam;
-using OPS.Domain.Entities.Submit;
-using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.ProblemQuestions.Commands;
 

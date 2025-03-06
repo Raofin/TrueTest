@@ -1,15 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.CrossCutting.Attributes;
-using OPS.Application.Features.ExamQuestions.Queries;
 using OPS.Application.Features.McqOptions.Commands;
 using OPS.Application.Features.McqOptions.Queries;
-using OPS.Domain.Entities.Exam;
-using OPS.Domain.Enums;
 
 namespace OPS.Api.Controllers;
-
 
 public class McqOptionController(IMediator mediator) : BaseApiController
 {

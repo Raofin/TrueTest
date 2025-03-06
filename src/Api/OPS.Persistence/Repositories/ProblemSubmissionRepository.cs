@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts;
+﻿using OPS.Domain.Contracts;
 using OPS.Domain.Entities.Submit;
 
 namespace OPS.Persistence.Repositories;

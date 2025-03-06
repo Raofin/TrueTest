@@ -1,5 +1,4 @@
-﻿using OPS.Domain.Entities.Exam;
-using OPS.Domain.Enums;
+﻿using OPS.Domain.Enums;
 
 namespace OPS.Application.Contracts.Dtos;
 

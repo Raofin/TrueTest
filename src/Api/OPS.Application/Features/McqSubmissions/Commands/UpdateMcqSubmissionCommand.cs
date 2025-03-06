@@ -3,7 +3,6 @@ using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Submit;
 using OPS.Domain;
 
 namespace OPS.Application.Features.McqSubmissions.Commands;

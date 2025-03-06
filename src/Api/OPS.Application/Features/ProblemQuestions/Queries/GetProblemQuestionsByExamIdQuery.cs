@@ -1,12 +1,8 @@
 ﻿using ErrorOr;
 using MediatR;
 using FluentValidation;
-using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Submit;
 using OPS.Domain;
-using OPS.Domain.Entities.Submit;
-using OPS.Domain.Entities.Exam;
 
 
 namespace OPS.Application.Features.ProblemQuestions.Queries;

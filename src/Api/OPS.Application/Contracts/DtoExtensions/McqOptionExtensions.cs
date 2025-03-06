@@ -1,8 +1,5 @@
-﻿using ErrorOr;
-using OPS.Application.Contracts.Dtos;
+﻿using OPS.Application.Contracts.Dtos;
 using OPS.Domain.Entities.Exam;
-using OPS.Domain.Entities.Submit;
-using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Contracts.DtoExtensions;
 

@@ -1,12 +1,9 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using Microsoft.Identity.Client;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos    ;
 using OPS.Domain;
-using OPS.Domain.Entities.Enum;
-using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 
 namespace OPS.Application.Features.ProblemSubmissions.Commands;

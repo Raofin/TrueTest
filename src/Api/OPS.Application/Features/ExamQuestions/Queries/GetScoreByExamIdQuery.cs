@@ -1,8 +1,6 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
 namespace OPS.Application.Features.ExamQuestions.Queries;

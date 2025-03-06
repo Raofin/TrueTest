@@ -19,10 +19,8 @@ internal class UnitOfWork(
     IProfileRepository profileRepository,
     IProfileSocialRepository profileSocialRepository,
     IProblemSubmissionRepository problemSubmissionRepository,
-    ICloudFileRepository cloudFileRepository) : IUnitOfWork
-    IProblemSubmissionRepository problemSubmissionRepository,
-    ITestCaseRepository testCaseRepository  
-    ) : IUnitOfWork
+    ICloudFileRepository cloudFileRepository,
+    ITestCaseRepository testCaseRepository) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 

@@ -1,13 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.Options;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.DtoExtensions;
+﻿using OPS.Application.Contracts.Dtos;
 using OPS.Domain.Entities.Exam;
-
-using OPS.Domain.Enums;
-using OPS.Application.Features.ExamQuestions.Queries;
 
 namespace OPS.Application.Contracts.DtoExtensions;
 

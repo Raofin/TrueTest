@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Entities.Submit;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Contracts;
 

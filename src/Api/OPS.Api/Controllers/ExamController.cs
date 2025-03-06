@@ -1,10 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.CrossCutting.Attributes;
 using OPS.Application.Features.Examinations.Commands;
 using OPS.Application.Features.Examinations.Queries;
-using OPS.Domain.Enums;
 
 namespace OPS.Api.Controllers;
 

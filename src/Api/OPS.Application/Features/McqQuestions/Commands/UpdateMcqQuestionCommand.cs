@@ -1,7 +1,6 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Options;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
