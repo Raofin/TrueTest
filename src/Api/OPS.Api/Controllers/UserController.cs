@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
+using OPS.Application.Features.Examinations.Queries;
 using OPS.Application.Features.User.Commands;
 using OPS.Application.Features.User.Queries;
 using OPS.Domain.Contracts.Core.Authentication;
@@ -46,6 +47,14 @@ public class UserController(
     public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command)
     {
         var result = await _mediator.Send(command);
+
+        return ToResult(result);
+    }
+    
+    [HttpGet("Exams")]
+    public async Task<IActionResult> GetExamsAsync(GetExamsByUserQuery query)
+    {
+        var result = await _mediator.Send(query);
 
         return ToResult(result);
     }

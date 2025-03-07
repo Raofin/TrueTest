@@ -1,5 +1,4 @@
 ﻿using ErrorOr;
-using FluentValidation;
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
@@ -21,15 +20,5 @@ public class GetExamByIdQueryHandler(IUnitOfWork unitOfWork)
         return exam is null
             ? Error.NotFound()
             : exam.ToDto();
-    }
-}
-
-public class GetExamByIdQueryValidator : AbstractValidator<GetExamByIdQuery>
-{
-    public GetExamByIdQueryValidator()
-    {
-        RuleFor(x => x.ExamId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
     }
 }
