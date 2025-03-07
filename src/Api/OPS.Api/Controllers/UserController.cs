@@ -27,6 +27,14 @@ public class UserController(
         });
     }
     
+    [HttpPatch("AccountSettings")]
+    public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        return ToResult(result);
+    }
+    
     [HttpGet("Details")]
     public async Task<IActionResult> GetDetailsAsync()
     {
