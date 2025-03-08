@@ -550,11 +550,11 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<string>("Input")
+                    b.Property<string>("ExpectedOutput")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Output")
+                    b.Property<string>("Input")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -663,6 +663,46 @@ namespace OPS.Persistence.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("ProblemSubmissions", "Submit");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.Submit.TestCaseOutput", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NewId()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<bool>("IsAccepted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Output")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProblemSubmissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestCaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProblemSubmissionId");
+
+                    b.HasIndex("TestCaseId");
+
+                    b.ToTable("TestCaseOutputs", "Submit");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.WrittenSubmission", b =>
@@ -1083,6 +1123,25 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("OPS.Domain.Entities.Submit.TestCaseOutput", b =>
+                {
+                    b.HasOne("OPS.Domain.Entities.Submit.ProblemSubmission", "ProblemSubmissions")
+                        .WithMany("TestCaseOutputs")
+                        .HasForeignKey("ProblemSubmissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OPS.Domain.Entities.Exam.TestCase", "TestCase")
+                        .WithMany("TestCaseOutputs")
+                        .HasForeignKey("TestCaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProblemSubmissions");
+
+                    b.Navigation("TestCase");
+                });
+
             modelBuilder.Entity("OPS.Domain.Entities.Submit.WrittenSubmission", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.User.Account", "Account")
@@ -1195,6 +1254,16 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("TestCases");
 
                     b.Navigation("WrittenSubmissions");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.Exam.TestCase", b =>
+                {
+                    b.Navigation("TestCaseOutputs");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.Submit.ProblemSubmission", b =>
+                {
+                    b.Navigation("TestCaseOutputs");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.User.Account", b =>

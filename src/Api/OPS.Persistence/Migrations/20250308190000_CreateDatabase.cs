@@ -427,7 +427,7 @@ namespace OPS.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Input = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Output = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpectedOutput = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
                     UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
@@ -530,6 +530,38 @@ namespace OPS.Persistence.Migrations
                         column: x => x.McqOptionId,
                         principalSchema: "Exam",
                         principalTable: "McqOption",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestCaseOutputs",
+                schema: "Submit",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
+                    Output = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    TestCaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProblemSubmissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestCaseOutputs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestCaseOutputs_ProblemSubmissions_ProblemSubmissionId",
+                        column: x => x.ProblemSubmissionId,
+                        principalSchema: "Submit",
+                        principalTable: "ProblemSubmissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TestCaseOutputs_TestCases_TestCaseId",
+                        column: x => x.TestCaseId,
+                        principalSchema: "Exam",
+                        principalTable: "TestCases",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -812,6 +844,18 @@ namespace OPS.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_TestCaseOutputs_ProblemSubmissionId",
+                schema: "Submit",
+                table: "TestCaseOutputs",
+                column: "ProblemSubmissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestCaseOutputs_TestCaseId",
+                schema: "Submit",
+                table: "TestCaseOutputs",
+                column: "TestCaseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TestCases_QuestionId",
                 schema: "Exam",
                 table: "TestCases",
@@ -858,16 +902,12 @@ namespace OPS.Persistence.Migrations
                 schema: "User");
 
             migrationBuilder.DropTable(
-                name: "ProblemSubmissions",
-                schema: "Submit");
-
-            migrationBuilder.DropTable(
                 name: "ProfileLinks",
                 schema: "User");
 
             migrationBuilder.DropTable(
-                name: "TestCases",
-                schema: "Exam");
+                name: "TestCaseOutputs",
+                schema: "Submit");
 
             migrationBuilder.DropTable(
                 name: "WrittenSubmissions",
@@ -882,20 +922,32 @@ namespace OPS.Persistence.Migrations
                 schema: "Exam");
 
             migrationBuilder.DropTable(
-                name: "ProgLanguages",
-                schema: "Enum");
-
-            migrationBuilder.DropTable(
                 name: "Profiles",
                 schema: "User");
+
+            migrationBuilder.DropTable(
+                name: "ProblemSubmissions",
+                schema: "Submit");
+
+            migrationBuilder.DropTable(
+                name: "TestCases",
+                schema: "Exam");
+
+            migrationBuilder.DropTable(
+                name: "CloudFiles",
+                schema: "Core");
+
+            migrationBuilder.DropTable(
+                name: "ProgLanguages",
+                schema: "Enum");
 
             migrationBuilder.DropTable(
                 name: "Questions",
                 schema: "Exam");
 
             migrationBuilder.DropTable(
-                name: "CloudFiles",
-                schema: "Core");
+                name: "Accounts",
+                schema: "User");
 
             migrationBuilder.DropTable(
                 name: "Difficulties",
@@ -908,10 +960,6 @@ namespace OPS.Persistence.Migrations
             migrationBuilder.DropTable(
                 name: "QuestionTypes",
                 schema: "Enum");
-
-            migrationBuilder.DropTable(
-                name: "Accounts",
-                schema: "User");
         }
     }
 }
