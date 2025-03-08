@@ -73,4 +73,19 @@ public static class QuestionExtensions
             mcqOption.AnswerOptions
         );
     }
+
+    public static WrittenQuestionResponse ToWrittenQuestionDto(this Question question)
+    {
+        return new WrittenQuestionResponse(
+            question.Id,
+            question.HasLongAnswer,
+            question.StatementMarkdown,
+            question.Points,
+            question.ExaminationId,
+            (DifficultyType)question.DifficultyId,
+            (QuestionType)question.QuestionTypeId,
+            question.CreatedAt,
+            question.UpdatedAt
+        );
+    }
 }

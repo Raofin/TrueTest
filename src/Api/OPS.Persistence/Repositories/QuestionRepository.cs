@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain.Contracts;
-using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Exam;
 using QuestionType = OPS.Domain.Enums.QuestionType;
 
@@ -61,6 +60,20 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
             .Include(q => q.McqOption)
             .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.MCQ)
             .OrderBy(q => q.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Question?> GetWrittenByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Questions
+            .Where(q => q.Id == id && q.QuestionTypeId == (int)QuestionType.Written)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<List<Question>> GetWrittenByExamIdAsync(Guid examId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Questions
+            .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.Written)
             .ToListAsync(cancellationToken);
     }
 }

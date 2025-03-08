@@ -12,7 +12,7 @@ public record ProblemQuestionResponse(
     DateTime CreatedAt,
     DateTime? UpdatedAt,
     bool IsActive,
-    List<TestCaseResponse> TestCases    
+    List<TestCaseResponse> TestCases
 );
 
 public record TestCaseResponse(
@@ -70,4 +70,24 @@ public record UpdateMcqOptionRequest(
     string? Option4,
     bool? IsMultiSelect,
     string? AnswerOptions
+);
+
+public record WrittenQuestionResponse(
+    Guid Id,
+    bool HasLongAnswer,
+    string StatementMarkdown,
+    decimal Score,
+    Guid ExaminationId,
+    DifficultyType DifficultyType,
+    QuestionType QuestionType,
+    DateTime CreatedAt,
+    DateTime? UpdatedAt
+);
+
+public record WrittenQuestionUpdateRequest(
+    Guid? Id,
+    bool? HasLongAnswer,
+    string? StatementMarkdown,
+    decimal? Score,
+    DifficultyType DifficultyType
 );
