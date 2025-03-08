@@ -26,10 +26,10 @@ public record ProfileResponse(
     string? InstituteName,
     string? PhoneNumber,
     Guid? ImageFileId,
-    List<ProfileSocialRequest> ProfileSocials
+    List<ProfileLinkRequest> ProfileLinks
 );
 
-public record ProfileSocialRequest(
+public record ProfileLinkRequest(
     Guid? Id,
     string? Name,
     string? Link

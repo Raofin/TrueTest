@@ -5,6 +5,7 @@ public record ExamResponse(
     string Title,
     string Description,
     int DurationMinutes,
+    string Status,
     DateTime OpensAt,
     DateTime ClosesAt,
     DateTime CreatedAt,

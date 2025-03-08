@@ -14,8 +14,8 @@ public class GetScoreByExamsIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<decimal>> Handle(GetScoreByExamsIdQuery request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetAllQuestionByExamIdAsync(request.ExamId, cancellationToken);
-        var score = question.Sum(x => x.Score);
+        var question = await _unitOfWork.Question.GetAllByExamIdAsync(request.ExamId, cancellationToken);
+        var score = question.Sum(x => x.Points);
 
         return score;
     }

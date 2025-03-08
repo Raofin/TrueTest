@@ -18,8 +18,8 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(accounts);
     }
 
-    [HttpPatch("ToggleActiveStatus")]
-    public async Task<IActionResult> ToggleActiveStatus(ChangeActiveStatusCommand command)
+    [HttpPatch("ChangeActiveStatus")]
+    public async Task<IActionResult> ChangeActiveStatus(ChangeActiveStatusCommand command)
     {
         var status = await _mediator.Send(command);
 
@@ -32,5 +32,21 @@ public class AccountController(IMediator mediator) : BaseApiController
         var updatedAccount = await _mediator.Send(command);
 
         return ToResult(updatedAccount);
+    }
+    
+    [HttpPost("MakeAdmin")]
+    public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
+    {
+        var account = await _mediator.Send(command);
+
+        return ToResult(account);
+    }
+    
+    [HttpPost("SendAdminInvite")]
+    public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
+    {
+        var invite = await _mediator.Send(command);
+
+        return ToResult(invite);
     }
 }

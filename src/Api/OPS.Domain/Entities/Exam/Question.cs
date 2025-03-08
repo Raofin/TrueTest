@@ -7,8 +7,8 @@ namespace OPS.Domain.Entities.Exam;
 public class Question : SoftDeletableEntity
 {
     public string StatementMarkdown { get; set; } = null!;
-    public decimal Score { get; set; }
-    public bool HasLongAnswer { get; set; } = false;
+    public decimal Points { get; set; }
+    public bool HasLongAnswer { get; set; }
 
     public int QuestionTypeId { get; set; }
     public int DifficultyId { get; set; }
@@ -17,8 +17,8 @@ public class Question : SoftDeletableEntity
     public Difficulty Difficulty { get; set; } = null!;
     public QuestionType QuestionType { get; set; } = null!;
 
+    public McqOption? McqOption { get; set; }
     public ICollection<TestCase> TestCases { get; set; } = [];
-    public ICollection<McqOption> McqQptions { get; set; } = [];
     public ICollection<WrittenSubmission> WrittenSubmissions { get; set; } = [];
     public ICollection<ProblemSubmission> ProblemSubmissions { get; set; } = [];
 }
