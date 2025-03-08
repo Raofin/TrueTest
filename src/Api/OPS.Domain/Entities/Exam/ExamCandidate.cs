@@ -7,9 +7,9 @@ public class ExamCandidate : SoftDeletableEntity
 {
     public string CandidateEmail { get; set; } = null!;
     public decimal Score { get; set; }
-    public DateTime? StartedAt { get; set; } = null;
-    public DateTime? SubmittedAt { get; set; } = null;
-    public bool HasCheated { get; set; } = false;
+    public DateTime? StartedAt { get; set; }
+    public DateTime? SubmittedAt { get; set; }
+    public bool HasCheated { get; set; }
 
     public Guid? AccountId { get; set; }
     public Guid ExaminationId { get; set; }

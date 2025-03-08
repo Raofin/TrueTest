@@ -1,6 +1,4 @@
-﻿using ErrorOr;
-using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Application.Features.ExamQuestions.Commands;
@@ -39,6 +37,15 @@ public class QuestionController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> GetAllQuestionsByExamIdQuestionTypeIdAsync(Guid examId,int questionTypeId)
     {
         var result = await _mediator.Send(new GetAllQuestionByExamIdQuestionTypeIdQuery(examId,questionTypeId));
+        return ToResult(result);
+    }
+
+
+    [HttpGet("scoreByExamId/{examId:guid}")]
+    public async Task<IActionResult> GetScoreByExamIdAsync(Guid examId)
+    {
+        var result = await _mediator.Send(new GetScoreByExamsIdQuery(examId));
+
         return ToResult(result);
     }
 

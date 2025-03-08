@@ -1,8 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using OPS.Domain.Entities.Exam;
-using OPS.Domain.Entities.Submit;
-
-namespace OPS.Application.Contracts.Dtos;
+﻿namespace OPS.Application.Contracts.Dtos;
 
 public record McqSubmissionResponse(
     Guid Id,

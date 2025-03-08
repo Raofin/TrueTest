@@ -11,9 +11,8 @@ namespace OPS.Application.Features.ExamQuestions.Commands;
 public record UpdateQuestionCommand(
     Guid QuestionId,
     string? StatementMarkdown,
-    decimal? Score,
-    DifficultyType? DifficultyId,
-    QuestionType? QuestionTypeId,
+    decimal? Points,
+    DifficultyType? DifficultyType,
     bool? IsActive,
     bool? IsDeleted) : IRequest<ErrorOr<QuestionResponse>>;
 
@@ -29,9 +28,8 @@ public class UpdateQuestionCommandHandler(IUnitOfWork unitOfWork)
         if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
-        question.Score = command.Score ?? question.Score;
-        question.DifficultyId = command.DifficultyId.HasValue ? (int)command.DifficultyId.Value : question.DifficultyId;
-        question.QuestionTypeId = command.QuestionTypeId.HasValue ? (int)command.QuestionTypeId.Value : question.QuestionTypeId;
+        question.Points = command.Points ?? question.Points;
+        question.DifficultyId = command.DifficultyType.HasValue ? (int)command.DifficultyType.Value : question.DifficultyId;
         question.IsActive = command.IsActive ?? question.IsActive;
         question.IsDeleted = command.IsDeleted ?? question.IsDeleted;
         question.UpdatedAt = DateTime.UtcNow;
@@ -56,16 +54,12 @@ public class UpdateQuestionCommandValidator : AbstractValidator<UpdateQuestionCo
             .MaximumLength(5000)
             .When(x => x.StatementMarkdown is not null);
 
-        RuleFor(x => x.Score)
+        RuleFor(x => x.Points)
             .GreaterThanOrEqualTo(0)
-            .When(x => x.Score.HasValue);
+            .When(x => x.Points.HasValue);
 
-        RuleFor(x => x.DifficultyId)
+        RuleFor(x => x.DifficultyType)
             .IsInEnum()
-            .When(x => x.DifficultyId.HasValue);
-
-        RuleFor(x => x.QuestionTypeId)
-            .IsInEnum()
-            .When(x => x.QuestionTypeId.HasValue);
+            .When(x => x.DifficultyType.HasValue);
     }
 }

@@ -1,14 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.CrossCutting.Attributes;
 using OPS.Application.Features.McqSubmissions.Commands;
 using OPS.Application.Features.McqSubmissions.Queries;
-using OPS.Domain.Entities.Submit;
-using OPS.Domain.Enums;
 
 namespace OPS.Api.Controllers;
-
 
 public class McqSubmissionController(IMediator mediator) : BaseApiController
 {
@@ -38,11 +34,11 @@ public class McqSubmissionController(IMediator mediator) : BaseApiController
         return ToResult(createdMcqSubmission);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> UpdateAccount(UpdateMcqSubmissionCommand command)
-    {
-        var mcqSubmission = await _mediator.Send(command);
-
-        return ToResult(mcqSubmission);
-    }
+    // [HttpPut]
+    // public async Task<IActionResult> UpdateAccount(UpdateMcqQuestionCommand command)
+    // {
+    //     var mcqSubmission = await _mediator.Send(command);
+    //
+    //     return ToResult(mcqSubmission);
+    // }
 }

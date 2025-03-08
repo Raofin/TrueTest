@@ -17,9 +17,11 @@ internal class UnitOfWork(
     IMcqSubmissionRepository mcqSubmissionRepository,
     IMcqOptionRepository mcqOptionRepository,
     IProfileRepository profileRepository,
-    IProfileSocialRepository profileSocialRepository,
+    IProfileLinkRepository profileLinkRepository,
     IProblemSubmissionRepository problemSubmissionRepository,
-    ICloudFileRepository cloudFileRepository) : IUnitOfWork
+    ICloudFileRepository cloudFileRepository,
+    ITestCaseRepository testCaseRepository,
+    IAdminInviteRepository adminInviteRepository) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
@@ -32,9 +34,11 @@ internal class UnitOfWork(
     public IMcqSubmissionRepository McqSubmission { get; } = mcqSubmissionRepository;
     public IMcqOptionRepository McqOption { get; } = mcqOptionRepository;
     public IProfileRepository Profile { get; } = profileRepository;
-    public IProfileSocialRepository ProfileSocial { get; } = profileSocialRepository;
+    public IProfileLinkRepository ProfileLink { get; } = profileLinkRepository;
     public IProblemSubmissionRepository ProblemSubmission { get; } = problemSubmissionRepository;
+    public ITestCaseRepository TestCase { get; } = testCaseRepository;
     public ICloudFileRepository CloudFile { get; } = cloudFileRepository;
+    public IAdminInviteRepository AdminInvite { get; } = adminInviteRepository;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {

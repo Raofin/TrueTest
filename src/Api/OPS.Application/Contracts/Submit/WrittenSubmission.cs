@@ -5,5 +5,5 @@ public record WrittenSubmissionResponse(
     Guid QuestionId,
     Guid AccountId, 
     string Answer,
-    decimal Score
+    decimal? Score
 );

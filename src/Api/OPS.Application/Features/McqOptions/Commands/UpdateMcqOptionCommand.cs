@@ -1,14 +1,9 @@
-﻿using Azure.Core;
-using ErrorOr;
+﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Submit;
 using OPS.Domain;
-using OPS.Domain.Entities.Exam;
-using OPS.Domain.Entities.Submit;
 
 namespace OPS.Application.Features.McqOptions.Commands;
 

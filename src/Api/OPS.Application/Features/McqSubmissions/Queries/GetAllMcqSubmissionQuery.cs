@@ -2,9 +2,7 @@
 using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Contracts.Submit;
 using OPS.Domain;
-using OPS.Domain.Entities.Submit;
 
 namespace OPS.Application.Features.McqSubmissions.Queries;
 

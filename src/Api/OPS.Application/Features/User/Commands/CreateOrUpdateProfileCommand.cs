@@ -13,11 +13,11 @@ namespace OPS.Application.Features.User.Commands;
 public record CreateOrUpdateProfileCommand(
     string? FirstName,
     string? LastName,
-    string? BioMarkdown,
+    string? Bio,
     string? InstituteName,
     string? PhoneNumber,
     Guid? ImageFileId,
-    List<ProfileSocialRequest> ProfileSocials) : IRequest<ErrorOr<ProfileResponse>>;
+    List<ProfileLinkRequest> ProfileLinks) : IRequest<ErrorOr<ProfileResponse>>;
 
 public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
     : IRequestHandler<CreateOrUpdateProfileCommand, ErrorOr<ProfileResponse>>
@@ -44,12 +44,12 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
                 AccountId = accountId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                BioMarkdown = request.BioMarkdown,
+                Bio = request.Bio,
                 InstituteName = request.InstituteName,
                 PhoneNumber = request.PhoneNumber,
                 ImageFileId = request.ImageFileId,
-                ProfileSocials = request.ProfileSocials
-                    .Select(x => new ProfileSocial { Name = x.Name!, Link = x.Link! })
+                ProfileLinks = request.ProfileLinks
+                    .Select(x => new ProfileLinks { Name = x.Name!, Link = x.Link! })
                     .ToList()
             };
 
@@ -59,7 +59,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
         {
             profile.FirstName = request.FirstName ?? profile.FirstName;
             profile.LastName = request.LastName ?? profile.LastName;
-            profile.BioMarkdown = request.BioMarkdown ?? profile.BioMarkdown;
+            profile.Bio = request.Bio ?? profile.Bio;
             profile.InstituteName = request.InstituteName ?? profile.InstituteName;
             profile.PhoneNumber = request.PhoneNumber ?? profile.PhoneNumber;
 
@@ -68,26 +68,26 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
                 profile.ImageFileId = request.ImageFileId;
             }
 
-            foreach (var profileSocial in request.ProfileSocials)
+            foreach (var linkRequest in request.ProfileLinks)
             {
-                if (!profileSocial.Id.HasValue)
+                if (!linkRequest.Id.HasValue)
                 {
-                    var social = new ProfileSocial
+                    var profileLink = new ProfileLinks
                     {
                         ProfileId = profile.Id,
-                        Name = profileSocial.Name!,
-                        Link = profileSocial.Link!
+                        Name = linkRequest.Name!,
+                        Link = linkRequest.Link!
                     };
 
-                    _unitOfWork.ProfileSocial.Add(social);
+                    _unitOfWork.ProfileLink.Add(profileLink);
                 }
                 else
                 {
-                    var social = await _unitOfWork.ProfileSocial.GetAsync(profileSocial.Id!.Value, cancellationToken);
-                    social.ThrowIfNull("Profile social not found.");
+                    var profileLink = await _unitOfWork.ProfileLink.GetAsync(linkRequest.Id!.Value, cancellationToken);
+                    profileLink.ThrowIfNull("Profile link not found.");
 
-                    social.Name = profileSocial.Name ?? social.Name;
-                    social.Link = profileSocial.Link ?? social.Link;
+                    profileLink.Name = linkRequest.Name ?? profileLink.Name;
+                    profileLink.Link = linkRequest.Link ?? profileLink.Link;
                 }
             }
         }
@@ -114,9 +114,9 @@ public class CreateProfileCommandValidator : AbstractValidator<CreateOrUpdatePro
             .MaximumLength(20)
             .When(command => !string.IsNullOrEmpty(command.LastName));
 
-        RuleFor(command => command.BioMarkdown)
+        RuleFor(command => command.Bio)
             .MaximumLength(200)
-            .When(command => !string.IsNullOrEmpty(command.BioMarkdown));
+            .When(command => !string.IsNullOrEmpty(command.Bio));
 
         RuleFor(command => command.InstituteName)
             .MaximumLength(50)
@@ -126,27 +126,27 @@ public class CreateProfileCommandValidator : AbstractValidator<CreateOrUpdatePro
             .MaximumLength(20)
             .When(command => !string.IsNullOrEmpty(command.PhoneNumber));
 
-        RuleForEach(command => command.ProfileSocials)
-            .SetValidator(new ProfileSocialRequestValidator());
+        RuleForEach(command => command.ProfileLinks)
+            .SetValidator(new ProfileLinkRequestValidator());
     }
 }
 
-public class ProfileSocialRequestValidator : AbstractValidator<ProfileSocialRequest>
+public class ProfileLinkRequestValidator : AbstractValidator<ProfileLinkRequest>
 {
-    public ProfileSocialRequestValidator()
+    public ProfileLinkRequestValidator()
     {
-        RuleFor(social => social.Id)
-            .Must(id => !id.HasValue || id.Value != Guid.Empty)
-            .When(social => social.Id.HasValue);
+        RuleFor(x => x.Id)
+            .Must(x => !x.HasValue || x.Value != Guid.Empty)
+            .When(x => x.Id.HasValue);
 
-        RuleFor(social => social.Name)
+        RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(20)
-            .When(social => !string.IsNullOrEmpty(social.Name));
+            .When(x => !string.IsNullOrEmpty(x.Name));
 
-        RuleFor(social => social.Link)
+        RuleFor(x => x.Link)
             .NotEmpty()
             .MaximumLength(200)
-            .When(social => !string.IsNullOrEmpty(social.Link));
+            .When(x => !string.IsNullOrEmpty(x.Link));
     }
 }

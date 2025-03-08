@@ -35,25 +35,25 @@ public static class AccountExtensions
             profile.Id,
             profile.FirstName,
             profile.LastName,
-            profile.BioMarkdown,
+            profile.Bio,
             profile.InstituteName,
             profile.PhoneNumber,
             profile.ImageFileId,
-            profile.ProfileSocials
-                .Select(social => new ProfileSocialRequest(
-                    social.Id,
-                    social.Name,
-                    social.Link)
+            profile.ProfileLinks
+                .Select(link => new ProfileLinkRequest(
+                    link.Id,
+                    link.Name,
+                    link.Link)
                 ).ToList()
         );
     }
     
-    public static ProfileSocialRequest ToDto(this ProfileSocial profileSocial)
+    public static ProfileLinkRequest ToDto(this ProfileLinks link)
     {
-        return new ProfileSocialRequest(
-            profileSocial.Id,
-            profileSocial.Name,
-            profileSocial.Link
+        return new ProfileLinkRequest(
+            link.Id,
+            link.Name,
+            link.Link
         );
     }
 }

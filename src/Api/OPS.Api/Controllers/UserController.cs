@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
+using OPS.Application.Features.Examinations.Queries;
 using OPS.Application.Features.User.Commands;
 using OPS.Application.Features.User.Queries;
 using OPS.Domain.Contracts.Core.Authentication;
@@ -26,6 +27,14 @@ public class UserController(
         });
     }
     
+    [HttpPatch("AccountSettings")]
+    public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        return ToResult(result);
+    }
+    
     [HttpGet("Details")]
     public async Task<IActionResult> GetDetailsAsync()
     {
@@ -42,10 +51,18 @@ public class UserController(
         return ToResult(result);
     }
     
-    [HttpDelete("Socials")]
-    public async Task<IActionResult> DeleteSocialAsync(DeleteProfileSocialCommand command)
+    [HttpDelete("ProfileLink")]
+    public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command)
     {
         var result = await _mediator.Send(command);
+
+        return ToResult(result);
+    }
+    
+    [HttpGet("Exams")]
+    public async Task<IActionResult> GetExamsAsync(GetExamsByUserQuery query)
+    {
+        var result = await _mediator.Send(query);
 
         return ToResult(result);
     }

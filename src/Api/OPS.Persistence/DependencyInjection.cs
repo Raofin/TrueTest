@@ -21,9 +21,11 @@ public static class DependencyInjection
         services.AddScoped<IMcqSubmissionRepository, McqSubmissionRepository>();
         services.AddScoped<IMcqOptionRepository, McqOptionRepository>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
-        services.AddScoped<IProfileSocialRepository, ProfileSocialRepository>();
+        services.AddScoped<IProfileLinkRepository, ProfileLinkRepository>();
         services.AddScoped<IProblemSubmissionRepository, ProblemSubmissionRepository>();
         services.AddScoped<ICloudFileRepository, CloudFIleRepository>();
+        services.AddScoped<ITestCaseRepository, TestCaseRepository>();  
+        services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();
 
         return services;
     }
