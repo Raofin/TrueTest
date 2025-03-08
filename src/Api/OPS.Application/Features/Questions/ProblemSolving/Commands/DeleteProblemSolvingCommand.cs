@@ -14,7 +14,7 @@ public class DeleteProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<Success>> Handle(DeleteProblemSolvingCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetQuestionWithTestCases(request.QuestionId, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithTestCases(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
         _unitOfWork.TestCase.RemoveRange(question.TestCases);

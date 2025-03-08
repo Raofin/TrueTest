@@ -10,7 +10,7 @@ internal class McqOptionRepository(AppDbContext dbContext) : Repository<McqOptio
    
     public async Task<List<McqOption>> GetMcqOptionsByQuestionIdAsync(Guid questionId, CancellationToken cancellationToken)
     {
-        return await _dbContext.McqOptions
+        return await _dbContext.McqOption
             .AsNoTracking()
             .Where(option => option.QuestionId == questionId)
             .OrderBy(option => option.CreatedAt)

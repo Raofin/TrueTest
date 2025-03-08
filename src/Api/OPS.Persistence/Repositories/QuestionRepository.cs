@@ -10,7 +10,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<List<Question>> GetAllQuestionByExamIdAsync(Guid examId, CancellationToken cancellationToken)
+    public async Task<List<Question>> GetAllByExamIdAsync(Guid examId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
             .AsNoTracking()
@@ -28,21 +28,39 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Question?> GetQuestionWithTestCases(Guid questionId, CancellationToken cancellationToken)
+    public async Task<Question?> GetWithTestCases(Guid questionId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
             .Include(q => q.TestCases)
             .Where(q => q.Id == questionId)
             .SingleOrDefaultAsync(cancellationToken);
     }
-    
-    public async Task<List<Question>> GetProblemQuestionsByExamIdAsync(Guid examId, CancellationToken cancellationToken)
+
+    public async Task<List<Question>> GetProblemSolvingByExamIdAsync(Guid examId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
             .AsNoTracking()
             .Include(q => q.TestCases)
             .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.ProblemSolving)
             .OrderBy(exam => exam.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Question?> GetWithMcqOption(Guid questionId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Questions
+            .Include(q => q.McqOption)
+            .Where(q => q.Id == questionId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<List<Question>> GetMcqByExamIdAsync(Guid examId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Questions
+            .AsNoTracking()
+            .Include(q => q.McqOption)
+            .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.MCQ)
+            .OrderBy(q => q.CreatedAt)
             .ToListAsync(cancellationToken);
     }
 }

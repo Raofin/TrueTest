@@ -17,8 +17,8 @@ public class Question : SoftDeletableEntity
     public Difficulty Difficulty { get; set; } = null!;
     public QuestionType QuestionType { get; set; } = null!;
 
+    public McqOption? McqOption { get; set; }
     public ICollection<TestCase> TestCases { get; set; } = [];
-    public ICollection<McqOption> McqQptions { get; set; } = [];
     public ICollection<WrittenSubmission> WrittenSubmissions { get; set; } = [];
     public ICollection<ProblemSubmission> ProblemSubmissions { get; set; } = [];
 }

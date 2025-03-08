@@ -16,7 +16,7 @@ public class GetWrittenQuestionsByExamIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<List<WrittenQuestionResponse>>> Handle(GetWrittenQuestionsByExamIdQuery request, CancellationToken cancellationToken)
     {
-        var questions = await _unitOfWork.Question.GetAllQuestionByExamIdAsync(request.ExamId, cancellationToken);
+        var questions = await _unitOfWork.Question.GetAllByExamIdAsync(request.ExamId, cancellationToken);
 
         questions = questions.Where(q => q.QuestionTypeId == 2).ToList();
         var result = new List<WrittenQuestionResponse>();

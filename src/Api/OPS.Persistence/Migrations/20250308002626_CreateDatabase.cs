@@ -86,6 +86,7 @@ namespace OPS.Persistence.Migrations
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DescriptionMarkdown = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DurationMinutes = table.Column<int>(type: "int", nullable: false),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     OpensAt = table.Column<DateTime>(type: "DateTime", nullable: false),
                     ClosesAt = table.Column<DateTime>(type: "DateTime", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
@@ -349,7 +350,7 @@ namespace OPS.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "McqOptions",
+                name: "McqOption",
                 schema: "Exam",
                 columns: table => new
                 {
@@ -358,7 +359,7 @@ namespace OPS.Persistence.Migrations
                     Option2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Option3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Option4 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsMultiSelect = table.Column<bool>(type: "bit", nullable: false),
+                    IsMultiSelect = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     AnswerOptions = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
@@ -366,14 +367,14 @@ namespace OPS.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_McqOptions", x => x.Id);
+                    table.PrimaryKey("PK_McqOption", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_McqOptions_Questions_QuestionId",
+                        name: "FK_McqOption_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalSchema: "Exam",
                         principalTable: "Questions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -384,7 +385,7 @@ namespace OPS.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Attempts = table.Column<int>(type: "int", nullable: false),
-                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     IsFlagged = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     FlagReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProgLanguageId = table.Column<int>(type: "int", nullable: false),
@@ -450,7 +451,7 @@ namespace OPS.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     IsFlagged = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     FlagReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -508,7 +509,7 @@ namespace OPS.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     AnswerOptions = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     McqOptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
@@ -525,10 +526,10 @@ namespace OPS.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_McqSubmissions_McqOptions_McqOptionId",
+                        name: "FK_McqSubmissions_McqOption_McqOptionId",
                         column: x => x.McqOptionId,
                         principalSchema: "Exam",
-                        principalTable: "McqOptions",
+                        principalTable: "McqOption",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -686,10 +687,11 @@ namespace OPS.Persistence.Migrations
                 filter: "[IsDeleted] = 0");
 
             migrationBuilder.CreateIndex(
-                name: "IX_McqOptions_QuestionId",
+                name: "IX_McqOption_QuestionId",
                 schema: "Exam",
-                table: "McqOptions",
-                column: "QuestionId");
+                table: "McqOption",
+                column: "QuestionId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_McqSubmissions_AccountId",
@@ -876,7 +878,7 @@ namespace OPS.Persistence.Migrations
                 schema: "Enum");
 
             migrationBuilder.DropTable(
-                name: "McqOptions",
+                name: "McqOption",
                 schema: "Exam");
 
             migrationBuilder.DropTable(

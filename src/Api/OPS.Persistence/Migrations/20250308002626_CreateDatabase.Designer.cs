@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250306234537_CreateDatabase")]
+    [Migration("20250308002626_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -398,6 +398,11 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsPublished")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime>("OpensAt")
                         .HasColumnType("DateTime");
 
@@ -439,7 +444,9 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<bool>("IsMultiSelect")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Option1")
                         .IsRequired()
@@ -464,9 +471,10 @@ namespace OPS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
+                    b.HasIndex("QuestionId")
+                        .IsUnique();
 
-                    b.ToTable("McqOptions", "Exam");
+                    b.ToTable("McqOption", "Exam");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Question", b =>
@@ -590,7 +598,7 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("McqOptionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Score")
+                    b.Property<decimal?>("Score")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -642,7 +650,7 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Score")
+                    b.Property<decimal?>("Score")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -690,7 +698,7 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Score")
+                    b.Property<decimal?>("Score")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -986,9 +994,9 @@ namespace OPS.Persistence.Migrations
             modelBuilder.Entity("OPS.Domain.Entities.Exam.McqOption", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.Exam.Question", "Question")
-                        .WithMany("McqQptions")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithOne("McqOption")
+                        .HasForeignKey("OPS.Domain.Entities.Exam.McqOption", "QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Question");
@@ -1183,7 +1191,7 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Question", b =>
                 {
-                    b.Navigation("McqQptions");
+                    b.Navigation("McqOption");
 
                     b.Navigation("ProblemSubmissions");
 

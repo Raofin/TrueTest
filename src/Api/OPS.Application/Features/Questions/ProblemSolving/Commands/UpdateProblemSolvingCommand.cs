@@ -5,6 +5,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 using OPS.Domain.Entities.Exam;
+using OPS.Domain.Enums;
 using Throw;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
@@ -13,6 +14,7 @@ public record UpdateProblemSolvingCommand(
     Guid Id,
     string? StatementMarkdown,
     decimal? Points,
+    DifficultyType? DifficultyType,
     List<TestCaseUpdateRequest> TestCases) : IRequest<ErrorOr<ProblemQuestionResponse>>;
 
 public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
@@ -23,11 +25,12 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<ProblemQuestionResponse>> Handle(
         UpdateProblemSolvingCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetQuestionWithTestCases(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithTestCases(request.Id, cancellationToken);
         if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
         question.Points = request.Points ?? question.Points;
+        question.DifficultyId = request.DifficultyType.HasValue ? (int)request.DifficultyType.Value : question.DifficultyId;
 
         foreach (var tc in request.TestCases)
         {
@@ -75,6 +78,10 @@ public class UpdateProblemSolvingCommandValidator : AbstractValidator<UpdateProb
             .GreaterThan(0)
             .LessThanOrEqualTo(100)
             .When(x => x.Points.HasValue);
+        
+        RuleFor(x => x.DifficultyType)
+            .IsInEnum()
+            .When(x => x.DifficultyType.HasValue);
 
         RuleForEach(x => x.TestCases)
             .SetValidator(new TestCaseUpdateRequestValidator());

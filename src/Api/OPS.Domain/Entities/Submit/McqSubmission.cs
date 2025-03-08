@@ -7,7 +7,7 @@ namespace OPS.Domain.Entities.Submit;
 public class McqSubmission : BaseEntity
 {
     public string AnswerOptions { get; set; } = null!;
-    public decimal Score { get; set; }
+    public decimal? Score { get; set; }
 
     public Guid AccountId { get; set; }
     public Guid McqOptionId { get; set; }

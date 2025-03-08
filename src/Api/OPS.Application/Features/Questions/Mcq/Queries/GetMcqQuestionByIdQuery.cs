@@ -1,12 +1,11 @@
 ﻿using ErrorOr;
-using MediatR;
 using FluentValidation;
+using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-
-namespace OPS.Application.Features.McqQuestions.Queries;
+namespace OPS.Application.Features.Questions.Mcq.Queries;
 
 public record GetMcqQuestionByIdQuery(Guid QuestionId) : IRequest<ErrorOr<McqQuestionResponse>>;
 
@@ -17,17 +16,11 @@ public class GetMcqQuestionByIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<McqQuestionResponse>> Handle(GetMcqQuestionByIdQuery request, CancellationToken cancellationToken)
     {
-        var questions = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
+        var questions = await _unitOfWork.Question.GetWithMcqOption(request.QuestionId, cancellationToken);
 
-        if (questions == null || questions.QuestionTypeId != 3)
-        {
-            return Error.NotFound();
-        }
-
-        var options = await _unitOfWork.McqOption.GetMcqOptionsByQuestionIdAsync(questions.Id, cancellationToken);
-        var mcqQuestion = questions.OptionsToDto(options.Select(o => o.ToDto()).ToList());
-
-        return mcqQuestion;
+        return questions is null
+            ? Error.NotFound()
+            : questions.ToMcqQuestionDto();
     }
 }
 
@@ -37,6 +30,6 @@ public class GetMcqQuestionByIdQueryValidator : AbstractValidator<GetMcqQuestion
     {
         RuleFor(x => x.QuestionId)
             .NotEmpty()
-            .Must(id => id != Guid.Empty);
+            .NotEqual(Guid.Empty);
     }
 }

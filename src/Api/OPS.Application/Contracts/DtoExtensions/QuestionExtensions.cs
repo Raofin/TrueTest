@@ -20,7 +20,7 @@ public static class QuestionExtensions
             question.IsActive
         );
     }
-    
+
     public static ProblemQuestionResponse ToProblemQuestionDto(this Question question)
     {
         return new ProblemQuestionResponse(
@@ -43,6 +43,34 @@ public static class QuestionExtensions
             testCase.Id,
             testCase.Input,
             testCase.Output
+        );
+    }
+
+    public static McqQuestionResponse ToMcqQuestionDto(this Question question)
+    {
+        return new McqQuestionResponse(
+            question.Id,
+            question.StatementMarkdown,
+            question.Points,
+            question.ExaminationId,
+            (DifficultyType)question.DifficultyId,
+            (QuestionType)question.QuestionTypeId,
+            question.CreatedAt,
+            question.UpdatedAt,
+            question.IsActive,
+            question.McqOption!.ToDto()
+        );
+    }
+
+    public static McqOptionResponse ToDto(this McqOption mcqOption)
+    {
+        return new McqOptionResponse(
+            mcqOption.Option1,
+            mcqOption.Option2,
+            mcqOption.Option3,
+            mcqOption.Option4,
+            mcqOption.IsMultiSelect,
+            mcqOption.AnswerOptions
         );
     }
 }

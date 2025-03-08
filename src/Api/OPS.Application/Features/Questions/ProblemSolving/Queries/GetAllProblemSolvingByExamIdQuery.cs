@@ -16,7 +16,7 @@ public class GetAllProblemSolvingByExamIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<List<ProblemQuestionResponse>>> Handle(GetAllProblemSolvingByExamIdQuery request, CancellationToken cancellationToken)
     {
-        var questions = await _unitOfWork.Question.GetProblemQuestionsByExamIdAsync(request.ExamId, cancellationToken);
+        var questions = await _unitOfWork.Question.GetProblemSolvingByExamIdAsync(request.ExamId, cancellationToken);
 
         return questions.Select(q => q.ToProblemQuestionDto()).ToList();
     }

@@ -16,7 +16,7 @@ public class GetProblemSolvingByIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<ProblemQuestionResponse>> Handle(GetProblemSolvingByIdQuery request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetQuestionWithTestCases(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithTestCases(request.Id, cancellationToken);
 
         return question is null
             ? Error.NotFound()
