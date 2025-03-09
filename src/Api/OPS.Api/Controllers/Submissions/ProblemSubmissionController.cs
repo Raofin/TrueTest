@@ -4,7 +4,7 @@ using OPS.Api.Common;
 using OPS.Application.Features.ProblemSubmissions.Commands;
 using OPS.Application.Features.ProblemSubmissions.Queries;
 
-namespace OPS.Api.Controllers;
+namespace OPS.Api.Controllers.Submissions;
 
 public class ProblemSubmitController(IMediator mediator) : BaseApiController
 {
@@ -27,7 +27,7 @@ public class ProblemSubmitController(IMediator mediator) : BaseApiController
         return ToResult(result);
     }
     
-    [HttpGet("GetByExamId/{examId}/{accountId}")]
+    [HttpGet("GetByExamId/{examId:guid}/{accountId:guid}")]
     public async Task<IActionResult> GetAllProblemSubmitsByExamIdAsync(Guid examId, Guid accountId)
     {
         var query = new GetAllProblemQuesWithSubmissionQuery(examId, accountId);
