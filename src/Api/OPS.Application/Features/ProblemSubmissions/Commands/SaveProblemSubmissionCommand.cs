@@ -12,21 +12,21 @@ using Throw;
 
 namespace OPS.Application.Features.ProblemSubmissions.Commands;
 
-public record CreateProblemSubmitCommand(
+public record SaveProblemSubmissionCommand(
     Guid QuestionId,
     string Code,
     ProgLanguageType ProgLanguageType) : IRequest<ErrorOr<ProblemSubmitResponse>>;
 
-public class CreateProblemSubmitCommandHandler(
+public class SaveProblemSubmissionCommandHandler(
     IUnitOfWork unitOfWork,
     IUserInfoProvider userInfoProvider)
-    : IRequestHandler<CreateProblemSubmitCommand, ErrorOr<ProblemSubmitResponse>>
+    : IRequestHandler<SaveProblemSubmissionCommand, ErrorOr<ProblemSubmitResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
     public async Task<ErrorOr<ProblemSubmitResponse>> Handle(
-        CreateProblemSubmitCommand request, CancellationToken cancellationToken)
+        SaveProblemSubmissionCommand request, CancellationToken cancellationToken)
     {
         var accountId = _userInfoProvider.AccountId().ThrowIfNull(typeof(UnauthorizedAccessException));
         var testCases = await _unitOfWork.TestCase.GetByQuestionIdAsync(request.QuestionId, cancellationToken);
@@ -50,10 +50,10 @@ public class CreateProblemSubmitCommandHandler(
                 }).ToList()
         };
 
-        return await SaveSubmission(submission, testCases, cancellationToken);
+        return await SaveProblemSubmission(submission, testCases, cancellationToken);
     }
 
-    private async Task<ErrorOr<ProblemSubmitResponse>> SaveSubmission(
+    private async Task<ErrorOr<ProblemSubmitResponse>> SaveProblemSubmission(
         ProblemSubmission submission, List<TestCase> testCases, CancellationToken cancellationToken)
     {
         var existingSubmission = await _unitOfWork.ProblemSubmission.GetWithOutputsAsync(
@@ -83,14 +83,14 @@ public class CreateProblemSubmitCommandHandler(
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? submission.ToProblemSubmitDto(testCases)
+            ? submission.ToProblemSubmissionDto(testCases)!
             : Error.Failure();
     }
 }
 
-public class CreateProblemSubmissionCommandValidator : AbstractValidator<CreateProblemSubmitCommand>
+public class SaveProblemSubmissionCommandValidator : AbstractValidator<SaveProblemSubmissionCommand>
 {
-    public CreateProblemSubmissionCommandValidator()
+    public SaveProblemSubmissionCommandValidator()
     {
         RuleFor(x => x.QuestionId).NotEqual(Guid.Empty);
         RuleFor(x => x.ProgLanguageType).IsInEnum();

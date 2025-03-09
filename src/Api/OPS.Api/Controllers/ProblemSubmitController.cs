@@ -11,7 +11,7 @@ public class ProblemSubmitController(IMediator mediator) : BaseApiController
     private readonly IMediator _mediator = mediator;
     
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(CreateProblemSubmitCommand command)
+    public async Task<IActionResult> SaveAsync(SaveProblemSubmissionCommand command)
     {
         var result = await _mediator.Send(command);
 
@@ -27,19 +27,11 @@ public class ProblemSubmitController(IMediator mediator) : BaseApiController
         return ToResult(result);
     }
     
-    /*[HttpGet("GetByExamId/{examId:guid}")]
-    public async Task<IActionResult> GetAllProblemSubmitsByExamIdAsync(Guid examId)
+    [HttpGet("GetByExamId/{examId}/{accountId}")]
+    public async Task<IActionResult> GetAllProblemSubmitsByExamIdAsync(Guid examId, Guid accountId)
     {
-        var query = new GetAllProblemSubmitsByExamIdQuery(examId);
+        var query = new GetAllProblemQuesWithSubmissionQuery(examId, accountId);
         var result = await _mediator.Send(query);
-
-        return ToResult(result);
-    }*/
-    
-    [HttpPut]
-    public async Task<IActionResult> UpdateAsync(UpdateProblemSubmitCommand command)
-    {
-        var result = await _mediator.Send(command);
 
         return ToResult(result);
     }

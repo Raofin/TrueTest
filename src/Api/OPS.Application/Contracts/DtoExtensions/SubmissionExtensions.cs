@@ -7,23 +7,39 @@ namespace OPS.Application.Contracts.DtoExtensions;
 
 public static class SubmissionExtensions
 {
-    public static ProblemSubmitResponse ToProblemSubmitDto(
-        this ProblemSubmission submission, List<TestCase> testCases)
+    public static ProblemSubmitResponse? ToProblemSubmissionDto(
+        this ProblemSubmission? submission, List<TestCase> testCases)
     {
-        return new ProblemSubmitResponse(
-            submission.Id,
-            submission.Code,
-            submission.Attempts,
-            submission.Score,
-            (ProgLanguageType)submission.ProgLanguageId,
-            submission.TestCaseOutputs
-                .Zip(testCases, (output, testCase) => new TestCaseOutputResponse(
-                    output.TestCaseId,
-                    output.IsAccepted,
-                    testCase.Input,
-                    testCase.ExpectedOutput,
-                    output.ReceivedOutput
-                )).ToList()
+        return submission is null
+            ? null
+            : new ProblemSubmitResponse(
+                submission.Id,
+                submission.Code,
+                submission.Attempts,
+                submission.Score,
+                submission.IsFlagged,
+                submission.FlagReason,
+                (ProgLanguageType)submission.ProgLanguageId,
+                submission.TestCaseOutputs
+                    .Zip(testCases, (output, testCase) => new TestCaseOutputResponse(
+                        output.TestCaseId,
+                        output.IsAccepted,
+                        testCase.Input,
+                        testCase.ExpectedOutput,
+                        output.ReceivedOutput
+                    )).ToList()
+            );
+    }
+
+    public static ProblemQuesWithSubmissionResponse ToQuesProblemSubmissionDto(this Question question)
+    {
+        return new ProblemQuesWithSubmissionResponse(
+            question.Id,
+            question.StatementMarkdown,
+            question.Points,
+            (DifficultyType)question.DifficultyId,
+            question.ProblemSubmissions.FirstOrDefault()?
+                .ToProblemSubmissionDto(question.TestCases.ToList())
         );
     }
 }

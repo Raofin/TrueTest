@@ -5,7 +5,6 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-
 namespace OPS.Application.Features.ProblemSubmissions.Queries;
 
 public record GetProblemSubmissionByIdQuery(Guid ProblemSubmissionId) : IRequest<ErrorOr<ProblemSubmitResponse>>;
@@ -17,14 +16,12 @@ public class GetProblemSubmissionByIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<ProblemSubmitResponse>> Handle(GetProblemSubmissionByIdQuery request, CancellationToken cancellationToken)
     {
-        var ProblemSubmission = await _unitOfWork.ProblemSubmission.GetAsync(request.ProblemSubmissionId, cancellationToken);
+        var submission = await _unitOfWork.ProblemSubmission.GetWithOutputsAsync(request.ProblemSubmissionId, cancellationToken);
+        if (submission is null) return Error.NotFound();
 
-        // return ProblemSubmission is null
-        //     ? Error.NotFound()
-        //     : ProblemSubmission.ToDto();
-        
-        return Error.Failure();
+        var testCases = await _unitOfWork.TestCase.GetByQuestionIdAsync(submission.QuestionId, cancellationToken);
 
+        return submission.ToProblemSubmissionDto(testCases)!;
     }
 }
 
@@ -32,8 +29,6 @@ public class GetProblemSubmissionByIdQueryValidator : AbstractValidator<GetProbl
 {
     public GetProblemSubmissionByIdQueryValidator()
     {
-        RuleFor(x => x.ProblemSubmissionId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
+        RuleFor(x => x.ProblemSubmissionId).NotEqual(Guid.Empty);
     }
 }
