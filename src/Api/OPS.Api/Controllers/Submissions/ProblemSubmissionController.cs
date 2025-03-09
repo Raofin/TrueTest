@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.ProblemSubmissions.Commands;
-using OPS.Application.Features.ProblemSubmissions.Queries;
+using OPS.Application.Features.Submissions.ProblemSubmissions.Commands;
+using OPS.Application.Features.Submissions.ProblemSubmissions.Queries;
 
 namespace OPS.Api.Controllers.Submissions;
 

@@ -10,7 +10,7 @@ using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
 using Throw;
 
-namespace OPS.Application.Features.ProblemSubmissions.Commands;
+namespace OPS.Application.Features.Submissions.ProblemSubmissions.Commands;
 
 public record SaveProblemSubmissionCommand(
     Guid QuestionId,

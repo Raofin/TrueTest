@@ -1,11 +1,11 @@
 ﻿using ErrorOr;
-using MediatR;
 using FluentValidation;
+using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.ProblemSubmissions.Queries;
+namespace OPS.Application.Features.Submissions.ProblemSubmissions.Queries;
 
 public record GetProblemSubmissionByIdQuery(Guid ProblemSubmissionId) : IRequest<ErrorOr<ProblemSubmitResponse>>;
 

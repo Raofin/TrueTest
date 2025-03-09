@@ -5,7 +5,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.ProblemSubmissions.Queries;
+namespace OPS.Application.Features.Submissions.ProblemSubmissions.Queries;
 
 public record GetAllProblemQuesWithSubmissionQuery(Guid ExamId, Guid AccountId) : IRequest<ErrorOr<List<ProblemQuesWithSubmissionResponse>>>;
 
