@@ -54,4 +54,9 @@ internal class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEnti
     {
         _entities.RemoveRange(entities);
     }
+    
+    public void Update(TEntity entity)
+    {
+        _entities.Update(entity);
+    }
 }

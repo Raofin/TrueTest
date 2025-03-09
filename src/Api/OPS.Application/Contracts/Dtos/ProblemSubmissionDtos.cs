@@ -1,13 +1,20 @@
-﻿namespace OPS.Application.Contracts.Dtos;
+﻿using OPS.Domain.Enums;
 
-public record ProblemSubmissionResponse(
+namespace OPS.Application.Contracts.Dtos;
+
+public record ProblemSubmitResponse(
     Guid Id,
     string Code,
     int Attempts,
     decimal? Score,
-    bool IsFlagged,
-    string? FlagReason,
-    int ProgLanguageId,
-    Guid AccountId,
-    Guid QuestionId
+    ProgLanguageType ProgLanguageType,
+    List<TestCaseOutputResponse> TestCaseOutputs
+);
+
+public record TestCaseOutputResponse(
+    Guid TestCaseId,
+    bool IsAccepted,
+    string Input,
+    string ExpectedOutput,
+    string ReceivedOutput
 );

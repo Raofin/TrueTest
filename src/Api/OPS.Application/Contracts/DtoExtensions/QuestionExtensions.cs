@@ -42,7 +42,7 @@ public static class QuestionExtensions
         return new TestCaseResponse(
             testCase.Id,
             testCase.Input,
-            testCase.Output
+            testCase.ExpectedOutput
         );
     }
 

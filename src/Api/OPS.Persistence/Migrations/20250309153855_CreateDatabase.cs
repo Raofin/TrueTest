@@ -540,7 +540,7 @@ namespace OPS.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
-                    Output = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReceivedOutput = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsAccepted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     TestCaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProblemSubmissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

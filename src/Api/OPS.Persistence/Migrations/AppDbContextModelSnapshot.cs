@@ -682,12 +682,12 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Output")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ProblemSubmissionId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReceivedOutput")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TestCaseId")
                         .HasColumnType("uniqueidentifier");

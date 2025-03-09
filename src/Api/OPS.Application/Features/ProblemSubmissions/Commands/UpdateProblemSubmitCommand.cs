@@ -7,7 +7,7 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.ProblemSubmissions.Commands;
 
-public record UpdateProblemSubmissionCommand(
+public record UpdateProblemSubmitCommand(
     Guid Id,
     string Code,
     int Attempts,
@@ -15,14 +15,14 @@ public record UpdateProblemSubmissionCommand(
     bool IsFlagged,
     string? FlagReason,
     int ProgLanguageId
-    ) : IRequest<ErrorOr<ProblemSubmissionResponse>>;
+    ) : IRequest<ErrorOr<ProblemSubmitResponse>>;
 
 public class UpdateProblemSubmissionCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateProblemSubmissionCommand, ErrorOr<ProblemSubmissionResponse>>
+    : IRequestHandler<UpdateProblemSubmitCommand, ErrorOr<ProblemSubmitResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ProblemSubmissionResponse>> Handle(UpdateProblemSubmissionCommand command,
+    public async Task<ErrorOr<ProblemSubmitResponse>> Handle(UpdateProblemSubmitCommand command,
         CancellationToken cancellationToken)
     {
         var problemSubmission = await _unitOfWork.ProblemSubmission.GetAsync(command.Id, cancellationToken);
@@ -39,13 +39,15 @@ public class UpdateProblemSubmissionCommandHandler(IUnitOfWork unitOfWork)
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
+        /*return result > 0
             ? problemSubmission.ToDto()
-            : Error.Failure();
+            : Error.Failure();*/
+
+        return Error.Failure();
     }
 }
 
-public class UpdateProblemSubmissionCommandValidator : AbstractValidator<UpdateProblemSubmissionCommand>
+public class UpdateProblemSubmissionCommandValidator : AbstractValidator<UpdateProblemSubmitCommand>
 {
     public UpdateProblemSubmissionCommandValidator()
     {

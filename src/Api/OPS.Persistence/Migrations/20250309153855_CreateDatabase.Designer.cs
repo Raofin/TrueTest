@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250308190000_CreateDatabase")]
+    [Migration("20250309153855_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -685,12 +685,12 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Output")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ProblemSubmissionId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReceivedOutput")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TestCaseId")
                         .HasColumnType("uniqueidentifier");

@@ -16,6 +16,8 @@ public interface IUnitOfWork : IDisposable
     IProfileRepository Profile { get; }
     IProfileLinkRepository ProfileLink { get; }
     IProblemSubmissionRepository ProblemSubmission { get; }
+    ISubmissionRepository Submission { get; }
+    ITestCaseOutputRepository TestCaseOutput { get; }
     ICloudFileRepository CloudFile { get; }
     ITestCaseRepository TestCase { get; }
     IAdminInviteRepository AdminInvite { get; }

@@ -8,20 +8,23 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.ProblemSubmissions.Queries;
 
-public record GetProblemSubmissionByIdQuery(Guid ProblemSubmissionId) : IRequest<ErrorOr<ProblemSubmissionResponse>>;
+public record GetProblemSubmissionByIdQuery(Guid ProblemSubmissionId) : IRequest<ErrorOr<ProblemSubmitResponse>>;
 
 public class GetProblemSubmissionByIdQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetProblemSubmissionByIdQuery, ErrorOr<ProblemSubmissionResponse>>
+    : IRequestHandler<GetProblemSubmissionByIdQuery, ErrorOr<ProblemSubmitResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ProblemSubmissionResponse>> Handle(GetProblemSubmissionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ProblemSubmitResponse>> Handle(GetProblemSubmissionByIdQuery request, CancellationToken cancellationToken)
     {
         var ProblemSubmission = await _unitOfWork.ProblemSubmission.GetAsync(request.ProblemSubmissionId, cancellationToken);
 
-        return ProblemSubmission is null
-            ? Error.NotFound()
-            : ProblemSubmission.ToDto();
+        // return ProblemSubmission is null
+        //     ? Error.NotFound()
+        //     : ProblemSubmission.ToDto();
+        
+        return Error.Failure();
+
     }
 }
 

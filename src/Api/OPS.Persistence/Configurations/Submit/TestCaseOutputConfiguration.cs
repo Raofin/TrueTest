@@ -12,7 +12,7 @@ public class TestCaseOutputConfiguration : IEntityTypeConfiguration<TestCaseOutp
         entity.ToTable("TestCaseOutputs", "Submit");
         entity.HasKey(e => e.Id);
         
-        entity.Property(e => e.Output).IsRequired();
+        entity.Property(e => e.ReceivedOutput).IsRequired();
         entity.Property(e => e.IsAccepted).HasDefaultValue(false);
 
         new BaseEntityConfig<TestCaseOutput>().Configure(entity);

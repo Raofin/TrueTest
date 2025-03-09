@@ -5,7 +5,7 @@ namespace OPS.Domain.Entities.Submit;
 
 public class TestCaseOutput : BaseEntity
 {
-    public string Output { get; set; } = null!;
+    public string ReceivedOutput { get; set; } = null!;
     public bool IsAccepted { get; set; }
     
     public Guid TestCaseId { get; set; }

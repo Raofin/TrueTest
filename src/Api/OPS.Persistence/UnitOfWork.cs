@@ -19,6 +19,8 @@ internal class UnitOfWork(
     IProfileRepository profileRepository,
     IProfileLinkRepository profileLinkRepository,
     IProblemSubmissionRepository problemSubmissionRepository,
+    ISubmissionRepository submissionRepository,
+    ITestCaseOutputRepository testCaseOutputRepository,
     ICloudFileRepository cloudFileRepository,
     ITestCaseRepository testCaseRepository,
     IAdminInviteRepository adminInviteRepository) : IUnitOfWork
@@ -36,6 +38,8 @@ internal class UnitOfWork(
     public IProfileRepository Profile { get; } = profileRepository;
     public IProfileLinkRepository ProfileLink { get; } = profileLinkRepository;
     public IProblemSubmissionRepository ProblemSubmission { get; } = problemSubmissionRepository;
+    public ISubmissionRepository Submission { get; } = submissionRepository;
+    public ITestCaseOutputRepository TestCaseOutput { get; } = testCaseOutputRepository;
     public ITestCaseRepository TestCase { get; } = testCaseRepository;
     public ICloudFileRepository CloudFile { get; } = cloudFileRepository;
     public IAdminInviteRepository AdminInvite { get; } = adminInviteRepository;
@@ -58,6 +62,7 @@ internal class UnitOfWork(
             .ToList();
 
         foreach (var entityEntry in updatedEntities) entityEntry.Property(nameof(IBaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow;
+        
 
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }

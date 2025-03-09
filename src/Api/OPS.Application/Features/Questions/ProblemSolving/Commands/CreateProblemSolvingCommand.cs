@@ -42,7 +42,7 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
                 new TestCase
                 {
                     Input = tc.Input,
-                    Output = tc.Output,
+                    ExpectedOutput = tc.Output,
                 }
             );
         }
