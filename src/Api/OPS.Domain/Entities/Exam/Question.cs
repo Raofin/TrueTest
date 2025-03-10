@@ -20,5 +20,6 @@ public class Question : SoftDeletableEntity
     public McqOption? McqOption { get; set; }
     public ICollection<TestCase> TestCases { get; set; } = [];
     public ICollection<WrittenSubmission> WrittenSubmissions { get; set; } = [];
+    public ICollection<McqSubmission> McqSubmissions { get; set; } = [];
     public ICollection<ProblemSubmission> ProblemSubmissions { get; set; } = [];
 }

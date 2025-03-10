@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IProfileRepository, ProfileRepository>();
         services.AddScoped<IProfileLinkRepository, ProfileLinkRepository>();
         services.AddScoped<IProblemSubmissionRepository, ProblemSubmissionRepository>();
+        services.AddScoped<ITestCaseOutputRepository, TestCaseOutputRepository>();
         services.AddScoped<ICloudFileRepository, CloudFIleRepository>();
         services.AddScoped<ITestCaseRepository, TestCaseRepository>();  
         services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();

@@ -6,21 +6,6 @@ namespace OPS.Application.Contracts.DtoExtensions;
 
 public static class QuestionExtensions
 {
-    public static QuestionResponse ToDto(this Question question)
-    {
-        return new QuestionResponse(
-            question.Id,
-            question.StatementMarkdown,
-            question.Points,
-            question.ExaminationId,
-            question.DifficultyId,
-            question.QuestionTypeId,
-            question.CreatedAt,
-            question.UpdatedAt,
-            question.IsActive
-        );
-    }
-
     public static ProblemQuestionResponse ToProblemQuestionDto(this Question question)
     {
         return new ProblemQuestionResponse(
@@ -42,7 +27,7 @@ public static class QuestionExtensions
         return new TestCaseResponse(
             testCase.Id,
             testCase.Input,
-            testCase.Output
+            testCase.ExpectedOutput
         );
     }
 

@@ -24,5 +24,9 @@ public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission
             .WithMany(p => p.McqSubmissions)
             .HasForeignKey(d => d.McqOptionId)
             .OnDelete(DeleteBehavior.Restrict);
+        entity.HasOne(d => d.Question)
+            .WithMany(p => p.McqSubmissions)
+            .HasForeignKey(d => d.QuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
