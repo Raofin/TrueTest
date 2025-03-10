@@ -1,11 +1,14 @@
-# Team Elite Programmers
+# Elite Programmers
 
-| **Name** | **Role**    | **GitHub**                                 |
-| -------- | ----------- | ------------------------------------------ |
-| Nahid    | Team Leader | [@mdnahid20](https://github.com/mdnahid20) |
-| Rawfin   | Team Member | [@raofin](https://github.com/Raofin)       |
-| Akhi     | Team Member | [@akhi005](https://github.com/Akhi005)     |
-| Mahbub   | Mentor      | [@mahbub23](https://github.com/mahbub23)   |
+## Mentor
+
+- Mahbubur Rahman [@mahbub23](https://github.com/mahbub23)
+
+## Team Members
+
+- Zaid Amin Rawfin [@raofin](https://github.com/raofin)
+- Md Nahid Chowdhury [@mdnahid20](https://github.com/mdnahid20)
+- Kohinoor Akther Akhi [@akhi005](https://github.com/Akhi005)
 
 ## Online Proctoring System
 
@@ -26,6 +29,6 @@
 
 ## Resources
 
--   [Project Documentation](docs/)
--   [Development Setup](docs/setup.md)
--   [Contributing Guidelines](CONTRIBUTING.md)
+- [Project Documentation](docs/)
+- [Development Setup](docs/setup.md)
+- [Contributing Guidelines](CONTRIBUTING.md)
