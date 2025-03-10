@@ -10,12 +10,13 @@ import {
 } from "@nextui-org/react";
 import { Icon } from "@iconify/react";
 import React, { useState, useEffect } from "react";
-import MyExam from '../dashboard/candidate-dashboard/myexams/page';
+import MyExam from '../candidate/myexams/page';
 
 import NotificationsCard from "./notifications-card";
-import Home from '../dashboard/candidate-dashboard/home/page'
+import Home from '../candidate/home/page'
 import { usePathname } from "next/navigation";
-
+import { useAuth } from "../context/AuthProvider";
+import Logo from '../components/ui/logo/page'
 interface PageProps {
   onThemeToggle?: (theme: string) => void;
 }
@@ -24,7 +25,7 @@ export default function Component({ onThemeToggle }: PageProps) {
   const { dashboardType } = useDashboard();
   const [selected, setSelected] = useState<string>("home");
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -43,10 +44,18 @@ export default function Component({ onThemeToggle }: PageProps) {
 
   const pathname = usePathname();
 
+const {user,handleLogout}=useAuth();
   return (
-    <div>
-        {!pathname?.includes('/auth') && !pathname?.includes('/admin') &&   <>
-          <h2 className='flex absolute ml-24 text-3xl font-extrabold'>OPS</h2>
+    <div className="my-2">
+      
+         <>
+          <div className='flex absolute ml-24 text-3xl items-center gap-2 font-extrabold'> 
+                    <Logo />
+                    <p className="font-extrabold text-xl">
+                        <span className="text-red-500">True</span>
+                        <span className="text-blue-500">Test</span>
+                    </p>
+            </div>
           <div className="flex gap-5 absolute justify-center items-center ml-[1060px]">
             <Button
               isIconOnly
@@ -85,7 +94,7 @@ export default function Component({ onThemeToggle }: PageProps) {
                     <div className='flex gap-2 mb-2'>
                       <Avatar size="md" src="" alt="User Avatar" />
                       <div>
-                        <p>Username</p>
+                        <p>username</p>
                         <p>useremail@gmail.com</p>
                       </div>
                     </div>
@@ -93,23 +102,23 @@ export default function Component({ onThemeToggle }: PageProps) {
                   </DropdownItem>
 
                   <DropdownItem key="profile" className='text-white'>
-                    <Link href="/myprofile/1" className="flex items-center gap-2">
+                    <Link href="/profile" className={`flex items-center gap-2  ${isDarkMode? "text-white":"text-black"}`}>
                       <Icon icon="lucide:user" className="w-5 h-5" />
                       My Profile
                     </Link>
                   </DropdownItem>
 
                   <DropdownItem key="settings" className='text-white'>
-                    <Link href="/settings/1" className="flex items-center gap-2">
+                    <Link href="/settings/1" className={`flex items-center gap-2  ${isDarkMode? "text-white":"text-black"}`}>
                       <Icon icon="lucide:settings" className="w-5 h-5" />
                       Account Settings
                     </Link>
                   </DropdownItem>
 
                   <DropdownItem key="logout" className='text-white'>
-                    <Link href="/auth/login" className="flex items-center gap-2">
+                    <Link href="/login"  className={`flex items-center gap-2  ${isDarkMode? "text-white":"text-black"}`}>
                       <Icon icon="lucide:log-out" className="w-5 h-5" />
-                      Logout
+                      <p onClick={handleLogout}>Logout</p>
                     </Link>
                   </DropdownItem>
                 </DropdownMenu>
@@ -117,20 +126,20 @@ export default function Component({ onThemeToggle }: PageProps) {
             </button>
           </div>
         </>
-        }
+        
       {dashboardType &&
-        (<Tabs className={'flex justify-center space-x-7 mx-4'} aria-label="Options" selectedKey={selected} onSelectionChange={(key) => setSelected(key as string)}>
+        (<Tabs className={'flex justify-end  space-x-7 mx-72'} aria-label="Options" selectedKey={selected} onSelectionChange={(key) => setSelected(key as string)}>
           {dashboardType === 'candidate' ? (
             <>
-              <Tab key="home" title="Home">
-                <Card>
+              <Tab key="home" title="Home" >
+                <Card  className={`${isDarkMode? "bg-black" : "bg-white"}`}>
                   <CardBody>
                     <Home />
                   </CardBody>
                 </Card>
               </Tab>
-              <Tab key="My Exams" title="Attend Exam">
-                <Card>
+              <Tab key="My Exams" title="My Exams">
+                <Card  className={`${isDarkMode? "bg-black" : "bg-white"}`}>
                   <CardBody>
                     <MyExam />
                   </CardBody>

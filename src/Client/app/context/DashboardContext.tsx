@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import {usePathname} from "next/navigation";
 
 interface DashboardContextProps {
-    dashboardType: "candidate" | "admin" | 'reviewer'|null;
+    dashboardType: "candidate" | "admin" |null;
 }
 
 const DashboardContext = createContext<DashboardContextProps | undefined>(undefined);
@@ -14,17 +14,15 @@ interface DashboardProviderProps {
 
 export const DashboardProvider: React.FC<DashboardProviderProps> = ({ children }) => {
 
-    const [dashboardType, setDashboardType] = useState<"candidate" | "admin" | "reviewer"|null>(null);
+    const [dashboardType, setDashboardType] = useState<"candidate" | "admin" |null>(null);
   const path= usePathname();
   console.log("path : ",path);
     useEffect(() => {
-        if (path.includes("candidate-dashboard")) {
+        if (path.includes("candidate")) {
             setDashboardType("candidate");
-        } else if (path.includes("admin-dashboard")) {
+        } else if (path.includes("admin")) {
             setDashboardType("admin");
-        } else if (path.includes("reviewer-dashboard")){
-            setDashboardType('reviewer');
-        }
+        } 
     }, [path]);
     return (
         <DashboardContext.Provider value={{ dashboardType }}>
