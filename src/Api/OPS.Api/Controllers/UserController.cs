@@ -8,9 +8,8 @@ using OPS.Domain.Contracts.Core.Authentication;
 
 namespace OPS.Api.Controllers;
 
-public class UserController(
-    IMediator mediator,
-    IUserInfoProvider userInfoProvider) : BaseApiController
+[Route("api/User")]
+public class UserController(IMediator mediator, IUserInfoProvider userInfoProvider) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
@@ -26,44 +25,45 @@ public class UserController(
             Roles = _userInfoProvider.Roles()
         });
     }
-    
+
     [HttpPatch("AccountSettings")]
     public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command)
     {
-        var result = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(result);
+        return ToResult(response);
     }
-    
+
     [HttpGet("Details")]
     public async Task<IActionResult> GetDetailsAsync()
     {
-        var account = await _mediator.Send(new GetUserDetailsQuery());
+        var query = new GetUserDetailsQuery();
+        var response = await _mediator.Send(query);
 
-        return ToResult(account);
+        return ToResult(response);
     }
-    
-    [HttpPost("CreateOrUpdateProfile")]
+
+    [HttpPost("SaveProfile")]
     public async Task<IActionResult> CreateAsync(CreateOrUpdateProfileCommand command)
     {
-        var result = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(result);
+        return ToResult(response);
     }
-    
+
     [HttpDelete("ProfileLink")]
     public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command)
     {
-        var result = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(result);
+        return ToResult(response);
     }
-    
+
     [HttpGet("Exams")]
     public async Task<IActionResult> GetExamsAsync(GetExamsByUserQuery query)
     {
-        var result = await _mediator.Send(query);
+        var response = await _mediator.Send(query);
 
-        return ToResult(result);
+        return ToResult(response);
     }
 }

@@ -1,1 +1,0 @@
-﻿namespace OPS.Application.Contracts.Dtos;

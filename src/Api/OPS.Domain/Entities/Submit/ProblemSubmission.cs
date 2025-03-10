@@ -19,4 +19,5 @@ public class ProblemSubmission : BaseEntity
     public Account Account { get; set; } = null!;
     public Question Question { get; set; } = null!;
     public ProgLanguage ProgLanguages { get; set; } = null!;
+    public ICollection<TestCaseOutput> TestCaseOutputs { get; set; } = [];
 }

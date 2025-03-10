@@ -40,7 +40,7 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
                 testCase.ThrowIfNull();
 
                 testCase.Input = tc.Input ?? testCase.Input;
-                testCase.Output = tc.Output ?? testCase.Output;
+                testCase.ExpectedOutput = tc.Output ?? testCase.ExpectedOutput;
             }
             else
             {
@@ -48,7 +48,7 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
                     new TestCase
                     {
                         Input = tc.Input!,
-                        Output = tc.Output!,
+                        ExpectedOutput = tc.Output!,
                     }
                 );
             }

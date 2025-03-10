@@ -11,7 +11,7 @@ public static class AccountExtensions
         var roles = account.AccountRoles
             .Select(accountRole => (RoleType)accountRole.RoleId)
             .ToList();
-        
+
         return new AccountResponse(
             account.Id,
             account.Username,
@@ -23,37 +23,21 @@ public static class AccountExtensions
             account.Profile.ToDto()
         );
     }
-    
+
     public static ProfileResponse? ToDto(this Profile? profile)
     {
-        if (profile is null)
-        {
-            return null;
-        }
-        
-        return new ProfileResponse(
-            profile.Id,
-            profile.FirstName,
-            profile.LastName,
-            profile.Bio,
-            profile.InstituteName,
-            profile.PhoneNumber,
-            profile.ImageFileId,
-            profile.ProfileLinks
-                .Select(link => new ProfileLinkRequest(
-                    link.Id,
-                    link.Name,
-                    link.Link)
-                ).ToList()
-        );
-    }
-    
-    public static ProfileLinkRequest ToDto(this ProfileLinks link)
-    {
-        return new ProfileLinkRequest(
-            link.Id,
-            link.Name,
-            link.Link
-        );
+        return profile is null
+            ? null
+            : new ProfileResponse(
+                profile.Id,
+                profile.FirstName,
+                profile.LastName,
+                profile.Bio,
+                profile.InstituteName,
+                profile.PhoneNumber,
+                profile.ImageFileId,
+                profile.ProfileLinks
+                    .Select(pl => new ProfileLinkRequest(pl.Id, pl.Name, pl.Link)).ToList()
+            );
     }
 }
