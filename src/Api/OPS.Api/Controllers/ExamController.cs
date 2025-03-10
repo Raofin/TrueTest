@@ -1,88 +1,58 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
+using OPS.Application.CrossCutting.Attributes;
 using OPS.Application.Features.Examinations.Commands;
 using OPS.Application.Features.Examinations.Queries;
+using OPS.Domain.Enums;
 
 namespace OPS.Api.Controllers;
 
+// [AuthorizeRoles(RoleType.Admin)]
+[Route("api/Exam")]
 public class ExamController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet]
+    [HttpGet("All")]
     public async Task<IActionResult> GetAllExamsAsync()
     {
         var query = new GetAllExamsQuery();
+        var response = await _mediator.Send(query);
 
-        var exams = await _mediator.Send(query);
-
-        return ToResult(exams);
+        return ToResult(response);
     }
 
     [HttpGet("{examId:guid}")]
-    public async Task<IActionResult> GetExamByIdAsync(GetExamByIdQuery query)
+    public async Task<IActionResult> GetExamByIdAsync(Guid examId)
     {
-        var exam = await _mediator.Send(query);
+        var query = new GetExamByIdQuery(examId);
+        var response = await _mediator.Send(query);
 
-        return ToResult(exam);
+        return ToResult(response);
     }
 
-    [HttpGet("UpcomingExams")]
-    public async Task<IActionResult> GetUpcomingExamsAsync()
+    [HttpPost("Create")]
+    public async Task<IActionResult> CreateExamAsync(CreateExamCommand command)
     {
-        var query = new GetUpcomingExams();
+        var response = await _mediator.Send(command);
 
-        var upcomingExams = await _mediator.Send(query);
-
-        return ToResult(upcomingExams);
+        return ToResult(response);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateAsync(CreateExamCommand command)
-    {
-        var createdExam = await _mediator.Send(command);
-
-        return ToResult(createdExam);
-    }
-
-    [HttpPut]
+    [HttpPut("Update")]
     public async Task<IActionResult> UpdateAsync(UpdateExamCommand command)
     {
-        var updatedExam = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(updatedExam);
+        return ToResult(response);
     }
 
-    [HttpDelete]
+    [HttpDelete("Delete")]
     public async Task<IActionResult> DeleteAsync(DeleteExamCommand command)
     {
-        var deleteResult = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(deleteResult);
-    }
-    
-    [HttpGet("UpcomingExams/{accountId:guid}")]
-    public async Task<IActionResult> GetUpcomingExamsByAccountIdAsync(Guid accountId)
-    {
-        var query = new GetUpcomingExamsByAccountIdQuery(accountId);
-
-        var result = await _mediator.Send(query);
-
-        return !result.IsError
-            ? Ok(result.Value)
-            : Problem(result.FirstError.Description);
-    }
-
-    [HttpGet("PreviousExams/{accountId:guid}")]
-    public async Task<IActionResult> GetPreviousExamsByAccountIdAsync(Guid accountId)
-    {
-        var query = new GetPreviousExamsByAccountIdQuery(accountId);
-
-        var result = await _mediator.Send(query);
-
-        return !result.IsError
-            ? Ok(result.Value)
-            : Problem(result.FirstError.Description);
+        return ToResult(response);
     }
 }

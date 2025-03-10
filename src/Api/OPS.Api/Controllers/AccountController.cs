@@ -8,32 +8,50 @@ using OPS.Domain.Enums;
 
 namespace OPS.Api.Controllers;
 
-[AuthorizeRoles(RoleType.Admin)]
+// [AuthorizeRoles(RoleType.Admin)]
+[Route("api/Account")]
 public class AccountController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet]
+    [HttpGet("All")]
     public async Task<IActionResult> GetAllAccounts()
     {
-        var accounts = await _mediator.Send(new GetAllAccountsQuery());
+        var query = new GetAllAccountsQuery();
+        var response = await _mediator.Send(query);
 
-        return ToResult(accounts);
+        return ToResult(response);
     }
 
-    [HttpPatch("ToggleActiveStatus")]
-    public async Task<IActionResult> ToggleActiveStatus(ToggleActiveStatusCommand command)
+    [HttpPatch("ChangeActiveStatus")]
+    public async Task<IActionResult> ChangeActiveStatus(ChangeActiveStatusCommand command)
     {
-        var status = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(status);
+        return ToResult(response);
     }
 
-    [HttpPut]
+    [HttpPut("Update")]
     public async Task<IActionResult> UpdateAccount(UpdateAccountCommand command)
     {
-        var updatedAccount = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(updatedAccount);
+        return ToResult(response);
+    }
+
+    [HttpPost("MakeAdmin")]
+    public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
+    {
+        var response = await _mediator.Send(command);
+
+        return ToResult(response);
+    }
+
+    [HttpPost("SendAdminInvite")]
+    public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
+    {
+        var response = await _mediator.Send(command);
+
+        return ToResult(response);
     }
 }
