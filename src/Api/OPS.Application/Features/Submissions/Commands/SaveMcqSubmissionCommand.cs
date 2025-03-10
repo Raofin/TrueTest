@@ -8,7 +8,7 @@ using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
 using Throw;
 
-namespace OPS.Application.Features.Submissions.McqSubmissions.Commands;
+namespace OPS.Application.Features.Submissions.Commands;
 
 public record SaveMcqSubmissionCommand(
     Guid QuestionId,

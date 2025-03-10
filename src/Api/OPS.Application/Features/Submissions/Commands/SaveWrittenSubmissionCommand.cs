@@ -8,7 +8,7 @@ using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
 using Throw;
 
-namespace OPS.Application.Features.Submissions.Written.Commands;
+namespace OPS.Application.Features.Submissions.Commands;
 
 public record SaveWrittenSubmissionCommand(Guid QuestionId, string Answer)
     : IRequest<ErrorOr<WrittenSubmitResponse>>;
@@ -60,7 +60,7 @@ public class SaveWrittenSubmissionCommandValidator : AbstractValidator<SaveWritt
         RuleFor(x => x.QuestionId)
             .NotEmpty()
             .NotEqual(Guid.Empty);
-
+        
         RuleFor(x => x.Answer).NotEmpty();
     }
 }

@@ -7,14 +7,14 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Mcq.Queries;
 
-public record GetAllMcqByExamIdQuery(Guid ExamId) : IRequest<ErrorOr<List<McqQuestionResponse>>>;
+public record GetMcqByExamQuery(Guid ExamId) : IRequest<ErrorOr<List<McqQuestionResponse>>>;
 
-public class GetAllMcqByExamIdQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetAllMcqByExamIdQuery, ErrorOr<List<McqQuestionResponse>>>
+public class GetMcqByExamQueryHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<GetMcqByExamQuery, ErrorOr<List<McqQuestionResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<McqQuestionResponse>>> Handle(GetAllMcqByExamIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<McqQuestionResponse>>> Handle(GetMcqByExamQuery request, CancellationToken cancellationToken)
     {
         var questions = await _unitOfWork.Question.GetMcqByExamIdAsync(request.ExamId, cancellationToken);
 
@@ -22,9 +22,9 @@ public class GetAllMcqByExamIdQueryHandler(IUnitOfWork unitOfWork)
     }
 }
 
-public class GetAllMcqByExamIdQueryValidator : AbstractValidator<GetAllMcqByExamIdQuery>
+public class GetMcqByExamQueryValidator : AbstractValidator<GetMcqByExamQuery>
 {
-    public GetAllMcqByExamIdQueryValidator()
+    public GetMcqByExamQueryValidator()
     {
         RuleFor(x => x.ExamId)
             .NotEmpty()

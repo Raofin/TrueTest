@@ -10,7 +10,7 @@ using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
 using Throw;
 
-namespace OPS.Application.Features.Submissions.ProblemSubmissions.Commands;
+namespace OPS.Application.Features.Submissions.Commands;
 
 public record SaveProblemSubmissionCommand(
     Guid QuestionId,
@@ -32,7 +32,7 @@ public class SaveProblemSubmissionCommandHandler(
         var testCases = await _unitOfWork.TestCase.GetByQuestionIdAsync(request.QuestionId, cancellationToken);
 
         // TODO: Add compiler service to compile the code
-        
+
         var submission = new ProblemSubmission
         {
             Code = request.Code,
@@ -92,7 +92,10 @@ public class SaveProblemSubmissionCommandValidator : AbstractValidator<SaveProbl
 {
     public SaveProblemSubmissionCommandValidator()
     {
-        RuleFor(x => x.QuestionId).NotEqual(Guid.Empty);
+        RuleFor(x => x.QuestionId)
+            .NotEmpty()
+            .NotEqual(Guid.Empty);
+        
         RuleFor(x => x.ProgLanguageType).IsInEnum();
         RuleFor(x => x.Code).NotEmpty();
     }

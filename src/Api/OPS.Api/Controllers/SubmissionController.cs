@@ -1,12 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.Submissions.McqSubmissions.Commands;
-using OPS.Application.Features.Submissions.McqSubmissions.Queries;
-using OPS.Application.Features.Submissions.ProblemSubmissions.Commands;
-using OPS.Application.Features.Submissions.ProblemSubmissions.Queries;
-using OPS.Application.Features.Submissions.Written.Commands;
-using OPS.Application.Features.Submissions.Written.Queries;
+using OPS.Application.Features.Submissions.Commands;
+using OPS.Application.Features.Submissions.Queries;
 
 namespace OPS.Api.Controllers;
 
@@ -43,7 +39,7 @@ public class SubmissionController(IMediator mediator) : BaseApiController
     [HttpGet("Problem/{problemSubmissionId:guid}")]
     public async Task<IActionResult> GetProblemSubmissionAsync(Guid problemSubmissionId)
     {
-        var query = new GetProblemSubmissionByIdQuery(problemSubmissionId);
+        var query = new GetProblemSubmissionQuery(problemSubmissionId);
         var response = await _mediator.Send(query);
 
         return ToResult(response);
@@ -52,7 +48,7 @@ public class SubmissionController(IMediator mediator) : BaseApiController
     [HttpGet("Problem/ByExam/{examId:guid}/{accountId:guid}")]
     public async Task<IActionResult> GetProblemSubmissionsByExamAsync(Guid examId, Guid accountId)
     {
-        var query = new GetAllProblemQuesWithSubmissionQuery(examId, accountId);
+        var query = new GetProblemQuesWithSubmissionQuery(examId, accountId);
         var response = await _mediator.Send(query);
 
         return ToResult(response);

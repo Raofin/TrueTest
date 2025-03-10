@@ -31,7 +31,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [HttpGet("ByExam/{examId:guid}")]
     public async Task<IActionResult> GetProblemSolvingByExamAsync(Guid examId)
     {
-        var query = new GetAllProblemSolvingByExamIdQuery(examId);
+        var query = new GetProblemSolvingByExamQuery(examId);
         var response = await _mediator.Send(query);
 
         return ToResult(response);

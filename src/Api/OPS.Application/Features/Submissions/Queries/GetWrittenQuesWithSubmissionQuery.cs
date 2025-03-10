@@ -5,7 +5,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Submissions.Written.Queries;
+namespace OPS.Application.Features.Submissions.Queries;
 
 public record GetWrittenQuesWithSubmissionQuery(Guid ExamId, Guid AccountId)
     : IRequest<ErrorOr<List<WrittenQuesWithSubmissionResponse>>>;
@@ -31,7 +31,12 @@ public class GetWrittenQuesWithSubmissionQueryValidator : AbstractValidator<GetW
 {
     public GetWrittenQuesWithSubmissionQueryValidator()
     {
-        RuleFor(x => x.ExamId).NotEqual(Guid.Empty);
-        RuleFor(x => x.AccountId).NotEqual(Guid.Empty);
+        RuleFor(x => x.ExamId)
+            .NotEmpty()
+            .NotEqual(Guid.Empty);
+
+        RuleFor(x => x.AccountId)
+            .NotEmpty()
+            .NotEqual(Guid.Empty);
     }
 }

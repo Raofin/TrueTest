@@ -7,14 +7,14 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Queries;
 
-public record GetAllProblemSolvingByExamIdQuery(Guid ExamId) : IRequest<ErrorOr<List<ProblemQuestionResponse>>>;
+public record GetProblemSolvingByExamQuery(Guid ExamId) : IRequest<ErrorOr<List<ProblemQuestionResponse>>>;
 
-public class GetAllProblemSolvingByExamIdQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetAllProblemSolvingByExamIdQuery, ErrorOr<List<ProblemQuestionResponse>>>
+public class GetProblemSolvingByExamQueryHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<GetProblemSolvingByExamQuery, ErrorOr<List<ProblemQuestionResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<ProblemQuestionResponse>>> Handle(GetAllProblemSolvingByExamIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<ProblemQuestionResponse>>> Handle(GetProblemSolvingByExamQuery request, CancellationToken cancellationToken)
     {
         var questions = await _unitOfWork.Question.GetProblemSolvingByExamIdAsync(request.ExamId, cancellationToken);
 
@@ -22,9 +22,9 @@ public class GetAllProblemSolvingByExamIdQueryHandler(IUnitOfWork unitOfWork)
     }
 }
 
-public class GetAllProblemSolvingByExamIdQueryValidator : AbstractValidator<GetAllProblemSolvingByExamIdQuery>
+public class GetProblemSolvingByExamQueryValidator : AbstractValidator<GetProblemSolvingByExamQuery>
 {
-    public GetAllProblemSolvingByExamIdQueryValidator()
+    public GetProblemSolvingByExamQueryValidator()
     {
         RuleFor(x => x.ExamId)
             .NotEmpty()
