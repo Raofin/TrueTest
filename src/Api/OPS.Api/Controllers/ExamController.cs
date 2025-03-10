@@ -9,48 +9,50 @@ using OPS.Domain.Enums;
 namespace OPS.Api.Controllers;
 
 // [AuthorizeRoles(RoleType.Admin)]
+[Route("Exam")]
 public class ExamController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet]
+    [HttpGet("AllExams")]
     public async Task<IActionResult> GetAllExamsAsync()
     {
-        var exams = await _mediator.Send(new GetAllExamsQuery());
+        var query = new GetAllExamsQuery();
+        var response = await _mediator.Send(query);
 
-        return ToResult(exams);
+        return ToResult(response);
     }
 
-    [HttpGet("{examId}")]
+    [HttpGet("{examId:guid}")]
     public async Task<IActionResult> GetExamByIdAsync(Guid examId)
     {
         var query = new GetExamByIdQuery(examId);
-        var exam = await _mediator.Send(query);
-        
-        return ToResult(exam);
+        var response = await _mediator.Send(query);
+
+        return ToResult(response);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateAsync(CreateExamCommand command)
+    [HttpPost("Create")]
+    public async Task<IActionResult> CreateExamAsync(CreateExamCommand command)
     {
-        var createdExam = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(createdExam);
+        return ToResult(response);
     }
 
-    [HttpPut]
+    [HttpPut("Update")]
     public async Task<IActionResult> UpdateAsync(UpdateExamCommand command)
     {
-        var updatedExam = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(updatedExam);
+        return ToResult(response);
     }
 
-    [HttpDelete]
+    [HttpDelete("Delete")]
     public async Task<IActionResult> DeleteAsync(DeleteExamCommand command)
     {
-        var deleteResult = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        return ToResult(deleteResult);
+        return ToResult(response);
     }
 }
