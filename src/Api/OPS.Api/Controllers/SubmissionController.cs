@@ -10,7 +10,7 @@ using OPS.Application.Features.Submissions.Written.Queries;
 
 namespace OPS.Api.Controllers;
 
-[Route("Submissions")]
+[Route("api/Submissions")]
 public class SubmissionController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

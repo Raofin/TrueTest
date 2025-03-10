@@ -6,7 +6,7 @@ using OPS.Application.Features.Questions.Written.Queries;
 
 namespace OPS.Api.Controllers;
 
-[Route("Questions/Written")]
+[Route("api/Questions/Written")]
 public class QuestionWrittenController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

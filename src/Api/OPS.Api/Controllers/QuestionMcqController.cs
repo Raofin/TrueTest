@@ -6,7 +6,7 @@ using OPS.Application.Features.Questions.Mcq.Queries;
 
 namespace OPS.Api.Controllers;
 
-[Route("Questions/Mcq")]
+[Route("api/Questions/Mcq")]
 public class QuestionMcqController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

@@ -9,12 +9,12 @@ using OPS.Domain.Enums;
 namespace OPS.Api.Controllers;
 
 // [AuthorizeRoles(RoleType.Admin)]
-[Route("Exam")]
+[Route("api/Exam")]
 public class ExamController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("AllExams")]
+    [HttpGet("All")]
     public async Task<IActionResult> GetAllExamsAsync()
     {
         var query = new GetAllExamsQuery();

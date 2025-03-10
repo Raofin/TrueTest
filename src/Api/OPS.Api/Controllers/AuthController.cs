@@ -8,7 +8,7 @@ using OPS.Application.Features.Authentication.Queries;
 namespace OPS.Api.Controllers;
 
 [AllowAnonymous]
-[Route("Auth")]
+[Route("api/Auth")]
 public class AuthController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

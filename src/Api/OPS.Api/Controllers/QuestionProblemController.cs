@@ -6,7 +6,7 @@ using OPS.Application.Features.Questions.ProblemSolving.Queries;
 
 namespace OPS.Api.Controllers;
 
-[Route("Questions/Problem")]
+[Route("api/Questions/Problem")]
 public class QuestionProblemController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

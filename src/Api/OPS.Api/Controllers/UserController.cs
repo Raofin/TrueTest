@@ -8,7 +8,7 @@ using OPS.Domain.Contracts.Core.Authentication;
 
 namespace OPS.Api.Controllers;
 
-[Route("User")]
+[Route("api/User")]
 public class UserController(IMediator mediator, IUserInfoProvider userInfoProvider) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

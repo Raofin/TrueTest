@@ -9,12 +9,12 @@ using OPS.Domain.Enums;
 namespace OPS.Api.Controllers;
 
 // [AuthorizeRoles(RoleType.Admin)]
-[Route("Account")]
+[Route("api/Account")]
 public class AccountController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("AllAccounts")]
+    [HttpGet("All")]
     public async Task<IActionResult> GetAllAccounts()
     {
         var query = new GetAllAccountsQuery();
@@ -38,7 +38,7 @@ public class AccountController(IMediator mediator) : BaseApiController
 
         return ToResult(response);
     }
-    
+
     [HttpPost("MakeAdmin")]
     public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
     {
@@ -46,7 +46,7 @@ public class AccountController(IMediator mediator) : BaseApiController
 
         return ToResult(response);
     }
-    
+
     [HttpPost("SendAdminInvite")]
     public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
     {
