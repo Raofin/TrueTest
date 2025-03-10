@@ -52,24 +52,15 @@ public static class SubmissionExtensions
         );
     }
 
-    public static McqSubmissionResponse? ToSubmissionDto(this McqSubmission? submission)
-    {
-        return submission is null
-            ? null
-            : new McqSubmissionResponse(
-                submission.Id,
-                submission.AnswerOptions,
-                submission.Score
-            );
-    }
-
     public static McqQuesWithSubmissionResponse ToMcqWithSubmissionDto(this Question question)
     {
         return new McqQuesWithSubmissionResponse(
             question.Id,
             question.StatementMarkdown,
             question.Points,
-            question.McqSubmissions.FirstOrDefault()?.ToSubmissionDto()
+            question.McqSubmissions.FirstOrDefault() is { } submission
+                ? new McqSubmissionResponse(submission.Id, submission.AnswerOptions, submission.Score)
+                : null
         );
     }
 
