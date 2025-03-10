@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Application.Features.McqSubmissions.Commands;
-using OPS.Application.Features.McqSubmissions.Queries;
+using OPS.Application.Features.Submissions.McqSubmissions.Commands;
+using OPS.Application.Features.Submissions.McqSubmissions.Queries;
 
-namespace OPS.Api.Controllers;
+namespace OPS.Api.Controllers.Submissions;
 
 public class McqSubmissionController(IMediator mediator) : BaseApiController
 {
@@ -27,7 +27,7 @@ public class McqSubmissionController(IMediator mediator) : BaseApiController
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(CreateMcqSubmissionCommand command)
+    public async Task<IActionResult> CreateAsync(SaveMcqSubmissionCommand command)
     {
         var createdMcqSubmission = await _mediator.Send(command);
 

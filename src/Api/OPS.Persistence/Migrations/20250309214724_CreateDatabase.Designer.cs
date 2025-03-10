@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250309153855_CreateDatabase")]
+    [Migration("20250309214724_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -598,6 +598,9 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("McqOptionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal?>("Score")
                         .HasColumnType("decimal(10, 2)");
 
@@ -610,6 +613,8 @@ namespace OPS.Persistence.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("McqOptionId");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("McqSubmissions", "Submit");
                 });
@@ -1094,9 +1099,17 @@ namespace OPS.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("OPS.Domain.Entities.Exam.Question", "Question")
+                        .WithMany("McqSubmissions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Account");
 
                     b.Navigation("McqOption");
+
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.ProblemSubmission", b =>
@@ -1251,6 +1264,8 @@ namespace OPS.Persistence.Migrations
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Question", b =>
                 {
                     b.Navigation("McqOption");
+
+                    b.Navigation("McqSubmissions");
 
                     b.Navigation("ProblemSubmissions");
 

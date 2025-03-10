@@ -512,6 +512,7 @@ namespace OPS.Persistence.Migrations
                     Score = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     McqOptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
                     UpdatedAt = table.Column<DateTime>(type: "DateTime", nullable: true)
                 },
@@ -530,6 +531,13 @@ namespace OPS.Persistence.Migrations
                         column: x => x.McqOptionId,
                         principalSchema: "Exam",
                         principalTable: "McqOption",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_McqSubmissions_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalSchema: "Exam",
+                        principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -736,6 +744,12 @@ namespace OPS.Persistence.Migrations
                 schema: "Submit",
                 table: "McqSubmissions",
                 column: "McqOptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_McqSubmissions_QuestionId",
+                schema: "Submit",
+                table: "McqSubmissions",
+                column: "QuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProblemSubmissions_AccountId",

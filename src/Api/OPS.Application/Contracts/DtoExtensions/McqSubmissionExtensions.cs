@@ -5,15 +5,12 @@ namespace OPS.Application.Contracts.DtoExtensions;
 
 public static class McqSubmissionExtensions
 {
-    public static McqSubmissionResponse ToDto(this McqSubmission mcqSubmission)
+    public static McqSubmissionResponse ToDto(this McqSubmission submission)
     {
         return new McqSubmissionResponse(
-            mcqSubmission.Id,
-            mcqSubmission.AnswerOptions,
-            mcqSubmission.McqOptionId,
-            mcqSubmission.AccountId,
-            mcqSubmission.CreatedAt,
-            mcqSubmission.UpdatedAt
-            );
+            submission.Id,
+            submission.AnswerOptions,
+            submission.QuestionId
+        );
     }
 }

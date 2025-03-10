@@ -1,10 +1,7 @@
 ﻿namespace OPS.Application.Contracts.Dtos;
 
 public record McqSubmissionResponse(
-    Guid Id,
+    Guid McqSubmissionId,
     string AnswerOptions,
-    Guid McqOptionId,
-    Guid AccountId,
-    DateTime CreatedAt,
-    DateTime? UpdatedAt
+    Guid QuestionId
 );

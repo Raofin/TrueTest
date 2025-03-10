@@ -1,12 +1,11 @@
 ﻿using ErrorOr;
-using MediatR;
 using FluentValidation;
+using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-
-namespace OPS.Application.Features.McqSubmissions.Queries;
+namespace OPS.Application.Features.Submissions.McqSubmissions.Queries;
 
 public record GetProblemSubmissionByIdQuery(Guid McqSubmissionId) : IRequest<ErrorOr<McqSubmissionResponse>>;
 
@@ -19,9 +18,12 @@ public class GetMcqSubmissionByIdQueryHandler(IUnitOfWork unitOfWork)
     {
         var mcqSubmission = await _unitOfWork.McqSubmission.GetAsync(request.McqSubmissionId, cancellationToken);
 
-        return mcqSubmission is null
-            ? Error.NotFound()
-            : mcqSubmission.ToDto();
+        // return mcqSubmission is null
+        //     ? Error.NotFound()
+        //     : mcqSubmission.ToDto();
+        
+        return Error.Failure();
+
     }
 }
 

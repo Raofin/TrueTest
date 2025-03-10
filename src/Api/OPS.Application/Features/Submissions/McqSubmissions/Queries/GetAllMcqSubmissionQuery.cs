@@ -4,7 +4,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.McqSubmissions.Queries;
+namespace OPS.Application.Features.Submissions.McqSubmissions.Queries;
 
 public record GetAllMcqSubmissionQuery : IRequest<ErrorOr<List<McqSubmissionResponse>>>;
 
@@ -18,6 +18,8 @@ public class GetAllMcqSubmissionQueryHandler(IUnitOfWork unitOfWork)
     {
         var mcqSubmissions = await _unitOfWork.McqSubmission.GetAsync(cancellationToken);
 
-        return mcqSubmissions.Select(e => e.ToDto()).ToList();
+        // return mcqSubmissions.Select(e => e.ToDto()).ToList();
+        return Error.Failure();
+
     }
 }

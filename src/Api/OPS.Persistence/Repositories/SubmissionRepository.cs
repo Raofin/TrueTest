@@ -31,4 +31,12 @@ internal class SubmissionRepository(AppDbContext dbContext) : Repository<Questio
             .Where(q => q.Id == questionId && q.QuestionTypeId == (int)QuestionType.ProblemSolving)
             .SingleOrDefaultAsync(cancellationToken);
     }
+    
+    public async Task<Question?> GetWithMcqOptionAsync(Guid questionId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Questions
+            .Include(q => q.McqOption)
+            .Where(q => q.Id == questionId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }
