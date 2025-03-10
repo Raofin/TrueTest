@@ -17,7 +17,7 @@ internal class McqSubmissionRepository(AppDbContext dbContext) : Repository<McqS
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<List<Question>> GetAllMcqWithSubmission(Guid examId, Guid accountId, CancellationToken cancellationToken)
+    public async Task<List<Question>> GetMcqQuesWithSubmission(Guid examId, Guid accountId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
             .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.MCQ)

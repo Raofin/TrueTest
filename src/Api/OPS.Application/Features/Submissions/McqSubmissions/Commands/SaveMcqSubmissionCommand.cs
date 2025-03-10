@@ -12,15 +12,15 @@ namespace OPS.Application.Features.Submissions.McqSubmissions.Commands;
 
 public record SaveMcqSubmissionCommand(
     Guid QuestionId,
-    string AnswerOptions) : IRequest<ErrorOr<McqSubmissionResponse>>;
+    string AnswerOptions) : IRequest<ErrorOr<McqSubmitResponse>>;
 
 public class SaveMcqSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
-    : IRequestHandler<SaveMcqSubmissionCommand, ErrorOr<McqSubmissionResponse>>
+    : IRequestHandler<SaveMcqSubmissionCommand, ErrorOr<McqSubmitResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    public async Task<ErrorOr<McqSubmissionResponse>> Handle(
+    public async Task<ErrorOr<McqSubmitResponse>> Handle(
         SaveMcqSubmissionCommand request, CancellationToken cancellationToken)
     {
         var accountId = _userInfoProvider.AccountId().ThrowIfNull(typeof(UnauthorizedAccessException));

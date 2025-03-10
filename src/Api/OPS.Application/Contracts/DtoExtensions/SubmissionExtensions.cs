@@ -42,4 +42,34 @@ public static class SubmissionExtensions
                 .ToProblemSubmissionDto(question.TestCases.ToList())
         );
     }
+    
+    public static McqSubmitResponse ToDto(this McqSubmission submission)
+    {
+        return new McqSubmitResponse(
+            submission.Id,
+            submission.AnswerOptions,
+            submission.QuestionId
+        );
+    }
+
+    public static McqSubmissionResponse? ToSubmissionDto(this McqSubmission? submission)
+    {
+        return submission is null
+            ? null
+            : new McqSubmissionResponse(
+                submission.Id,
+                submission.AnswerOptions,
+                submission.Score
+            );
+    }
+
+    public static McqQuesWithSubmissionResponse ToQuesWithSubmissionDto(this Question question)
+    {
+        return new McqQuesWithSubmissionResponse(
+            question.Id,
+            question.StatementMarkdown,
+            question.Points,
+            question.McqSubmissions.FirstOrDefault()?.ToSubmissionDto()
+        );
+    }
 }
