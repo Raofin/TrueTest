@@ -22,8 +22,8 @@ public class GetMcqQuesWithSubmissionQueryHandler(IUnitOfWork unitOfWork)
             .GetMcqQuesWithSubmission(request.ExamId, request.AccountId, cancellationToken);
 
         return questions.Count == 0
-            ? Error.NotFound()
-            : questions.Select(q => q.ToQuesWithSubmissionDto()).ToList();
+            ? Error.Unexpected(description: "Invalid ExamId or AccountId")
+            : questions.Select(q => q.ToMcqWithSubmissionDto()).ToList();
     }
 }
 
@@ -31,6 +31,7 @@ public class GetMcqQuesWithSubmissionQueryValidator : AbstractValidator<GetMcqQu
 {
     public GetMcqQuesWithSubmissionQueryValidator()
     {
-        RuleFor(x => x.ExamId).NotEqual(Guid.Empty);
+        RuleFor(x => x.ExamId).NotEmpty().NotEqual(Guid.Empty);
+        RuleFor(x => x.AccountId).NotEmpty().NotEqual(Guid.Empty);
     }
 }

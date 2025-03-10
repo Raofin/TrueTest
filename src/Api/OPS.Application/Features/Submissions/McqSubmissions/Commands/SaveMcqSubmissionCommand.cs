@@ -37,7 +37,8 @@ public class SaveMcqSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoPr
             QuestionId = question.Id
         };
 
-        var existingSubmission = await _unitOfWork.McqSubmission.GetByAccountIdAsync(request.QuestionId, accountId, cancellationToken);
+        var existingSubmission = await _unitOfWork.McqSubmission
+            .GetByAccountIdAsync(request.QuestionId, accountId, cancellationToken);
 
         if (existingSubmission is null)
         {

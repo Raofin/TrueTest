@@ -18,3 +18,22 @@ public record McqQuesWithSubmissionResponse(
     decimal Points,
     McqSubmissionResponse? McqSubmission
 );
+
+public record WrittenSubmitResponse(
+    Guid WrittenSubmissionId,
+    string Answer,
+    Guid QuestionId
+);
+
+public record WrittenSubmissionResponse(
+    Guid WrittenSubmissionId,
+    string Answer,
+    decimal? Score
+);
+
+public record WrittenQuesWithSubmissionResponse(
+    Guid QuestionId,
+    string StatementMarkdown,
+    decimal Points,
+    WrittenSubmissionResponse? WrittenSubmission
+);

@@ -42,7 +42,7 @@ public static class SubmissionExtensions
                 .ToProblemSubmissionDto(question.TestCases.ToList())
         );
     }
-    
+
     public static McqSubmitResponse ToDto(this McqSubmission submission)
     {
         return new McqSubmitResponse(
@@ -63,13 +63,34 @@ public static class SubmissionExtensions
             );
     }
 
-    public static McqQuesWithSubmissionResponse ToQuesWithSubmissionDto(this Question question)
+    public static McqQuesWithSubmissionResponse ToMcqWithSubmissionDto(this Question question)
     {
         return new McqQuesWithSubmissionResponse(
             question.Id,
             question.StatementMarkdown,
             question.Points,
             question.McqSubmissions.FirstOrDefault()?.ToSubmissionDto()
+        );
+    }
+
+    public static WrittenSubmitResponse ToDto(this WrittenSubmission submission)
+    {
+        return new WrittenSubmitResponse(
+            submission.Id,
+            submission.Answer,
+            submission.QuestionId
+        );
+    }
+
+    public static WrittenQuesWithSubmissionResponse ToWrittenWithSubmissionDto(this Question question)
+    {
+        return new WrittenQuesWithSubmissionResponse(
+            question.Id,
+            question.StatementMarkdown,
+            question.Points,
+            question.WrittenSubmissions.FirstOrDefault() is { } submission
+                ? new WrittenSubmissionResponse(submission.Id, submission.Answer, submission.Score)
+                : null
         );
     }
 }

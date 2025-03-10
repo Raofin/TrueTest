@@ -11,7 +11,7 @@ public class McqSubmissionController(IMediator mediator) : BaseApiController
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("GetByExamId/{examId:guid}/{accountId:guid}")]
-    public async Task<IActionResult> GetAllMcqSubmissionsByExamAsync(Guid examId, Guid accountId)
+    public async Task<IActionResult> GetMcqSubmissionsAsync(Guid examId, Guid accountId)
     {
         var query = new GetMcqQuesWithSubmissionQuery(examId, accountId);
         var result = await _mediator.Send(query);

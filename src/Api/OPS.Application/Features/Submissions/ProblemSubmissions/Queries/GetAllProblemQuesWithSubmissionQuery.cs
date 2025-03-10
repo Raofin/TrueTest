@@ -7,7 +7,8 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Submissions.ProblemSubmissions.Queries;
 
-public record GetAllProblemQuesWithSubmissionQuery(Guid ExamId, Guid AccountId) : IRequest<ErrorOr<List<ProblemQuesWithSubmissionResponse>>>;
+public record GetAllProblemQuesWithSubmissionQuery(Guid ExamId, Guid AccountId) 
+    : IRequest<ErrorOr<List<ProblemQuesWithSubmissionResponse>>>;
 
 public class GetAllProblemQuesWithSubmissionQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetAllProblemQuesWithSubmissionQuery, ErrorOr<List<ProblemQuesWithSubmissionResponse>>>
@@ -29,5 +30,6 @@ public class GetAllProblemQuesWithSubmissionQueryValidator : AbstractValidator<G
     public GetAllProblemQuesWithSubmissionQueryValidator()
     {
         RuleFor(x => x.ExamId).NotEqual(Guid.Empty);
+        RuleFor(x => x.AccountId).NotEqual(Guid.Empty);
     }
 }
