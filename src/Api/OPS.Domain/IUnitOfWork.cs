@@ -12,11 +12,10 @@ public interface IUnitOfWork : IDisposable
     IQuestionRepository Question { get; }
     IWrittenSubmissionRepository WrittenSubmission { get; }
     IMcqSubmissionRepository McqSubmission { get; }
-    IMcqOptionRepository McqOption { get; } 
+    IMcqOptionRepository McqOption { get; }
     IProfileRepository Profile { get; }
     IProfileLinkRepository ProfileLink { get; }
     IProblemSubmissionRepository ProblemSubmission { get; }
-    ISubmissionRepository Submission { get; }
     ITestCaseOutputRepository TestCaseOutput { get; }
     ICloudFileRepository CloudFile { get; }
     ITestCaseRepository TestCase { get; }

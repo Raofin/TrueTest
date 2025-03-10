@@ -19,7 +19,6 @@ internal class UnitOfWork(
     IProfileRepository profileRepository,
     IProfileLinkRepository profileLinkRepository,
     IProblemSubmissionRepository problemSubmissionRepository,
-    ISubmissionRepository submissionRepository,
     ITestCaseOutputRepository testCaseOutputRepository,
     ICloudFileRepository cloudFileRepository,
     ITestCaseRepository testCaseRepository,
@@ -38,7 +37,6 @@ internal class UnitOfWork(
     public IProfileRepository Profile { get; } = profileRepository;
     public IProfileLinkRepository ProfileLink { get; } = profileLinkRepository;
     public IProblemSubmissionRepository ProblemSubmission { get; } = problemSubmissionRepository;
-    public ISubmissionRepository Submission { get; } = submissionRepository;
     public ITestCaseOutputRepository TestCaseOutput { get; } = testCaseOutputRepository;
     public ITestCaseRepository TestCase { get; } = testCaseRepository;
     public ICloudFileRepository CloudFile { get; } = cloudFileRepository;
