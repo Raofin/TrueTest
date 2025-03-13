@@ -1,66 +1,73 @@
 "use client"
 import { Link, Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle } from '@heroui/react'
 import '../styles/globals.css'
-import { Icon } from '@iconify/react/dist/iconify.js'
 import { useEffect, useState } from 'react';
-
+import Login from './(auth)/login/page'
+import Logo from './components/ui/logo/page'
+import { FaCircleUser } from "react-icons/fa6";
+import { BiSolidLogIn } from "react-icons/bi";
+import { FaSun } from "react-icons/fa6";
+import { IoMoon } from "react-icons/io5";
+import ThemeToggle from './components/ThemeToggle';
 
 export default function Component() {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setIsDarkMode(savedTheme === "dark");
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
-  }, []);
-
-  const handleThemeChange = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem("theme", newTheme);
-
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
 
   return (
     <>
-      <Navbar height="60px">
-        <NavbarBrand>
-          <NavbarMenuToggle className="mr-2 h-4 sm:hidden" />
-          <p className="font-extrabold text-3xl">OPS</p>
-        </NavbarBrand>
-        <NavbarContent justify="start">
-          <NavbarItem className='ml-16'>
-            <Link href="/">Home</Link>
-          </NavbarItem>
-        </NavbarContent>
-        <NavbarContent justify="end">
-          <NavbarItem>
-            <Button isIconOnly radius="full" variant="light" onPress={handleThemeChange}>
-              <Icon icon={isDarkMode ? "solar:moon-linear" : "solar:sun-linear"} width={24} />
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Link href="/auth/login">
-              <Button color="primary" variant="shadow">Login</Button>
-            </Link>
-          </NavbarItem>
-        </NavbarContent>
-      </Navbar>
-      <div className="flex justify-center items-center w-full gap-10 mt-20 text-xl">
-        <div className={"flex flex-col gap-5 ml-7"}>
-          <h2 className={"text-5xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent"}>
-            Online Proctoring System
-          </h2>
-          <p className={"text-white text-sm border-4 border-double rounded-r-full bg-blue-800 p-3"}>
-            A digital method of monitoring exams that ensures test integrity and prevents cheating, conducted via online software that enables students to sit for tests from any location.
+      <div className=' w-full flex justify-between items-center h-16 px-5 shadow'>
+        <div className="flex items-center gap-2">
+          <Logo />
+        </div>
+        <div className="flex items-center gap-4 flex-1 justify-end  ">
+          <div className=' flex items-center gap-4'>
+            <div>
+              <Link className='text-gray-400 light:text-black' href="/">About Us</Link>
+            </div>
+            <div>
+              <Link className='text-gray-400 light:text-black' href="/">Contact</Link>
+            </div>
+            <div>
+              <Link className='text-gray-400 light:text-black' href="/">Support</Link>
+            </div>
+            <div>
+              <Link className='text-gray-400 light:text-black' href="/">FAQs</Link>
+            </div>
+          </div>
+          <div className='flex items-center gap-3 ml-5'>
+            <ThemeToggle />
+            <div> <FaCircleUser className='text-gray-400 light:text-white' size={24} /></div>
+            <div> <BiSolidLogIn className='text-gray-400 light:text-white' size={24} /></div>
+          </div>
+        </div>
+      </div>
+      <div className='flex justify-around items-center gap-12 '>
+        <div className="flex flex-col items-center gap-4 flex-1">
+          <div className="flex items-center gap-2">
+            <Logo />
+            <p className="font-extrabold text-3xl">
+              <span className="text-red-500">True</span>
+              <span className="text-blue-500">Test</span>
+            </p>
+          </div>
+          <div className='flex flex-col items-center justify-center text-5xl font-bold '>
+            <p> Your Secure Platform</p>
+            <p>for Assessments</p>
+          </div>
+          <p className="text-[#71717A] light:text-black max-w-md text-center">
+            TrueTest ensures a fair, secure environment with real-time proctoring and anti-cheating features, so you can focus on showcasing your skills!
           </p>
         </div>
-        <img src="https://i.ibb.co/B5Cy5jDx/Online-Proctoring-Software-info-l1-ezgif-com-resize-removebg-preview-removebg-preview.png"
-          alt="ops"
-          width={700}
-          height={500}
-        />
+        <div className='flex-1'>
+          <Login />
+        </div>
       </div>
+      <footer className='w-full h-12 px-5 py-4 mb-5 pb-5'>
+        <div className='flex justify-between items-center text-gray-400 py-4'>
+          <p>© 2025 TrueTest. All rights reserved.</p>
+          <p>Contact Us: <Link href="#">support@truetest.com</Link></p>
+        </div>
+      </footer>
     </>
   );
 }
