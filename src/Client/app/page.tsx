@@ -8,35 +8,19 @@ import { FaCircleUser } from "react-icons/fa6";
 import { BiSolidLogIn } from "react-icons/bi";
 import { FaSun } from "react-icons/fa6";
 import { IoMoon } from "react-icons/io5";
+import ThemeToggle from './components/ThemeToggle';
 
 export default function Component() {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setIsDarkMode(savedTheme === "dark");
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
-  }, []);
-
-  const handleThemeChange = () => {
-    const newTheme = isDarkMode ? "light" : "dark";
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem("theme", newTheme);
-
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
 
   return (
     <>
-    <div className=' w-full flex justify-between items-center h-16 px-5 '>
-          <div className="flex items-center gap-2">
-            <Logo />
-            <p className="font-extrabold text-xl">
-              <span className="text-red-500">True</span>
-              <span className="text-blue-500">Test</span>
-            </p>
-          </div>
-        <div className="flex items-end gap-4 flex-1 justify-end  "> 
-          <div className=' flex items-center gap-4'> 
+      <div className=' w-full flex justify-between items-center h-16 px-5 shadow'>
+        <div className="flex items-center gap-2">
+          <Logo />
+        </div>
+        <div className="flex items-center gap-4 flex-1 justify-end  ">
+          <div className=' flex items-center gap-4'>
             <div>
               <Link className='text-gray-400 light:text-black' href="/">About Us</Link>
             </div>
@@ -50,16 +34,14 @@ export default function Component() {
               <Link className='text-gray-400 light:text-black' href="/">FAQs</Link>
             </div>
           </div>
-          <div className='flex items-center gap-3 ml-5'> 
-            <div onClick={handleThemeChange} className='text-gray-400 light:text-black'>
-              {isDarkMode ? <IoMoon width={32}/> :<FaSun width={32}/>} 
-            </div>
+          <div className='flex items-center gap-3 ml-5'>
+            <ThemeToggle />
             <div> <FaCircleUser className='text-gray-400 light:text-white' size={24} /></div>
-            <div> <BiSolidLogIn className='text-gray-400 light:text-white' size={24}/></div>
+            <div> <BiSolidLogIn className='text-gray-400 light:text-white' size={24} /></div>
           </div>
         </div>
-    </div>
-      <div className='flex justify-around items-center gap-12 shadow-xl'>
+      </div>
+      <div className='flex justify-around items-center gap-12 '>
         <div className="flex flex-col items-center gap-4 flex-1">
           <div className="flex items-center gap-2">
             <Logo />
@@ -80,7 +62,12 @@ export default function Component() {
           <Login />
         </div>
       </div>
-    
+      <footer className='w-full h-12 px-5 py-4 mb-5 pb-5'>
+        <div className='flex justify-between items-center text-gray-400 py-4'>
+          <p>© 2025 TrueTest. All rights reserved.</p>
+          <p>Contact Us: <Link href="#">support@truetest.com</Link></p>
+        </div>
+      </footer>
     </>
   );
 }

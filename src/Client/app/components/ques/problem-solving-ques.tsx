@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Form, Button, Textarea } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
+import PaginationButtons from "../ui/pagination-button";
 
 interface TestCase {
   id?: string;
@@ -100,26 +101,14 @@ export default function ProblemSolvingFormp() {
   const totalPages = Math.ceil(problems.length / problemsPerPage);
   const currentProblems = problems.slice(currentPage * problemsPerPage, (currentPage + 1) * problemsPerPage);
 
-  const goToPreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   const handleSaveAll = () => {
     // setIsModalOpen(true);
   };
-const Mode=localStorage.getItem("theme")
+  const Mode = localStorage.getItem("theme")
   return (
     <div className="border-none">
       <h2 className="flex justify-center text-2xl  mb-2">Problem Solving Question : {currentPage + 1}</h2>
-      <div className={`flex justify-center p-4 ${Mode==="dark"?"bg-[#18181b]":"bg-white"}`}>
+      <div className={`flex justify-center p-4 ${Mode === "dark" ? "bg-[#18181b]" : "bg-white"}`}>
         <Form className="w-full flex flex-col gap-4 p-5 border-none">
           {currentProblems.map((problem, problemIndex) => (
             <div key={problemIndex} className=" p-4 rounded-lg shadow-md">
@@ -127,7 +116,7 @@ const Mode=localStorage.getItem("theme")
                 label="Problem Description"
                 placeholder="Enter your problem description here..."
                 minRows={5}
-                variant="bordered" className={`${Mode==="dark"?"bg-[#27272a]":"bg-white"}`}
+                variant="bordered" className={`${Mode === "dark" ? "bg-[#27272a]" : "bg-white"}`}
                 value={problem.question}
                 onChange={(e) => handleProblemDescriptionChange(currentPage * problemsPerPage + problemIndex, e.target.value)}
               />
@@ -157,13 +146,13 @@ const Mode=localStorage.getItem("theme")
                       label={`Test Case ${testCaseIndex + 1} Input`}
                       value={testCase.input}
                       variant="bordered"
-                      minRows={2} className={`w-[400px] ${Mode==="dark"?"bg-[#27272a]":"bg-white"}`}
+                      minRows={2} className={`w-[400px] ${Mode === "dark" ? "bg-[#27272a]" : "bg-white"}`}
                       onChange={(e) => handleTestCaseInputChange(currentPage * problemsPerPage + problemIndex, testCaseIndex, e.target.value)}
                     />
                     <Textarea
                       label={`Test Case ${testCaseIndex + 1} Output`}
                       value={testCase.output} minRows={2}
-                      variant="bordered" className={`w-[400px] ${Mode==="dark"?"bg-[#27272a]":"bg-white"}`}
+                      variant="bordered" className={`w-[400px] ${Mode === "dark" ? "bg-[#27272a]" : "bg-white"}`}
                       onChange={(e) => handleTestCaseOutputChange(currentPage * problemsPerPage + problemIndex, testCaseIndex, e.target.value)}
                     />
                   </div>
@@ -182,14 +171,17 @@ const Mode=localStorage.getItem("theme")
           ))}
           <div className="flex justify-between gap-44 items-center mt-4 ">
             <div>
-              <Button  onPress={handleSaveAll}>
+              <Button onPress={handleSaveAll}>
                 Save All
               </Button>
             </div>
-            <div>
-              <Button onPress={goToPreviousPage} disabled={currentPage === 0}>Previous</Button>
+            <div className="flex gap-2 items-center">
               <span className="mx-2">Page {currentPage + 1} of {totalPages}</span>
-              <Button onPress={goToNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+              <PaginationButtons
+                currentIndex={currentPage+1}
+                totalItems={totalPages}
+                onPrevious={() => setCurrentPage(currentPage - 1)}
+                onNext={() => setCurrentPage(currentPage + 1)} />
             </div>
             <div >
               <Button onPress={handleAddProblem} >

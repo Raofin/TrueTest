@@ -1,26 +1,13 @@
 "use client";
+
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Input,
-    Button,
-    Pagination,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from "@heroui/react";
+import { Table, TableHeader,TableColumn, TableBody, TableRow, TableCell, Input, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter,} from "@heroui/react";
 import SearchIcon from "../../components/table/search_icon/page";
 import { useDisclosure } from "@nextui-org/react";
 import axios from "axios";
+import PaginationButtons from "@/app/components/ui/pagination-button";
 
 const columns = [
     { label: "Username", key: "username" },
@@ -110,18 +97,6 @@ export default function Component() {
         [handleOpen]
     );
 
-    const onNextPage = useCallback(() => {
-        if (page < pages) {
-            setPage(page + 1);
-        }
-    }, [page, pages]);
-
-    const onPreviousPage = useCallback(() => {
-        if (page > 1) {
-            setPage(page - 1);
-        }
-    }, [page]);
-
     const onSearchChange = useCallback((value?: string) => {
         if (value) {
             setFilterValue(value);
@@ -136,14 +111,13 @@ export default function Component() {
         setPage(1);
     },[page]);
 
-    const topContent = useMemo(
-        () => (
+    const topContent = useMemo(() => (
             <div className="flex gap-8 mt-8 w-full justify-between">
                 <h2>Users List</h2>
                 <div className="flex items-end">
                     <Input
                         isClearable
-                        className="w-[400px] ml-44"
+                        className="w-[400px]"
                         placeholder="Search by name..."
                         startContent={<SearchIcon />}
                         value={filterValue}
@@ -172,29 +146,18 @@ export default function Component() {
                     onChange={setPage}
                 />
                 <div className="hidden sm:flex w-[30%] justify-end gap-2">
-                    <Button
-                        isDisabled={pages === 1}
-                        size="sm"
-                        variant="flat"
-                        onPress={onPreviousPage}
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        isDisabled={pages === 1}
-                        size="sm"
-                        variant="flat"
-                        onPress={onNextPage}
-                    >
-                        Next
-                    </Button>
+                <PaginationButtons
+                      currentIndex={page}
+                      totalItems={pages}
+                      onPrevious={() => setPage(page - 1)}
+                      onNext={() => setPage(page + 1)}/>
                     <Button color="primary" size="sm">
                         Export
                     </Button>
                 </div>
             </div>
         ),
-        [page, pages, onPreviousPage, onNextPage]
+        [page, pages]
     );
 
     return (
@@ -210,12 +173,11 @@ export default function Component() {
                 ) : (
                     <Table
                         isStriped
-                        className="px-4"
                         isHeaderSticky
                         aria-label="Example table with custom cells, pagination"
                         bottomContent={bottomContent}
                         bottomContentPlacement="outside"
-                        classNames={{ wrapper: "max-h-[600px]" }}
+                        classNames={{ wrapper: "min-h-[70vh] max-h-[80vh] overflow-y-auto" }}
                         topContent={topContent}
                         topContentPlacement="outside"
                     >
@@ -230,7 +192,7 @@ export default function Component() {
                                 </TableColumn>
                             ))}
                         </TableHeader>
-                        <TableBody emptyContent="No user found">
+                        <TableBody emptyContent="No user found" className={items.length === 0 ? "min-h-[70vh]" : "min-h-[auto]"}>
                             {items.map((item) => (
                                 <TableRow key={item.email}>
                                     {columns.map((column) => (

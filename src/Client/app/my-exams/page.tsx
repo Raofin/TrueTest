@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Button, Card, CardBody, CardHeader } from "@heroui/react";
+import PaginationButtons from "../components/ui/pagination-button";
 
 interface Exam {
   title: string;
@@ -110,9 +111,11 @@ export default function ExamList() {
         </Card>
       ))}
       <div className="flex justify-center items-center my-4">
-        <Button disabled={currentPage === 1} onPress={() => setCurrentPage(currentPage - 1)}>Previous</Button>
-        <span className="mx-4">Page {currentPage} of {totalPages}</span>
-        <Button disabled={currentPage === totalPages} onPress={() => setCurrentPage(currentPage + 1)}>Next</Button>
+       <span className="mx-4">Page {currentPage} of {totalPages}</span>
+         <PaginationButtons currentIndex={currentPage+1}
+                                       totalItems={totalPages}
+                                       onPrevious={() => setCurrentPage(currentPage - 1)}
+                                       onNext={() => setCurrentPage(currentPage + 1)}/>
       </div>
     </div>
   );

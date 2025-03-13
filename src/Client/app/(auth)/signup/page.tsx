@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import toast, { Toaster } from "react-hot-toast";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "@/app/context/AuthProvider";
-
+import OTPModal from '../../components/ui/Modal/otp-verification'
 
 interface FormData {
     username: string;
@@ -42,7 +42,7 @@ export default function Signup() {
     const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible);
     const [contactInfo, setContactInfo] = useState("");
     const router = useRouter();
-    const isDarkMode=localStorage.getItem("theme");
+    const isDarkMode = localStorage.getItem("theme");
     const {
         handleSubmit: handleFormSubmit,
         control,
@@ -223,7 +223,10 @@ export default function Signup() {
         setLoading(true);
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_AUTH_URL}/SendOtp`,
-                JSON.stringify({ email: formData.email }));
+                { email: formData.email },{
+                headers: {
+                    "Content-Type": "application/json"
+                  }});
             if (response.status === 200) {
                 toast.success("OTP sent to your email. Please check your inbox.");
                 onOpen();
@@ -249,7 +252,7 @@ export default function Signup() {
     return (
         <div>
             <div className="container mx-auto px-4 py-12 ">
-                <div className={`max-w-md mx-auto  rounded-xl shadow-lg p-8 ${isDarkMode==="dark"? "bg-[#18181b]" : "bg-white"}`}>
+                <div className={`max-w-md mx-auto  rounded-xl shadow-lg p-8 ${isDarkMode === "dark" ? "bg-[#18181b]" : "bg-white"}`}>
                     <h2 className="text-2xl font-bold text-center my-4 ">Sign Up</h2>
 
                     {message && <p className="text-center text-sm text-red-500">{message}</p>}
@@ -351,65 +354,13 @@ export default function Signup() {
                     </p>
                 </div>
             </div>
-            <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
-                <ModalContent>
-                    {() => (
-                        <>
-                            <ModalBody>
-                                <form className="flex flex-col gap-6 ml-10 p-10" onSubmit={handleFormSubmit(onSubmit)}>
-                                    <Controller
-                                        control={control}
-                                        name="otp"
-                                        render={({ field }) => (
-                                            <InputOtp
-                                                classNames={{
-                                                    segmentWrapper: "gap-x-5",
-                                                    segment: [
-                                                        "relative",
-                                                        "h-12",
-                                                        "w-12",
-                                                        "border-y",
-                                                        "border-r",
-                                                        "first:rounded-l-md",
-                                                        "first:border-l",
-                                                        "last:rounded-r-md",
-                                                        "border-default-200",
-                                                        "data-[active=true]:border",
-                                                        "data-[active=true]:z-20",
-                                                        "data-[active=true]:ring-2",
-                                                        "data-[active=true]:ring-offset-2",
-                                                        "data-[active=true]:ring-offset-background",
-                                                        "data-[active=true]:ring-foreground",
-                                                    ],
-                                                }}
-                                                {...field}
-                                                errorMessage={errors.otp?.message}
-                                                isInvalid={!!errors.otp}
-                                                length={4}
-                                            />
-                                        )}
-                                        rules={{
-                                            required: "OTP is required",
-                                            minLength: {
-                                                value: 4,
-                                                message: "Please enter a valid OTP",
-                                            },
-                                        }}
-                                    />
-                                    <Button
-                                        color="primary"
-                                        className="max-w-fit ml-20"
-                                        type="submit"
-                                        variant="solid"
-                                    >
-                                        Verify OTP
-                                    </Button>
-                                </form>
-                            </ModalBody>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <OTPModal
+                isOpen={isOpen?true:false}
+                onOpenChange={() => { }}
+                control={control}
+                handleFormSubmit={handleFormSubmit(onSubmit)}
+                errors={errors}
+            />
             <Toaster />
         </div>
     );

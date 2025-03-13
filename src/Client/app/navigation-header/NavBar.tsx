@@ -51,10 +51,7 @@ const {user,handleLogout}=useAuth();
          <>
           <div className='flex absolute ml-24 text-3xl items-center gap-2 font-extrabold'> 
                     <Logo />
-                    <p className="font-extrabold text-xl">
-                        <span className="text-red-500">True</span>
-                        <span className="text-blue-500">Test</span>
-                    </p>
+                   
             </div>
           <div className="flex gap-5 absolute justify-center items-center ml-[1060px]">
             <Button

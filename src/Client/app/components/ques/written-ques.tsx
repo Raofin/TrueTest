@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from "react";
 import { Button, Textarea, Checkbox } from "@heroui/react";
+import PaginationButtons from "../ui/pagination-button";
 
 interface WrittenQuestion {
   id?: string;
@@ -67,17 +68,6 @@ export default function App() {
   const totalPages = Math.ceil(writtenQuestions.length / questionsPerPage);
   const currentQuestions = writtenQuestions.slice(currentPage * questionsPerPage, (currentPage + 1) * questionsPerPage);
 
-  const goToPreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
  const Mode=localStorage.getItem("theme")
   return (
     <div className={`flex flex-col items-center shadow ${Mode==='dark'?"bg-[#18181b]":"bg-white"}`}>
@@ -122,11 +112,12 @@ export default function App() {
             Add Written Question
           </Button>
         </div>
-
         <div className="flex justify-center items-center my-3">
-          <Button onPress={goToPreviousPage} disabled={currentPage === 0}>Previous</Button>
           <span className="mx-2">Page {currentPage + 1} of {totalPages}</span>
-          <Button onPress={goToNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+            <PaginationButtons currentIndex={currentPage+1}
+                                totalItems={totalPages}
+                                onPrevious={() => setCurrentPage(currentPage - 1)}
+                                onNext={() => setCurrentPage(currentPage + 1)}/>
         </div>
       </div>
     </div>

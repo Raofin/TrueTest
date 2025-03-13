@@ -119,7 +119,7 @@ export default function Component() {
   ), [filterValue, onSearchChange, onClear]);
 
   const bottomContent = useMemo(() => (
-    <div className="py-2 mt-8 px-2 flex justify-between items-center">
+    <div className="py-2 px-2 flex justify-between items-center">
       <span className="w-[30%] text-small text-default-400">Page {page} out of {pages}</span>
       <Pagination
         isCompact
@@ -154,7 +154,7 @@ export default function Component() {
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "max-h-[400px]",
+          wrapper: "min-h-[70vh] max-h-[80vh] overflow-y-auto",
         }}
         topContent={topContent}
         topContentPlacement="outside"
@@ -173,7 +173,7 @@ export default function Component() {
             </TableColumn>
           ))}
         </TableHeader>
-        <TableBody emptyContent="No admin found">
+        <TableBody emptyContent="No admin found" className={items.length === 0 ? "min-h-[70vh]" : "min-h-[auto]"}>
           {items.map((item) => (
             <TableRow key={item.key}>
               {columns.map((column) => (

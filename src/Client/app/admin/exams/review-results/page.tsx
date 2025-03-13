@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Card, CardBody, Button, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import PaginationButtons from "@/app/components/ui/pagination-button";
 
 interface TestCase {
   input: string;
@@ -84,8 +85,8 @@ int main() {
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="">
-      <Card className="max-w-6xl mx-auto  border-none h-full">
+    <div >
+      <Card className="max-w-6xl mx-auto border-none h-screen">
         <CardBody>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -212,25 +213,11 @@ int main() {
                 </Button>
               </div>
             </div>
-
-            <div className="flex justify-between py-4">
-              <Button
-                size="sm"
-                
-                isDisabled={currentQuestion === 0}
-                onPress={() => setCurrentQuestion(prev => prev - 1)}
-              >
-                Previous
-              </Button>
-              <Button
-                size="sm"
-           
-                isDisabled={currentQuestion === questions.length - 1}
-                onPress={() => setCurrentQuestion(prev => prev + 1)}
-              >
-                Next
-              </Button>
-            </div>
+            <PaginationButtons
+              currentIndex={currentQuestion}
+              totalItems={questions.length}
+              onPrevious={() => setCurrentQuestion(prev => prev - 1)}
+              onNext={() => setCurrentQuestion(prev => prev + 1)} />
           </div>
         </CardBody>
       </Card>

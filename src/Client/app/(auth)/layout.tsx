@@ -9,14 +9,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <>
             <NavBar />
-            <div className='flex justify-around items-center gap-12 shadow-xl'>
+            <div className='flex justify-around items-center gap-12'>
                     <div className="flex flex-col items-center gap-4 flex-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-2xl">
                         <Logo />
-                        <p className="font-extrabold text-3xl">
-                          <span className="text-red-500">True</span>
-                          <span className="text-blue-500">Test</span>
-                        </p>
+                       
                       </div>
                       <div className='flex flex-col items-center justify-center text-5xl font-bold '>
                         <p> Your Secure Platform</p>

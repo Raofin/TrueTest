@@ -12,22 +12,19 @@ import ModerateExam from '../exams/review-results/page'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../../components/ui/logo/page'
-import { useAuth } from "@/app/context/AuthProvider";
 
 export default function Component() {
   const Mode=localStorage.getItem("theme")
   const [selected, setSelected] = useState("dashboard");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       setIsDarkMode(savedTheme === "dark");
     }
   }, []);
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
 
   const handleThemeChange = () => {
     setIsDarkMode((prev) => !prev);
@@ -35,25 +32,22 @@ export default function Component() {
     localStorage.setItem("theme", newTheme);
    
   };
-const {user,handleLogout}=useAuth();
   return (
-    <div className={`flex ${Mode==="dark"?"bg-black":"bg-white"}`}>
-    <div className={`flex flex-col justify-between ${isCollapsed ? "w-20" : "w-56"} transition-all duration-300 border-r border-white/10`}>
-        <div>
+    <div className="flex min-h-screen max-h-fit">
+    <div
+      className={`flex flex-col justify-between min-h-screen max-h-fit ${
+        Mode === "dark" ? "bg-black" : "bg-white"
+      } ${isCollapsed ? "w-20" : "w-56"} transition-all duration-300 border-r border-white/10`} >
+      <div className="flex flex-col flex-grow">
         <div className="flex items-center justify-between p-4 border-b border-white/10">
-          {!isCollapsed && (
-            <div className="flex items-center gap-1">
-            <Logo/>
-            {!isCollapsed && <span className="font-bold text-xl">OPS</span>}
-            </div>
-          )}
-          <button 
+          {!isCollapsed && <Logo />}
+          <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 hover:bg-white/10 rounded-lg"
-          >
+            className="p-2 hover:bg-white/10 rounded-lg">
             <Icon icon={isCollapsed ? "lucide:chevron-right" : "lucide:chevron-left"} width={20} />
           </button>
         </div>
+  
         <Tabs
           aria-label="Navigation"
           selectedKey={selected}
@@ -63,7 +57,7 @@ const {user,handleLogout}=useAuth();
           isVertical
           classNames={{
             tab: "flex items-center justify-start h-10 rounded-lg hover:bg-white/10 data-[selected=true]:bg-primary/20 data-[selected=true]:text-primary",
-            tabList: "flex flex-col ",
+            tabList: "flex flex-col flex-grow",
             cursor: "bg-transparent",
           }}
         >
@@ -138,16 +132,16 @@ const {user,handleLogout}=useAuth();
         </div>
         <div>
         <hr />
-        <div className="border-t border-white/10 px-2 py-4 mb-5">
+        <div className="border-t border-white/10 px-2 py-4 mb-5 sticky bottom-0">
           <div className="flex flex-col gap-1 ">
            <div className="flex items-center gap-2">
            <div className="w-8 h-8 rounded-full  flex items-center justify-center ">
               <Icon icon="lucide:user" width={16} />
             </div>
             {!isCollapsed && (
-            <Link href={`/profile`} className="text-black dark:text-white"> <div>
-             <p className="text-sm ">admin</p>
-             <p className="text-xs">admin@gmail.com</p>
+            <Link href={`/profile`}> <div>
+             <p className={`text-sm ${isDarkMode?"text-white":"text-black"}`}>admin</p>
+             <p className={`text-xs ${isDarkMode?"text-white":"text-black"}`}>admin@gmail.com</p>
            </div></Link>
             )}
            </div>
@@ -174,8 +168,8 @@ const {user,handleLogout}=useAuth();
             </div>
              {!isCollapsed && (
               <div>
-                 <Link href="/login" className="text-black dark:text-white"> 
-                 <p className="text-sm " onClick={handleLogout}>log out</p></Link>
+                 <Link href="/login"> 
+                 <p className={`text-sm ${isDarkMode?"text-white":"text-black"}`} >log out</p></Link>
               </div>
             )}</div>
           </div>

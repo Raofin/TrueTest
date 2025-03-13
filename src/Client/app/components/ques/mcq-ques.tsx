@@ -2,6 +2,7 @@
 import React from "react";
 import { Form, Button, Textarea, Card, CardBody, CardHeader, RadioGroup, Radio } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import PaginationButtons from "../ui/pagination-button";
 
 interface MCQOption {
   id: number;
@@ -117,29 +118,14 @@ export default function App() {
         )}
 
         <div className="flex justify-between gap-2">
-          <Button 
-            variant="flat"
-            startContent={<Icon icon="lucide:arrow-left" />}
-            onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-            isDisabled={currentPage === 0}
-          >
-            Previous
-          </Button>
-
+         
+          <PaginationButtons currentIndex={currentPage+1} totalItems={questions.length} onPrevious={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+                                onNext={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}/>
           <Button
             startContent={<Icon icon="lucide:plus" />}
             onPress={addNewQuestion}
           >
             Add New Question
-          </Button>
-
-          <Button 
-            variant="flat"
-            startContent={<Icon icon="lucide:arrow-right" />}
-            onPress={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}
-            isDisabled={currentPage === questions.length - 1}
-          >
-            Next
           </Button>
 
           <Button className="ml-44 mb-10" type="submit">

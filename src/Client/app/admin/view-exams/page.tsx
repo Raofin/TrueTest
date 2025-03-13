@@ -1,18 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Modal,
-    ModalContent,
-    ModalBody,
-    useDisclosure,
-} from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, Modal, ModalContent, ModalBody, useDisclosure, } from "@heroui/react";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
+import PaginationButtons from "@/app/components/ui/pagination-button";
 
 interface Exam {
     examId: string;
@@ -81,19 +73,18 @@ const Exams: Exam[] = [
         invitedCandidates: 0,
         acceptedCandidates: 0
     },
-  ];
+];
 export default function ExamList() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { control, handleSubmit, reset } = useForm<Exam>();
-    const Mode=localStorage.getItem("theme")
+    const Mode = localStorage.getItem("theme")
     const [currentPage, setCurrentPage] = useState(1);
     // const [exams, setExams] = useState<Exam[]>([]);
     const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
-
     const totalPages = Math.max(1, Math.ceil(Exams.length / ITEMS_PER_PAGE));
 
     useEffect(() => {
-        setCurrentPage((prev) => Math.min(prev, totalPages)); 
+        setCurrentPage((prev) => Math.min(prev, totalPages));
     }, [Exams, totalPages]);
     const paginatedExams = Exams.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -118,12 +109,12 @@ export default function ExamList() {
         onOpen();
     };
     const handleDelete = async (examId: string) => {
-      
+
         // try {
         //   const response = await axios.delete(
         //     `${process.env.NEXT_PUBLIC_URL}/Exam/${examId}`
         //   );
-  
+
         //   if (response.status === 200) {
         //     setExams((prevExams) =>
         //       prevExams.filter((exam) => exam.examId !== examId)
@@ -147,7 +138,7 @@ export default function ExamList() {
         //     alert(`Failed to delete exam: ${error.message}`);
         //   }
         // }
-      
+
     };
     // const onSubmit = async (data: Exam) => {
     //     if (!selectedExam) return;
@@ -222,8 +213,8 @@ export default function ExamList() {
 
     return (
         <>
-        
-            <div className={`h-screen flex flex-col justify-around ${Mode==="dark"?"bg-black":"bg-white"}`}>
+
+            <div className={`h-screen flex flex-col justify-around ${Mode === "dark" ? "bg-black" : "bg-white"}`}>
                 {paginatedExams.map((exam, index) => (
                     <Card key={index} className="mx-8">
                         <CardHeader className="flex justify-between items-center ">
@@ -239,7 +230,7 @@ export default function ExamList() {
                                 ) : (<>
                                     <Button color="primary" onPress={() => handleEdit(exam)}>Edit</Button>
                                     <Button color="primary" onPress={() => handleDelete(exam.examId)}>Delete</Button>
-                               </> )}
+                                </>)}
                             </div>
                         </CardHeader>
                         <CardBody className="px-3">
@@ -249,7 +240,7 @@ export default function ExamList() {
                                     <p>Duration: 2 hr</p>
                                     <p>Starts at: 9:00 PM</p>
                                     <p>Closes at: 10:20 PM</p>
-                               </div>
+                                </div>
                                 <div className="flex flex-col flex-1">
                                     <p>Problem Solving: 10</p>
                                     <p>Written: 10</p>
@@ -265,11 +256,12 @@ export default function ExamList() {
                     </Card>
                 ))}
                 <div className="flex justify-center items-center my-4">
-                    <Button disabled={currentPage <= 1} 
-        onPress={() => setCurrentPage((prev) => Math.max(1, prev - 1))}>Previous</Button>
                     <span className="mx-4">Page {currentPage} of {totalPages}</span>
-                    <Button  disabled={currentPage >= totalPages} 
-        onPress={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}>Next</Button>
+                    <PaginationButtons
+                        currentIndex={currentPage}
+                        totalItems={totalPages}
+                        onPrevious={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                        onNext={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))} />
                 </div>
             </div>
 
@@ -277,9 +269,9 @@ export default function ExamList() {
                 <ModalContent>
                     <ModalBody>
                         {selectedExam && (
-                            <form 
-                            // onSubmit={handleSubmit(onSubmit)}
-                             className="flex flex-col gap-6 p-10">
+                            <form
+                                // onSubmit={handleSubmit(onSubmit)}
+                                className="flex flex-col gap-6 p-10">
                                 <Controller name="title" control={control} render={({ field }) => <div className="flex gap-2"><h3 className="font-semibold">Title :</h3> <input {...field} placeholder="Exam Title" /></div>} />
                                 <Controller name="description" control={control} render={({ field }) => <div className="flex gap-2"><h3 className="font-semibold">Description :</h3> <input {...field} placeholder="Description" /></div>} />
                                 <Controller name="durationMinutes" control={control} render={({ field }) => <div className="flex gap-2"><h3 className="font-semibold flex">Duration(min) :</h3> <input {...field} type="number" placeholder="Duration (minutes)" /></div>} />
