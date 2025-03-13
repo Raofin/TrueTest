@@ -14,7 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<AccountRole> AccountRoles { get; set; } = null!;
     public DbSet<Otp> Otps { get; set; } = null!;
     public DbSet<Profile> Profiles { get; set; } = null!;
-    public DbSet<ProfileSocial> ProfileSocials { get; set; } = null!;
+    public DbSet<ProfileLinks> ProfileLinks { get; set; } = null!;
     public DbSet<Difficulty> Difficulties { get; set; } = null!;
     public DbSet<ProgLanguage> ProgLanguages { get; set; } = null!;
     public DbSet<QuestionType> QuestionTypes { get; set; } = null!;
@@ -22,11 +22,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Examination> Examinations { get; set; } = null!;
     public DbSet<ExamCandidate> ExamCandidates { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
-    public DbSet<McqOption> McqOptions { get; set; } = null!;
+    public DbSet<McqOption> McqOption { get; set; } = null!;
     public DbSet<TestCase> TestCases { get; set; } = null!;
     public DbSet<McqSubmission> McqSubmissions { get; set; } = null!;
     public DbSet<ProblemSubmission> ProblemSubmissions { get; set; } = null!;
     public DbSet<WrittenSubmission> WrittenSubmissions { get; set; } = null!;
+    public DbSet<TestCaseOutput> TestCaseOutputs { get; set; } = null!;
+    public DbSet<AdminInvite> AdminInvites { get; set; } = null!;
     public DbSet<CloudFile> CloudFiles { get; set; } = null!;
     public DbSet<LogEvent> LogEvents { get; set; } = null!;
 

@@ -11,6 +11,7 @@ public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission
     {
         entity.ToTable("McqSubmissions", "Submit");
         entity.HasKey(e => e.Id);
+        entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
         entity.Property(e => e.AnswerOptions).IsRequired().HasMaxLength(50);
 
         new BaseEntityConfig<McqSubmission>().Configure(entity);
@@ -22,6 +23,10 @@ public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission
         entity.HasOne(d => d.McqOption)
             .WithMany(p => p.McqSubmissions)
             .HasForeignKey(d => d.McqOptionId)
+            .OnDelete(DeleteBehavior.Restrict);
+        entity.HasOne(d => d.Question)
+            .WithMany(p => p.McqSubmissions)
+            .HasForeignKey(d => d.QuestionId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

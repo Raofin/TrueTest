@@ -7,7 +7,7 @@ public class Profile : SoftDeletableEntity
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    public string? BioMarkdown { get; set; }
+    public string? Bio { get; set; }
     public string? InstituteName { get; set; }
     public string? PhoneNumber { get; set; }
 
@@ -15,5 +15,5 @@ public class Profile : SoftDeletableEntity
     public Guid? ImageFileId { get; set; }
     public Account Account { get; set; } = null!;
     public CloudFile? ImageFile { get; set; }
-    public ICollection<ProfileSocial> ProfileSocials { get; set; } = [];
+    public ICollection<ProfileLinks> ProfileLinks { get; set; } = [];
 }

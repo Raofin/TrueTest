@@ -9,7 +9,7 @@ public class ProblemSubmission : BaseEntity
 {
     public string Code { get; set; } = null!;
     public int Attempts { get; set; }
-    public decimal Score { get; set; }
+    public decimal? Score { get; set; }
     public bool IsFlagged { get; set; }
     public string? FlagReason { get; set; }
 
@@ -19,4 +19,5 @@ public class ProblemSubmission : BaseEntity
     public Account Account { get; set; } = null!;
     public Question Question { get; set; } = null!;
     public ProgLanguage ProgLanguages { get; set; } = null!;
+    public ICollection<TestCaseOutput> TestCaseOutputs { get; set; } = [];
 }

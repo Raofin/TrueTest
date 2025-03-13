@@ -22,124 +22,6 @@ namespace OPS.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OPS.Domain.Entities.Auth.Account", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NewId()");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Salt")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("IsActive")
-                        .HasFilter("[IsActive] = 1");
-
-                    b.HasIndex("IsDeleted")
-                        .HasFilter("[IsDeleted] = 0");
-
-                    b.HasIndex("Username")
-                        .IsUnique();
-
-                    b.ToTable("Accounts", "User");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Auth.AccountRole", b =>
-                {
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AccountId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AccountRoles", "User");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Auth.Otp", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NewId()");
-
-                    b.Property<int>("Attempts")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("GetUtcDate()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DateTime")
-                        .HasDefaultValueSql("(DateAdd(minute, (5), GetUtcDate()))");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("DateTime");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Otps", "User");
-                });
-
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -513,6 +395,11 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsPublished")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime>("OpensAt")
                         .HasColumnType("DateTime");
 
@@ -554,7 +441,9 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("GetUtcDate()");
 
                     b.Property<bool>("IsMultiSelect")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Option1")
                         .IsRequired()
@@ -579,9 +468,10 @@ namespace OPS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
+                    b.HasIndex("QuestionId")
+                        .IsUnique();
 
-                    b.ToTable("McqOptions", "Exam");
+                    b.ToTable("McqOption", "Exam");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Question", b =>
@@ -617,11 +507,11 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<decimal>("Points")
+                        .HasColumnType("decimal(10, 2)");
+
                     b.Property<int>("QuestionTypeId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("Score")
-                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<string>("StatementMarkdown")
                         .IsRequired()
@@ -660,11 +550,11 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
 
-                    b.Property<string>("Input")
+                    b.Property<string>("ExpectedOutput")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Output")
+                    b.Property<string>("Input")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -705,6 +595,12 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("McqOptionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Score")
+                        .HasColumnType("decimal(10, 2)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
@@ -714,6 +610,8 @@ namespace OPS.Persistence.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("McqOptionId");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("McqSubmissions", "Submit");
                 });
@@ -754,7 +652,7 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Score")
+                    b.Property<decimal?>("Score")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -770,6 +668,46 @@ namespace OPS.Persistence.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("ProblemSubmissions", "Submit");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.Submit.TestCaseOutput", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NewId()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<bool>("IsAccepted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("ProblemSubmissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReceivedOutput")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TestCaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProblemSubmissionId");
+
+                    b.HasIndex("TestCaseId");
+
+                    b.ToTable("TestCaseOutputs", "Submit");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.WrittenSubmission", b =>
@@ -802,7 +740,7 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Score")
+                    b.Property<decimal?>("Score")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -818,6 +756,149 @@ namespace OPS.Persistence.Migrations
                     b.ToTable("WrittenSubmissions", "Submit");
                 });
 
+            modelBuilder.Entity("OPS.Domain.Entities.User.Account", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NewId()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("IsDeleted")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Accounts", "User");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.User.AccountRole", b =>
+                {
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AccountId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AccountRoles", "User");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.User.AdminInvite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NewId()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdminInvites", "User");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.User.Otp", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NewId()");
+
+                    b.Property<int>("Attempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("(DateAdd(minute, (5), GetUtcDate()))");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("DateTime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Otps", "User");
+                });
+
             modelBuilder.Entity("OPS.Domain.Entities.User.Profile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -828,7 +909,7 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BioMarkdown")
+                    b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -887,7 +968,7 @@ namespace OPS.Persistence.Migrations
                     b.ToTable("Profiles", "User");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.User.ProfileSocial", b =>
+            modelBuilder.Entity("OPS.Domain.Entities.User.ProfileLinks", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -920,31 +1001,12 @@ namespace OPS.Persistence.Migrations
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("ProfileSocials", "User");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Auth.AccountRole", b =>
-                {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
-                        .WithMany("AccountRoles")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OPS.Domain.Entities.Enum.Role", "Role")
-                        .WithMany("AccountRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Role");
+                    b.ToTable("ProfileLinks", "User");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
                 {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
+                    b.HasOne("OPS.Domain.Entities.User.Account", "Account")
                         .WithMany("CloudFiles")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -955,7 +1017,7 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.ExamCandidate", b =>
                 {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
+                    b.HasOne("OPS.Domain.Entities.User.Account", "Account")
                         .WithMany("ExamCandidates")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -974,9 +1036,9 @@ namespace OPS.Persistence.Migrations
             modelBuilder.Entity("OPS.Domain.Entities.Exam.McqOption", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.Exam.Question", "Question")
-                        .WithMany("McqQptions")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithOne("McqOption")
+                        .HasForeignKey("OPS.Domain.Entities.Exam.McqOption", "QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Question");
@@ -1022,7 +1084,7 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.McqSubmission", b =>
                 {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
+                    b.HasOne("OPS.Domain.Entities.User.Account", "Account")
                         .WithMany("McqSubmissions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1034,14 +1096,22 @@ namespace OPS.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("OPS.Domain.Entities.Exam.Question", "Question")
+                        .WithMany("McqSubmissions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Account");
 
                     b.Navigation("McqOption");
+
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Submit.ProblemSubmission", b =>
                 {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
+                    b.HasOne("OPS.Domain.Entities.User.Account", "Account")
                         .WithMany("ProblemSubmissions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1066,9 +1136,28 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("OPS.Domain.Entities.Submit.TestCaseOutput", b =>
+                {
+                    b.HasOne("OPS.Domain.Entities.Submit.ProblemSubmission", "ProblemSubmissions")
+                        .WithMany("TestCaseOutputs")
+                        .HasForeignKey("ProblemSubmissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OPS.Domain.Entities.Exam.TestCase", "TestCase")
+                        .WithMany("TestCaseOutputs")
+                        .HasForeignKey("TestCaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProblemSubmissions");
+
+                    b.Navigation("TestCase");
+                });
+
             modelBuilder.Entity("OPS.Domain.Entities.Submit.WrittenSubmission", b =>
                 {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
+                    b.HasOne("OPS.Domain.Entities.User.Account", "Account")
                         .WithMany("WrittenSubmissions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1085,9 +1174,28 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("OPS.Domain.Entities.User.AccountRole", b =>
+                {
+                    b.HasOne("OPS.Domain.Entities.User.Account", "Account")
+                        .WithMany("AccountRoles")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OPS.Domain.Entities.Enum.Role", "Role")
+                        .WithMany("AccountRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("OPS.Domain.Entities.User.Profile", b =>
                 {
-                    b.HasOne("OPS.Domain.Entities.Auth.Account", "Account")
+                    b.HasOne("OPS.Domain.Entities.User.Account", "Account")
                         .WithOne("Profile")
                         .HasForeignKey("OPS.Domain.Entities.User.Profile", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1102,32 +1210,15 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("ImageFile");
                 });
 
-            modelBuilder.Entity("OPS.Domain.Entities.User.ProfileSocial", b =>
+            modelBuilder.Entity("OPS.Domain.Entities.User.ProfileLinks", b =>
                 {
                     b.HasOne("OPS.Domain.Entities.User.Profile", "Profile")
-                        .WithMany("ProfileSocials")
+                        .WithMany("ProfileLinks")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Auth.Account", b =>
-                {
-                    b.Navigation("AccountRoles");
-
-                    b.Navigation("CloudFiles");
-
-                    b.Navigation("ExamCandidates");
-
-                    b.Navigation("McqSubmissions");
-
-                    b.Navigation("ProblemSubmissions");
-
-                    b.Navigation("Profile");
-
-                    b.Navigation("WrittenSubmissions");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Core.CloudFile", b =>
@@ -1169,7 +1260,9 @@ namespace OPS.Persistence.Migrations
 
             modelBuilder.Entity("OPS.Domain.Entities.Exam.Question", b =>
                 {
-                    b.Navigation("McqQptions");
+                    b.Navigation("McqOption");
+
+                    b.Navigation("McqSubmissions");
 
                     b.Navigation("ProblemSubmissions");
 
@@ -1178,9 +1271,36 @@ namespace OPS.Persistence.Migrations
                     b.Navigation("WrittenSubmissions");
                 });
 
+            modelBuilder.Entity("OPS.Domain.Entities.Exam.TestCase", b =>
+                {
+                    b.Navigation("TestCaseOutputs");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.Submit.ProblemSubmission", b =>
+                {
+                    b.Navigation("TestCaseOutputs");
+                });
+
+            modelBuilder.Entity("OPS.Domain.Entities.User.Account", b =>
+                {
+                    b.Navigation("AccountRoles");
+
+                    b.Navigation("CloudFiles");
+
+                    b.Navigation("ExamCandidates");
+
+                    b.Navigation("McqSubmissions");
+
+                    b.Navigation("ProblemSubmissions");
+
+                    b.Navigation("Profile");
+
+                    b.Navigation("WrittenSubmissions");
+                });
+
             modelBuilder.Entity("OPS.Domain.Entities.User.Profile", b =>
                 {
-                    b.Navigation("ProfileSocials");
+                    b.Navigation("ProfileLinks");
                 });
 #pragma warning restore 612, 618
         }

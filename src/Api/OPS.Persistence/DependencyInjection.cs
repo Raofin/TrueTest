@@ -18,6 +18,15 @@ public static class DependencyInjection
         services.AddScoped<IExamCandidatesRepository, ExamCandidatesRepository>();
         services.AddScoped<IQuestionRepository, QuestionRepository>();
         services.AddScoped<IWrittenSubmissionRepository, WrittenSubmissionRepository>();
+        services.AddScoped<IMcqSubmissionRepository, McqSubmissionRepository>();
+        services.AddScoped<IMcqOptionRepository, McqOptionRepository>();
+        services.AddScoped<IProfileRepository, ProfileRepository>();
+        services.AddScoped<IProfileLinkRepository, ProfileLinkRepository>();
+        services.AddScoped<IProblemSubmissionRepository, ProblemSubmissionRepository>();
+        services.AddScoped<ITestCaseOutputRepository, TestCaseOutputRepository>();
+        services.AddScoped<ICloudFileRepository, CloudFIleRepository>();
+        services.AddScoped<ITestCaseRepository, TestCaseRepository>();  
+        services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();
 
         return services;
     }

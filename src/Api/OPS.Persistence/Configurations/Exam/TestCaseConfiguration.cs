@@ -13,7 +13,7 @@ public class TestCaseConfiguration : IEntityTypeConfiguration<TestCase>
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.Input).IsRequired();
-        entity.Property(e => e.Output).IsRequired();
+        entity.Property(e => e.ExpectedOutput).IsRequired();
 
         new BaseEntityConfig<TestCase>().Configure(entity);
 

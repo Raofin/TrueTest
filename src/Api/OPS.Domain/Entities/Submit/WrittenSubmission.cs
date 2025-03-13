@@ -7,7 +7,7 @@ namespace OPS.Domain.Entities.Submit;
 public class WrittenSubmission : BaseEntity
 {
     public string Answer { get; set; } = null!;
-    public decimal Score { get; set; }
+    public decimal? Score { get; set; }
     public bool IsFlagged { get; set; }
     public string? FlagReason { get; set; }
 

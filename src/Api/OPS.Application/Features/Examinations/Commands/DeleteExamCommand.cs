@@ -15,14 +15,14 @@ public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
     {
         var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
 
-        if (exam is null) return Error.NotFound("Exam was not found");
+        if (exam is null) return Error.NotFound();
 
         _unitOfWork.Exam.Remove(exam);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
             ? Result.Success
-            : Error.Failure("The exam could not be deleted.");
+            : Error.Failure();
     }
 }
 
