@@ -2,18 +2,31 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+html {
+    --background: #ffffff;
+    --foreground: #171717;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    /* background-color: #030303;
+    color: #ffffff; */
 }
 
-.dark {
-  height: 100%;
-  background-color:#313132;
-  color: #eee;
+html.light {
+    color: black;
+}
+
+html.dark {
+    color: #ffffff;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+@layer utilities {
+  /* .background-light850_dark100 {
+    @apply bg-white dark:bg-[#18181b];
+  } */
 }
