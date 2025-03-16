@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardBody, Button, Divider, Textarea, Select, SelectItem } from '@heroui/react'
 
 interface TestCase {
@@ -142,7 +142,12 @@ int main() {
   const currentExamData = examData[0]
   const currentCandidateSubmission = currentExamData.submissions.find((sub) => sub.candidateId === selectedCandidate)
   const currentQ = currentCandidateSubmission?.questions || currentExamData.submissions[0].questions
-  const Mode = localStorage.getItem('theme')
+  const [Mode,setMode]=useState<string|null>();
+  useEffect(()=>{
+    if(typeof window!==undefined){
+       setMode(localStorage.getItem("theme"))
+    }
+  },[])
 
   const handleCandidateChange = (value: string) => {
     setSelectedCandidate(value)
@@ -171,7 +176,7 @@ int main() {
 
             <div className="flex flex-col gap-3 text-lg">
               <div className="flex w-full items-center justify-between">
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <span className="text-default-500">Candidate: </span>
                   <Select
                     aria-label="Select a candidate"
@@ -241,6 +246,7 @@ int main() {
           </div>
 
           <Divider className="my-5" />
+          <h2 className='w-full text-center '>{selectedCandidate}</h2>
 
           {currentQ.map((curr, idx) => (
             <div key={idx} className="space-y-4">
@@ -325,10 +331,8 @@ int main() {
               </div>
 
               {flag && <Textarea placeholder="Flag reason" />}
-              <div className="w-full flex justify-center">
-                {' '}
-                <Button color="primary"> Save</Button>
-              </div>
+              
+          <div className='w-full flex justify-center'> <Button className='my-3' color="primary"> Save</Button></div>
             </div>
           ))}
         </CardBody>

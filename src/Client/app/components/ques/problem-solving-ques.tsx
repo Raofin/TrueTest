@@ -6,7 +6,8 @@ import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
 import PaginationButtons from 'app/components/ui/pagination-button'
 import MDEditor from '@uiw/react-md-editor'
-
+import unescapeJsonString from 'app/components/ui/unescapestring'
+import escapeJsonString from 'app/components/ui/escapestring'
 
 interface TestCase {
   id?: string
@@ -25,7 +26,10 @@ export default function ProblemSolvingFormp() {
   const [currentPage, setCurrentPage] = useState(0)
   const problemsPerPage = 1
   const [Mode, setMode] = useState<string | null>(null)
-  const [value, setValue] = React.useState('**Hello world!!!**')
+  const [value, setValue] = React.useState('Hello world')
+ console.log("at first ",value);
+ console.log("escape ",escapeJsonString(value))
+ console.log("unescape ",unescapeJsonString(value))
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -41,7 +45,6 @@ export default function ProblemSolvingFormp() {
       }
       return updatedProblems
     })
-
     setValue('')
   }
 
@@ -108,31 +111,20 @@ export default function ProblemSolvingFormp() {
   return (
     <div className="border-none">
       <h2 className="flex justify-center text-2xl  mb-2">Problem Solving Question : {currentPage + 1}</h2>
-      <div className={`flex justify-center p-4 ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
+      <div className={`flex justify-center p-4`}>
         <Form id="#" className="w-full flex flex-col gap-4 p-5 border-none">
           {currentProblems.map((problem, problemIndex) => (
             <div key={problemIndex} className=" p-4 rounded-lg shadow-md">
-              {/* <Textarea
-                label="Problem Description"
-                placeholder="Enter your problem description here..."
-                minRows={5}
-                variant="bordered"
-                className={`${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}
-                value={problem.question}
-                onChange={(e) =>
-                  handleProblemDescriptionChange(currentPage * problemsPerPage + problemIndex, e.target.value)
-                }
-              /> */}
-              <div className={`${Mode === 'dark' ? 'bg-[#27272a] text-white' : 'bg-white text-black'}`}> 
+         
               <MDEditor
-                  className={` rounded-lg ${Mode === 'dark' ? 'bg-[#27272a] text-white' : 'bg-white text-black'}`}
+                  className={` rounded-lg ${Mode === 'dark' ? ' bg-[#27272a] text-white' : 'bg-white text-black'}`}
                   value={value}
                   onChange={(val) => {
                     setValue(val || '')
                   }}/>
-              
-              {/* <MDEditor.Markdown source={value} style={{ whiteSpace: 'pre-wrap' }} /> */}
-               </div> 
+                  
+                {/* <MDEditor.Markdown source={value} style={{ whiteSpace: 'pre-wrap' }} /> */}
+           
 
               {problem.testCases.map((testCase, testCaseIndex) => (
                 <div key={testCaseIndex} className="flex gap-2 mt-2">
