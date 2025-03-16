@@ -1,7 +1,6 @@
 'use client';
 import { Providers } from './providers';
-import '../styles/globals.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ThemeProvider } from './ThemeProvider';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,19 +1,20 @@
 'use client'
-import React from "react";
-import { Form, Button, Textarea, Card, CardBody, CardHeader, RadioGroup, Radio } from "@heroui/react";
-import { Icon } from "@iconify/react";
-import PaginationButtons from "../ui/pagination-button";
+
+import React from 'react'
+import { Form, Button, Textarea, Card, CardBody, CardHeader, RadioGroup, Radio } from '@heroui/react'
+import { Icon } from '@iconify/react'
+import PaginationButtons from 'app/components/ui/pagination-button'
 
 interface MCQOption {
-  id: number;
-  text: string;
+  id: number
+  text: string
 }
 
 interface MCQQuestion {
-  id?: string;
-  question: string;
-  options: MCQOption[];
-  correctOption: number;
+  id?: string
+  question: string
+  options: MCQOption[]
+  correctOption: number
 }
 
 export default function App() {
@@ -24,61 +25,61 @@ export default function App() {
         { id: 1, text: '' },
         { id: 2, text: '' },
         { id: 3, text: '' },
-        { id: 4, text: '' }
+        { id: 4, text: '' },
       ],
-      correctOption: 1
-    }
-  ]);
-  
-  const [currentPage, setCurrentPage] = React.useState(0);
+      correctOption: 1,
+    },
+  ])
+
+  const [currentPage, setCurrentPage] = React.useState(0)
 
   const handleQuestionChange = (index: number, value: string) => {
-    const newQuestions = [...questions];
-    newQuestions[index].question = value;
-    setQuestions(newQuestions);
-  };
+    const newQuestions = [...questions]
+    newQuestions[index].question = value
+    setQuestions(newQuestions)
+  }
 
   const handleOptionChange = (questionIndex: number, optionId: number, value: string) => {
-    const newQuestions = [...questions];
-    const optionIndex = newQuestions[questionIndex].options.findIndex(opt => opt.id === optionId);
-    newQuestions[questionIndex].options[optionIndex].text = value;
-    setQuestions(newQuestions);
-  };
+    const newQuestions = [...questions]
+    const optionIndex = newQuestions[questionIndex].options.findIndex((opt) => opt.id === optionId)
+    newQuestions[questionIndex].options[optionIndex].text = value
+    setQuestions(newQuestions)
+  }
 
   const handleCorrectOptionChange = (questionIndex: number, value: number) => {
-    const newQuestions = [...questions];
-    newQuestions[questionIndex].correctOption = value;
-    setQuestions(newQuestions);
-  };
+    const newQuestions = [...questions]
+    newQuestions[questionIndex].correctOption = value
+    setQuestions(newQuestions)
+  }
 
   const addNewQuestion = () => {
-    setQuestions([...questions, {
-      question: '',
-      options: [
-        { id: 1, text: '' },
-        { id: 2, text: '' },
-        { id: 3, text: '' },
-        { id: 4, text: '' }
-      ],
-      correctOption: 1
-    }]);
-    setCurrentPage(questions.length); 
-  };
+    setQuestions([
+      ...questions,
+      {
+        question: '',
+        options: [
+          { id: 1, text: '' },
+          { id: 2, text: '' },
+          { id: 3, text: '' },
+          { id: 4, text: '' },
+        ],
+        correctOption: 1,
+      },
+    ])
+    setCurrentPage(questions.length)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(questions);
-  };
+    e.preventDefault()
+  }
 
   return (
     <div className="flex justify-center ">
-      <Form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+      <Form id='#' className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
         {questions.length > 0 && (
           <Card key={currentPage} className="w-full">
             <CardHeader className="flex flex-col gap-2">
-              <div className="text-default-500">
-               MCQ Question {currentPage + 1}
-              </div>
+              <div className="text-default-500">MCQ Question {currentPage + 1}</div>
               <Textarea
                 label="Question"
                 placeholder="Enter your question here..."
@@ -94,23 +95,23 @@ export default function App() {
                     key={option.id}
                     label={`Option ${option.id}`}
                     placeholder={`Enter option ${option.id}`}
-                    value={option.text} minRows={2}
+                    value={option.text}
+                    minRows={2}
                     variant="bordered"
                     onChange={(e) => handleOptionChange(currentPage, option.id, e.target.value)}
                   />
                 ))}
               </div>
 
-              <RadioGroup 
+              <RadioGroup
                 label="Correct Answer"
                 value={questions[currentPage].correctOption.toString()}
                 onValueChange={(value) => handleCorrectOptionChange(currentPage, parseInt(value))}
               >
                 {questions[currentPage].options.map((option) => (
                   <div key={option.id} className="flex flex-row flex-wrap items-center ">
-                  <Radio  value={option.id.toString()}>
-                    Option {option.id}
-                  </Radio></div>
+                    <Radio value={option.id.toString()}>Option {option.id}</Radio>
+                  </div>
                 ))}
               </RadioGroup>
             </CardBody>
@@ -118,13 +119,13 @@ export default function App() {
         )}
 
         <div className="flex justify-between gap-2">
-         
-          <PaginationButtons currentIndex={currentPage+1} totalItems={questions.length} onPrevious={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-                                onNext={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}/>
-          <Button
-            startContent={<Icon icon="lucide:plus" />}
-            onPress={addNewQuestion}
-          >
+          <PaginationButtons
+            currentIndex={currentPage + 1}
+            totalItems={questions.length}
+            onPrevious={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+            onNext={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}
+          />
+          <Button startContent={<Icon icon="lucide:plus" />} onPress={addNewQuestion}>
             Add New Question
           </Button>
 
@@ -134,5 +135,5 @@ export default function App() {
         </div>
       </Form>
     </div>
-  );
+  )
 }

@@ -1,15 +1,13 @@
-import { NextConfig } from "next";
+import { NextConfig } from 'next'
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const path = require('path')
 
 const nextConfig: NextConfig = {
-    webpack: (config, { dev }) => {
-        if (dev) {
-            config.watchOptions = {
-                ignored: ["**/node_modules/**", "**/.next/**"],
-            };
-        }
-        return config;
-    },
-    reactStrictMode: true,
-};
+  webpack: (config) => {
+    config.resolve.alias['@app'] = path.resolve(__dirname, 'src/Client/app')
+    return config
+  },
+  reactStrictMode: true,
+}
 
-export default nextConfig;
+export default nextConfig

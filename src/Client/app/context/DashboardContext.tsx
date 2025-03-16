@@ -16,7 +16,7 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({ children }
 
     const [dashboardType, setDashboardType] = useState<"candidate" | "admin" |null>(null);
   const path= usePathname();
-  console.log("path : ",path);
+
     useEffect(() => {
         if (path.includes("candidate")) {
             setDashboardType("candidate");
