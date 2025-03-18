@@ -1,53 +1,50 @@
-"use client";
+'use client'
 
-import type {CardProps} from "@nextui-org/react";
+import React from 'react'
+import type { CardProps } from '@heroui/react'
+import { Button, Card, CardBody, CardHeader, Tabs, Tab, ScrollShadow } from '@heroui/react'
+import { Icon } from '@iconify/react'
 
-import React from "react";
-import {Button, Card, CardBody, CardHeader, Tabs, Tab, ScrollShadow} from "@nextui-org/react";
-import {Icon} from "@iconify/react";
-
-import NotificationItem from "./notification-item";
+import NotificationItem from './notification-item'
 
 type Notification = {
-  id: string;
-  isRead?: boolean;
-  avatar: string;
-  description: string;
-  name: string;
-  time: string;
- 
-};
+  id: string
+  isRead?: boolean
+  avatar: string
+  description: string
+  name: string
+  time: string
+}
 enum NotificationTabs {
-  All = "all",
-  Unread = "unread"
+  All = 'all',
+  Unread = 'unread',
 }
 const notifications: Record<NotificationTabs, Notification[]> = {
   all: [
     {
-      id: "1",
+      id: '1',
       isRead: false,
-      avatar: "",
-      description: "requested to join your Acme organization.",
-      name: "Ben Berman",
-      time: "2 hours ago",
-     
+      avatar: '',
+      description: 'requested to join your Acme organization.',
+      name: 'Ben Berman',
+      time: '2 hours ago',
     },
   ],
   unread: [
     {
-      id: "1",
+      id: '1',
       isRead: false,
-      avatar: "",
-      description: "requested to join your Acme organization.",
-      name: "Tony Reichert",
-      time: "2 hours ago",
+      avatar: '',
+      description: 'requested to join your Acme organization.',
+      name: 'Tony Reichert',
+      time: '2 hours ago',
     },
-  ]
-};
+  ],
+}
 
 export default function Component(props: CardProps) {
-  const [activeTab, setActiveTab] = React.useState<NotificationTabs>(NotificationTabs.All);
-  const activeNotifications = notifications[activeTab];
+  const [activeTab, setActiveTab] = React.useState<NotificationTabs>(NotificationTabs.All)
+  const activeNotifications = notifications[activeTab]
   return (
     <Card className="w-full max-w-[420px]" {...props}>
       <CardHeader className="flex flex-col px-0 pb-0">
@@ -62,15 +59,16 @@ export default function Component(props: CardProps) {
         <Tabs
           aria-label="Notifications"
           classNames={{
-            base: "w-full",
-            tabList: "gap-6 px-6 py-0 w-full relative rounded-none border-b border-divider",
-            cursor: "w-full",
-            tab: "max-w-fit px-2 h-12",
+            base: 'w-full',
+            tabList: 'gap-6 px-6 py-0 w-full relative rounded-none border-b border-divider',
+            cursor: 'w-full',
+            tab: 'max-w-fit px-2 h-12',
           }}
           color="primary"
           selectedKey={activeTab}
           variant="underlined"
-          onSelectionChange={(selected) => setActiveTab(selected as NotificationTabs)}>
+          onSelectionChange={(selected) => setActiveTab(selected as NotificationTabs)}
+        >
           <Tab
             key="all"
             title={
@@ -84,9 +82,7 @@ export default function Component(props: CardProps) {
       <CardBody className="w-full gap-0 p-0">
         <ScrollShadow className=" w-full">
           {activeNotifications?.length > 0 ? (
-            activeNotifications.map((notification) => (
-              <NotificationItem key={notification.id} {...notification} />
-            ))
+            activeNotifications.map((notification) => <NotificationItem key={notification.id} {...notification} />)
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2">
               <Icon className="text-default-400" icon="solar:bell-off-linear" width={40} />
@@ -95,7 +91,6 @@ export default function Component(props: CardProps) {
           )}
         </ScrollShadow>
       </CardBody>
-
     </Card>
-  );
+  )
 }
