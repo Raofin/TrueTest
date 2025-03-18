@@ -1,0 +1,32 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html {
+    --background: #ffffff;
+    --foreground: #171717;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    /* background-color: #030303;
+    color: #ffffff; */
+}
+
+html.light {
+    color: black;
+}
+
+html.dark {
+    color: #ffffff;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+@layer utilities {
+  /* .background-light850_dark100 {
+    @apply bg-white dark:bg-[#18181b];
+  } */
+}
