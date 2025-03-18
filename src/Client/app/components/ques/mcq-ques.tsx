@@ -3,7 +3,7 @@
 import React from 'react'
 import { Form, Button, Textarea, Card, CardBody, CardHeader, RadioGroup, Radio } from '@heroui/react'
 import { Icon } from '@iconify/react'
-import PaginationButtons from 'app/components/ui/pagination-button'
+import PaginationButtons from '@/app/components/ui/pagination-button'
 
 interface MCQOption {
   id: number
@@ -75,7 +75,7 @@ export default function App() {
 
   return (
     <div className="flex justify-center ">
-      <Form id='#' className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+      <Form id="#" className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
         {questions.length > 0 && (
           <Card key={currentPage} className="w-full">
             <CardHeader className="flex flex-col gap-2">

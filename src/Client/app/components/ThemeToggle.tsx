@@ -4,7 +4,7 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@heroui/react'
-import { useTheme } from 'app/ThemeProvider'
+import { useTheme } from '@/app/ThemeProvider'
 
 const ThemeToggle: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme()

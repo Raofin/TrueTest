@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Form, Button, Textarea } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
-import PaginationButtons from 'app/components/ui/pagination-button'
+import PaginationButtons from '@/app/components/ui/pagination-button'
 import MDEditor from '@uiw/react-md-editor'
-import unescapeJsonString from 'app/components/ui/unescapestring'
-import escapeJsonString from 'app/components/ui/escapestring'
+import he from 'he'
+import useTheme from '@/app/hooks/useTheme'
 
 interface TestCase {
   id?: string
@@ -25,17 +25,12 @@ export default function ProblemSolvingFormp() {
   const [problems, setProblems] = useState<Problem[]>([{ question: '', testCases: [{ input: '', output: '' }] }])
   const [currentPage, setCurrentPage] = useState(0)
   const problemsPerPage = 1
-  const [Mode, setMode] = useState<string | null>(null)
-  const [value, setValue] = React.useState('Hello world')
- console.log("at first ",value);
- console.log("escape ",escapeJsonString(value))
- console.log("unescape ",unescapeJsonString(value))
+  const Mode = useTheme()
+  const [value, setValue] = React.useState('"Hello, World!"')
+  const escaped: string = he.escape(value)
+  const unescaped: string = he.unescape(escaped)
+  console.log(unescaped)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setMode(localStorage.getItem('theme'))
-    }
-  }, [])
   const addTestCase = (problemIndex: number) => {
     setProblems((prevProblems) => {
       const updatedProblems = [...prevProblems]
@@ -115,17 +110,13 @@ export default function ProblemSolvingFormp() {
         <Form id="#" className="w-full flex flex-col gap-4 p-5 border-none">
           {currentProblems.map((problem, problemIndex) => (
             <div key={problemIndex} className=" p-4 rounded-lg shadow-md">
-         
               <MDEditor
-                  className={` rounded-lg ${Mode === 'dark' ? ' bg-[#27272a] text-white' : 'bg-white text-black'}`}
-                  value={value}
-                  onChange={(val) => {
-                    setValue(val || '')
-                  }}/>
-                  
-                {/* <MDEditor.Markdown source={value} style={{ whiteSpace: 'pre-wrap' }} /> */}
-           
-
+                className="rounded-lg"
+                value={value}
+                onChange={(val) => {
+                  setValue(val || '')
+                }}
+              />
               {problem.testCases.map((testCase, testCaseIndex) => (
                 <div key={testCaseIndex} className="flex gap-2 mt-2">
                   <div className="flex flex-col gap-2">

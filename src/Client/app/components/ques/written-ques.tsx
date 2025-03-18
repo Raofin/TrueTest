@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { Button, Textarea, Checkbox } from '@heroui/react'
-import PaginationButtons from 'app/components/ui/pagination-button'
+import PaginationButtons from '@/app/components/ui/pagination-button'
+import useTheme from '@/app/hooks/useTheme'
 
 interface WrittenQuestion {
   id?: string
@@ -19,7 +20,7 @@ export default function App() {
   ])
   const [currentPage, setCurrentPage] = useState(0)
   const questionsPerPage = 1
-
+ const Mode=useTheme();
   const handleAddWrittenQuestion = () => {
     setWrittenQuestions((prevQuestions) => {
       const newQuestions: WrittenQuestion[] = [
@@ -72,7 +73,6 @@ export default function App() {
   const totalPages = Math.ceil(writtenQuestions.length / questionsPerPage)
   const currentQuestions = writtenQuestions.slice(currentPage * questionsPerPage, (currentPage + 1) * questionsPerPage)
 
-  const Mode = localStorage.getItem('theme')
   return (
     <div className={`flex flex-col items-center shadow ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
       <h2 className="text-2xl mt-3">Written Question : {currentPage + 1}</h2>

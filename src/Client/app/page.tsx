@@ -1,54 +1,78 @@
 'use client'
 
-import 'app/globals.css'
-import { Link } from '@heroui/react'
-import Login from 'app/(auth)/login/page'
-import Logo from 'app/components/ui/logo/page'
+import '@/app/globals.css'
+import { Link, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
+import Login from '@/app/(auth)/login/page'
+import Logo from '@/app/components/ui/logo/page'
 import { FaCircleUser } from 'react-icons/fa6'
 import { BiSolidLogIn } from 'react-icons/bi'
-import ThemeToggle from 'app/components/ThemeToggle'
+import ThemeToggle from '@/app/components/ThemeToggle'
 
 export default function Component() {
   return (
     <>
-      <div className=" w-full flex justify-between items-center h-16 px-5 shadow">
+      <div className=" w-full flex justify-between items-center h-16">
         <div className="flex items-center gap-2">
           <Logo />
         </div>
-        <div className="flex items-center gap-4 flex-1 justify-end  ">
-          <div className=" flex items-center gap-4">
-            <div>
+       <div className='flex'>
+       <Navbar
+          classNames={{
+            wrapper: 'justify-end bg-transparent',
+            item: 'hidden md:flex',
+          }}
+        >
+          <NavbarContent
+            className="hidden h-11 gap-5 rounded-full border-small border-default-200/20 bg-background/60 px-4 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 md:flex"
+            justify="end"
+          >
+            <NavbarItem>
+              <Link className="text-gray-400 light:text-black" href="/overview">
+                Overview
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link className="text-gray-400 light:text-black" href="/home">
+                Home
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
               <Link className="text-gray-400 light:text-black" href="/">
                 About Us
               </Link>
-            </div>
-            <div>
+            </NavbarItem>
+            <NavbarItem>
               <Link className="text-gray-400 light:text-black" href="/">
                 Contact
               </Link>
-            </div>
-            <div>
+            </NavbarItem>
+            <NavbarItem>
               <Link className="text-gray-400 light:text-black" href="/">
                 Support
               </Link>
-            </div>
-            <div>
+            </NavbarItem>
+            <NavbarItem>
               <Link className="text-gray-400 light:text-black" href="/">
                 FAQs
               </Link>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 ml-5">
-            <ThemeToggle />
-            <div>
-              {' '}
-              <FaCircleUser className="text-gray-400 light:text-white" size={24} />
-            </div>
-            <div>
-              {' '}
-              <BiSolidLogIn className="text-gray-400 light:text-white" size={24} />
-            </div>
-          </div>
+            </NavbarItem>
+          </NavbarContent>
+       
+      
+        <NavbarContent
+            className="hidden h-11 gap-5 rounded-full border-small border-default-200/20 bg-background/60 px-4 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 md:flex"
+            justify="end"
+          >
+            <NavbarItem><ThemeToggle /></NavbarItem>
+          
+           <NavbarItem>
+            <FaCircleUser className="text-gray-400 light:text-white" size={24} />
+          </NavbarItem>
+           <NavbarItem>
+            <BiSolidLogIn className="text-gray-400 light:text-white" size={24} />
+          </NavbarItem>
+        </NavbarContent>
+        </Navbar>
         </div>
       </div>
       <div className="flex justify-around items-center gap-12 ">

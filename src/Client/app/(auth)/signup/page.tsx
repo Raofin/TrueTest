@@ -3,23 +3,21 @@
 import React, { useState } from 'react'
 import { Button, Input, Checkbox, Link, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
-import 'app/globals.css'
+import '@/app/globals.css'
+import useTheme from '@/app/hooks/useTheme'
 
 export default function Signup() {
   const [isVisible] = useState<boolean>(false)
   const [isConfirmVisible] = useState<boolean>(false)
-  const isDarkMode = localStorage.getItem('theme')
   const [loading] = useState<boolean>(false)
+  const Mode = useTheme()
+
   return (
     <div>
       <div className="container mx-auto px-4 py-12 ">
-        <div
-          className={`max-w-md mx-auto  rounded-xl shadow-lg p-8 ${
-            isDarkMode === 'dark' ? 'bg-[#18181b]' : 'bg-white'
-          }`}
-        >
+        <div className={`max-w-md mx-auto  rounded-xl shadow-lg p-8 ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
           <h2 className="text-2xl font-bold text-center my-4 ">Sign Up</h2>
-          <form id='#' className="flex flex-col gap-4">
+          <form id="#" className="flex flex-col gap-4">
             <Input isRequired label="Username" name="username" type="text" variant="bordered" />
             <div className="relative">
               <Input isRequired label="Email" name="email" type="email" variant="bordered" />

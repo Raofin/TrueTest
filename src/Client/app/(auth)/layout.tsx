@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import NavBar from 'app/(auth)/NavBar'
-import 'app/globals.css'
-import Logo from 'app/components/ui/logo/page'
+import NavBar from '@/app/(auth)/NavBar'
+import '@/app/globals.css'
+import Logo from '@/app/components/ui/logo/page'
 import { Link } from '@heroui/react'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

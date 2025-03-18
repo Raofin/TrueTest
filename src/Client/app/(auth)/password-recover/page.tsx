@@ -1,18 +1,20 @@
 'use client'
 
 import React, { useState } from 'react'
-import 'app/globals.css'
+import '@/app/globals.css'
 import { Button } from '@heroui/react'
 import Link from 'next/link'
+import useTheme from '@/app/hooks/useTheme'
 
 const PasswordRecoverPage = () => {
   const [contactInfo, setContactInfo] = useState('')
-  const isDarkMode = localStorage.getItem('theme')
+  const Mode = useTheme()
 
   return (
     <div className="flex items-center justify-center h-[600px]">
-      <form id='#'
-        className={`p-8 rounded-lg shadow-lg max-w-md w-full ${isDarkMode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}
+      <form
+        id="#"
+        className={`p-8 rounded-lg shadow-lg max-w-md w-full ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}
       >
         <h1 className="text-2xl font-semibold mb-6 text-center">Password Recovery</h1>
         <input
