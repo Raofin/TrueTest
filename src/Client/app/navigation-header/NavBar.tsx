@@ -18,9 +18,9 @@ import {
 } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
-import ThemeToggle from '@/app/components/ThemeToggle'
+import ThemeSwitch from '../ThemeSwitch'
 
-export default function Component({...props}) {
+export default function Component({ ...props }) {
   return (
     <div>
       <Navbar
@@ -35,7 +35,7 @@ export default function Component({...props}) {
           justify="end"
         >
           <NavbarItem>
-            <ThemeToggle />
+            <ThemeSwitch />
           </NavbarItem>
           <NavbarItem>
             <Popover offset={12} placement="bottom-end">

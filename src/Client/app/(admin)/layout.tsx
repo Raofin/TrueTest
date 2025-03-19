@@ -11,7 +11,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <div className="flex h-screen">
       <SideBar />
-      <main className="flex-grow w-full">{children}</main>
+      <main  suppressHydrationWarning className="flex-grow w-full">{children}</main>
     </div>
   )
 }

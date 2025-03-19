@@ -1,17 +1,20 @@
 'use client'
 
-import { Button, Link } from '@heroui/react'
-import useTheme from '@/app/hooks/useTheme'
+import { Button, Card, Link } from '@heroui/react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function Component() {
-  const Mode = useTheme()
+    const path=usePathname();
+    const [route,setRoute]=useState("");
+    useEffect(()=>{
+       if(path.startsWith("/settings")) setRoute("settings")
+        else setRoute("mysettings")
+    },[path])
   return (
     <>
-      <div className="mt-12 h-full flex flex-col items-center justify-center ">
-        <form
-          id="#"
-          className={`p-8 rounded-lg shadow-lg max-w-md w-full ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}
-        >
+      <div className="mt-16 h-full flex flex-col items-center justify-center ">
+        <Card className={`p-8 rounded-lg shadow-lg max-w-md w-full `}>
           <h1 className="text-2xl font-semibold mb-6 text-center">Account settings</h1>
           <hr />
           <div className="flex flex-col space-y-2">
@@ -33,12 +36,14 @@ export default function Component() {
               <p className="text-sm ml-3">21 Nov 2024, 10:00PM</p>
             </div>
           </div>
-          <Button className="ml-32 mt-5" color="primary">
-            <Link className="text-white" href={`/mysettings/edit`}>
-              Change Settings
-            </Link>
-          </Button>
-        </form>
+          <div className="mt-5 flex w-full justify-center">
+            <Button color="primary">
+              <Link className="text-white" href={`/${route ? route : 'mysettings'}/edit`}>
+                Change Settings
+              </Link>
+            </Button>
+          </div>
+        </Card>
       </div>
     </>
   )

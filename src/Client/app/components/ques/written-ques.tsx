@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Textarea, Checkbox } from '@heroui/react'
+import { Button, Textarea, Checkbox, Card } from '@heroui/react'
 import PaginationButtons from '@/app/components/ui/pagination-button'
-import useTheme from '@/app/hooks/useTheme'
+
 
 interface WrittenQuestion {
   id?: string
@@ -20,7 +20,6 @@ export default function App() {
   ])
   const [currentPage, setCurrentPage] = useState(0)
   const questionsPerPage = 1
- const Mode=useTheme();
   const handleAddWrittenQuestion = () => {
     setWrittenQuestions((prevQuestions) => {
       const newQuestions: WrittenQuestion[] = [
@@ -74,13 +73,12 @@ export default function App() {
   const currentQuestions = writtenQuestions.slice(currentPage * questionsPerPage, (currentPage + 1) * questionsPerPage)
 
   return (
-    <div className={`flex flex-col items-center shadow ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
+    <Card className={`flex flex-col items-center shadow `}>
       <h2 className="text-2xl mt-3">Written Question : {currentPage + 1}</h2>
       <div className="w-full max-w-5xl">
         {currentQuestions.map((question, questionIndex) => (
           <div key={questionIndex} className="p-4 rounded-lg shadow-md mt-4">
             <Textarea
-              className={`${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}
               label="Written Question"
               name="question"
               minRows={4}
@@ -131,6 +129,6 @@ export default function App() {
           />
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

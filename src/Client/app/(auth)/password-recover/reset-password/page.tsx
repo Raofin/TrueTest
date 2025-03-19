@@ -1,13 +1,8 @@
 'use client'
 
-import useTheme from '@/app/hooks/useTheme'
 import { Button, Input, Link } from '@heroui/react'
-import { useSearchParams } from 'next/navigation'
 
 export default function Component() {
-  const searchParams = useSearchParams()
-  const email = searchParams.get('email')
-  const Mode = useTheme()
 
   return (
     <div className="flex h-full w-full items-center justify-center mb-16">
@@ -17,9 +12,7 @@ export default function Component() {
         </div>
         <form
           id="#"
-          className={`flex w-full flex-wrap md:flex-nowrap gap-4 flex-col ${
-            Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'
-          }`}
+          className={`flex w-full flex-wrap md:flex-nowrap gap-4 flex-col`}
         >
           <Input
             isRequired
@@ -27,7 +20,7 @@ export default function Component() {
             name="email"
             type="email"
             variant="bordered"
-            defaultValue={email || ''}
+            defaultValue={''}
           />
           <Input isRequired label="New Password" name="newpassword" type="password" variant="bordered" />
           <Input isRequired label="Confirm Password" name="newconfirmpassword" type="password" variant="bordered" />
