@@ -3,7 +3,7 @@
 import React from 'react'
 import '@/app/globals.css'
 import NavBar from '@/app/navigation-header/NavBar'
-import { ThemeProvider } from '@/app/ThemeProvider'
+
 import Logo from '@/app/components/ui/logo/page'
 import { Link, Navbar, NavbarContent, NavbarItem, NavbarProps } from '@heroui/react'
 
@@ -43,7 +43,7 @@ export default function RootLayout({ children, ...props }: RootLayoutProps) {
           <NavBar />
         </div>
       </div>
-      <ThemeProvider>{children}</ThemeProvider>
+      {children}
     </div>
   )
 }

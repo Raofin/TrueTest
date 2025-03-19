@@ -1,22 +1,19 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
+import { Button, Input, Checkbox, Link, Form, Divider, Card } from '@heroui/react'
 import { Icon } from '@iconify/react'
-import useTheme from '@/app/hooks/useTheme'
+
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)
-  const Mode = useTheme()
   const [user, setUser] = useState({ email: '', password: '' })
   const toggleVisibility = () => setIsVisible((prev) => !prev)
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div
-        className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 pb-7 mb-12 shadow-2xl  ${
-          Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'
-        }`}
+      <Card
+        className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 pb-7 mb-12 shadow-2xl `}
       >
         <div className="flex flex-col gap-1">
           <h1 className="text-large font-medium text-center mt-2">Log In</h1>
@@ -85,7 +82,7 @@ export default function LoginComponent() {
             Sign Up
           </Link>
         </p>
-      </div>
+      </Card>
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { Button, Card, CardBody, CardHeader, Modal, ModalContent, ModalBody, use
 import { Controller, useForm } from 'react-hook-form'
 import PaginationButtons from '@/app/components/ui/pagination-button'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
-import useTheme from '@/app/hooks/useTheme'
+
 
 interface Exam {
   examId: string
@@ -78,7 +78,6 @@ const Exams: Exam[] = [
 export default function ExamList() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { control, reset } = useForm<Exam>()
-  const Mode=useTheme();
   const [currentPage, setCurrentPage] = useState(1)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null)
@@ -100,7 +99,7 @@ export default function ExamList() {
 
   return (
     <>
-      <div className={`h-screen flex flex-col justify-around ${Mode === 'dark' ? 'bg-black' : 'bg-white'}`}>
+      <div className={`h-screen flex flex-col justify-around w-full`}>
         {paginatedExams.map((exam, index) => (
           <Card key={index} className="mx-8">
             <CardHeader className="flex justify-between items-center ">

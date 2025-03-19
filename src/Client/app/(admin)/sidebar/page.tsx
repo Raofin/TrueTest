@@ -3,10 +3,9 @@
 import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
+import { useState } from 'react'
 import Logo from '@/app/components/ui/logo/page'
+import ThemeSwitch from '@/app/ThemeSwitch'
 
 const menuItems = [
   { key: 'dashboard', icon: 'lucide:layout-dashboard', label: 'Dashboard', path: '/overview' },
@@ -17,28 +16,14 @@ const menuItems = [
   { key: 'admins', icon: 'lucide:settings', label: 'Admin Management', path: '/add-admins' },
 ]
 
-const AdminLayout = () => {
+const Sidebar = () => {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme')
-    if (savedTheme) {
-      setIsDarkMode(savedTheme === 'dark')
-    }
-  }, [])
-
-  const handleThemeChange = () => {
-    setIsDarkMode((prev) => !prev)
-    const newTheme = !isDarkMode ? 'dark' : 'light'
-    localStorage.setItem('theme', newTheme)
-  }
 
   return (
-    <div className={`w-64 flex flex-col justify-between ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
+    <div className={`w-64 flex flex-col justify-between`}>
       <div
-        className={`flex flex-col justify-between min-h-screen max-h-fit ${isDarkMode ? 'bg-black' : 'bg-white'} ${
+        className={`flex flex-col justify-between min-h-screen max-h-fit  ${
           isCollapsed ? 'w-20' : 'w-56'
         } transition-all duration-300 border-r border-white/10`}
       >
@@ -79,8 +64,8 @@ const AdminLayout = () => {
               {!isCollapsed && (
                 <Link href={`/profile`}>
                   <div>
-                    <p className={`text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>admin</p>
-                    <p className={`text-xs ${isDarkMode ? 'text-white' : 'text-black'}`}>admin@gmail.com</p>
+                    <p className={`text-sm `}>admin</p>
+                    <p className={`text-xs `}>admin@gmail.com</p>
                   </div>
                 </Link>
               )}
@@ -92,23 +77,14 @@ const AdminLayout = () => {
               {!isCollapsed && (
                 <div className="flex">
                   <Link href="/settings">
-                    <p className={`${isDarkMode ? 'text-white text-sm' : 'text-black text-sm'}`}>Settings</p>
+                    <p className={``}>Settings</p>
                   </Link>
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} width={30} />
-              </div>
-              {!isCollapsed && (
-                <button
-                  onClick={handleThemeChange}
-                  className={`${isDarkMode ? 'text-white text-sm' : 'text-black text-sm'}`}
-                >
-                  Theme
-                </button>
-              )}
+            <div className="flex items-center gap-2 ml-2">
+              <ThemeSwitch />
+              {!isCollapsed && <button>Theme</button>}
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full flex items-center justify-center">
@@ -117,7 +93,7 @@ const AdminLayout = () => {
               {!isCollapsed && (
                 <div>
                   <Link href="/login">
-                    <p className={`text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>Log Out</p>
+                    <p className={`text-sm`}>Log Out</p>
                   </Link>
                 </div>
               )}
@@ -129,4 +105,4 @@ const AdminLayout = () => {
   )
 }
 
-export default AdminLayout
+export default Sidebar

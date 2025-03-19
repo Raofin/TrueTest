@@ -1,21 +1,13 @@
 'use client'
 
-import React from 'react'
 import { Providers } from './providers'
-import { ThemeProvider } from './ThemeProvider'
 
-const RootLayout = React.memo(function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>
-          <ThemeProvider>
-            <main>{children}</main>
-          </ThemeProvider>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
-})
-
-export default RootLayout
+}

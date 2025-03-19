@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import { Card, CardBody, Button, Divider, Textarea, Select, SelectItem } from '@heroui/react'
-import useTheme from '@/app/hooks/useTheme'
 
 interface TestCase {
   input: string
@@ -62,14 +61,14 @@ export default function App() {
               outputFormat: 'Print the sum of a and b.',
               constraints: '-10⁹ ≤ a, b ≤ 10⁹',
               userSubmission: `#include <bits/stdc++.h>
-                                using namespace std;
+using namespace std;
 
-                                int main() {
-                                    int a, b;
-                                    cin >> a >> b;
-                                    cout << "Candidate-1" << '\\n';
-                                    return 0;
-                                }`,
+int main() {
+int a, b;
+cin >> a >> b;
+cout << "Candidate-1" << '\\n';
+return 0;
+}`,
               testCases: [
                 {
                   input: '3 7',
@@ -139,7 +138,6 @@ int main() {
   ]
 
   const [flag, setFlag] = useState(false)
-  const Mode = useTheme()
   const [selectedCandidate, setSelectedCandidate] = useState('Candidate-1')
   const currentExamData = examData[0]
   const currentCandidateSubmission = currentExamData.submissions.find((sub) => sub.candidateId === selectedCandidate)
@@ -165,7 +163,7 @@ int main() {
 
   return (
     <div>
-      <Card className="max-w-6xl mx-auto border-none h-screen">
+      <Card className="max-w-6xl mx-3 border-none h-screen">
         <CardBody>
           <div className="space-y-4">
             <h1 className="text-2xl font-bold w-full text-center">Exam: {currentExamData.title}</h1>
@@ -181,9 +179,7 @@ int main() {
                     onChange={(e) => handleCandidateChange(e.target.value)}
                   >
                     {currentExamData.submissions.map((sub) => (
-                      <SelectItem key={sub.candidateId} value={sub.candidateId}>
-                        {sub.candidateId}
-                      </SelectItem>
+                      <SelectItem key={sub.candidateId}>{sub.candidateId}</SelectItem>
                     ))}
                   </Select>
                 </div>
@@ -273,15 +269,9 @@ int main() {
 
               <div>
                 <h3 className="font-semibold mb-2">{curr.type === 'code' ? 'User Submission' : 'User Answer'}</h3>
-                <div className="p-4 rounded-lg">
-                  <div
-                    className={`font-mono text-sm whitespace-pre-wrap p-2 ${
-                      Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'
-                    }`}
-                  >
-                    {curr.userSubmission}
-                  </div>
-                </div>
+                <Card className={`p-4 rounded-lg shadoe-xl mx-2 `}>
+                  <div className={`font-mono text-sm whitespace-pre-wrap p-2`}>{curr.userSubmission}</div>
+                </Card>
               </div>
 
               {curr.type === 'code' && curr.testCases.length > 0 && (
@@ -297,15 +287,9 @@ int main() {
                     </div>
                     {curr.testCases.map((testCase, index) => (
                       <div key={index} className="grid grid-cols-3 gap-4 p-3 rounded-lg">
-                        <div className={`${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'} p-3 font-mono text-sm`}>
-                          {testCase.input}
-                        </div>
-                        <div className={`${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'} p-3 font-mono text-sm`}>
-                          {testCase.expectedOutput}
-                        </div>
-                        <div className={`${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'} p-3 font-mono text-sm`}>
-                          {testCase.receivedOutput}
-                        </div>
+                        <div className={`p-3 font-mono text-sm`}>{testCase.input}</div>
+                        <div className={`p-3 font-mono text-sm`}>{testCase.expectedOutput}</div>
+                        <div className={`p-3 font-mono text-sm`}>{testCase.receivedOutput}</div>
                       </div>
                     ))}
                   </div>
@@ -329,9 +313,7 @@ int main() {
               {flag && <Textarea placeholder="Flag reason" />}
 
               <div className="w-full flex justify-center">
-                {' '}
                 <Button className="my-3" color="primary">
-                  {' '}
                   Save
                 </Button>
               </div>
