@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Form, Button, Textarea } from '@heroui/react'
+import { Form, Button, Textarea, Card } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
 import PaginationButtons from '@/app/components/ui/pagination-button'
 import MDEditor from '@uiw/react-md-editor'
 import he from 'he'
-import useTheme from '@/app/hooks/useTheme'
 
 interface TestCase {
   id?: string
@@ -25,7 +24,6 @@ export default function ProblemSolvingFormp() {
   const [problems, setProblems] = useState<Problem[]>([{ question: '', testCases: [{ input: '', output: '' }] }])
   const [currentPage, setCurrentPage] = useState(0)
   const problemsPerPage = 1
-  const Mode = useTheme()
   const [value, setValue] = React.useState('"Hello, World!"')
   const escaped: string = he.escape(value)
   const unescaped: string = he.unescape(escaped)
@@ -104,7 +102,7 @@ export default function ProblemSolvingFormp() {
     // setIsModalOpen(true);
   }
   return (
-    <div className="border-none">
+    <Card className="border-none">
       <h2 className="flex justify-center text-2xl  mb-2">Problem Solving Question : {currentPage + 1}</h2>
       <div className={`flex justify-center p-4`}>
         <Form id="#" className="w-full flex flex-col gap-4 p-5 border-none">
@@ -143,7 +141,7 @@ export default function ProblemSolvingFormp() {
                       value={testCase.input}
                       variant="bordered"
                       minRows={2}
-                      className={`w-[400px] ${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}
+                      className={`w-[400px] `}
                       onChange={(e) =>
                         handleTestCaseInputChange(
                           currentPage * problemsPerPage + problemIndex,
@@ -157,7 +155,7 @@ export default function ProblemSolvingFormp() {
                       value={testCase.output}
                       minRows={2}
                       variant="bordered"
-                      className={`w-[400px] ${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}
+                      className={`w-[400px] `}
                       onChange={(e) =>
                         handleTestCaseOutputChange(
                           currentPage * problemsPerPage + problemIndex,
@@ -201,6 +199,6 @@ export default function ProblemSolvingFormp() {
           </div>
         </Form>
       </div>
-    </div>
+    </Card>
   )
 }

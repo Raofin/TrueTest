@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Button, Input, Form } from '@heroui/react'
+import { Button, Input, Form, Card } from '@heroui/react'
 import '@/app/globals.css'
 
 export default function Component() {
@@ -9,8 +9,8 @@ export default function Component() {
     event.preventDefault()
   }
   return (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
+    <div className="flex h-full w-full items-center justify-center mt-8">
+      <Card className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
         <div className="flex flex-col gap-3">
           <h1 className="text-xl font-semibold text-center mb-6"> Account Settings</h1>
         </div>
@@ -27,7 +27,7 @@ export default function Component() {
             Save Changes
           </Button>
         </Form>
-      </div>
+      </Card>
     </div>
   )
 }

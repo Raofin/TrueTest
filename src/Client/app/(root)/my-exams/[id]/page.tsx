@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardBody, Button, Checkbox, Pagination } from '@heroui/react'
 import CodeEditor from '@/app/(root)/my-exams/code-editor'
 import '@/app/globals.css'
-import useTheme from '@/app/hooks/useTheme'
 
 interface Question {
   id: number
@@ -30,7 +29,6 @@ export default function Component() {
   const [regularQues, setRegularQues] = useState(0)
   const [codingQues, setCodingQues] = useState(0)
   const [quesleft, setQuesLeft] = useState(0)
-  const Mode = useTheme()
   const examData = {
     title: 'Star Coder 2025',
     totalQuestions: 30,
@@ -76,14 +74,11 @@ export default function Component() {
   const getQuestionsForCurrentPage = (currentPage: number) => {
     const regularQuestions = questions.filter((q) => q.questionTypeId !== 3)
     const codingQuestions = questions.filter((q) => q.questionTypeId === 3)
-
     const regularQuestionsPages = Math.ceil(regularQuestions.length / 5)
-
     if (currentPage <= regularQuestionsPages) {
       const startIndex = (currentPage - 1) * 5
       return regularQuestions.slice(startIndex, startIndex + 5)
     }
-
     const codingIndex = currentPage - regularQuestionsPages - 1
     return codingIndex >= 0 && codingIndex < codingQuestions.length ? [codingQuestions[codingIndex]] : []
   }
@@ -152,8 +147,8 @@ export default function Component() {
 
   if (!examStarted) {
     return (
-      <div className="pt-8">
-        <Card className="max-w-3xl mx-auto border-none">
+      <div className="pt-8 ">
+        <Card className="max-w-3xl mx-auto p-3 border-none">
           <CardBody>
             <div className="space-y-3">
               <div>
@@ -270,50 +265,65 @@ export default function Component() {
       )}
       <div>
         <div className="mx-5 mt-3  border-none px-8">
-          <div className={`space-y-8 rounded-lg p-5 `}>
+          <div className={`space-y-8 rounded-lg `}>
             {currentQuestions.map((question) => (
               <div key={question.id} className="space-y-4">
-                <div className="w-full flex justify-between">
-                  <h2 className="text-lg font-semibold">{question.title}</h2>
-                  <p>points: {question.points}</p>
-                </div>
                 {question.questionTypeId === 1 && question.options && (
-                  <div className={`space-y-4 p-4 rounded-lg ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
-                    <p>{question.description}</p>
-                    {question.options.map((option, index) => (
-                      <div key={index} className="flex items-center gap-2 p-3 rounded-lg hover:bg-white/5">
-                        <Checkbox
-                          value={option}
-                          isSelected={
-                            Array.isArray(answers[question.id]) && (answers[question.id] as string[]).includes(option)
-                          }
-                          onValueChange={(isChecked) => handleCheckboxChange(question.id, option, isChecked)}
-                        >
-                          {option}
-                        </Checkbox>
-                      </div>
-                    ))}
-                  </div>
+                  <Card className=" p-5">
+                    <div className="w-full flex justify-between">
+                      <h2 className="text-lg font-semibold">{question.title}</h2>
+                      <p>points: {question.points}</p>
+                    </div>
+                    <div className={`space-y-4 p-4 rounded-lg `}>
+                      <p>{question.description}</p>
+                      {question.options.map((option, index) => (
+                        <div key={index} className="flex items-center gap-2 p-3 rounded-lg hover:bg-white/5">
+                          <Checkbox
+                            value={option}
+                            isSelected={
+                              Array.isArray(answers[question.id]) && (answers[question.id] as string[]).includes(option)
+                            }
+                            onValueChange={(isChecked) => handleCheckboxChange(question.id, option, isChecked)}
+                          >
+                            {option}
+                          </Checkbox>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
                 )}
                 {question.questionTypeId === 2 && (
-                  <div className={`space-y-4 p-4 rounded-lg ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
-                    <p>{question.description}</p>
-                    <textarea
-                      className={`w-full border border-white/10 rounded-lg p-3 ${
-                        Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'
-                      }`}
-                      placeholder="Type your answer here..."
-                      value={(answers[question.id] as string) || ''}
-                      onChange={(e) =>
-                        setAnswers({
-                          ...answers,
-                          [question.id]: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+                  <Card className=" p-5">
+                    <div className="w-full flex justify-between">
+                      <h2 className="text-lg font-semibold">{question.title}</h2>
+                      <p>points: {question.points}</p>
+                    </div>
+                    <div className={`space-y-4 p-4 rounded-lg `}>
+                      <p>{question.description}</p>
+                      <textarea
+                        className={`w-full border border-white/10 rounded-lg p-3`}
+                        placeholder="Type your answer here..."
+                        value={(answers[question.id] as string) || ''}
+                        onChange={(e) =>
+                          setAnswers({
+                            ...answers,
+                            [question.id]: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </Card>
                 )}
-                {question.questionTypeId === 3 && <CodeEditor />}
+                {question.questionTypeId === 3 && (
+                  <>
+                    {' '}
+                    <div className="w-full flex justify-between">
+                      <h2 className="text-lg font-semibold">{question.title}</h2>
+                      <p>points: {question.points}</p>
+                    </div>
+                    <CodeEditor />
+                  </>
+                )}
               </div>
             ))}
           </div>

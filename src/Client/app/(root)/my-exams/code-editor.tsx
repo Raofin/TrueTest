@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useEffect } from 'react'
-import { Select, SelectItem } from '@heroui/react'
+import { Button, Card, Select, SelectItem } from '@heroui/react'
 import Editor from '@monaco-editor/react'
-import useTheme from '@/app/hooks/useTheme'
+
 
 interface TestCase {
   input: string
@@ -57,7 +57,6 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = React.useState('cpp')
   const [codeStates, setCodeStates] = React.useState<CodeState>({})
   const [selectedTestCase, setSelectedTestCase] = React.useState<number>(0)
-  const Mode = useTheme()
 
   const question: Question = {
     id: 1,
@@ -111,7 +110,7 @@ export default function App() {
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className={`border-none rounded-lg p-4 ${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}>
+      <Card className={`border-none rounded-lg p-4 `}>
         <h2 className="text-xl font-bold mb-3">{question.title}</h2>
         <div className="space-y-4">
           <div>
@@ -148,25 +147,26 @@ export default function App() {
             ))}
           </div>
         </div>
-      </div>
+      </Card>
       <div className="border-none">
-        <div className={`${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'} px-3 rounded-lg h-[500px] mb-3`}>
+        <Card className={` px-3 rounded-lg h-[500px] mb-3`}>
           <div className={`flex w-full items-center justify-between pt-2`}>
             <p className="font-semibold">Code </p>
+          <div className='flex gap-2'>
+          <Button>Run</Button>
             <Select
-               aria-label="Select Language" 
+              aria-label="Select Language"
               selectedKeys={[selectedLanguage]}
               onChange={(e) => setSelectedLanguage(e.target.value)}
               className="w-40"
             >
               {languages.map((lang) => (
-                <SelectItem key={lang.value} value={lang.value}>
-                  {lang.label}
-                </SelectItem>
+                <SelectItem key={lang.value}>{lang.label}</SelectItem>
               ))}
             </Select>
           </div>
-          <div className={`m-3 rounded-lg overflow-hidden shadow-xl ${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}>
+          </div>
+          <div className={`m-3 rounded-lg overflow-hidden shadow-xl `}>
             <Editor
               height="420px"
               defaultLanguage={selectedLanguage}
@@ -182,9 +182,9 @@ export default function App() {
               }}
             />
           </div>
-        </div>
+        </Card>
         <div>
-          <div className={`${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'} p-4 rounded-lg`}>
+          <Card className={` p-4 rounded-lg`}>
             <div className="flex justify-between">
               <p className="font-bold">Test Cases</p>
               <div className="flex items-center gap-2">
@@ -208,20 +208,20 @@ export default function App() {
             </div>
             {displayedTestCases.map((testCase, index) => (
               <div key={index} className="p-2 rounded-lg ">
-                <div className={`grid grid-cols-3 gap-4 h-[160px]`}>
-                  <div className={`font-mono p-2 rounded-lg  ${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}>
+                <div className={`grid grid-cols-3 gap-4 h-[140px]`}>
+                  <Card className={`font-mono p-2 rounded-lg `}>
                     {testCase.input}
-                  </div>
-                  <div className={`font-mono p-2 rounded-lg ${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}>
+                  </Card>
+                  <Card className={`font-mono p-2 rounded-lg`}>
                     {testCase.expectedOutput}
-                  </div>
-                  <div className={`font-mono p-2 rounded-lg ${Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}>
+                  </Card>
+                  <Card className={`font-mono p-2 rounded-lg`}>
                     {testCase.receivedOutput}
-                  </div>
+                  </Card>
                 </div>
               </div>
             ))}
-          </div>
+          </Card>
         </div>
       </div>
     </div>

@@ -6,7 +6,8 @@ import Login from '@/app/(auth)/login/page'
 import Logo from '@/app/components/ui/logo/page'
 import { FaCircleUser } from 'react-icons/fa6'
 import { BiSolidLogIn } from 'react-icons/bi'
-import ThemeToggle from '@/app/components/ThemeToggle'
+import ThemeSwitch from './ThemeSwitch'
+
 
 export default function Component() {
   return (
@@ -63,7 +64,7 @@ export default function Component() {
             className="hidden h-11 gap-5 rounded-full border-small border-default-200/20 bg-background/60 px-4 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 md:flex"
             justify="end"
           >
-            <NavbarItem><ThemeToggle /></NavbarItem>
+            <NavbarItem className="text-gray-400 light:text-white"><ThemeSwitch /></NavbarItem>
           
            <NavbarItem>
             <FaCircleUser className="text-gray-400 light:text-white" size={24} />

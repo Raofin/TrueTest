@@ -40,7 +40,7 @@ export default function SetupPage() {
             <CardHeader className="flex items-center text-center">
               <div className="relative">
                 <Avatar
-                  className="h-24 w-24 ml-56"
+                  className="h-32 w-32 ml-56"
                   size="lg"
                   src={imageFileId ? `your-image-server/${imageFileId}` : ''}
                 />
