@@ -4,7 +4,7 @@ import React from 'react'
 import { Card, CardHeader, CardBody } from '@heroui/react'
 import { FaBookOpen, FaCheckCircle, FaThList, FaUser, FaUsers } from 'react-icons/fa'
 import { AiFillPieChart } from 'react-icons/ai'
-import useTheme from '@/app/hooks/useTheme'
+
 
 export default function Component() {
   const stats = [
@@ -15,15 +15,10 @@ export default function Component() {
     { icon: <FaCheckCircle size={70} />, value: 162, title: 'Total Submissions', subtitle: 'attempted by candidates' },
     { icon: <AiFillPieChart size={70} />, value: 75, title: 'Average Score', subtitle: 'across all candidates' },
   ]
-  const Mode = useTheme()
   return (
-    <div
-      className={`flex flex-wrap gap-6 w-full items-center justify-center h-screen ${
-        Mode === 'dark' ? 'bg-black' : 'bg-white'
-      }`}
-    >
+    <div className={`flex flex-wrap gap-6 w-full items-center justify-center h-screen`}>
       {stats.map((stat, index) => (
-        <Card key={index} className={`py-4 w-[300px] text-center ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
+        <Card key={index} className={`py-4 w-[300px] text-center `}>
           <CardHeader className="pb-0 pt-2 px-4 flex flex-col items-center">
             {stat.icon}
             <h1 className="font-bold text-5xl">{stat.value}</h1>

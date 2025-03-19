@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Button, DatePicker, Input, Textarea, TimeInput, useDisclosure } from '@heroui/react'
+import { Button, Card, DatePicker, Input, Textarea, TimeInput, useDisclosure } from '@heroui/react'
 import { CalendarDate, Time } from '@internationalized/date'
 import { Toaster } from 'react-hot-toast'
 import CommonModal from '@/app/components/ui/Modal/common-modal'
@@ -9,7 +9,7 @@ import ProblemSolve from '@/app/components/ques/problem-solving-ques'
 import WrittenQues from '@/app/components/ques/written-ques'
 import MCQ from '@/app/components/ques/mcq-ques'
 import '@/app/globals.css'
-import useTheme from '@/app/hooks/useTheme'
+
 
 interface FormData {
   title: string
@@ -29,7 +29,7 @@ export default function App() {
   const [date] = React.useState<CalendarDate | null>(null)
   const { isOpen, onOpenChange } = useDisclosure()
   const [activeComponents, setActiveComponents] = React.useState<string[]>([])
-  const Mode = useTheme()
+ 
 
   const handleAddComponent = (componentType: string) => {
     if (!activeComponents.includes(componentType)) {
@@ -47,9 +47,7 @@ export default function App() {
 
   return (
     <div className="m-12 flex flex-col gap-8">
-      <div
-        className={`flex flex-col justify-between p-8 items-center ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}
-      >
+      <Card className={`flex flex-col justify-between p-8 items-center `}>
         <form id="#" className="flex gap-4 flex-wrap flex-col w-full">
           <Input isRequired label="Title" name="title" type="text" variant="bordered" value={formData.title} />
           <Textarea
@@ -85,7 +83,7 @@ export default function App() {
             </Button>
           </div>
         </form>
-      </div>
+      </Card>
 
       {activeComponents.map((component, index) => (
         <div key={index} className="w-full">

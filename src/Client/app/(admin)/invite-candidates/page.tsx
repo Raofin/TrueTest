@@ -23,7 +23,7 @@ import SearchIcon from '@/app/components/table/search_icon/page'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
 import PaginationButtons from '@/app/components/ui/pagination-button'
-import useTheme from '@/app/hooks/useTheme'
+
 
 const columns = [
   { label: 'Email', key: 'email' },
@@ -94,7 +94,6 @@ export default function Component() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [userEmail, setUserEmail] = useState<User[]>([])
-  const Mode = useTheme()
   const handleCopyEmail = useCallback(
     (email: string) => {
       navigator.clipboard.writeText(email).then(() => {
@@ -234,7 +233,7 @@ export default function Component() {
   )
 
   return (
-    <div className={`flex flex-col ${Mode === 'dark' ? 'bg-black' : 'bg-white'}`}>
+    <div className={`mx-3 flex flex-col `}>
       <div>
         <Select className="max-w-xs my-5 ml-4" label="Select an exam">
           {exams.map((exam) => (
