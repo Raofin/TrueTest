@@ -1,9 +1,11 @@
 'use client'
-import React, { useEffect } from 'react'
+
+import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardBody, Button, Checkbox, Pagination } from '@heroui/react'
 import CodeEditor from '@/app/(root)/my-exams/code-editor'
 import '@/app/globals.css'
 import useTheme from '@/app/hooks/useTheme'
+
 interface Question {
   id: number
   title: string
@@ -14,19 +16,21 @@ interface Question {
 }
 
 export default function Component() {
-  const [currentPage, setCurrentPage] = React.useState(1)
-  const [timeLeft, setTimeLeft] = React.useState(3600)
-  const [agreedToTerms, setAgreedToTerms] = React.useState({
+  const [currentPage, setCurrentPage] = useState(1)
+  const [timeLeft, setTimeLeft] = useState(3600)
+  const [agreedToTerms, setAgreedToTerms] = useState({
     capture: false,
     screenMonitor: false,
     audio: false,
     clipboard: false,
   })
-  const [examStarted, setExamStarted] = React.useState(false)
-  const [totalpage, setTotalPage] = React.useState(1)
-  const [answers, setAnswers] = React.useState<{ [key: number]: string }>({})
+  const [examStarted, setExamStarted] = useState(false)
+  const [totalpage, setTotalPage] = useState(1)
+  const [answers, setAnswers] = useState<{ [key: number]: string | string[] }>({})
+  const [regularQues, setRegularQues] = useState(0)
+  const [codingQues, setCodingQues] = useState(0)
+  const [quesleft, setQuesLeft] = useState(0)
   const Mode = useTheme()
-
   const examData = {
     title: 'Star Coder 2025',
     totalQuestions: 30,
@@ -37,57 +41,61 @@ export default function Component() {
     totalScore: 100,
   }
 
-  const questions: Question[] = [
-    ...[...Array(7)].map((_, index) => ({
-      id: index + 1,
-      title: `Question : ${index + 1}`,
-      description:
-        index % 2 === 0
-          ? 'What is the difference between var, let, and const in JavaScript?'
-          : 'Which of the following is true about React hooks?',
-      questionTypeId: index % 2 === 0 ? 2 : 1,
-      options:
-        index % 2 === 0
-          ? undefined
-          : [
-              'They can only be used in class components',
-              'They must be called at the top level of a component',
-              'They can be called conditionally',
-              'They can only be used in functional components',
-            ],
-      points: 3,
-    })),
-    ...[...Array(3)].map((_, index) => ({
-      id: index + 11,
-      title: `Question #${index + 1}`,
-      description: 'Write a function to implement the following logic...',
-      questionTypeId: 3,
-      points: 10,
-    })),
-  ]
+  const questions: Question[] = useMemo(
+    () => [
+      ...Array.from({ length: 7 }, (_, index) => ({
+        id: index + 1,
+        title: `Question : ${index + 1}`,
+        description:
+          index % 2 === 0
+            ? 'What is the difference between var, let, and const in JavaScript?'
+            : 'Which of the following is true about React hooks?',
+        questionTypeId: index % 2 === 0 ? 2 : 1,
+        options:
+          index % 2 === 0
+            ? undefined
+            : [
+                'They can only be used in class components',
+                'They must be called at the top level of a component',
+                'They can be called conditionally',
+                'They can only be used in functional components',
+              ],
+        points: 3,
+      })),
+      ...Array.from({ length: 3 }, (_, index) => ({
+        id: index + 8,
+        title: `Question #${index + 1}`,
+        description: 'Write a function to implement the following logic...',
+        questionTypeId: 3,
+        points: 10,
+      })),
+    ],
+    []
+  )
 
-  const getQuestionsForCurrentPage = () => {
+  const getQuestionsForCurrentPage = (currentPage: number) => {
     const regularQuestions = questions.filter((q) => q.questionTypeId !== 3)
     const codingQuestions = questions.filter((q) => q.questionTypeId === 3)
 
     const regularQuestionsPages = Math.ceil(regularQuestions.length / 5)
+
     if (currentPage <= regularQuestionsPages) {
       const startIndex = (currentPage - 1) * 5
       return regularQuestions.slice(startIndex, startIndex + 5)
     }
-    const codingIndex = currentPage - regularQuestionsPages - 1
-    if (codingIndex >= 0 && codingIndex < codingQuestions.length) {
-      return [codingQuestions[codingIndex]]
-    }
 
-    return []
+    const codingIndex = currentPage - regularQuestionsPages - 1
+    return codingIndex >= 0 && codingIndex < codingQuestions.length ? [codingQuestions[codingIndex]] : []
   }
 
   useEffect(() => {
-    const regularQuestions = questions.filter((q) => q.questionTypeId !== 3).length
-    const codingQuestions = questions.filter((q) => q.questionTypeId === 3).length
-    setTotalPage(Math.ceil(regularQuestions / 5) + codingQuestions)
-  }, [])
+    const regularQuestionsCount = questions.filter((q) => q.questionTypeId !== 3).length
+    const codingQuestionsCount = questions.filter((q) => q.questionTypeId === 3).length
+    setRegularQues(regularQuestionsCount)
+    setCodingQues(codingQuestionsCount)
+    setTotalPage(Math.ceil(regularQuestionsCount / 5) + codingQuestionsCount)
+    setQuesLeft(regularQuestionsCount + codingQuestionsCount)
+  }, [questions])
 
   useEffect(() => {
     if (examStarted) {
@@ -105,11 +113,41 @@ export default function Component() {
     }
   }, [examStarted])
 
+  useEffect(() => {
+    let count = 0
+    questions.forEach((question) => {
+      if (answers[question.id]) {
+        if (Array.isArray(answers[question.id])) {
+          if (answers[question.id].length > 0) {
+            count++
+          }
+        } else if (typeof answers[question.id] === 'string') {
+          if ((answers[question.id] as string).trim()) {
+            count++
+          }
+        }
+      }
+    })
+
+    setQuesLeft(regularQues + codingQues - count)
+  }, [answers, questions, regularQues, codingQues])
+
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const secs = seconds % 60
     return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const handleCheckboxChange = (questionId: number, option: string, isChecked: boolean) => {
+    setAnswers((prevAnswers) => {
+      const currentAnswers = prevAnswers[questionId] || []
+      if (isChecked) {
+        return { ...prevAnswers, [questionId]: [...(currentAnswers as string[]), option] }
+      } else {
+        return { ...prevAnswers, [questionId]: (currentAnswers as string[]).filter((o) => o !== option) }
+      }
+    })
   }
 
   if (!examStarted) {
@@ -122,7 +160,6 @@ export default function Component() {
                 <h1 className="text-2xl font-bold">{examData.title}</h1>
                 <span className="text-sm text-default-500">Running</span>
               </div>
-
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>Date: Friday, 21 Nov 2026</div>
                 <div className="text-right">Problem Solving: {examData.problemSolving}</div>
@@ -133,9 +170,7 @@ export default function Component() {
                 <div>Duration: {examData.duration}</div>
                 <div className="text-right">Score: {examData.totalScore}</div>
               </div>
-
               <hr className="my-2" />
-
               <div className="space-y-2">
                 <h2 className="text-lg font-semibold">Instructions</h2>
                 <ol className="list-decimal list-inside space-y-2 text-sm">
@@ -153,7 +188,6 @@ export default function Component() {
                   <li>Do not attempt to copy or paste anything during the exam. It will be detected and flagged.</li>
                 </ol>
               </div>
-
               <div className="space-y-1">
                 <h3 className="font-semibold">
                   Please read and agree to the following terms to proceed with the exam:
@@ -185,7 +219,6 @@ export default function Component() {
                   </Checkbox>
                 </div>
               </div>
-
               <Button
                 color="primary"
                 className="w-full"
@@ -201,7 +234,7 @@ export default function Component() {
     )
   }
 
-  const currentQuestions = getQuestionsForCurrentPage()
+  const currentQuestions = getQuestionsForCurrentPage(currentPage)
 
   if (currentQuestions.length === 0) {
     return (
@@ -223,7 +256,7 @@ export default function Component() {
             </div>
             <div className="flex items-center gap-4 ">
               <div>
-                Questions Left: {questions.length - currentPage}/{totalpage}
+                Questions Left: {quesleft}/{codingQues + regularQues}
               </div>
               <div className={`font-mono ${timeLeft < 300 ? 'text-danger' : ''}`}>
                 Time Left: {formatTime(timeLeft)}
@@ -235,7 +268,6 @@ export default function Component() {
           </div>
         </div>
       )}
-
       <div>
         <div className="mx-5 mt-3  border-none px-8">
           <div className={`space-y-8 rounded-lg p-5 `}>
@@ -245,18 +277,24 @@ export default function Component() {
                   <h2 className="text-lg font-semibold">{question.title}</h2>
                   <p>points: {question.points}</p>
                 </div>
-
                 {question.questionTypeId === 1 && question.options && (
                   <div className={`space-y-4 p-4 rounded-lg ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
                     <p>{question.description}</p>
                     {question.options.map((option, index) => (
                       <div key={index} className="flex items-center gap-2 p-3 rounded-lg hover:bg-white/5">
-                        <Checkbox value={option}>{option}</Checkbox>
+                        <Checkbox
+                          value={option}
+                          isSelected={
+                            Array.isArray(answers[question.id]) && (answers[question.id] as string[]).includes(option)
+                          }
+                          onValueChange={(isChecked) => handleCheckboxChange(question.id, option, isChecked)}
+                        >
+                          {option}
+                        </Checkbox>
                       </div>
                     ))}
                   </div>
                 )}
-
                 {question.questionTypeId === 2 && (
                   <div className={`space-y-4 p-4 rounded-lg ${Mode === 'dark' ? 'bg-[#18181b]' : 'bg-white'}`}>
                     <p>{question.description}</p>
@@ -265,7 +303,7 @@ export default function Component() {
                         Mode === 'dark' ? 'bg-[#27272a]' : 'bg-white'
                       }`}
                       placeholder="Type your answer here..."
-                      value={answers[question.id] || ''}
+                      value={(answers[question.id] as string) || ''}
                       onChange={(e) =>
                         setAnswers({
                           ...answers,
@@ -275,12 +313,10 @@ export default function Component() {
                     />
                   </div>
                 )}
-
                 {question.questionTypeId === 3 && <CodeEditor />}
               </div>
             ))}
           </div>
-
           <div className="flex justify-center items-end py-6">
             <Pagination
               total={totalpage}

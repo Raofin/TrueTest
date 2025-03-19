@@ -154,7 +154,7 @@ export default function App() {
           <div className={`flex w-full items-center justify-between pt-2`}>
             <p className="font-semibold">Code </p>
             <Select
-              label=""
+               aria-label="Select Language" 
               selectedKeys={[selectedLanguage]}
               onChange={(e) => setSelectedLanguage(e.target.value)}
               className="w-40"
