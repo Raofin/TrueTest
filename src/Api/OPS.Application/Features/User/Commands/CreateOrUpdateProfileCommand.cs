@@ -27,7 +27,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
 
     public async Task<ErrorOr<ProfileResponse>> Handle(CreateOrUpdateProfileCommand request, CancellationToken cancellationToken)
     {
-        var accountId = _userInfoProvider.AccountId().ThrowIfNull("User is not authenticated");
+        var userAccountId = _userInfoProvider.AccountId();
 
         if (request.ImageFileId.HasValue)
         {
@@ -35,13 +35,13 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
             if (!isExists) throw new ArgumentNullException(nameof(request.ImageFileId), "Image file does not exist.");
         }
 
-        var profile = await _unitOfWork.Profile.GetByAccountId(accountId, cancellationToken);
+        var profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
         if (profile is null)
         {
             profile = new Profile
             {
-                AccountId = accountId,
+                AccountId = userAccountId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Bio = request.Bio,
@@ -95,7 +95,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         if (result <= 0) return Error.Failure();
-        profile = await _unitOfWork.Profile.GetByAccountId(accountId, cancellationToken);
+        profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
         return profile.ToDto()!;
 
