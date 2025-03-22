@@ -6,7 +6,6 @@ using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
-using Throw;
 
 namespace OPS.Application.Features.Submissions.Commands;
 
@@ -23,7 +22,7 @@ public class SaveMcqSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoPr
     public async Task<ErrorOr<McqSubmitResponse>> Handle(
         SaveMcqSubmissionCommand request, CancellationToken cancellationToken)
     {
-        var accountId = _userInfoProvider.AccountId().ThrowIfNull(typeof(UnauthorizedAccessException));
+        var userAccountId = _userInfoProvider.AccountId();
 
         var question = await _unitOfWork.Question.GetWithMcqOption(request.QuestionId, cancellationToken);
         if (question == null) return Error.NotFound();
@@ -32,13 +31,13 @@ public class SaveMcqSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoPr
         {
             AnswerOptions = request.AnswerOptions,
             Score = question.McqOption!.AnswerOptions == request.AnswerOptions ? question.Points : 0,
-            AccountId = accountId,
+            AccountId = userAccountId,
             McqOptionId = question.McqOption!.Id,
             QuestionId = question.Id
         };
 
         var existingSubmission = await _unitOfWork.McqSubmission
-            .GetByAccountIdAsync(request.QuestionId, accountId, cancellationToken);
+            .GetByAccountIdAsync(request.QuestionId, userAccountId, cancellationToken);
 
         if (existingSubmission is null)
         {

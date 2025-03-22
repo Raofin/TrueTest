@@ -4,7 +4,6 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
-using Throw;
 
 namespace OPS.Application.Features.User.Queries;
 
@@ -19,9 +18,9 @@ public class GetUserDetailsQueryHandler(
 
     public async Task<ErrorOr<AccountResponse>> Handle(GetUserDetailsQuery request, CancellationToken cancellationToken)
     {
-        var accountId = _userInfoProvider.AccountId().ThrowIfNull("User is not authenticated");
+        var userAccountId = _userInfoProvider.AccountId();
 
-        var account = await _unitOfWork.Account.GetWithProfile(accountId, cancellationToken);
+        var account = await _unitOfWork.Account.GetWithProfile(userAccountId, cancellationToken);
 
         return account is null
             ? Error.NotFound()

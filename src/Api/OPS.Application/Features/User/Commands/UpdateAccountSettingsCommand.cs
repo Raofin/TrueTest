@@ -26,9 +26,9 @@ public class UpdateAccountSettingsCommandHandler(
 
     public async Task<ErrorOr<AccountResponse>> Handle(UpdateAccountSettingsCommand request, CancellationToken cancellationToken)
     {
-        var accountId = _userInfoProvider.AccountId().ThrowIfNull("User is not authenticated");
+        var userAccountId = _userInfoProvider.AccountId();
 
-        var account = await _unitOfWork.Account.GetAsync(accountId, cancellationToken);
+        var account = await _unitOfWork.Account.GetAsync(userAccountId, cancellationToken);
         account.ThrowIfNull();
 
         if (request.Username is not null)

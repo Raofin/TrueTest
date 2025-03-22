@@ -17,13 +17,15 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     [HttpGet("Info")]
     public IActionResult GetInfo()
     {
-        return Ok(new
-        {
-            AccountId = _userInfoProvider.AccountId(),
-            Username = _userInfoProvider.Username(),
-            Email = _userInfoProvider.Email(),
-            Roles = _userInfoProvider.Roles()
-        });
+        return !_userInfoProvider.IsAuthenticated()
+            ? Unauthorized("User is not authenticated.")
+            : Ok(new
+            {
+                AccountId = _userInfoProvider.AccountId(),
+                Username = _userInfoProvider.Username(),
+                Email = _userInfoProvider.Email(),
+                Roles = _userInfoProvider.Roles()
+            });
     }
 
     [HttpPatch("AccountSettings")]
