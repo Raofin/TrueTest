@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace OPS.Domain.Contracts.Repository;
+namespace OPS.Domain.Contracts.Repository.Common;
 
 public interface IBaseRepository<TEntity> where TEntity : class
 {
