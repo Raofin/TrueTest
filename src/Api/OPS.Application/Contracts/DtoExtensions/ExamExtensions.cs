@@ -8,10 +8,21 @@ public static class ExamExtensions
     public static ExamResponse ToDto(this Examination exam)
     {
         var now = DateTime.UtcNow;
+
+        string status;
         
-        var status = 
-            now < exam.OpensAt ? "Scheduled" :
-            now > exam.ClosesAt ? "Ended" : "Running";
+        if (now < exam.OpensAt)
+        {
+            status = "Scheduled";
+        }
+        else if (now > exam.ClosesAt)
+        {
+            status = "Ended";
+        }
+        else
+        {
+            status = "Running";
+        }
 
         return new ExamResponse(
             exam.Id,
