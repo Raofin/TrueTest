@@ -32,7 +32,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
         if (request.ImageFileId.HasValue)
         {
             var isExists = await _unitOfWork.CloudFile.IsExistsAsync(request.ImageFileId.Value, cancellationToken);
-            if (!isExists) throw new ArgumentNullException(nameof(request.ImageFileId), "Image file does not exist.");
+            if (!isExists) throw new NullReferenceException("Image file does not exist.");
         }
 
         var profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);

@@ -5,7 +5,7 @@ namespace OPS.Domain.Contracts.Repository.Questions;
 
 public interface IQuestionRepository : IBaseRepository<Question>
 {
-    Task<List<Question>> GetAllByExamIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<List<Question>> GetAllByExamIdAsync(Guid examId, CancellationToken cancellationToken);
     Task<List<Question>> GetAllQuestionByExamIdQuestionTypeIdAsync(Guid examId, int questionTypeId, CancellationToken cancellationToken);
     Task<Question?> GetWithTestCases(Guid questionId, CancellationToken cancellationToken);
     Task<List<Question>> GetProblemSolvingByExamIdAsync(Guid examId, CancellationToken cancellationToken);

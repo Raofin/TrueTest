@@ -90,7 +90,7 @@ public static class AppConfigurations
         var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
 
         if (jwtSettings == null || string.IsNullOrEmpty(jwtSettings.Secret))
-            throw new ArgumentNullException(nameof(jwtSettings), "JWT settings are not configured properly.");
+            throw new NullReferenceException("JWT settings are not configured properly.");
 
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

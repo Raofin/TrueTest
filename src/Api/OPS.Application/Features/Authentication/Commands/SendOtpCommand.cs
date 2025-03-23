@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using System.Security.Cryptography;
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 using OPS.Application.CrossCutting.Constants;
@@ -40,7 +41,15 @@ public class SendOtpCommandHandler(
 
     private static string GenerateOtp()
     {
-        return new Random().Next(1000, 9999).ToString();
+        using var rng = RandomNumberGenerator.Create();
+        
+        var randomBytes = new byte[4];
+        rng.GetBytes(randomBytes);
+
+        var otp = BitConverter.ToInt32(randomBytes, 0) & 0x7FFFFFFF;
+        otp = otp % 9000 + 1000;
+        
+        return otp.ToString();
     }
 }
 
