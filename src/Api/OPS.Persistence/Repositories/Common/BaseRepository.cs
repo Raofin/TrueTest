@@ -19,13 +19,13 @@ internal class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEnti
     }
 
     public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await _entities.Where(predicate).ToListAsync(cancellationToken);
     }
 
     public async Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await _entities.SingleOrDefaultAsync(predicate, cancellationToken);
     }
