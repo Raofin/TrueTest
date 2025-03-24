@@ -10,7 +10,7 @@ const PasswordRecoverPage = () => {
 
   return (
     <div className="flex items-center justify-center ">
-      <Card className="px-8 py-5">
+      <Card className="px-8 py-5 shadow-none bg-white dark:bg-[#18181b]">
         <form id="#" className={` rounded-lg  w-full `}>
           <h1 className="text-2xl font-bold mb-6 text-center">Password Recovery</h1>
           <Input

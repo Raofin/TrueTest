@@ -70,7 +70,7 @@ export default function ExamList() {
     <div className="mx-44 flex flex-col items-center mt-3 ">
       <h1 className='text-center my-4 font-bold text-3xl'>My Exams</h1>
       {paginatedExams.map((exam, index) => (
-        <Card key={index} className="relative w-full mb-3 p-2 ">
+        <Card key={index} className="relative w-full mb-3 p-2 shadow-none bg-white dark:bg-[#18181b]">
           <CardHeader>
             <div className="flex w-full justify-between items-center">
               <h1 className="text-2xl font-bold w-full">
@@ -99,7 +99,7 @@ export default function ExamList() {
               <div className="text-center">
                 <div className="flex justify-between">
                   <p>
-                    Date:{' '}
+                    <span className='text-[#71717a] dark:text-white'> Date : </span>
                     {new Date(exam.opensAt).toLocaleDateString('en-US', {
                       weekday: 'long',
                       year: 'numeric',
@@ -107,8 +107,8 @@ export default function ExamList() {
                       day: 'numeric',
                     })}
                   </p>
-                  <p>Score: 100/100</p>
-                  <p>Participants: 3068</p>
+                  <p> <span className='text-[#71717a] dark:text-white'>Score :</span> 100/100</p>
+                  <p> <span className='text-[#71717a] dark:text-white'>Participants :</span> 3068</p>
                 </div>
                 <div >
                 <p className="font-semibold mt-7">Your result hasn&apos;t been published. You&apos;ll be notified once it&apos;s available.</p>
@@ -121,7 +121,7 @@ export default function ExamList() {
               <div className="flex">
                 <div className="flex flex-col flex-1">
                   <p>
-                    Date:{' '}
+                   <span className='text-[#71717a] dark:text-white'> Date : </span>
                     {new Date(exam.opensAt).toLocaleDateString('en-US', {
                       weekday: 'long',
                       year: 'numeric',
@@ -129,21 +129,21 @@ export default function ExamList() {
                       day: 'numeric',
                     })}
                   </p>
-                  <p>Duration: {exam.durationMinutes / 60} hr</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Duration :</span> {exam.durationMinutes / 60} hr</p>
                   <p>
-                    Starts at:{' '}
+                   <span className='text-[#71717a] dark:text-white'> Starts at :</span>
                     {new Date(exam.opensAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                   <p>
-                    Closes at:{' '}
+                    <span className='text-[#71717a] dark:text-white'>Closes at :</span>
                     {new Date(exam.closesAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
                 <div className="flex flex-col flex-1">
-                  <p>Problem Solving: {exam.problemSolving}</p>
-                  <p>Written: {exam.written}</p>
-                  <p>MCQ: {exam.mcq}</p>
-                  <p>Score: {exam.score}</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Problem Solving:</span> {exam.problemSolving}</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Written :</span> {exam.written}</p>
+                  <p><span className='text-[#71717a] dark:text-white'>MCQ :</span> {exam.mcq}</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Score :</span> {exam.score}</p>
                 </div>
               </div>
             )}

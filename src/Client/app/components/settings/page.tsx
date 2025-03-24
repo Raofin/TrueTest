@@ -15,7 +15,7 @@ export default function Component() {
     <>
 
       <div className="mt-32 flex items-center justify-center ">
-        <Card className={`p-8 rounded-lg max-w-md w-full `}>
+        <Card className={`p-8 rounded-lg max-w-md w-full shadow-none bg-white dark:bg-[#18181b]`}>
           <h1 className="text-2xl font-semibold mb-6 text-center">Account settings</h1>
           <hr />
           <div className="flex flex-col space-y-2">

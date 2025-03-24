@@ -17,7 +17,7 @@ export default function ProfilePage() {
   return (
     <>
       <div className="h-full flex items-center justify-center mt-5">
-        <Card className={`relative rounded-2xl p-8 w-[600px] overflow-visible`}>
+        <Card className={`relative rounded-2xl p-8 w-[600px] overflow-visible shadow-none bg-white dark:bg-[#18181b]`}>
           <div className="flex items-center mb-8">
             <Avatar src="" alt="Profile" radius="md" className="absolute w-36 h-36 -mt-20 ml-24" />
             <div className=" ml-64">
@@ -36,21 +36,21 @@ export default function ProfilePage() {
             <p className="text-md flex gap-3">
               <strong>Email:</strong>
               <a href="">
-                useremail@gmail.com
+              <span className='text-[#71717a] dark:text-white'>  useremail@gmail.com</span>
               </a>
             </p>
             <p className="text-md flex gap-3">
-              <strong>Institute:</strong> Lorem University
+              <strong>Institute:</strong> <span className='text-[#71717a] dark:text-white'>Lorem University</span>
             </p>
             <p className="text-md flex gap-3">
-              <strong>Phone:</strong> +880 123456789
+              <strong>Phone:</strong> <span className='text-[#71717a] dark:text-white'>+880 123456789</span>
             </p>
             <p className="text-md flex gap-3 items-center">
-              <strong>Links:</strong>Portfolio <FaLink /> Github <FaLink /> Linkedin <FaLink />
+              <strong>Links:</strong> <span className='flex items-center gap-2 text-[#71717a] dark:text-white'>Portfolio <FaLink /> Github <FaLink /> Linkedin <FaLink /></span>
             </p>
 
             <p className="text-md flex gap-3">
-              <strong>Joined:</strong> 28 Nov 2026, 10:08 PM
+              <strong>Joined:</strong> <span className='text-[#71717a] dark:text-white'>28 Nov 2026, 10:08 PM</span>
             </p>
           </div>
           <div className="flex justify-center">

@@ -24,12 +24,12 @@ export default function Component() {
               >
                 <NavbarItem>
                   <Link className="text-[#3f3f46] dark:text-white light:text-black" href="/overview">
-                    Overview
+                    Admin Panel
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
                   <Link className="text-[#3f3f46] dark:text-white " href="/home">
-                    Home
+                    Candidate Home
                   </Link>
                 </NavbarItem>
                 <NavbarItem>

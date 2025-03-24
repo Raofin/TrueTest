@@ -20,7 +20,7 @@ export default function Component() {
     <div className="flex flex-col gap-6 items-center justify-center text-center h-screen w-full ">
       <div className="gap-5 flex">
         {stats.map((stat, index) => (
-          <Card key={index} className="py-4 w-[200px] text-center flex flex-col items-center ">
+          <Card key={index} className="py-4 w-[200px] text-center flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]">
             <CardHeader className="pb-0 pt-2 px-4 flex flex-col items-center">
               <Icon icon={stat.icon} width={50} height={50} />
             </CardHeader>

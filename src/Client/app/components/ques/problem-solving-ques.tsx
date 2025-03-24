@@ -103,7 +103,7 @@ export default function ProblemSolvingFormp() {
   }
   return (
     <div>
-    <Card className="border-none">
+    <Card className="border-none shadow-none bg-white dark:bg-[#18181b]">
       <h2 className="flex justify-center text-2xl my-3">Problem Solving Question : {currentPage + 1}</h2>
       <div className={`flex justify-center p-4`}>
         <Form id="#" className="w-full flex flex-col gap-4 p-5 border-none">

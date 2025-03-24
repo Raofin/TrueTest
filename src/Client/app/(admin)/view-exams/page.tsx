@@ -101,10 +101,10 @@ export default function ExamList() {
       <div className={`h-screen flex flex-col justify-between w-full`}>
         <h1 className='w-full text-center text-3xl font-bold my-3'>Exams</h1>
         {paginatedExams.map((exam, index) => (
-          <Card key={index} className="mx-8 p-4">
+          <Card key={index} className="mx-8 p-4 shadow-none">
             <CardHeader className="flex justify-between items-center ">
               <div className="flex items-end gap-1">
-                <h1 className="text-2xl font-bold flex gap-1 items-end">{exam.title}</h1>
+                <h1 className="text-2xl font-bold flex gap-1 items-end text-[#3f3f46] dark:text-white">{exam.title}</h1>
                 {exam.status === 'Published' ? (
                   <p className="text-green-500">{exam.status}</p>
                 ) : exam.status === 'Draft' ? (
@@ -135,20 +135,20 @@ export default function ExamList() {
             <CardBody className="px-3">
               <div className="flex">
                 <div className="flex flex-col flex-1">
-                  <p>Date: Friday, 21 Nov 2026</p>
-                  <p>Duration: 2 hr</p>
-                  <p>Starts at: 9:00 PM</p>
-                  <p>Closes at: 10:20 PM</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Date:</span> Friday, 21 Nov 2026</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Duration:</span> 2 hr</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Starts at:</span> 9:00 PM</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Closes at:</span> 10:20 PM</p>
                 </div>
                 <div className="flex flex-col flex-1">
-                  <p>Problem Solving: 10</p>
-                  <p>Written: 10</p>
-                  <p>MCQ: 10</p>
-                  <p>Score: 100</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Problem Solving:</span> 10</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Written:</span> 10</p>
+                  <p><span className='text-[#71717a] dark:text-white'>MCQ:</span> 10</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Score:</span> 100</p>
                 </div>
                 <div className="flex flex-col flex-1">
-                  <p>Invited Candidates: 120</p>
-                  <p>Accepted: 90</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Invited Candidates:</span> 120</p>
+                  <p><span className='text-[#71717a] dark:text-white'>Accepted:</span> 90</p>
                 </div>
               </div>
             </CardBody>

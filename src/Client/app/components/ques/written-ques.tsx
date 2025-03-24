@@ -74,7 +74,7 @@ export default function App() {
 
   return (
     <div>
-    <Card className={`flex flex-col items-center `}>
+    <Card className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`}>
       <h2 className="text-2xl mt-3">Written Question : {currentPage + 1}</h2>
       <div className="w-full">
       {currentQuestions.map((question, questionIndex) => (

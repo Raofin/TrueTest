@@ -70,7 +70,7 @@ export default function App() {
     <div className="flex justify-center ">
       <Form id="#" className="w-full flex flex-col" onSubmit={handleSubmit}>
         {questions.length > 0 && (
-          <Card key={currentPage} className="w-full">
+          <Card key={currentPage} className="w-full shadow-none bg-white dark:bg-[#18181b]">
             <CardHeader className="flex flex-col gap-2 ">
               <h2 className="text-2xl my-3">MCQ Question : {currentPage + 1}</h2>
             </CardHeader>

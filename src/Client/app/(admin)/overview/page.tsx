@@ -19,7 +19,7 @@ export default function Component() {
     <div className={`flex h-screen flex-wrap gap-6 w-full items-center justify-center`}>
       <h1 className='w-full text-center text-3xl font-bold my-3'>Overview</h1>
       {stats.map((stat, index) => (
-        <Card key={index} className={`py-4 w-[300px] text-center `}>
+        <Card key={index} className={`py-4 w-[300px] text-center shadow-none`}>
           <CardHeader className="pb-0 pt-2 px-4 flex flex-col items-center">
             {stat.icon}
             <h1 className="font-bold text-5xl">{stat.value}</h1>

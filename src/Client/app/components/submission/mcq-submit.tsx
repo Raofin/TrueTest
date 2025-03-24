@@ -27,7 +27,7 @@ export default function MCQSubmission({ question,answers,setAnswers,options}: Pa
       })
     }
   return (
-    <Card className=" p-5">
+    <Card className=" p-5 shadow-none bg-white dark:bg-[#18181b]">
       <div className="w-full flex justify-between">
         <h2 className="text-lg font-semibold">{question.title}</h2>
         <p>points: {question.points}</p>

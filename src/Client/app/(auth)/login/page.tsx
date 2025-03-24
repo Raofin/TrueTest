@@ -8,14 +8,20 @@ export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)
   const [user, setUser] = useState({ email: '', password: '' })
   const toggleVisibility = () => setIsVisible((prev) => !prev)
-
+ 
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 py-5 bg-white dark:bg-[#18181b]`}>
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold my-3 text-center ">Log In</h1>
         </div>
-        <Form id="#" className="flex w-full flex-wrap gap-4 flex-col" validationBehavior="native">
+        <Form
+          id="#"
+          className="flex w-full flex-wrap gap-4 flex-col"
+          validationBehavior="native"
+          // onSubmit={handleLogin}
+        >
+          {/* {error && <p className="text-red-500 text-center">{error}</p>} */}
           <Input
             isRequired
             label="Username or Email Address"

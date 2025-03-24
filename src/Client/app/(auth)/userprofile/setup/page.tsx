@@ -8,7 +8,7 @@ export default function ProfileDetails() {
   return (
     <>
       <div className="flex justify-center items-center ">
-        <Card className=" py-5 px-8 rounded-lg">
+        <Card className=" py-5 px-8 rounded-lg shadow-none bg-white dark:bg-[#18181b]">
           <h2 className="text-xl font-bold text-center">Add Details</h2>
           <ProfileEdit />
           <div className="flex justify-between mt-6">

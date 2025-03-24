@@ -10,7 +10,7 @@ export default function Component() {
     <>
     <RootNavBar/>
       <div className="flex justify-center items-center min-h-screen ">
-        <Card className=" p-6 rounded-lg">
+        <Card className=" p-6 rounded-lg shadow-none bg-white dark:bg-[#18181b]">
           <h2 className="text-lg font-semibold text-center">Update Profile</h2>
           <ProfileEdit />
           <div className="flex justify-center">

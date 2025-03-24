@@ -28,7 +28,7 @@ export default function StartExam({ examData, setExamStarted, startExam }: PageP
 
   return (
     <div className="pt-8 ">
-      <Card className="max-w-3xl mx-auto p-3 border-none">
+      <Card className="max-w-3xl mx-auto p-3 border-none shadow-none bg-white dark:bg-[#18181b]">
         <CardBody>
           <div className="space-y-3 ">
             <div className="flex w-full justify-between">
@@ -43,14 +43,14 @@ export default function StartExam({ examData, setExamStarted, startExam }: PageP
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>Date: Friday, 21 Nov 2026</div>
-              <div className="text-right">Problem Solving: {examData.problemSolving}</div>
-              <div>Starts at: 9:00 PM</div>
-              <div className="text-right">Written: {examData.written}</div>
-              <div>Closes at: 10:20 PM</div>
-              <div className="text-right">MCQ: {examData.mcq}</div>
-              <div>Duration: {examData.duration}</div>
-              <div className="text-right">Score: {examData.totalScore}</div>
+              <div><span className='text-[#71717a] dark:text-white'>Date:</span> Friday, 21 Nov 2026</div>
+              <div className="text-right"><span className='text-[#71717a] dark:text-white'>Problem Solving:</span> {examData.problemSolving}</div>
+              <div><span className='text-[#71717a] dark:text-white'>Starts at:</span> 9:00 PM</div>
+              <div className="text-right"><span className='text-[#71717a] dark:text-white'>Written:</span> {examData.written}</div>
+              <div><span className='text-[#71717a] dark:text-white'>Closes at:</span> 10:20 PM</div>
+              <div className="text-right"><span className='text-[#71717a] dark:text-white'>MCQ:</span> {examData.mcq}</div>
+              <div><span className='text-[#71717a] dark:text-white'>Duration:</span> {examData.duration}</div>
+              <div className="text-right"><span className='text-[#71717a] dark:text-white'>Score: </span>{examData.totalScore}</div>
             </div>
             <hr className="my-2" />
             <div className="space-y-2">
