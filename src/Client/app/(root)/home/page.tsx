@@ -3,17 +3,20 @@
 import { Card, CardHeader, CardBody, Button } from '@heroui/react'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { useState } from 'react'
+import RootNavBar from '../root-navbar'
 
 const stats = [
-  { icon: 'lucide:camera', title: 'Camera' },
-  { icon: 'lucide:mic', title: 'Microphone' },
-  { icon: 'lucide:monitor', title: 'Screen Recording' },
-  { icon: 'lucide:clipboard-list', title: 'Clipboard' },
-]
+  { icon: 'fa-solid:camera', title: 'Camera' },
+  { icon: 'fa-solid:microphone-alt', title: 'Microphone' },
+  { icon: 'fa-solid:desktop', title: 'Screen Recording' }, 
+  { icon: 'fa-solid:clipboard-list', title: 'Clipboard' },
+];
 
 export default function Component() {
   const [isPermit, setPermit] = useState(false)
   return (
+    <>
+    <RootNavBar/>
     <div className="flex flex-col gap-6 items-center justify-center text-center h-screen w-full ">
       <div className="gap-5 flex">
         {stats.map((stat, index) => (
@@ -27,7 +30,7 @@ export default function Component() {
           </Card>
         ))}
       </div>
-      <p className="mx-24 mt-5">
+      <p className="w-[800px] text-center mt-5">
         contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin
         literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney
         College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and
@@ -44,5 +47,6 @@ export default function Component() {
         </Button>
       </div>
     </div>
+    </>
   )
 }

@@ -1,9 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Input, Checkbox, Link, Form, Divider, Card } from '@heroui/react'
+import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
-
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)
@@ -12,30 +11,28 @@ export default function LoginComponent() {
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <Card
-        className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 pb-7 mb-12 shadow-2xl `}
-      >
+      <div className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 py-5`}>
         <div className="flex flex-col gap-1">
-          <h1 className="text-large font-medium text-center mt-2">Log In</h1>
+          <h1 className="text-2xl font-bold my-3 text-center ">Log In</h1>
         </div>
         <Form id="#" className="flex w-full flex-wrap md:flex-nowrap gap-4 flex-col" validationBehavior="native">
           <Input
             isRequired
-            label="Email"
+            label="Username or Email Address"
             name="email"
             type="email"
-            variant="bordered"
+            className="bg-[#eeeef0] dark:bg-[#71717a] rounded-xl"
             value={user.email}
-            onChange={(e) => setUser((prev) => ({ ...prev, email: e.target.value }))}
+            onChange={(e: { target: { value: string } }) => setUser((prev) => ({ ...prev, email: e.target.value }))}
           />
           <Input
             isRequired
             label="Password"
             name="password"
             type={isVisible ? 'text' : 'password'}
-            variant="bordered"
+            className="bg-[#eeeef0] dark:bg-[#71717a] rounded-xl"
             value={user.password}
-            onChange={(e) => setUser((prev) => ({ ...prev, password: e.target.value }))}
+            onChange={(e: { target: { value: string } }) => setUser((prev) => ({ ...prev, password: e.target.value }))}
             endContent={
               <button type="button" onClick={toggleVisibility}>
                 <Icon
@@ -82,7 +79,7 @@ export default function LoginComponent() {
             Sign Up
           </Link>
         </p>
-      </Card>
+      </div>
     </div>
   )
 }

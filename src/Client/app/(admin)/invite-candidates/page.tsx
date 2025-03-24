@@ -33,48 +33,7 @@ interface CsvRow {
   email?: string
   [key: string]: string | undefined
 }
-// const users = [
-//   {
-//     key: '1',
-//     email: 'alice@example.com',
-//   },
-//   {
-//     key: '2',
-//     email: 'bob@example.com',
-//   },
-//   {
-//     key: '3',
-//     email: 'charlie@example.com',
-//   },
-//   {
-//     key: '4',
-//     email: 'david@example.com',
-//   },
-//   {
-//     key: '5',
-//     email: 'eve@example.com',
-//   },
-//   {
-//     key: '6',
-//     email: 'eve@example.com',
-//   },
-//   {
-//     key: '7',
-//     email: 'eve@example.com',
-//   },
-//   {
-//     key: '8',
-//     email: 'eve@example.com',
-//   },
-//   {
-//     key: '9',
-//     email: 'eve@example.com',
-//   },
-//   {
-//     key: '10',
-//     email: 'eve@example.com',
-//   },
-// ]
+
 type User = {
   email: string
 }
@@ -192,10 +151,61 @@ export default function Component() {
     }
   }, [])
 
-  const topContent = useMemo(
+  const bottomContent = useMemo(
     () => (
+      <div className="p-2 m-2 flex justify-between items-end">
+       
+        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
+        <div className="flex items-center  gap-2">
+        <span className="text-small ">
+          Page {page} out of {pages}
+        </span>
+          <PaginationButtons
+            currentIndex={page}
+            totalItems={pages}
+            onPrevious={() => setPage(page - 1)}
+            onNext={() => setPage(page + 1)}
+          />
+          <Button size="sm" color="primary">Send Invitation</Button>
+        </div>
+      </div>
+    ),
+    [page, pages]
+  )
+
+  return (
+    <div className="flex h-screen flex-col justify-between">
+        <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Invite Candidates</h2>
+    <div className={` flex flex-col rounded-xl pt-5 justify-between mx-12 bg-white dark:bg-[#18181b]`}>
+      <div>
+      <div className='w-full flex items-center justify-center'>
+        <p>Exam</p>
+        <Select label="" className="max-w-md  ml-4 bg-[#eeeef0] dark:bg-[#71717a] rounded-2xl" placeholder="Select an exam">
+          {exams.map((exam) => (
+            <SelectItem key={exam.key}>{exam.label}</SelectItem>
+          ))}
+        </Select>
+      </div>
+      <h1 className='ml-6 my-2'>Candidate Email Import</h1>
+      <div className="flex gap-2 px-5">
+        <Textarea type="file" value={fileContent} className=" " />
+        <div className="flex flex-col gap-2">
+          <input
+            type="file"
+            accept=".csv,.txt"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+            className="bg-[#eeeef0] dark:[#71717a] rounded-xl"
+          />
+          <Button onPress={() => fileInputRef.current?.click()}>Upload CSV</Button>
+          <Button color="primary" onPress={handlecsvtoarray}>Add to list</Button>
+        </div>
+      </div>
+      </div>
+      <div className='flex flex-col gap-5'>
       <div className="mt-4 flex gap-8 w-full justify-between">
-        <h2>Candidates List</h2>
+        <h2 className='ml-5'>Candidates List</h2>
         <div className="flex items-end">
           <Input
             isClearable
@@ -207,67 +217,14 @@ export default function Component() {
           />
         </div>
       </div>
-    ),
-    [filterValue, onSearchChange]
-  )
-
-  const bottomContent = useMemo(
-    () => (
-      <div className="py-2 px-2 flex justify-between items-end">
-        <span className="w-[30%] text-small text-default-400">
-          Page {page} out of {pages}
-        </span>
-        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <PaginationButtons
-            currentIndex={page}
-            totalItems={pages}
-            onPrevious={() => setPage(page - 1)}
-            onNext={() => setPage(page + 1)}
-          />
-          <Button size="sm">Send Invitation</Button>
-        </div>
-      </div>
-    ),
-    [page, pages]
-  )
-
-  return (
-    <div className={`mx-3 flex flex-col `}>
-      <div>
-        <Select className="max-w-xs my-5 ml-4" label="Select an exam">
-          {exams.map((exam) => (
-            <SelectItem key={exam.key}>{exam.label}</SelectItem>
-          ))}
-        </Select>
-      </div>
-      <div className="flex gap-4">
-        <Textarea type="file" value={fileContent} readOnly />
-        <div className="flex flex-col gap-4">
-          <input
-            type="file"
-            accept=".csv,.txt"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            style={{ display: 'none' }}
-          />
-          <Button onPress={() => fileInputRef.current?.click()}>Upload CSV</Button>
-          <Button onPress={handlecsvtoarray}>Add to list</Button>
-        </div>
-      </div>
       <Table
-        isStriped
-        isHeaderSticky
+  
         aria-label="Example table with custom cells, pagination"
         bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        className=""
-        classNames={{
-          wrapper: 'min-h-[50vh] max-h-[80vh] overflow-y-auto',
-          table: 'w-full',
-        }}
-        topContent={topContent}
-        topContentPlacement="outside"
+        bottomContentPlacement="inside"
+       
+       className=''
+        topContentPlacement="inside"
         selectionMode="multiple"
       >
         <TableHeader>
@@ -277,7 +234,7 @@ export default function Component() {
             </TableColumn>
           ))}
         </TableHeader>
-        <TableBody emptyContent="No candidate found" className={items.length === 0 ? 'min-h-[50vh]' : 'min-h-[auto]'}>
+        <TableBody emptyContent="No candidate found" className=''>
           {items.map((item) => (
             <TableRow key={item.email} className="max-h-4">
               {columns.map((column) => (
@@ -289,6 +246,8 @@ export default function Component() {
           ))}
         </TableBody>
       </Table>
+      </div>
+      
 
       <CommonModal
         isOpen={isEditModalOpen}
@@ -306,6 +265,7 @@ export default function Component() {
         confirmButtonText="Delete"
         onConfirm={() => setIsDeleteModalOpen(false)}
       />
+    </div>
     </div>
   )
 }

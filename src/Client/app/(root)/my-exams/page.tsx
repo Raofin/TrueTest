@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react'
 import PaginationButtons from '@/app/components/ui/pagination-button'
+import RootNavBar from '../root-navbar'
 
 interface Exam {
   title: string
@@ -64,15 +65,18 @@ export default function ExamList() {
   const paginatedExams = Exams.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   return (
+    <>
+    <RootNavBar/>
     <div className="mx-44 flex flex-col items-center mt-3 ">
+      <h1 className='text-center my-4 font-bold text-3xl'>My Exams</h1>
       {paginatedExams.map((exam, index) => (
         <Card key={index} className="relative w-full mb-3 p-2 ">
           <CardHeader>
             <div className="flex w-full justify-between items-center">
               <h1 className="text-2xl font-bold w-full">
-                {exam.title}{' '}
+                {exam.title}
                 <span
-                  className={`text-sm ${
+                  className={`ml-2 text-sm ${
                     exam.status === 'Upcoming'
                       ? 'text-green-500'
                       : exam.status === 'Ended'
@@ -106,7 +110,12 @@ export default function ExamList() {
                   <p>Score: 100/100</p>
                   <p>Participants: 3068</p>
                 </div>
-                <p className="font-semibold mt-7">Result hasn&apos;t been published.</p>
+                <div >
+                <p className="font-semibold mt-7">Your result hasn&apos;t been published. You&apos;ll be notified once it&apos;s available.</p>
+<p>Congratulations! You are in the top 5%</p>
+<p>You are on 40%</p>
+<p className='text-red-500'>You cheated!</p>
+              </div>
               </div>
             ) : (
               <div className="flex">
@@ -153,5 +162,6 @@ export default function ExamList() {
         />
       </div>
     </div>
+    </>
   )
 }

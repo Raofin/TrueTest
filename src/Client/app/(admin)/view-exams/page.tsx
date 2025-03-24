@@ -6,7 +6,6 @@ import { Controller, useForm } from 'react-hook-form'
 import PaginationButtons from '@/app/components/ui/pagination-button'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
 
-
 interface Exam {
   examId: string
   title: string
@@ -15,7 +14,7 @@ interface Exam {
   opensAt: string
   createdAt: string
   closesAt: string
-  status: 'Upcoming' | 'Running' | 'Ended'
+  status: 'Published' | 'Draft' | 'Ended'
   invitedCandidates: number | 'N/A'
   acceptedCandidates: number | 'N/A'
   problemSolving: number
@@ -32,7 +31,7 @@ const Exams: Exam[] = [
     durationMinutes: 60,
     opensAt: '2026-11-21T21:00:00.000Z',
     closesAt: '2026-11-21T22:20:00.000Z',
-    status: 'Running',
+    status: 'Published',
     problemSolving: 10,
     written: 10,
     mcq: 30,
@@ -48,7 +47,7 @@ const Exams: Exam[] = [
     durationMinutes: 90,
     opensAt: '2026-12-10T21:00:00.000Z',
     closesAt: '2026-12-10T23:00:00.000Z',
-    status: 'Upcoming',
+    status: 'Draft',
     problemSolving: 10,
     written: 10,
     mcq: 30,
@@ -99,33 +98,36 @@ export default function ExamList() {
 
   return (
     <>
-      <div className={`h-screen flex flex-col justify-around w-full`}>
+      <div className={`h-screen flex flex-col justify-between w-full`}>
+        <h1 className='w-full text-center text-3xl font-bold my-3'>Exams</h1>
         {paginatedExams.map((exam, index) => (
-          <Card key={index} className="mx-8">
+          <Card key={index} className="mx-8 p-4">
             <CardHeader className="flex justify-between items-center ">
-              <h1 className="text-2xl font-bold flex gap-1 items-end">{exam.title}</h1>
+              <div className="flex items-end gap-1">
+                <h1 className="text-2xl font-bold flex gap-1 items-end">{exam.title}</h1>
+                {exam.status === 'Published' ? (
+                  <p className="text-green-500">{exam.status}</p>
+                ) : exam.status === 'Draft' ? (
+                  <p className="text-yellow-500">{exam.status}</p>
+                ) : (
+                  <p className="text-blue-600">{exam.status}</p>
+                )}
+              </div>
               <div className="flex gap-2">
                 {exam.status === 'Ended' ? (
-                  <Button className="bg-purple-500 text-white">
+                  <Button color="primary">
                     <Link href="/exams/review-results" className={'text-white'}>
-                      Review
+                      Review Results
                     </Link>
                   </Button>
-                ) : exam.status === 'Upcoming' ? (
+                ) : exam.status === 'Draft' ? (
                   <>
-                    <Button color="primary" onPress={() => handleEdit(exam)}>
-                      Edit
-                    </Button>
-                    <Button className="bg-blue-500 text-white">Publish</Button>
+                    <Button onPress={() => handleEdit(exam)}>Edit</Button>
+                    <Button color="primary">Publish</Button>
                   </>
                 ) : (
                   <>
-                    <Button color="primary" onPress={() => handleEdit(exam)}>
-                      Edit
-                    </Button>
-                    <Button color="primary" onPress={() => setIsDeleteModalOpen(true)}>
-                      Delete
-                    </Button>
+                    <Button onPress={() => handleEdit(exam)}>Edit</Button>
                   </>
                 )}
               </div>

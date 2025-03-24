@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
-import { Form, Button, Textarea, Card, CardBody, CardHeader, RadioGroup, Radio } from '@heroui/react'
-import { Icon } from '@iconify/react'
+import React, { useState } from 'react'
+import { Form, Button, Textarea, Card, CardBody, CardHeader, Checkbox, Input } from '@heroui/react'
 import PaginationButtons from '@/app/components/ui/pagination-button'
 
 interface MCQOption {
@@ -18,7 +17,7 @@ interface MCQQuestion {
 }
 
 export default function App() {
-  const [questions, setQuestions] = React.useState<MCQQuestion[]>([
+  const [questions, setQuestions] = useState<MCQQuestion[]>([
     {
       question: '',
       options: [
@@ -31,7 +30,7 @@ export default function App() {
     },
   ])
 
-  const [currentPage, setCurrentPage] = React.useState(0)
+  const [currentPage, setCurrentPage] = useState(0)
 
   const handleQuestionChange = (index: number, value: string) => {
     const newQuestions = [...questions]
@@ -43,12 +42,6 @@ export default function App() {
     const newQuestions = [...questions]
     const optionIndex = newQuestions[questionIndex].options.findIndex((opt) => opt.id === optionId)
     newQuestions[questionIndex].options[optionIndex].text = value
-    setQuestions(newQuestions)
-  }
-
-  const handleCorrectOptionChange = (questionIndex: number, value: number) => {
-    const newQuestions = [...questions]
-    newQuestions[questionIndex].correctOption = value
     setQuestions(newQuestions)
   }
 
@@ -75,62 +68,61 @@ export default function App() {
 
   return (
     <div className="flex justify-center ">
-      <Form id="#" className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+      <Form id="#" className="w-full flex flex-col" onSubmit={handleSubmit}>
         {questions.length > 0 && (
           <Card key={currentPage} className="w-full">
-            <CardHeader className="flex flex-col gap-2">
-              <div className="text-default-500">MCQ Question {currentPage + 1}</div>
-              <Textarea
-                label="Question"
-                placeholder="Enter your question here..."
-                value={questions[currentPage].question}
-                variant="bordered"
-                onChange={(e) => handleQuestionChange(currentPage, e.target.value)}
-              />
+            <CardHeader className="flex flex-col gap-2 ">
+              <h2 className="text-2xl my-3">MCQ Question : {currentPage + 1}</h2>
             </CardHeader>
-            <CardBody className="flex flex-col gap-4 ">
+            <CardBody className="flex flex-col gap-4 p-8">
+              <Textarea
+                label="mcq question"
+                minRows={5}
+                value={questions[currentPage].question}
+                className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+                onChange={(e: { target: { value: string } }) => handleQuestionChange(currentPage, e.target.value)}
+              />
               <div className="grid grid-cols-2 gap-4">
                 {questions[currentPage].options.map((option) => (
-                  <Textarea
-                    key={option.id}
-                    label={`Option ${option.id}`}
-                    placeholder={`Enter option ${option.id}`}
-                    value={option.text}
-                    minRows={2}
-                    variant="bordered"
-                    onChange={(e) => handleOptionChange(currentPage, option.id, e.target.value)}
-                  />
-                ))}
-              </div>
-
-              <RadioGroup
-                label="Correct Answer"
-                value={questions[currentPage].correctOption.toString()}
-                onValueChange={(value) => handleCorrectOptionChange(currentPage, parseInt(value))}
-              >
-                {questions[currentPage].options.map((option) => (
-                  <div key={option.id} className="flex flex-row flex-wrap items-center ">
-                    <Radio value={option.id.toString()}>Option {option.id}</Radio>
+                  <div key={option.id} className="flex">
+                    <Checkbox name="remember" size="sm"></Checkbox>
+                    <Textarea
+                     className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+                      label={`Option ${option.id}`}
+                      value={option.text}
+                      isRequired={option.id === 1 || option.id === 2}
+                      onChange={(e: { target: { value: string } }) =>
+                        handleOptionChange(currentPage, option.id, e.target.value)
+                      }
+                    />
                   </div>
                 ))}
-              </RadioGroup>
+              </div>
             </CardBody>
+            <div className="w-full flex justify-between px-8 py-5">
+              <Input className="w-32" type="number" placeholder="Points" />
+              <div className='flex items-center gap-2 '>
+              <span >
+            Page {currentPage + 1} of {questions.length}
+          </span>
+              <PaginationButtons
+                currentIndex={currentPage + 1}
+                totalItems={questions.length}
+                onPrevious={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+                onNext={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}
+              />
+              </div>
+
+              <Button color="primary" type="submit">
+                Save
+              </Button>
+            </div>
           </Card>
         )}
 
-        <div className="flex justify-between gap-2">
-          <PaginationButtons
-            currentIndex={currentPage + 1}
-            totalItems={questions.length}
-            onPrevious={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-            onNext={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}
-          />
-          <Button startContent={<Icon icon="lucide:plus" />} onPress={addNewQuestion}>
-            Add New Question
-          </Button>
-
-          <Button className="ml-44 mb-10" type="submit">
-            Save All Questions
+        <div className="w-full  my-3 text-center">
+          <Button onPress={addNewQuestion}>
+            Add MCQ Question
           </Button>
         </div>
       </Form>

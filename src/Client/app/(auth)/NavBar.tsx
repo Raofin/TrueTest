@@ -9,46 +9,46 @@ import ThemeSwitch from '../ThemeSwitch'
 
 export default function Component() {
   return (
-    <div className=" w-full flex justify-between items-center h-16 px-5">
-      <Logo />
+    <div className=" w-full flex justify-between items-center h-16 px-2">
+     <div className='bg-[#eeeef0] dark:bg-[#000000]'><Logo /></div> 
      <div className='flex'>
            <Navbar
               classNames={{
-                wrapper: 'justify-end bg-transparent',
+                wrapper: 'justify-end bg-[#eeeef0] dark:bg-[#000000]',
                 item: 'hidden md:flex',
               }}
             >
               <NavbarContent
-                className="hidden h-11 gap-5 rounded-full border-small border-default-200/20 bg-background/60 px-4 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 md:flex"
+                className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]"
                 justify="end"
               >
                 <NavbarItem>
-                  <Link className="text-gray-400 light:text-black" href="/overview">
+                  <Link className="text-black dark:text-white light:text-black" href="/overview">
                     Overview
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-gray-400 light:text-black" href="/home">
+                  <Link className="text-black dark:text-white light:text-black" href="/home">
                     Home
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-gray-400 light:text-black" href="/">
+                  <Link className="text-black dark:text-white light:text-black" href="/">
                     About Us
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-gray-400 light:text-black" href="/">
+                  <Link className="text-black dark:text-white light:text-black" href="/">
                     Contact
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-gray-400 light:text-black" href="/">
+                  <Link className="text-black dark:text-white light:text-black" href="/">
                     Support
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-gray-400 light:text-black" href="/">
+                  <Link className="text-black dark:text-white light:text-black" href="/">
                     FAQs
                   </Link>
                 </NavbarItem>
@@ -56,16 +56,15 @@ export default function Component() {
            
           
             <NavbarContent
-                className="hidden h-11 gap-5 rounded-full border-small border-default-200/20 bg-background/60 px-4 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 md:flex"
-                justify="end"
+                 className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end"
               >
-                <NavbarItem><ThemeSwitch/></NavbarItem>
+                <NavbarItem className="text-black dark:text-white "><ThemeSwitch/></NavbarItem>
               
                <NavbarItem>
-                <FaCircleUser className="text-gray-400 light:text-white" size={24} />
+               <Link href="/userprofile/setup"> <FaCircleUser className="text-black dark:text-white " size={24} /></Link>
               </NavbarItem>
                <NavbarItem>
-                <BiSolidLogIn className="text-gray-400 light:text-white" size={24} />
+               <Link href="/login">  <BiSolidLogIn className="text-black dark:text-white " size={24} /></Link>
               </NavbarItem>
             </NavbarContent>
             </Navbar>

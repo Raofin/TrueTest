@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardBody, Button, Divider, Textarea, Select, SelectItem } from '@heroui/react'
+import { Card, Button,  Textarea, Select, SelectItem } from '@heroui/react'
 
 interface TestCase {
   input: string
@@ -39,7 +39,7 @@ interface ExamData {
   submissions: ExamSubmission[]
 }
 
-export default function App() {
+export default function Component() {
   const examData: ExamData[] = [
     {
       title: 'Learnathon 2.0',
@@ -162,13 +162,14 @@ int main() {
   }
 
   return (
-    <div>
-      <Card className="max-w-6xl mx-3 border-none h-screen">
-        <CardBody>
-          <div className="space-y-4">
-            <h1 className="text-2xl font-bold w-full text-center">Exam: {currentExamData.title}</h1>
+    <div className='h-screen flex flex-col  justify-between'>
+      <h2 className="text-2xl font-bold text-center my-5">Review Results</h2>
+      <div className="w-full px-12 border-none flex flex-col gap-4 ">
+        
+          <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b]">
+            <h1 className="text-xl font-semibold w-full text-center">Exam: {currentExamData.title}</h1>
 
-            <div className="flex flex-col gap-3 text-lg">
+            <div className="flex flex-col gap-3 ">
               <div className="flex w-full items-center justify-between">
                 <div className="flex gap-2 items-center">
                   <span className="text-default-500">Candidate: </span>
@@ -176,7 +177,7 @@ int main() {
                     aria-label="Select a candidate"
                     className="w-80"
                     value={selectedCandidate}
-                    onChange={(e) => handleCandidateChange(e.target.value)}
+                    onChange={(e: { target: { value: string } }) => handleCandidateChange(e.target.value)}
                   >
                     {currentExamData.submissions.map((sub) => (
                       <SelectItem key={sub.candidateId}>{sub.candidateId}</SelectItem>
@@ -185,17 +186,17 @@ int main() {
                 </div>
                 <div className="flex gap-2">
                   <Button
-                    color="primary"
+                 
                     size="sm"
                     isDisabled={
                       currentExamData.submissions.findIndex((sub) => sub.candidateId === selectedCandidate) <= 0
                     }
                     onPress={handlePrevCandidate}
                   >
-                    Previous Candidate
+                    Previous 
                   </Button>
                   <Button
-                    color="primary"
+                   
                     size="sm"
                     isDisabled={
                       currentExamData.submissions.findIndex((sub) => sub.candidateId === selectedCandidate) >=
@@ -203,13 +204,12 @@ int main() {
                     }
                     onPress={handleNextCandidate}
                   >
-                    {' '}
-                    Next Candidate
+                    Next 
                   </Button>
                 </div>
               </div>
 
-              <div className="flex w-full items-center justify-between">
+              <div className="flex items-center justify-between">
                 <div>
                   <span className="text-default-500">Score: </span>
                   {currentExamData.totalScore}
@@ -220,7 +220,7 @@ int main() {
                 </div>
               </div>
 
-              <div className="flex w-full items-center justify-between">
+              <div className="flex  items-center justify-between">
                 <div>
                   <span className="text-default-500">Problem Solving: </span>
                   {currentExamData.problemSolving}
@@ -234,10 +234,11 @@ int main() {
                   {currentExamData.mcq}
                 </div>
               </div>
-            </div>
-          </div>
+              </div>
+            </Card>
+       
 
-          <Divider className="my-5" />
+        <div className='bg-white dark:bg-[#18181b] p-5 rounded-xl'>
           <h2 className="w-full text-center ">{selectedCandidate}</h2>
 
           {currentQ.map((curr, idx) => (
@@ -269,7 +270,7 @@ int main() {
 
               <div>
                 <h3 className="font-semibold mb-2">{curr.type === 'code' ? 'User Submission' : 'User Answer'}</h3>
-                <Card className={`p-4 rounded-lg shadoe-xl mx-2 `}>
+                <Card className={`p-4 rounded-lg  bg-[#eeeef0] dark:bg-[#3f3f46]`}>
                   <div className={`font-mono text-sm whitespace-pre-wrap p-2`}>{curr.userSubmission}</div>
                 </Card>
               </div>
@@ -286,10 +287,10 @@ int main() {
                       <div className="text-xs text-default-500 mb-1">Received Output</div>
                     </div>
                     {curr.testCases.map((testCase, index) => (
-                      <div key={index} className="grid grid-cols-3 gap-4 p-3 rounded-lg">
-                        <div className={`p-3 font-mono text-sm`}>{testCase.input}</div>
-                        <div className={`p-3 font-mono text-sm`}>{testCase.expectedOutput}</div>
-                        <div className={`p-3 font-mono text-sm`}>{testCase.receivedOutput}</div>
+                      <div key={index} className="grid grid-cols-3 gap-4 p-3 ">
+                        <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#3f3f46]`}>{testCase.input}</div>
+                        <div className={`p-3 font-mono text-sm h-20 rounded-lg  bg-[#eeeef0] dark:bg-[#3f3f46]`}>{testCase.expectedOutput}</div>
+                        <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#3f3f46]`}>{testCase.receivedOutput}</div>
                       </div>
                     ))}
                   </div>
@@ -304,13 +305,13 @@ int main() {
                     <input name="points" type="number" className="w-16" defaultValue={curr.points} />/{curr.maxPoints}
                   </div>
                   <Button size="sm" variant="flat">
-                    <input name="flag" type="checkbox" checked={flag} onChange={(e) => setFlag(e.target.checked)} />{' '}
+                    <input  name="flag" type="checkbox" checked={flag} onChange={(e) => setFlag(e.target.checked)} />
                     Flag Solution
                   </Button>
                 </div>
               </div>
 
-              {flag && <Textarea placeholder="Flag reason" />}
+              {flag && <Textarea className='bg-[#eeeef0] dark:bg-[#3f3f46] rounded-xl' placeholder="Flag reason" />}
 
               <div className="w-full flex justify-center">
                 <Button className="my-3" color="primary">
@@ -319,8 +320,8 @@ int main() {
               </div>
             </div>
           ))}
-        </CardBody>
-      </Card>
-    </div>
+        </div></div>
+      </div>
+   
   )
 }

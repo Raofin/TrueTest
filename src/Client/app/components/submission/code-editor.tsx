@@ -4,7 +4,6 @@ import React, { useEffect } from 'react'
 import { Button, Card, Select, SelectItem } from '@heroui/react'
 import Editor from '@monaco-editor/react'
 
-
 interface TestCase {
   input: string
   expectedOutput: string
@@ -19,12 +18,12 @@ interface Question {
   inputFormat: string
   outputFormat: string
   constraints: string
-  examples: Array<{
-    input: string
-    output: string
-    explanation?: string
-  }>
+  examples: Array<{ input: string; output: string; explanation?: string }>
   testCases: TestCase[]
+}
+interface PageProps {
+  questionId: number
+  setAnswers: React.Dispatch<React.SetStateAction<{ [key: number]: string | string[] }>>
 }
 
 interface CodeState {
@@ -53,11 +52,10 @@ const languages = [
   },
 ]
 
-export default function App() {
+export default function CodeEditor({ setAnswers, questionId }: PageProps) {
   const [selectedLanguage, setSelectedLanguage] = React.useState('cpp')
   const [codeStates, setCodeStates] = React.useState<CodeState>({})
   const [selectedTestCase, setSelectedTestCase] = React.useState<number>(0)
-
   const question: Question = {
     id: 1,
     title: 'Alice and Bob',
@@ -84,7 +82,7 @@ export default function App() {
       { input: '1000000000 1000000000', receivedOutput: '2000000000', expectedOutput: '2000000000' },
     ],
   }
-
+  const displayedTestCases = [question.testCases[selectedTestCase]]
   useEffect(() => {
     const initialStates: CodeState = {}
     languages.forEach((lang) => {
@@ -99,14 +97,12 @@ export default function App() {
         ...prev,
         [selectedLanguage]: value,
       }))
+      setAnswers((prevAnswers) => ({
+        ...prevAnswers,
+        [questionId]: value,
+      }))
     }
   }
-
-  const handleTestCaseClick = (index: number) => {
-    setSelectedTestCase(index)
-  }
-
-  const displayedTestCases = [question.testCases[selectedTestCase]]
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -152,27 +148,27 @@ export default function App() {
         <Card className={` px-3 rounded-lg h-[500px] mb-3`}>
           <div className={`flex w-full items-center justify-between pt-2`}>
             <p className="font-semibold">Code </p>
-          <div className='flex gap-2'>
-          <Button>Run</Button>
-            <Select
-              aria-label="Select Language"
-              selectedKeys={[selectedLanguage]}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="w-40"
-            >
-              {languages.map((lang) => (
-                <SelectItem key={lang.value}>{lang.label}</SelectItem>
-              ))}
-            </Select>
+            <div className="flex gap-2">
+              <Button>Run</Button>
+              <Select
+                aria-label="Select Language"
+                selectedKeys={[selectedLanguage]}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) => setSelectedLanguage(e.target.value)}
+                className="w-40"
+              >
+                {languages.map((lang) => (
+                  <SelectItem key={lang.value}>{lang.label}</SelectItem>
+                ))}
+              </Select>
+            </div>
           </div>
-          </div>
-          <div className={`m-3 rounded-lg overflow-hidden shadow-xl `}>
+          <div className={`m-3 rounded-lg overflow-hidden `}>
             <Editor
               height="420px"
               defaultLanguage={selectedLanguage}
               value={codeStates[selectedLanguage]}
               onChange={handleCodeChange}
-              theme="vs-dark"
+              theme='vs-dark'
               options={{
                 minimap: { enabled: false },
                 fontSize: 14,
@@ -191,7 +187,7 @@ export default function App() {
                 {question.testCases.map((_, index) => (
                   <button
                     key={index}
-                    onClick={() => handleTestCaseClick(index)}
+                    onClick={() => setSelectedTestCase(index)}
                     className={`w-8 h-8 rounded-lg flex items-center justify-center text-white 
                         ${_.receivedOutput === _.expectedOutput ? 'bg-green-500' : 'bg-red-500'}
                         ${selectedTestCase === index ? 'ring-2 ring-blue-500' : ''}`}
@@ -209,15 +205,13 @@ export default function App() {
             {displayedTestCases.map((testCase, index) => (
               <div key={index} className="p-2 rounded-lg ">
                 <div className={`grid grid-cols-3 gap-4 h-[140px]`}>
-                  <Card className={`font-mono p-2 rounded-lg `}>
-                    {testCase.input}
-                  </Card>
-                  <Card className={`font-mono p-2 rounded-lg`}>
+                  <div className={`font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg `}>{testCase.input}</div>
+                  <div className={`font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg`}>
                     {testCase.expectedOutput}
-                  </Card>
-                  <Card className={`font-mono p-2 rounded-lg`}>
+                  </div>
+                  <div className={`font-mono p-2 bg-[#eeeef0] dark:bg-[#27272a] rounded-lg`}>
                     {testCase.receivedOutput}
-                  </Card>
+                  </div>
                 </div>
               </div>
             ))}

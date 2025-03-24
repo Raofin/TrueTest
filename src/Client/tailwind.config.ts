@@ -8,10 +8,17 @@ const config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        black1: "#3f3f46",
+        black2: "#71717a",
+        white1: "#ffffff",
+        white2: "#eeeef0",
+      },
+    },
   },
-  darkMode: ['class', '[data-theme="dark"]'],
   plugins: [heroui()],
 }
 

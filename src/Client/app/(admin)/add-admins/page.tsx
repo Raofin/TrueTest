@@ -95,30 +95,6 @@ export default function Component() {
     setSelectedKeys(new Set())
   }, [selectedKeys])
 
-  const topContent = useMemo(
-    () => (
-      <div className="flex flex-col gap-8 mt-2 w-full">
-        <div className="flex justify-center ml-72 gap-16 my-5">
-          <h2 className="text-2xl font-bold text-center">Admin Management</h2>
-          <Input
-            isClearable
-            className="w-[300px] "
-            placeholder="Search by name..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={onClear}
-            onValueChange={onSearchChange}
-          />
-        </div>
-        <div className="flex gap-3">
-          <Input isClearable className="w-[500px]" placeholder="Email Address" onClear={onClear} />
-          <Button color="primary">Send Invitation</Button>
-        </div>
-      </div>
-    ),
-    [filterValue, onSearchChange, onClear]
-  )
-
   const bottomContent = useMemo(
     () => (
       <div className="py-2 px-2 flex justify-between items-center">
@@ -143,19 +119,36 @@ export default function Component() {
   )
 
   return (
-    <>
+    <div className='h-screen flex flex-col justify-between'>
+      <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
+      <div className="mx-12 flex h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
+      
+        <div className="flex gap-3 w-full p-3 mt-5">
+          <Input isClearable className="bg-[#eeeef0] dark:bg-[#71717a] rounded-2xl" placeholder="Email Address" onClear={onClear} />
+          <Button color="primary">Send Invitation</Button>
+        </div>
+     
+     <div>
+     <div className="flex w-full justify-between px-5 my-3">
+        <p>User List</p>
+        <Input
+          isClearable
+          className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+          placeholder="Search"
+          startContent={<SearchIcon />}
+          value={filterValue}
+          onClear={onClear}
+          onValueChange={onSearchChange}
+        />
+      </div>
       <Table
-        isStriped
-        className="px-4"
-        isHeaderSticky
+
         aria-label="Example table with custom cells, pagination, and sorting"
         bottomContent={bottomContent}
-        bottomContentPlacement="outside"
+        bottomContentPlacement="inside"
         classNames={{
-          wrapper: 'min-h-[70vh] max-h-[80vh] overflow-y-auto',
+          wrapper: ' overflow-y-auto',
         }}
-        topContent={topContent}
-        topContentPlacement="outside"
         selectedKeys={selectedKeys}
         selectionMode="multiple"
         onSelectionChange={setSelectedKeys}
@@ -177,6 +170,7 @@ export default function Component() {
           ))}
         </TableBody>
       </Table>
-    </>
+     </div>
+    </div></div>
   )
 }
