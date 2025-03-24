@@ -119,58 +119,62 @@ export default function Component() {
   )
 
   return (
-    <div className='h-screen flex flex-col justify-between'>
+    <div className="h-screen flex flex-col justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
       <div className="mx-12 flex h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
-      
         <div className="flex gap-3 w-full p-3 mt-5">
-          <Input isClearable className="bg-[#eeeef0] dark:bg-[#71717a] rounded-2xl" placeholder="Email Address" onClear={onClear} />
+          <Input
+            isClearable
+            className="bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
+            placeholder="Email Address"
+            onClear={onClear}
+          />
           <Button color="primary">Send Invitation</Button>
         </div>
-     
-     <div>
-     <div className="flex w-full justify-between px-5 my-3">
-        <p>User List</p>
-        <Input
-          isClearable
-          className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-          placeholder="Search"
-          startContent={<SearchIcon />}
-          value={filterValue}
-          onClear={onClear}
-          onValueChange={onSearchChange}
-        />
-      </div>
-      <Table
 
-        aria-label="Example table with custom cells, pagination, and sorting"
-        bottomContent={bottomContent}
-        bottomContentPlacement="inside"
-        classNames={{
-          wrapper: ' overflow-y-auto',
-        }}
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        onSelectionChange={setSelectedKeys}
-      >
-        <TableHeader>
-          {columns.map((column) => (
-            <TableColumn key={column.key} align={'center'} className={'font-semibold'}>
-              {column.label}
-            </TableColumn>
-          ))}
-        </TableHeader>
-        <TableBody emptyContent="No admin found" className={items.length === 0 ? 'min-h-[70vh]' : 'min-h-[auto]'}>
-          {items.map((item) => (
-            <TableRow key={item.key}>
+        <div>
+          <div className="flex w-full justify-between px-5 my-3">
+            <p>User List</p>
+            <Input
+              isClearable
+              className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+              placeholder="Search"
+              startContent={<SearchIcon />}
+              value={filterValue}
+              onClear={onClear}
+              onValueChange={onSearchChange}
+            />
+          </div>
+          <Table
+            aria-label="Example table with custom cells, pagination, and sorting"
+            bottomContent={bottomContent}
+            bottomContentPlacement="inside"
+            classNames={{
+              wrapper: ' overflow-y-auto',
+            }}
+            selectedKeys={selectedKeys}
+            selectionMode="multiple"
+            onSelectionChange={setSelectedKeys}
+          >
+            <TableHeader>
               {columns.map((column) => (
-                <TableCell key={column.key}>{renderCell(item, column.key)}</TableCell>
+                <TableColumn key={column.key} align={'center'} className={'font-semibold'}>
+                  {column.label}
+                </TableColumn>
               ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-     </div>
-    </div></div>
+            </TableHeader>
+            <TableBody emptyContent="No admin found" className={items.length === 0 ? 'min-h-[70vh]' : 'min-h-[auto]'}>
+              {items.map((item) => (
+                <TableRow key={item.key}>
+                  {columns.map((column) => (
+                    <TableCell key={column.key}>{renderCell(item, column.key)}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </div>
   )
 }

@@ -24,7 +24,6 @@ import { Icon } from '@iconify/react/dist/iconify.js'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
 import PaginationButtons from '@/app/components/ui/pagination-button'
 
-
 const columns = [
   { label: 'Email', key: 'email' },
   { label: 'Action', key: 'action' },
@@ -71,7 +70,7 @@ export default function Component() {
     return filteredUsers
   }, [filterValue, hasSearchFilter, userEmail])
 
-  const pages =( Math.ceil(filteredItems.length / rowsPerPage) || 1)
+  const pages = Math.ceil(filteredItems.length / rowsPerPage) || 1
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage
@@ -154,19 +153,20 @@ export default function Component() {
   const bottomContent = useMemo(
     () => (
       <div className="p-2 m-2 flex justify-between items-end">
-       
         <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
         <div className="flex items-center  gap-2">
-        <span className="text-small ">
-          Page {page} out of {pages}
-        </span>
+          <span className="text-small ">
+            Page {page} out of {pages}
+          </span>
           <PaginationButtons
             currentIndex={page}
             totalItems={pages}
             onPrevious={() => setPage(page - 1)}
             onNext={() => setPage(page + 1)}
           />
-          <Button size="sm" color="primary">Send Invitation</Button>
+          <Button size="sm" color="primary">
+            Send Invitation
+          </Button>
         </div>
       </div>
     ),
@@ -175,97 +175,100 @@ export default function Component() {
 
   return (
     <div className="flex h-screen flex-col justify-between">
-        <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Invite Candidates</h2>
-    <div className={` flex flex-col rounded-xl pt-5 justify-between mx-12 bg-white dark:bg-[#18181b]`}>
-      <div>
-      <div className='w-full flex items-center justify-center'>
-        <p>Exam</p>
-        <Select label="" className="max-w-md  ml-4 bg-[#eeeef0] dark:bg-[#71717a] rounded-2xl" placeholder="Select an exam">
-          {exams.map((exam) => (
-            <SelectItem key={exam.key}>{exam.label}</SelectItem>
-          ))}
-        </Select>
-      </div>
-      <h1 className='ml-6 my-2'>Candidate Email Import</h1>
-      <div className="flex gap-2 px-5">
-        <Textarea type="file" value={fileContent} className=" " />
-        <div className="flex flex-col gap-2">
-          <input
-            type="file"
-            accept=".csv,.txt"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            style={{ display: 'none' }}
-            className="bg-[#eeeef0] dark:[#71717a] rounded-xl"
-          />
-          <Button onPress={() => fileInputRef.current?.click()}>Upload CSV</Button>
-          <Button color="primary" onPress={handlecsvtoarray}>Add to list</Button>
-        </div>
-      </div>
-      </div>
-      <div className='flex flex-col gap-5'>
-      <div className="mt-4 flex gap-8 w-full justify-between">
-        <h2 className='ml-5'>Candidates List</h2>
-        <div className="flex items-end">
-          <Input
-            isClearable
-            className="w-[400px] "
-            placeholder="Search by name..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onValueChange={onSearchChange}
-          />
-        </div>
-      </div>
-      <Table
-  
-        aria-label="Example table with custom cells, pagination"
-        bottomContent={bottomContent}
-        bottomContentPlacement="inside"
-       
-       className=''
-        topContentPlacement="inside"
-        selectionMode="multiple"
-      >
-        <TableHeader>
-          {columns.map((column) => (
-            <TableColumn key={column.key} align="center" className="font-semibold">
-              {column.label}
-            </TableColumn>
-          ))}
-        </TableHeader>
-        <TableBody emptyContent="No candidate found" className=''>
-          {items.map((item) => (
-            <TableRow key={item.email} className="max-h-4">
-              {columns.map((column) => (
-                <TableCell key={column.key} align="center" className="max-h-4">
-                  {renderCell(item, column.key)}
-                </TableCell>
+      <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Invite Candidates</h2>
+      <div className={` flex flex-col rounded-xl pt-5 justify-between mx-12 bg-white dark:bg-[#18181b]`}>
+        <div>
+          <div className="w-full flex items-center justify-center">
+            <p>Exam</p>
+            <Select
+              label=""
+              className="max-w-md  ml-4 bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
+              placeholder="Select an exam"
+            >
+              {exams.map((exam) => (
+                <SelectItem key={exam.key}>{exam.label}</SelectItem>
               ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      </div>
-      
+            </Select>
+          </div>
+          <h1 className="ml-6 my-2">Candidate Email Import</h1>
+          <div className="flex gap-2 px-5">
+            <Textarea type="file" value={fileContent} className=" " />
+            <div className="flex flex-col gap-2">
+              <input
+                type="file"
+                accept=".csv,.txt"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+                className="bg-[#eeeef0] dark:[#71717a] rounded-xl"
+              />
+              <Button onPress={() => fileInputRef.current?.click()}>Upload CSV</Button>
+              <Button color="primary" onPress={handlecsvtoarray}>
+                Add to list
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-5">
+          <div className="mt-4 flex gap-8 w-full justify-between">
+            <h2 className="ml-5">Candidates List</h2>
+            <div className="flex items-end">
+              <Input
+                isClearable
+                className="w-[400px] "
+                placeholder="Search by name..."
+                startContent={<SearchIcon />}
+                value={filterValue}
+                onValueChange={onSearchChange}
+              />
+            </div>
+          </div>
+          <Table
+            aria-label="Example table with custom cells, pagination"
+            bottomContent={bottomContent}
+            bottomContentPlacement="inside"
+            className=""
+            topContentPlacement="inside"
+            selectionMode="multiple"
+          >
+            <TableHeader>
+              {columns.map((column) => (
+                <TableColumn key={column.key} align="center" className="font-semibold">
+                  {column.label}
+                </TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody emptyContent="No candidate found" className="">
+              {items.map((item) => (
+                <TableRow key={item.email} className="max-h-4">
+                  {columns.map((column) => (
+                    <TableCell key={column.key} align="center" className="max-h-4">
+                      {renderCell(item, column.key)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <CommonModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        title="Edit Confirmation"
-        content="Do you want to edit this user record?"
-        confirmButtonText="Edit"
-        onConfirm={() => setIsEditModalOpen(false)}
-      />
-      <CommonModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        title="Delete Confirmation"
-        content="Do you want to delete this user record?"
-        confirmButtonText="Delete"
-        onConfirm={() => setIsDeleteModalOpen(false)}
-      />
-    </div>
+        <CommonModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          title="Edit Confirmation"
+          content="Do you want to edit this user record?"
+          confirmButtonText="Edit"
+          onConfirm={() => setIsEditModalOpen(false)}
+        />
+        <CommonModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          title="Delete Confirmation"
+          content="Do you want to delete this user record?"
+          confirmButtonText="Delete"
+          onConfirm={() => setIsDeleteModalOpen(false)}
+        />
+      </div>
     </div>
   )
 }

@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>}
         <div className="flex-1">{children}</div>
       </div>
-      <footer className="w-full h-12 px-5">
+      <footer className="w-full h-12 px-5 py-8">
         <div className="flex justify-between items-center text-gray-400">
           <p>© 2025 TrueTest. All rights reserved.</p>
           <p>

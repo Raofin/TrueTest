@@ -5,7 +5,6 @@ import { Button, Input, Checkbox, Link, Divider, Card } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import '@/app/globals.css'
 
-
 export default function Signup() {
   const [isVisible] = useState<boolean>(false)
   const [isConfirmVisible] = useState<boolean>(false)
@@ -16,11 +15,24 @@ export default function Signup() {
         <Card className={`max-w-sm mx-auto  rounded-xl px-8 py-5`}>
           <h2 className="text-2xl font-bold text-center my-4 ">Sign Up</h2>
           <form id="#" className="flex flex-col gap-4">
-            <Input isRequired label="Username" name="username" type="text"  className='bg-[#eeeef0] dark:bg-[#71717a] rounded-xl' />
+            <Input
+              isRequired
+              label="Username"
+              name="username"
+              type="text"
+              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+            />
             <div className="relative">
-              <Input isRequired label="Email" name="email" type="email" className='bg-[#eeeef0] dark:bg-[#71717a] rounded-xl' />
+              <Input
+                isRequired
+                label="Email"
+                name="email"
+                type="email"
+                className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+              />
             </div>
-            <Input className='bg-[#eeeef0] dark:bg-[#71717a] rounded-xl'
+            <Input
+              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
               isRequired
               endContent={
                 <button type="button">
@@ -33,9 +45,9 @@ export default function Signup() {
               label="Password"
               name="password"
               type={isVisible ? 'text' : 'password'}
-          
             />
-            <Input className='bg-[#eeeef0] dark:bg-[#71717a] rounded-xl'
+            <Input
+              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
               isRequired
               endContent={
                 <button type="button">
@@ -48,7 +60,6 @@ export default function Signup() {
               label="Confirm Password"
               name="confirmPassword"
               type={isConfirmVisible ? 'text' : 'password'}
-             
             />
             <Checkbox isRequired className="py-4" size="sm" name="agreeTerms">
               I agree with the &nbsp;

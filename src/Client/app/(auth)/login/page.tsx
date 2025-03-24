@@ -11,17 +11,17 @@ export default function LoginComponent() {
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 py-5`}>
+      <div className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 py-5 bg-white dark:bg-[#18181b]`}>
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold my-3 text-center ">Log In</h1>
         </div>
-        <Form id="#" className="flex w-full flex-wrap md:flex-nowrap gap-4 flex-col" validationBehavior="native">
+        <Form id="#" className="flex w-full flex-wrap gap-4 flex-col" validationBehavior="native">
           <Input
             isRequired
             label="Username or Email Address"
             name="email"
             type="email"
-            className="bg-[#eeeef0] dark:bg-[#71717a] rounded-xl"
+            className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             value={user.email}
             onChange={(e: { target: { value: string } }) => setUser((prev) => ({ ...prev, email: e.target.value }))}
           />
@@ -30,7 +30,7 @@ export default function LoginComponent() {
             label="Password"
             name="password"
             type={isVisible ? 'text' : 'password'}
-            className="bg-[#eeeef0] dark:bg-[#71717a] rounded-xl"
+            className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             value={user.password}
             onChange={(e: { target: { value: string } }) => setUser((prev) => ({ ...prev, password: e.target.value }))}
             endContent={

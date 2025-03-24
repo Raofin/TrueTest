@@ -23,32 +23,32 @@ export default function Component() {
                 justify="end"
               >
                 <NavbarItem>
-                  <Link className="text-black dark:text-white light:text-black" href="/overview">
+                  <Link className="text-[#3f3f46] dark:text-white light:text-black" href="/overview">
                     Overview
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-black dark:text-white light:text-black" href="/home">
+                  <Link className="text-[#3f3f46] dark:text-white " href="/home">
                     Home
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-black dark:text-white light:text-black" href="/">
+                  <Link className="text-[#3f3f46] dark:text-white " href="/">
                     About Us
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-black dark:text-white light:text-black" href="/">
+                  <Link className="text-[#3f3f46] dark:text-white " href="/">
                     Contact
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-black dark:text-white light:text-black" href="/">
+                  <Link className="text-[#3f3f46] dark:text-white " href="/">
                     Support
                   </Link>
                 </NavbarItem>
                 <NavbarItem>
-                  <Link className="text-black dark:text-white light:text-black" href="/">
+                  <Link className="text-[#3f3f46] dark:text-white " href="/">
                     FAQs
                   </Link>
                 </NavbarItem>
@@ -58,13 +58,13 @@ export default function Component() {
             <NavbarContent
                  className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end"
               >
-                <NavbarItem className="text-black dark:text-white "><ThemeSwitch/></NavbarItem>
+                <NavbarItem className="text-[#3f3f46] dark:text-white "><ThemeSwitch/></NavbarItem>
               
                <NavbarItem>
-               <Link href="/userprofile/setup"> <FaCircleUser className="text-black dark:text-white " size={24} /></Link>
+               <Link href="/userprofile/setup"> <FaCircleUser className="text-[#3f3f46] dark:text-white " size={24} /></Link>
               </NavbarItem>
                <NavbarItem>
-               <Link href="/login">  <BiSolidLogIn className="text-black dark:text-white " size={24} /></Link>
+               <Link href="/login">  <BiSolidLogIn className="text-[#3f3f46] dark:text-white " size={24} /></Link>
               </NavbarItem>
             </NavbarContent>
             </Navbar>

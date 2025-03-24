@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, Button,  Textarea, Select, SelectItem } from '@heroui/react'
+import { Card, Button, Textarea, Select, SelectItem } from '@heroui/react'
 
 interface TestCase {
   input: string
@@ -137,12 +137,12 @@ int main() {
     },
   ]
 
-  const [flag, setFlag] = useState(false)
+  const [flaggedCandidate, setFlaggedCandidate] = useState<number|null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState('Candidate-1')
   const currentExamData = examData[0]
   const currentCandidateSubmission = currentExamData.submissions.find((sub) => sub.candidateId === selectedCandidate)
   const currentQ = currentCandidateSubmission?.questions || currentExamData.submissions[0].questions
-
+  
   const handleCandidateChange = (value: string) => {
     setSelectedCandidate(value)
   }
@@ -162,83 +162,79 @@ int main() {
   }
 
   return (
-    <div className='h-screen flex flex-col  justify-between'>
+    <div className="h-screen flex flex-col  justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Review Results</h2>
       <div className="w-full px-12 border-none flex flex-col gap-4 ">
-        
-          <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b]">
-            <h1 className="text-xl font-semibold w-full text-center">Exam: {currentExamData.title}</h1>
+        <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b]">
+          <h1 className="text-xl font-semibold w-full text-center">Exam: {currentExamData.title}</h1>
 
-            <div className="flex flex-col gap-3 ">
-              <div className="flex w-full items-center justify-between">
-                <div className="flex gap-2 items-center">
-                  <span className="text-default-500">Candidate: </span>
-                  <Select
-                    aria-label="Select a candidate"
-                    className="w-80"
-                    value={selectedCandidate}
-                    onChange={(e: { target: { value: string } }) => handleCandidateChange(e.target.value)}
-                  >
-                    {currentExamData.submissions.map((sub) => (
-                      <SelectItem key={sub.candidateId}>{sub.candidateId}</SelectItem>
-                    ))}
-                  </Select>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                 
-                    size="sm"
-                    isDisabled={
-                      currentExamData.submissions.findIndex((sub) => sub.candidateId === selectedCandidate) <= 0
-                    }
-                    onPress={handlePrevCandidate}
-                  >
-                    Previous 
-                  </Button>
-                  <Button
-                   
-                    size="sm"
-                    isDisabled={
-                      currentExamData.submissions.findIndex((sub) => sub.candidateId === selectedCandidate) >=
-                      currentExamData.submissions.length - 1
-                    }
-                    onPress={handleNextCandidate}
-                  >
-                    Next 
-                  </Button>
-                </div>
+          <div className="flex flex-col gap-3 ">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex gap-2 items-center">
+                <span className="text-default-500">Candidate: </span>
+                <Select
+                  aria-label="Select a candidate"
+                  className="w-80"
+                  value={selectedCandidate}
+                  onChange={(e: { target: { value: string } }) => handleCandidateChange(e.target.value)}
+                >
+                  {currentExamData.submissions.map((sub) => (
+                    <SelectItem key={sub.candidateId}>{sub.candidateId}</SelectItem>
+                  ))}
+                </Select>
               </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  isDisabled={
+                    currentExamData.submissions.findIndex((sub) => sub.candidateId === selectedCandidate) <= 0
+                  }
+                  onPress={handlePrevCandidate}
+                >
+                  Previous
+                </Button>
+                <Button
+                  size="sm"
+                  isDisabled={
+                    currentExamData.submissions.findIndex((sub) => sub.candidateId === selectedCandidate) >=
+                    currentExamData.submissions.length - 1
+                  }
+                  onPress={handleNextCandidate}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-default-500">Score: </span>
-                  {currentExamData.totalScore}
-                </div>
-                <div>
-                  <span className="text-default-500">Exam Duration: </span>
-                  {currentExamData.examDuration}
-                </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-default-500">Score: </span>
+                {currentExamData.totalScore}
               </div>
+              <div>
+                <span className="text-default-500">Exam Duration: </span>
+                {currentExamData.examDuration}
+              </div>
+            </div>
 
-              <div className="flex  items-center justify-between">
-                <div>
-                  <span className="text-default-500">Problem Solving: </span>
-                  {currentExamData.problemSolving}
-                </div>
-                <div>
-                  <span className="text-default-500">Written Questions: </span>
-                  {currentExamData.writtenQuestions}
-                </div>
-                <div>
-                  <span className="text-default-500">MCQ: </span>
-                  {currentExamData.mcq}
-                </div>
+            <div className="flex  items-center justify-between">
+              <div>
+                <span className="text-default-500">Problem Solving: </span>
+                {currentExamData.problemSolving}
               </div>
+              <div>
+                <span className="text-default-500">Written Questions: </span>
+                {currentExamData.writtenQuestions}
               </div>
-            </Card>
-       
+              <div>
+                <span className="text-default-500">MCQ: </span>
+                {currentExamData.mcq}
+              </div>
+            </div>
+          </div>
+        </Card>
 
-        <div className='bg-white dark:bg-[#18181b] p-5 rounded-xl'>
+        <div className="bg-white dark:bg-[#18181b] p-5 rounded-xl">
           <h2 className="w-full text-center ">{selectedCandidate}</h2>
 
           {currentQ.map((curr, idx) => (
@@ -270,7 +266,7 @@ int main() {
 
               <div>
                 <h3 className="font-semibold mb-2">{curr.type === 'code' ? 'User Submission' : 'User Answer'}</h3>
-                <Card className={`p-4 rounded-lg  bg-[#eeeef0] dark:bg-[#3f3f46]`}>
+                <Card className={`p-4 rounded-lg  bg-[#eeeef0] dark:bg-[#27272a]`}>
                   <div className={`font-mono text-sm whitespace-pre-wrap p-2`}>{curr.userSubmission}</div>
                 </Card>
               </div>
@@ -288,9 +284,15 @@ int main() {
                     </div>
                     {curr.testCases.map((testCase, index) => (
                       <div key={index} className="grid grid-cols-3 gap-4 p-3 ">
-                        <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#3f3f46]`}>{testCase.input}</div>
-                        <div className={`p-3 font-mono text-sm h-20 rounded-lg  bg-[#eeeef0] dark:bg-[#3f3f46]`}>{testCase.expectedOutput}</div>
-                        <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#3f3f46]`}>{testCase.receivedOutput}</div>
+                        <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#27272a]`}>
+                          {testCase.input}
+                        </div>
+                        <div className={`p-3 font-mono text-sm h-20 rounded-lg  bg-[#eeeef0] dark:bg-[#27272a]`}>
+                          {testCase.expectedOutput}
+                        </div>
+                        <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#27272a]`}>
+                          {testCase.receivedOutput}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -305,13 +307,13 @@ int main() {
                     <input name="points" type="number" className="w-16" defaultValue={curr.points} />/{curr.maxPoints}
                   </div>
                   <Button size="sm" variant="flat">
-                    <input  name="flag" type="checkbox" checked={flag} onChange={(e) => setFlag(e.target.checked)} />
+                    <input name="flag" type="checkbox" checked={flaggedCandidate===idx} onChange={() => setFlaggedCandidate(flaggedCandidate===idx? null: idx)} />
                     Flag Solution
                   </Button>
                 </div>
               </div>
 
-              {flag && <Textarea className='bg-[#eeeef0] dark:bg-[#3f3f46] rounded-xl' placeholder="Flag reason" />}
+              {flaggedCandidate === idx && <Textarea className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl" placeholder="Flag reason" />}
 
               <div className="w-full flex justify-center">
                 <Button className="my-3" color="primary">
@@ -320,8 +322,8 @@ int main() {
               </div>
             </div>
           ))}
-        </div></div>
+        </div>
       </div>
-   
+    </div>
   )
 }
