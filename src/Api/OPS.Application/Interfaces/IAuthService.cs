@@ -5,5 +5,5 @@ namespace OPS.Application.Interfaces;
 
 public interface IAuthService
 {
-    AuthenticationResult AuthenticateUser(Account account);
+    AuthenticationResponse AuthenticateUser(Account account);
 }

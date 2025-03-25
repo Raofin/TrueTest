@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using System.Net.Mime;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -7,6 +8,8 @@ namespace OPS.Api.Common;
 
 // [Authorize]
 [ApiController]
+[Produces(MediaTypeNames.Application.Json)]
+[Consumes(MediaTypeNames.Application.Json)]
 public class BaseApiController : ControllerBase
 {
     protected IActionResult ToResult<T>(ErrorOr<T> result)

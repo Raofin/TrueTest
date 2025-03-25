@@ -47,31 +47,31 @@ export default function App() {
 
   return (
     <div className="m-12 flex flex-col gap-8">
-      <Card className={`flex flex-col justify-between p-8 items-center `}>
-        <form id="#" className="flex gap-4 flex-wrap flex-col w-full">
-          <Input isRequired label="Title" name="title" type="text" variant="bordered" value={formData.title} />
-          <Textarea
+         <h1 className='w-full text-center text-3xl font-bold my-3'>Create (and Edit) Exam</h1>
+      <Card className={`flex shadow-none flex-col justify-between p-8 items-center `}>
+        <form id="#" className="flex gap-4 flex-wrap flex-col w-full ">
+          <Input className="bg-[#eeeef0] dark:[#71717a] rounded-2xl" isRequired label="Title" name="title" type="text" value={formData.title} />
+          <Textarea className='bg-[#eeeef0] dark:[#71717a] rounded-2xl'
             isRequired
             label="Description"
             name="description"
             type="text"
-            variant="bordered"
             value={formData.description}
           />
           <div className="flex gap-5">
-            <DatePicker className="flex-1" isRequired label="Date" name="date" value={date} />
+            <DatePicker   className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl" isRequired label="Date" name="date" value={date} />
             <Input
-              className="flex-1"
+              className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
               isRequired
               label="Total Points"
               name="totalpoints"
               type="text"
-              variant="bordered"
+              
             />
           </div>
           <div className="flex gap-5">
-            <TimeInput label="Start Time" name="opensAt" value={parseTime(formData.opensAt)} isRequired />
-            <TimeInput label="End Time" name="closesAt" value={parseTime(formData.closesAt)} isRequired />
+            <TimeInput label="Start Time"   className="bg-[#eeeef0] dark:[#71717a] rounded-2xl" name="opensAt" value={parseTime(formData.opensAt)} isRequired />
+            <TimeInput label="End Time"   className="bg-[#eeeef0] dark:[#71717a] rounded-2xl" name="closesAt" value={parseTime(formData.closesAt)} isRequired />
           </div>
           <div className="flex justify-end mt-2">
             <Button color="success">Publish</Button>
@@ -93,7 +93,7 @@ export default function App() {
         </div>
       ))}
 
-      <div className="flex gap-3 justify-center mt-4">
+      <div className="flex gap-3 justify-center my-4">
         {!activeComponents.includes('problemSolve') && (
           <Button onPress={() => handleAddComponent('problemSolve')}>Add Problem Solving Question</Button>
         )}

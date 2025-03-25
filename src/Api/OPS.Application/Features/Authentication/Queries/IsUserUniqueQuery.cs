@@ -36,7 +36,6 @@ public class IsUserUniqueQueryValidator : AbstractValidator<IsUserUniqueQuery>
 
         RuleFor(x => x.Email)
             .Matches(ValidationConstants.EmailRegex)
-            .WithMessage("Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).")
             .When(x => !string.IsNullOrEmpty(x.Email));
 
         RuleFor(x => x)

@@ -143,34 +143,14 @@ export default function Component() {
     setPage(1)
   }, [])
 
-  const topContent = useMemo(
-    () => (
-      <div className="flex gap-8 mt-8 w-full justify-between">
-        <h2>Users List</h2>
-        <div className="flex items-end">
-          <Input
-            isClearable
-            className="w-[400px]"
-            placeholder="Search by name..."
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={onClear}
-            onValueChange={onSearchChange}
-          />
-        </div>
-      </div>
-    ),
-    [filterValue, onSearchChange, onClear]
-  )
-
   const bottomContent = useMemo(
     () => (
       <div className="py-4 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
+        <span className=" text-small text-default-400">
           Page {page} out of {pages}
         </span>
-        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className="flex gap-2">
           <PaginationButtons
             currentIndex={page}
             totalItems={pages}
@@ -187,18 +167,32 @@ export default function Component() {
   )
 
   return (
-    <>
-      <div className="flex flex-col">
-        <h2 className="text-2xl font-bold my-4 text-center flex justify-center">Users Management</h2>
+    <div className="flex h-screen flex-col justify-between">
+      <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Manage Users</h2>
+      <div className="mx-12 flex h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
+        <div className="flex gap-8 p-3  w-full justify-between items-center mt-5">
+          <h2 className="ml-3">Users List</h2>
+          <div className="flex items-end">
+            <Input
+              isClearable
+              className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+              placeholder="Search"
+              startContent={<SearchIcon />}
+              value={filterValue}
+              onClear={onClear}
+              onValueChange={onSearchChange}
+            />
+          </div>
+        </div>
         <Table
-          isStriped
-          isHeaderSticky
           aria-label="Example table with custom cells, pagination"
           bottomContent={bottomContent}
-          bottomContentPlacement="outside"
-          classNames={{ wrapper: 'min-h-[70vh] max-h-[80vh] overflow-y-auto' }}
-          topContent={topContent}
-          topContentPlacement="outside"
+          bottomContentPlacement="inside"
+          selectionMode="multiple"
+          classNames={{
+            wrapper: ' ',
+            table: 'w-full ',
+          }}
         >
           <TableHeader>
             {columns.map((column) => (
@@ -234,6 +228,6 @@ export default function Component() {
         confirmButtonText="Delete"
         onConfirm={() => setIsDeleteModalOpen(false)}
       />
-    </>
+    </div>
   )
 }

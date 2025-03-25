@@ -5,28 +5,25 @@ import '@/app/globals.css'
 import NavBar from '@/app/navigation-header/NavBar'
 
 import Logo from '@/app/components/ui/logo/page'
-import { Link, Navbar, NavbarContent, NavbarItem, NavbarProps } from '@heroui/react'
+import { Link, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
 
-interface RootLayoutProps extends NavbarProps {
-  children: React.ReactNode
-}
 
-export default function RootLayout({ children, ...props }: RootLayoutProps) {
+export default function RootNavBar() {
   return (
-    <div>
-      <div className="flex w-full justify-between">
+
+      <div className="flex w-full justify-between items-center bg-[#eeeef0] dark:bg-[#000000]">
+        <div className='bg-[#eeeef0] dark:bg-[#000000] mt-2'>
         <Logo />
+        </div>
         <div className="flex">
           <Navbar
-            {...props}
             classNames={{
-              wrapper: ' justify-end bg-transparent',
+              wrapper: ' justify-end bg-[#eeeef0] dark:bg-[#000000]',
               item: 'hidden md:flex',
             }}
           >
             <NavbarContent
-              className="hidden h-11 gap-4 rounded-full border-small border-default-200/20 bg-background/60 px-4 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 md:flex"
-              justify="end"
+             className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end"
             >
               <NavbarItem>
                 <Link className="text-default-500" href="/home" size="sm">
@@ -43,7 +40,6 @@ export default function RootLayout({ children, ...props }: RootLayoutProps) {
           <NavBar />
         </div>
       </div>
-      {children}
-    </div>
+     
   )
 }

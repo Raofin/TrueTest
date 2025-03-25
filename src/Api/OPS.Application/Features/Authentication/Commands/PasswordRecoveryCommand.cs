@@ -11,19 +11,19 @@ namespace OPS.Application.Features.Authentication.Commands;
 
 public record PasswordRecoveryCommand(
     string Email,
-    string Password,
-    string Otp) : IRequest<ErrorOr<AuthenticationResult>>;
+    string NewPassword,
+    string Otp) : IRequest<ErrorOr<AuthenticationResponse>>;
 
 public class ResetPasswordCommandHandler(
     IUnitOfWork unitOfWork,
     IPasswordHasher passwordHasher,
-    IAuthService authService) : IRequestHandler<PasswordRecoveryCommand, ErrorOr<AuthenticationResult>>
+    IAuthService authService) : IRequestHandler<PasswordRecoveryCommand, ErrorOr<AuthenticationResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IAuthService _authService = authService;
 
-    public async Task<ErrorOr<AuthenticationResult>> Handle(PasswordRecoveryCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AuthenticationResponse>> Handle(PasswordRecoveryCommand request, CancellationToken cancellationToken)
     {
         var account = await _unitOfWork.Account.GetByEmailAsync(request.Email, cancellationToken);
 
@@ -34,7 +34,7 @@ public class ResetPasswordCommandHandler(
         if (!isValidOtp)
             return Error.Unauthorized(description: "Invalid OTP.");
 
-        var (hashedPassword, salt) = _passwordHasher.HashPassword(request.Password);
+        var (hashedPassword, salt) = _passwordHasher.HashPassword(request.NewPassword);
 
         account.PasswordHash = hashedPassword;
         account.Salt = salt;
@@ -55,7 +55,7 @@ public class ResetPasswordCommandValidator : AbstractValidator<PasswordRecoveryC
             .NotEmpty()
             .Matches(ValidationConstants.EmailRegex);
 
-        RuleFor(x => x.Password)
+        RuleFor(x => x.NewPassword)
             .NotEmpty()
             .Matches(ValidationConstants.PasswordRegex)
             .WithMessage("Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).");
