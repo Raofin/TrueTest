@@ -4,7 +4,6 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
-using Throw;
 
 namespace OPS.Application.Features.Examinations.Queries;
 
@@ -18,7 +17,7 @@ public class GetExamsByAccountIdQueryHandler(IUnitOfWork unitOfWork, IUserInfoPr
 
     public async Task<ErrorOr<List<ExamResponse>>> Handle(GetExamsByUserQuery request, CancellationToken cancellationToken)
     {
-        var userAccountId = _userInfoProvider.AccountId().ThrowIfNull("User is not authenticated");
+        var userAccountId = _userInfoProvider.AccountId();
 
         var exams = await _unitOfWork.Exam.GetByAccountIdAsync(userAccountId, cancellationToken);
 

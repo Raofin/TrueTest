@@ -46,7 +46,7 @@ export default function Component(props: CardProps) {
   const [activeTab, setActiveTab] = React.useState<NotificationTabs>(NotificationTabs.All)
   const activeNotifications = notifications[activeTab]
   return (
-    <Card className="w-full max-w-[420px]" {...props}>
+    <Card className="w-full max-w-[420px] shadow-none bg-white dark:bg-[#18181b]" {...props}>
       <CardHeader className="flex flex-col px-0 pb-0">
         <div className="flex w-full items-center justify-between px-5 py-2">
           <div className="inline-flex items-center gap-1">
@@ -79,7 +79,7 @@ export default function Component(props: CardProps) {
           />
         </Tabs>
       </CardHeader>
-      <CardBody className="w-full gap-0 p-0">
+      <CardBody className="w-full gap-0 p-0 ">
         <ScrollShadow className=" w-full">
           {activeNotifications?.length > 0 ? (
             activeNotifications.map((notification) => <NotificationItem key={notification.id} {...notification} />)

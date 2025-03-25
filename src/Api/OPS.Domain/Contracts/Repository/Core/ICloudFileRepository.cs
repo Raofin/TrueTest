@@ -1,6 +1,7 @@
+using OPS.Domain.Contracts.Repository.Common;
 using OPS.Domain.Entities.Core;
 
-namespace OPS.Domain.Contracts.Repository;
+namespace OPS.Domain.Contracts.Repository.Core;
 
 public interface ICloudFileRepository : IBaseRepository<CloudFile>
 {

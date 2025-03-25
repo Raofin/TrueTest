@@ -1,6 +1,6 @@
 'use client'
 
-import Settings from '@/app/(root)/mysettings/page'
+import Settings from '@/app/components/settings/page'
 
 export default function Component(){
    return <Settings />
