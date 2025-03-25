@@ -8,7 +8,6 @@ using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
-using Throw;
 
 namespace OPS.Application.Features.Submissions.Commands;
 
@@ -28,7 +27,7 @@ public class SaveProblemSubmissionCommandHandler(
     public async Task<ErrorOr<ProblemSubmitResponse>> Handle(
         SaveProblemSubmissionCommand request, CancellationToken cancellationToken)
     {
-        var accountId = _userInfoProvider.AccountId().ThrowIfNull(typeof(UnauthorizedAccessException));
+        var userAccountId = _userInfoProvider.AccountId();
         var testCases = await _unitOfWork.TestCase.GetByQuestionIdAsync(request.QuestionId, cancellationToken);
 
         // TODO: Add compiler service to compile the code
@@ -39,7 +38,7 @@ public class SaveProblemSubmissionCommandHandler(
             Attempts = 1,
             Score = 0,
             ProgLanguageId = (int)request.ProgLanguageType,
-            AccountId = accountId,
+            AccountId = userAccountId,
             QuestionId = request.QuestionId,
             TestCaseOutputs = testCases.Select(
                 testCase => new TestCaseOutput
