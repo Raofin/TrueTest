@@ -6,6 +6,7 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Contracts.Dtos;
 using OPS.Application.Features.Authentication.Commands;
 using OPS.Application.Features.Authentication.Queries;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
@@ -20,9 +21,10 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <returns>Login token with account and profile details.</returns>
     [HttpPost("Login")]
     [EndpointDescription("User login with provided credentials.")]
-    [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(UnauthorizedResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<AuthenticationResponse>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> LoginAsync([FromBody] LoginQuery query)
     {
         var response = await _mediator.Send(query);
@@ -35,9 +37,10 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <returns>Account details with login token.</returns>
     [HttpPost("Register")]
     [EndpointDescription("Registers a new user.")]
-    [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ConflictResponse), StatusCodes.Status409Conflict)]
-    [ProducesResponseType(typeof(UnauthorizedResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<AuthenticationResponse>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> RegisterAsync(RegisterCommand command)
     {
         var response = await _mediator.Send(command);
@@ -50,9 +53,10 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <returns>Account details with login token.</returns>
     [HttpPost("PasswordRecovery")]
     [EndpointDescription("Recovers password for a user.")]
-    [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(UnauthorizedResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<AuthenticationResponse>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> PasswordRecoveryAsync(PasswordRecoveryCommand command)
     {
         var response = await _mediator.Send(command);
@@ -65,7 +69,8 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <returns>Boolean indicating if the user is unique.</returns>
     [HttpPost("IsUserUnique")]
     [EndpointDescription("Checks if a user is unique.")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> IsUserUniqueAsync(IsUserUniqueQuery query)
     {
         var response = await _mediator.Send(query);
@@ -80,7 +85,8 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <returns>Void</returns>
     [HttpPost("SendOtp")]
     [EndpointDescription("Sends an OTP to a specified user.")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> SendOtpAsync(SendOtpCommand command)
     {
         var response = await _mediator.Send(command);
@@ -93,7 +99,8 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <returns>Boolean indicating if the OTP is valid.</returns>
     [HttpPost("IsValidOtp")]
     [EndpointDescription("Validates a provided OTP.")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> IsValidOtpAsync(IsValidOtpQuery query)
     {
         var response = await _mediator.Send(query);
