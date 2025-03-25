@@ -15,18 +15,18 @@ public record RegisterCommand(
     string Username,
     string Email,
     string Password,
-    string Otp) : IRequest<ErrorOr<AuthenticationResult>>;
+    string Otp) : IRequest<ErrorOr<AuthenticationResponse>>;
 
 public class RegisterCommandHandler(
     IUnitOfWork unitOfWork,
     IPasswordHasher passwordHasher,
-    IAuthService authService) : IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResult>>
+    IAuthService authService) : IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IAuthService _authService = authService;
 
-    public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AuthenticationResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         var isUserUnique =
             await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
