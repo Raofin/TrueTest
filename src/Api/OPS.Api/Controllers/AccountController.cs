@@ -1,8 +1,7 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
-using OPS.Api.Common.ProblemResponses;
+using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Contracts.Dtos;
 using OPS.Application.Features.Accounts.Commands;
 using OPS.Application.Features.Accounts.Queries;
@@ -72,7 +71,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="command">Contains the email address to send admin invite.</param>
     /// <returns>A success response if the invite was sent.</returns>
     [HttpPost("SendAdminInvite")]
-    [ProducesResponseType(typeof(NoContent), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
     {
         var response = await _mediator.Send(command);

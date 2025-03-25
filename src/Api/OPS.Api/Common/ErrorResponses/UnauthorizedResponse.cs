@@ -1,6 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Filters;
 
-namespace OPS.Api.Common.ProblemResponses;
+namespace OPS.Api.Common.ErrorResponses;
 
 public record UnauthorizedResponse(
     string Type,
