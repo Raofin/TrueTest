@@ -3,17 +3,15 @@
 @import 'tailwindcss/utilities';
 
 html {
-    --background: #ffffff;
-    --foreground: #171717;
     height: 100%;
     margin: 0;
     padding: 0;
-    /* background-color: #030303;
-    color: #ffffff; */
+    color: #3f3f46;
 }
 
 html.light {
-    color: black;
+    color: #3f3f46;
+    background-color: #eeeef0;
 }
 
 html.dark {

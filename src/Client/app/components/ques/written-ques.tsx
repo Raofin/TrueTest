@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Textarea, Checkbox, Card } from '@heroui/react'
+import { Button, Textarea, Checkbox, Card, Input } from '@heroui/react'
 import PaginationButtons from '@/app/components/ui/pagination-button'
 
 
@@ -73,25 +73,27 @@ export default function App() {
   const currentQuestions = writtenQuestions.slice(currentPage * questionsPerPage, (currentPage + 1) * questionsPerPage)
 
   return (
-    <Card className={`flex flex-col items-center shadow `}>
+    <div>
+    <Card className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`}>
       <h2 className="text-2xl mt-3">Written Question : {currentPage + 1}</h2>
-      <div className="w-full max-w-5xl">
-        {currentQuestions.map((question, questionIndex) => (
-          <div key={questionIndex} className="p-4 rounded-lg shadow-md mt-4">
-            <Textarea
+      <div className="w-full">
+      {currentQuestions.map((question, questionIndex) => (
+          <div key={questionIndex} className="p-4 mx-5 rounded-lg mt-4">
+            <Textarea 
               label="Written Question"
               name="question"
-              minRows={4}
-              variant="bordered"
+              minRows={5}
+               className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
               value={question.question}
-              onChange={(e) => handleQuestionChange(currentPage * questionsPerPage + questionIndex, e.target.value)}
+              onChange={(e: { target: { value: string } }) => handleQuestionChange(currentPage * questionsPerPage + questionIndex, e.target.value)}
             />
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 mt-5">
+            <Input className="w-32" type="number" placeholder="Points"/>
               <label>
                 <Checkbox
                   checked={question.isShortAnswer}
-                  onChange={(e) =>
+                  onChange={(e: { target: { checked: boolean } }) =>
                     handleShortAnswerChange(currentPage * questionsPerPage + questionIndex, e.target.checked)
                   }
                   isDisabled={question.isLongAnswer}
@@ -102,7 +104,7 @@ export default function App() {
               <label>
                 <Checkbox
                   checked={question.isLongAnswer}
-                  onChange={(e) =>
+                  onChange={(e: { target: { checked: boolean } }) =>
                     handleLongAnswerChange(currentPage * questionsPerPage + questionIndex, e.target.checked)
                   }
                   isDisabled={question.isShortAnswer}
@@ -114,11 +116,11 @@ export default function App() {
           </div>
         ))}
 
-        <div className="flex justify-end mt-4">
-          <Button onPress={handleAddWrittenQuestion}>Add Written Question</Button>
-        </div>
-        <div className="flex justify-center items-center my-3">
-          <span className="mx-2">
+      
+        <div className="flex w-full justify-between items-center my-3  p-5">
+          <div></div>
+          <div className='flex items-center gap-2 ml-12'>
+          <span >
             Page {currentPage + 1} of {totalPages}
           </span>
           <PaginationButtons
@@ -127,8 +129,15 @@ export default function App() {
             onPrevious={() => setCurrentPage(currentPage - 1)}
             onNext={() => setCurrentPage(currentPage + 1)}
           />
+            </div>
+          <Button color="primary" className="mr-4">Save</Button>
+       
         </div>
+      
       </div>
     </Card>
+      <div className="flex justify-center my-8">
+      <Button onPress={handleAddWrittenQuestion}>Add Written Question</Button>
+    </div></div>
   )
 }
