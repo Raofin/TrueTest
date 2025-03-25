@@ -28,7 +28,6 @@ public class AuthController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> LoginAsync([FromBody] LoginQuery query)
     {
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
@@ -44,7 +43,6 @@ public class AuthController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> RegisterAsync(RegisterCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -60,7 +58,6 @@ public class AuthController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> PasswordRecoveryAsync(PasswordRecoveryCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -90,7 +87,6 @@ public class AuthController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> SendOtpAsync(SendOtpCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 

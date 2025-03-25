@@ -16,16 +16,15 @@ public class AccountController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    /// <summary>Retrieves all accounts.</summary>
+    /// <summary>Retrieves all accounts with details.</summary>
     /// <returns>A list of account objects.</returns>
     [HttpGet("All")]
-    [EndpointDescription("Retrieves all accounts.")]
+    [EndpointDescription("Retrieves all accounts with details.")]
     [ProducesResponseType<List<AccountResponse>>(Status200OK)]
     public async Task<IActionResult> GetAllAccounts()
     {
         var query = new GetAllAccountsQuery();
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
@@ -40,7 +39,6 @@ public class AccountController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> ChangeActiveStatus(ChangeActiveStatusCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -56,7 +54,6 @@ public class AccountController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> UpdateAccount(UpdateAccountCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -71,7 +68,6 @@ public class AccountController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -80,12 +76,11 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <returns>A success response if the invite was sent.</returns>
     [HttpPost("SendAdminInvite")]
     [EndpointDescription("Sends admin invite to an email address.")]
-    [ProducesResponseType<EmptyResult>(Status200OK)]
+    [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 }

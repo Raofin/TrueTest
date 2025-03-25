@@ -29,11 +29,11 @@ public class ExamController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Retrieves a specific exam by Id.</summary>
+    /// <summary>Retrieves a specific exam.</summary>
     /// <param name="examId">Exam Id.</param>
     /// <returns>Exam details.</returns>
     [HttpGet("{examId:guid}")]
-    [EndpointDescription("Retrieves a specific exam by Id.")]
+    [EndpointDescription("Retrieves a specific exam.")]
     [ProducesResponseType<ExamResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -41,12 +41,11 @@ public class ExamController(IMediator mediator) : BaseApiController
     {
         var query = new GetExamByIdQuery(examId);
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
     /// <summary>Creates a new exam.</summary>
-    /// <param name="command">Details of the exam to create.</param>
+    /// <param name="command">Exam with details.</param>
     /// <returns>Newly created exam details.</returns>
     [HttpPost("Create")]
     [EndpointDescription("Creates a new exam.")]
@@ -55,7 +54,6 @@ public class ExamController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> CreateExamAsync(CreateExamCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -70,7 +68,6 @@ public class ExamController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> UpdateAsync(UpdateExamCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -79,14 +76,13 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <returns>Void.</returns>
     [HttpDelete("Delete/{examId:guid}")]
     [EndpointDescription("Deletes an existing exam.")]
-    [ProducesResponseType<EmptyResult>(Status200OK)]
+    [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(Guid examId)
     {
         var command = new DeleteExamCommand(examId);
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 }

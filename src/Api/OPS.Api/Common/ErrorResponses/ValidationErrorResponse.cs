@@ -20,8 +20,8 @@ public class ValidationErrorResponseExample : IExamplesProvider<ValidationErrorR
             Status: 400,
             Errors: new Dictionary<string, List<string>>
             {
-                { "Field1", ["Error message 1", "Error message 2"] },
-                { "Field2", ["Error message 3"] }
+                { "Field1", ["Error message"] },
+                { "Field2", ["Error message"] }
             },
             TraceId: "trace-id"
         );
