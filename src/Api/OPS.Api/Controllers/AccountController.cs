@@ -15,9 +15,10 @@ public class AccountController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    /// <summary>Retrieves a list of all available accounts.</summary>
+    /// <summary>Retrieves all available accounts.</summary>
     /// <returns>A list of account objects.</returns>
     [HttpGet("All")]
+    [EndpointDescription("Retrieves all available accounts.")]
     [ProducesResponseType(typeof(List<AccountResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllAccounts()
     {
@@ -27,10 +28,11 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Changes the active status of an account.</summary>
-    /// <param name="command">Contains the account ID to change status.</param>
+    /// <summary>Changes active status of an account.</summary>
+    /// <param name="command">Account ID to change active status.</param>
     /// <returns>The updated account object.</returns>
     [HttpPatch("ChangeActiveStatus")]
+    [EndpointDescription("Changes active status of an account.")]
     [ProducesResponseType(typeof(AccountResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ChangeActiveStatus(ChangeActiveStatusCommand command)
@@ -40,10 +42,11 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Updates the details of an account.</summary>
-    /// <param name="command">Contains the account ID and updated info.</param>
+    /// <summary>Updates details of an account.</summary>
+    /// <param name="command">Account ID and updated details.</param>
     /// <returns>The updated account object.</returns>
     [HttpPut("Update")]
+    [EndpointDescription("Updates details of an account.")]
     [ProducesResponseType(typeof(AccountResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ConflictResponse), StatusCodes.Status409Conflict)]
@@ -54,10 +57,11 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Makes an account an admin.</summary>
-    /// <param name="command">Contains the account ID to make admin.</param>
+    /// <summary>Upgrades an account to admin.</summary>
+    /// <param name="command">Account ID to make admin.</param>
     /// <returns>The updated account object.</returns>
     [HttpPost("MakeAdmin")]
+    [EndpointDescription("Upgrades an account to admin.")]
     [ProducesResponseType(typeof(AccountResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(NotFoundResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
@@ -67,10 +71,11 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Sends an admin invite to an email address.</summary>
-    /// <param name="command">Contains the email address to send admin invite.</param>
+    /// <summary>Sends admin invite to an email address.</summary>
+    /// <param name="command">Email address to send admin invite.</param>
     /// <returns>A success response if the invite was sent.</returns>
     [HttpPost("SendAdminInvite")]
+    [EndpointDescription("Sends admin invite to an email address.")]
     [ProducesResponseType(typeof(EmptyResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
     {
