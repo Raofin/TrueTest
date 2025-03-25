@@ -72,7 +72,7 @@ internal static class DependencyInjection
         {
             options
                 .WithTitle("Online Proctoring System")
-                .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios)
+                // .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios)
                 .WithDefaultOpenAllTags(true)
                 /*.WithLayout(ScalarLayout.Classic)*/;
         });

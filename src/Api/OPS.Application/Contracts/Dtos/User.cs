@@ -2,7 +2,7 @@
 
 namespace OPS.Application.Contracts.Dtos;
 
-public record AuthenticationResult(
+public record AuthenticationResponse(
     string Token,
     AccountResponse Account
 );
