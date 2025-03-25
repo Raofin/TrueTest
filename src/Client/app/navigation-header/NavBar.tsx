@@ -15,24 +15,23 @@ import {
   NavbarItem,
   Badge,
   Navbar,
+  Divider,
 } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
 
-export default function Component({ ...props }) {
+export default function Component() {
   return (
     <div>
       <Navbar
-        {...props}
         classNames={{
-          wrapper: 'w-full justify-end bg-transparent',
+          wrapper: 'w-full justify-end bg-[#eeeef0] dark:bg-[#000000]',
           item: 'hidden md:flex',
         }}
       >
         <NavbarContent
-          className="hidden h-11 gap-2 rounded-full border-small border-default-200/20 bg-background/60 px-4 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 md:flex"
-          justify="end"
+          className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end"
         >
           <NavbarItem>
             <ThemeSwitch />
@@ -66,14 +65,14 @@ export default function Component({ ...props }) {
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="flat">
                   <DropdownItem key="user" className="h-14 gap-2">
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex gap-2 my-4">
                       <Avatar size="md" src="" alt="User Avatar" />
                       <div>
                         <p>username</p>
                         <p>useremail@gmail.com</p>
                       </div>
                     </div>
-                    <hr />
+                    <Divider className='mb-5'/>
                   </DropdownItem>
                   <DropdownItem key="profile">
                     <Link

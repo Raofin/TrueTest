@@ -1,6 +1,6 @@
 'use client'
 
-import Profile from 'app/(root)/myprofile/page'
+import Profile from 'app/components/profile/page'
 
 export default function Component(){
    return <Profile/>
