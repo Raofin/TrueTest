@@ -1,7 +1,9 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using System.Reflection;
+using Microsoft.OpenApi.Models;
 using OPS.Api.Middlewares;
 using Scalar.AspNetCore;
 using OPS.Api.Transformers;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace OPS.Api;
 
@@ -82,7 +84,7 @@ internal static class DependencyInjection
         {
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "Online Proctoring System",
+                Title = "TrueTest - API Documentation",
                 Version = "v1"
             });
 
@@ -109,6 +111,14 @@ internal static class DependencyInjection
                     []
                 }
             });
+
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            options.IncludeXmlComments(xmlPath);
+
+            options.ExampleFilters();
         });
+
+        services.AddSwaggerExamplesFromAssemblyOf<Program>();
     }
 }
