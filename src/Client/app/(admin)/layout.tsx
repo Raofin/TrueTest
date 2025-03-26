@@ -9,9 +9,9 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <div className="flex h-screen ">
+    <div className="flex min-h-screen ">
       <SideBar />
-      <main  suppressHydrationWarning className="flex-grow w-full">{children}</main>
+      <main  suppressHydrationWarning className="flex-grow w-full ">{children}</main>
     </div>
   )
 }

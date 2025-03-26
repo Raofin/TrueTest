@@ -2,6 +2,7 @@
 
 import { Card, CardBody, Checkbox, Button } from '@heroui/react'
 import { useState } from 'react'
+import RootNavBar from '@/app/(root)/root-navbar'
 
 interface ExamData {
   title: string
@@ -27,8 +28,10 @@ export default function StartExam({ examData, setExamStarted, startExam }: PageP
   })
 
   return (
-    <div className="pt-8 ">
-      <Card className="max-w-3xl mx-auto p-3 border-none shadow-none bg-white dark:bg-[#18181b]">
+     <div>
+       <RootNavBar/>
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <Card className=" max-w-3xl mx-auto p-3 border-none shadow-none bg-white dark:bg-[#18181b]">
         <CardBody>
           <div className="space-y-3 ">
             <div className="flex w-full justify-between">
@@ -115,5 +118,6 @@ export default function StartExam({ examData, setExamStarted, startExam }: PageP
         </CardBody>
       </Card>
     </div>
+     </div>
   )
 }
