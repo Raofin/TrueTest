@@ -16,7 +16,7 @@ export default function Component() {
     { icon: <AiFillPieChart size={70} />, value: 75, title: 'Average Score', subtitle: 'across all candidates' },
   ]
   return (
-    <div className={`flex h-screen flex-wrap gap-6 w-full items-center justify-center`}>
+    <div className={`flex h-screen flex-wrap gap-6 w-full items-center justify-center max-w-[1200px] mx-auto`}>
       <h1 className='w-full text-center text-3xl font-bold my-3'>Overview</h1>
       {stats.map((stat, index) => (
         <Card key={index} className={`py-4 w-[300px] text-center shadow-none`}>

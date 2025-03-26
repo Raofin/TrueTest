@@ -28,8 +28,8 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
-    <div className={`h-screen  flex flex-col  justify-between bg-white dark:bg-[#18181b] rounded-lg p-3`}>
-      <div className={`h-screen flex flex-col justify-between ${isCollapsed ? 'w-20' : 'w-56'}`}>
+    <div className={`min-h-screen flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b]  rounded-lg p-3`}>
+      <div className={`min-h-full flex flex-col justify-between ${isCollapsed ? 'w-20' : 'w-56'}`}>
         <div>
           <div className="flex flex-col pt-3 pl-2">
             <div className="flex w-full justify-between ">
@@ -71,7 +71,7 @@ const Sidebar = () => {
           </ul>
         </div>
 
-        <div className="bottom-0">
+        <div className="bottom-0 ">
           <div className="flex flex-col gap-2 ">
             {!isCollapsed && <p className=" opacity-50">Account</p>}
             <div className="flex items-center gap-2">

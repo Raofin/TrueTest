@@ -143,51 +143,34 @@ export default function Component() {
     setPage(1)
   }, [])
 
-  const bottomContent = useMemo(
+  const topContent = useMemo(
     () => (
-      <div className="py-4 px-2 flex justify-between items-center">
-        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
-        <span className=" text-small text-default-400">
-          Page {page} out of {pages}
-        </span>
-        <div className="flex gap-2">
-          <PaginationButtons
-            currentIndex={page}
-            totalItems={pages}
-            onPrevious={() => setPage(page - 1)}
-            onNext={() => setPage(page + 1)}
+      <div className="flex gap-8 p-3  w-full justify-between items-center mt-5">
+        <h2 className="ml-3">Users List</h2>
+        <div className="flex items-end">
+          <Input
+            isClearable
+            className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+            placeholder="Search"
+            startContent={<SearchIcon />}
+            value={filterValue}
+            onClear={onClear}
+            onValueChange={onSearchChange}
           />
-          <Button color="primary" size="sm">
-            Export
-          </Button>
         </div>
       </div>
     ),
-    [page, pages]
+    [filterValue, onClear, onSearchChange]
   )
 
   return (
-    <div className="flex h-screen flex-col justify-between">
+    <div className="flex  flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Manage Users</h2>
-      <div className="mx-12 flex h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
-        <div className="flex gap-8 p-3  w-full justify-between items-center mt-5">
-          <h2 className="ml-3">Users List</h2>
-          <div className="flex items-end">
-            <Input
-              isClearable
-              className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-              placeholder="Search"
-              startContent={<SearchIcon />}
-              value={filterValue}
-              onClear={onClear}
-              onValueChange={onSearchChange}
-            />
-          </div>
-        </div>
+      <div className="mx-12 flex min-h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
         <Table
           aria-label="Example table with custom cells, pagination"
-          bottomContent={bottomContent}
-          bottomContentPlacement="inside"
+          topContent={topContent}
+          topContentPlacement="outside"
           selectionMode="multiple"
           classNames={{
             wrapper: ' ',
@@ -211,6 +194,23 @@ export default function Component() {
             ))}
           </TableBody>
         </Table>
+        <div className="py-4 px-2 flex justify-between items-center">
+          <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
+          <span className=" text-small text-default-400">
+            Page {page} out of {pages}
+          </span>
+          <div className="flex gap-2">
+            <PaginationButtons
+              currentIndex={page}
+              totalItems={pages}
+              onPrevious={() => setPage(page - 1)}
+              onNext={() => setPage(page + 1)}
+            />
+            <Button color="primary" size="sm">
+              Export
+            </Button>
+          </div>
+        </div>
       </div>
       <CommonModal
         isOpen={isEditModalOpen}

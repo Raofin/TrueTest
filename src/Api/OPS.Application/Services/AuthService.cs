@@ -10,8 +10,8 @@ internal class AuthService(IJwtGenerator jwtGenerator) : IAuthService
 {
     private readonly IJwtGenerator _jwtGenerator = jwtGenerator;
 
-    public AuthenticationResult AuthenticateUser(Account account)
+    public AuthenticationResponse AuthenticateUser(Account account)
     {
-        return new AuthenticationResult(_jwtGenerator.CreateToken(account), account.ToDto());
+        return new AuthenticationResponse(_jwtGenerator.CreateToken(account), account.ToDto());
     }
 }

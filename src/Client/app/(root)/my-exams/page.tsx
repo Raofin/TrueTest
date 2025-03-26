@@ -67,7 +67,7 @@ export default function ExamList() {
   return (
     <>
     <RootNavBar/>
-    <div className="mx-44 flex flex-col items-center mt-3 ">
+    <div className="min-h-screen mx-44 flex flex-col items-center justify-between mt-3 ">
       <h1 className='text-center my-4 font-bold text-3xl'>My Exams</h1>
       {paginatedExams.map((exam, index) => (
         <Card key={index} className="relative w-full mb-3 p-2 shadow-none bg-white dark:bg-[#18181b]">

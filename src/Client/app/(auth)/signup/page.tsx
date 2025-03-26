@@ -22,7 +22,7 @@ export default function Signup() {
               type="text"
               className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             />
-            <div className="relative">
+            
               <Input
                 isRequired
                 label="Email"
@@ -30,7 +30,7 @@ export default function Signup() {
                 type="email"
                 className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
               />
-            </div>
+         
             <Input
               className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
               isRequired
@@ -71,7 +71,7 @@ export default function Signup() {
                 Privacy Policy
               </Link>
             </Checkbox>
-            <Button color="primary" type="submit" isDisabled={loading}>
+            <Button className='w-full' color="primary" type="submit" isDisabled={loading}>
               {loading ? 'Signing Up...' : 'Sign Up'}
             </Button>
           </Form>
