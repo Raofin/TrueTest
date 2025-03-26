@@ -19,7 +19,7 @@ import {
   Tooltip,
   Select,
 } from '@heroui/react'
-import SearchIcon from '@/app/components/table/search_icon/page'
+import SearchIcon from '@/app/components/ui/search_icon/page'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
 import PaginationButtons from '@/app/components/ui/pagination-button'
@@ -201,7 +201,8 @@ export default function Component() {
               />
             </div>
           </div>
-          <Table suppressHydrationWarning
+          <Table
+            suppressHydrationWarning
             aria-label="Example table with custom cells, pagination"
             bottomContentPlacement="inside"
             className=""

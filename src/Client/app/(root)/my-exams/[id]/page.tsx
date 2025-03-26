@@ -173,7 +173,6 @@ export default function Component() {
               <div>
                 Questions Left: {quesleft}/{codingQues + regularQues}
               </div>
-              
               <div className="flex items-center gap-1 before:content-[''] before:w-2 before:h-2 before:bg-red-500 before:rounded-full">
                 <p>Time Left : </p>
                 <p className={`font-mono ml-1 ${timeLeft < 300 ? 'text-danger' : 'text-success'}`}>
@@ -182,7 +181,6 @@ export default function Component() {
               </div>
             </div>
             <Link href="/my-exams">
-            
               <Button onPress={exitFullscreen} color="primary" size="md" radius='full'>
                 Submit Exam
               </Button>

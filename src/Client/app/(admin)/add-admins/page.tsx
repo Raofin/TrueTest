@@ -13,7 +13,7 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from 'app/components/table/search_icon/page'
+import SearchIcon from '@/app/components/ui/search_icon/page'
 
 const columns = [
   { label: 'Username', key: 'username' },
@@ -97,19 +97,18 @@ export default function Component() {
 
   const topContent = useMemo(
     () => (
-     
-       <div className="flex w-full justify-between px-5 my-3">
-       <p>User List</p>
-       <Input
-         isClearable
-         className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-         placeholder="Search"
-         startContent={<SearchIcon />}
-         value={filterValue}
-         onClear={onClear}
-         onValueChange={onSearchChange}
-       />
-     </div>
+      <div className="flex w-full justify-between px-5 my-3">
+        <p>User List</p>
+        <Input
+          isClearable
+          className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+          placeholder="Search"
+          startContent={<SearchIcon />}
+          value={filterValue}
+          onClear={onClear}
+          onValueChange={onSearchChange}
+        />
+      </div>
     ),
     [filterValue, onClear, onSearchChange]
   )
@@ -127,51 +126,52 @@ export default function Component() {
           />
           <Button color="primary">Send Invitation</Button>
         </div>
-          <Table suppressHydrationWarning
-            aria-label="Example table with custom cells, pagination, and sorting"
-            topContent={topContent}
-            topContentPlacement="outside"
-            classNames={{
-              wrapper: ' overflow-y-auto',
-            }}
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            onSelectionChange={setSelectedKeys}
-          >
-            <TableHeader>
-              {columns.map((column) => (
-                <TableColumn key={column.key} align={'center'} className={'font-semibold'}>
-                  {column.label}
-                </TableColumn>
-              ))}
-            </TableHeader>
-            <TableBody emptyContent="No admin found" className={items.length === 0 ? 'min-h-[70vh]' : 'min-h-[auto]'}>
-              {items.map((item) => (
-                <TableRow key={item.key}>
-                  {columns.map((column) => (
-                    <TableCell key={column.key}>{renderCell(item, column.key)}</TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
-          Page {page} out of {pages}
-        </span>
-        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
-            Previous
-          </Button>
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
-            Next
-          </Button>
-          <Button color="primary" size="sm" onPress={makeAdmin}>
-            Make Admin
-          </Button>
+        <Table
+          suppressHydrationWarning
+          aria-label="Example table with custom cells, pagination, and sorting"
+          topContent={topContent}
+          topContentPlacement="outside"
+          classNames={{
+            wrapper: ' overflow-y-auto',
+          }}
+          selectedKeys={selectedKeys}
+          selectionMode="multiple"
+          onSelectionChange={setSelectedKeys}
+        >
+          <TableHeader>
+            {columns.map((column) => (
+              <TableColumn key={column.key} align={'center'} className={'font-semibold'}>
+                {column.label}
+              </TableColumn>
+            ))}
+          </TableHeader>
+          <TableBody emptyContent="No admin found" className={items.length === 0 ? 'min-h-[70vh]' : 'min-h-[auto]'}>
+            {items.map((item) => (
+              <TableRow key={item.key}>
+                {columns.map((column) => (
+                  <TableCell key={column.key}>{renderCell(item, column.key)}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <div className="py-2 px-2 flex justify-between items-center">
+          <span className="w-[30%] text-small text-default-400">
+            Page {page} out of {pages}
+          </span>
+          <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
+          <div className="hidden sm:flex w-[30%] justify-end gap-2">
+            <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+              Previous
+            </Button>
+            <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+              Next
+            </Button>
+            <Button color="primary" size="sm" onPress={makeAdmin}>
+              Make Admin
+            </Button>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   )

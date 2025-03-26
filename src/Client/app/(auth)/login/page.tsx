@@ -8,7 +8,7 @@ export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)
   const [user, setUser] = useState({ email: '', password: '' })
   const toggleVisibility = () => setIsVisible((prev) => !prev)
-
+ 
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -16,7 +16,7 @@ export default function LoginComponent() {
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold my-3 text-center ">Log In</h1>
         </div>
-        <Form
+        <Form 
           id="#"
           className="flex w-full flex-wrap gap-4 flex-col"
           validationBehavior="native"

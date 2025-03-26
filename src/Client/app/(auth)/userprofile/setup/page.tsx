@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Button, Card } from '@heroui/react'
+import { Button, Card, Link } from '@heroui/react'
 import ProfileEdit from '@/app/components/profile/edit/page'
 
 export default function ProfileDetails() {
@@ -12,7 +12,7 @@ export default function ProfileDetails() {
           <h2 className="text-xl font-bold text-center">Add Details</h2>
           <ProfileEdit />
           <div className="flex justify-between mt-6">
-            <Button>Skip for now</Button>
+            <Button><Link href="/home" className='text-[#3f3f46] dark:text-white'>Skip for now</Link></Button>
             <Button color="primary" radius="full" type="submit">
               Save & Continue
             </Button>
