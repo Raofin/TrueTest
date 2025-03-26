@@ -162,7 +162,7 @@ int main() {
   }
 
   return (
-    <div className="h-screen flex flex-col  justify-between">
+    <div className="min-h-screen flex flex-col  justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Review Results</h2>
       <div className="w-full px-12 border-none flex flex-col gap-4 ">
         <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none">
