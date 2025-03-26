@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain;
-using OPS.Domain.Contracts;
-using OPS.Domain.Contracts.Repository;
+using OPS.Domain.Contracts.Repository.Core;
+using OPS.Domain.Contracts.Repository.Exams;
+using OPS.Domain.Contracts.Repository.Questions;
+using OPS.Domain.Contracts.Repository.Submissions;
+using OPS.Domain.Contracts.Repository.Users;
 using OPS.Domain.Entities.Common;
 
 namespace OPS.Persistence;

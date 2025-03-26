@@ -6,7 +6,6 @@ using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
-using Throw;
 
 namespace OPS.Application.Features.Submissions.Commands;
 
@@ -22,19 +21,19 @@ public class SaveWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserIn
     public async Task<ErrorOr<WrittenSubmitResponse>> Handle(SaveWrittenSubmissionCommand request,
         CancellationToken cancellationToken)
     {
-        var accountId = _userInfoProvider.AccountId().ThrowIfNull(typeof(UnauthorizedAccessException));
+        var userAccountId = _userInfoProvider.AccountId();
 
         var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
         if (question == null) return Error.NotFound();
 
         var existingSubmission = await _unitOfWork.WrittenSubmission.GetByAccountIdAsync(
-            request.QuestionId, accountId, cancellationToken);
+            request.QuestionId, userAccountId, cancellationToken);
 
         var submission = new WrittenSubmission
         {
             Answer = request.Answer,
             QuestionId = request.QuestionId,
-            AccountId = accountId
+            AccountId = userAccountId
         };
 
         if (existingSubmission is null)
