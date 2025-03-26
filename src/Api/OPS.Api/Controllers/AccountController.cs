@@ -20,7 +20,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <returns>A list of account objects.</returns>
     [HttpGet("All")]
     [EndpointDescription("Retrieves all accounts with details.")]
-    [ProducesResponseType<List<AccountResponse>>(Status200OK)]
+    [ProducesResponseType<List<AccountWithDetailsResponse>>(Status200OK)]
     public async Task<IActionResult> GetAllAccounts()
     {
         var query = new GetAllAccountsQuery();
@@ -47,7 +47,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <returns>The updated account object.</returns>
     [HttpPut("Update")]
     [EndpointDescription("Updates details of an account.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
@@ -62,7 +62,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <returns>The updated account object.</returns>
     [HttpPost("MakeAdmin")]
     [EndpointDescription("Upgrades an account to admin.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)

@@ -8,11 +8,23 @@ public static class AccountExtensions
 {
     public static AccountResponse ToDto(this Account account)
     {
+        return new AccountResponse(
+            account.Id,
+            account.Username,
+            account.Email,
+            account.CreatedAt,
+            account.UpdatedAt,
+            account.IsActive
+        );
+    }
+
+    public static AccountWithDetailsResponse ToDtoWithDetails(this Account account)
+    {
         var roles = account.AccountRoles
             .Select(accountRole => (RoleType)accountRole.RoleId)
             .ToList();
 
-        return new AccountResponse(
+        return new AccountWithDetailsResponse(
             account.Id,
             account.Username,
             account.Email,

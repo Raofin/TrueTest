@@ -13,18 +13,18 @@ namespace OPS.Application.Features.User.Commands;
 public record UpdateAccountSettingsCommand(
     string? Username,
     string? NewPassword,
-    string? CurrentPassword) : IRequest<ErrorOr<AccountResponse>>;
+    string? CurrentPassword) : IRequest<ErrorOr<AccountWithDetailsResponse>>;
 
 public class UpdateAccountSettingsCommandHandler(
     IUserInfoProvider userInfoProvider,
     IPasswordHasher passwordHasher,
-    IUnitOfWork unitOfWork) : IRequestHandler<UpdateAccountSettingsCommand, ErrorOr<AccountResponse>>
+    IUnitOfWork unitOfWork) : IRequestHandler<UpdateAccountSettingsCommand, ErrorOr<AccountWithDetailsResponse>>
 {
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountResponse>> Handle(UpdateAccountSettingsCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(UpdateAccountSettingsCommand request, CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
 
@@ -53,7 +53,7 @@ public class UpdateAccountSettingsCommandHandler(
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? account.ToDto()
+            ? account.ToDtoWithDetails()
             : Error.Failure();
     }
 }

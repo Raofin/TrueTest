@@ -17,25 +17,17 @@ public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<Success>> Handle(SendAdminInviteCommand request, CancellationToken cancellationToken)
     {
-        var exists = await _unitOfWork.AdminInvite.IsExistsAsync(request.Email, cancellationToken);
-
-        if (exists)
-        {
-            return Result.Success;
-        }
+        var isExists = await _unitOfWork.AdminInvite.IsExistsAsync(request.Email, cancellationToken);
+        if (isExists) return Result.Success;
 
         var account = await _unitOfWork.Account.GetByEmailAsync(request.Email, cancellationToken);
 
-        if (account == null)
+        if (account is null)
         {
             var adminInvite = new AdminInvite { Email = request.Email };
             _unitOfWork.AdminInvite.Add(adminInvite);
         }
-        else if (account.AccountRoles.Any(role => role.RoleId == (int)RoleType.Admin))
-        {
-            return Result.Success;
-        }
-        else
+        else if (account.AccountRoles.All(role => role.RoleId != (int)RoleType.Admin))
         {
             var accountRole = new AccountRole
             {
@@ -44,6 +36,10 @@ public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork)
             };
 
             account.AccountRoles.Add(accountRole);
+        }
+        else
+        {
+            return Result.Success;
         }
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);

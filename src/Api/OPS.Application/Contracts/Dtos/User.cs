@@ -2,12 +2,21 @@
 
 namespace OPS.Application.Contracts.Dtos;
 
-public record AuthenticationResponse(
-    string Token,
-    AccountResponse Account
+public record AccountResponse(
+    Guid AccountId,
+    string Username,
+    string Email,
+    DateTime CreatedAt,
+    DateTime? UpdatedAt,
+    bool IsActive
 );
 
-public record AccountResponse(
+public record AuthenticationResponse(
+    string Token,
+    AccountWithDetailsResponse AccountWithDetails
+);
+
+public record AccountWithDetailsResponse(
     Guid AccountId,
     string Username,
     string Email,

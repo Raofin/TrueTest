@@ -12,6 +12,6 @@ internal class AuthService(IJwtGenerator jwtGenerator) : IAuthService
 
     public AuthenticationResponse AuthenticateUser(Account account)
     {
-        return new AuthenticationResponse(_jwtGenerator.CreateToken(account), account.ToDto());
+        return new AuthenticationResponse(_jwtGenerator.CreateToken(account), account.ToDtoWithDetails());
     }
 }

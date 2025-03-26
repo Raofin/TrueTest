@@ -14,10 +14,10 @@ public class ChangeActiveStatusCommandHandler(IUnitOfWork unitOfWork)
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountResponse>> Handle(ChangeActiveStatusCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AccountResponse>> Handle(
+        ChangeActiveStatusCommand request, CancellationToken cancellationToken)
     {
         var account = await _unitOfWork.Account.GetAsync(request.AccountId, cancellationToken);
-
         if (account is null) return Error.NotFound();
 
         account.IsActive = !account.IsActive;

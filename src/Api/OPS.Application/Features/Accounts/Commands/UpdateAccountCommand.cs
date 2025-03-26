@@ -11,23 +11,25 @@ namespace OPS.Application.Features.Accounts.Commands;
 public record UpdateAccountCommand(
     Guid AccountId,
     string? Username,
-    string? Email) : IRequest<ErrorOr<AccountResponse>>;
+    string? Email) : IRequest<ErrorOr<AccountWithDetailsResponse>>;
 
-public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<UpdateAccountCommand, ErrorOr<AccountResponse>>
+public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<UpdateAccountCommand, ErrorOr<AccountWithDetailsResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountResponse>> Handle(UpdateAccountCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(
+        UpdateAccountCommand command, CancellationToken cancellationToken)
     {
-        var account = await _unitOfWork.Account.GetAsync(command.AccountId, cancellationToken);
-
+        var account = await _unitOfWork.Account.GetWithDetails(command.AccountId, cancellationToken);
         if (account is null) return Error.NotFound();
 
-        var isUnique = await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
-            command.Username,
-            command.Email,
-            cancellationToken
-        );
+        var isUnique =
+            await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
+                command.Username,
+                command.Email,
+                cancellationToken
+            );
 
         if (!isUnique) return Error.Conflict();
 
@@ -37,7 +39,7 @@ public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork) : IRequestHandl
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? account.ToDto()
+            ? account.ToDtoWithDetails()
             : Error.Failure();
     }
 }

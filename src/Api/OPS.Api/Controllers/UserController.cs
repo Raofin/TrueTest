@@ -41,7 +41,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     /// <returns>Updated account settings.</returns>
     [HttpPatch("AccountSettings")]
     [EndpointDescription("Updates account settings of the authenticated user.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command)
@@ -54,7 +54,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     /// <returns>User details.</returns>
     [HttpGet("Details")]
     [EndpointDescription("Retrieves account details of the authenticated user.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     public async Task<IActionResult> GetDetailsAsync()
     {
         var query = new GetUserDetailsQuery();

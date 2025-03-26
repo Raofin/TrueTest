@@ -26,7 +26,8 @@ public class RegisterCommandHandler(
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IAuthService _authService = authService;
 
-    public async Task<ErrorOr<AuthenticationResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AuthenticationResponse>> Handle(
+        RegisterCommand request, CancellationToken cancellationToken)
     {
         var isUserUnique =
             await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
@@ -35,13 +36,10 @@ public class RegisterCommandHandler(
                 cancellationToken
             );
 
-        if (!isUserUnique)
-            return Error.Conflict();
+        if (!isUserUnique) return Error.Conflict();
 
         var isValidOtp = await _unitOfWork.Otp.IsValidOtpAsync(request.Email, request.Otp, cancellationToken);
-
-        if (!isValidOtp)
-            return Error.Unauthorized(description: "Invalid OTP.");
+        if (!isValidOtp) return Error.Unauthorized(description: "Invalid OTP.");
 
         var (hashedPassword, salt) = _passwordHasher.HashPassword(request.Password);
 
@@ -82,7 +80,8 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
         RuleFor(x => x.Password)
             .NotEmpty()
             .Matches(ValidationConstants.PasswordRegex)
-            .WithMessage("Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).");
+            .WithMessage(
+                "Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).");
 
         RuleFor(x => x.Otp)
             .NotEmpty()
