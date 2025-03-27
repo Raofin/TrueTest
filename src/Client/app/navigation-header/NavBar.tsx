@@ -22,9 +22,8 @@ import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
 import { useAuth } from '../context/AuthProvider'
 
-
 export default function Component() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth()
   return (
     <div>
       <Navbar
@@ -33,9 +32,7 @@ export default function Component() {
           item: 'hidden md:flex',
         }}
       >
-        <NavbarContent
-          className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end"
-        >
+        <NavbarContent className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end">
           <NavbarItem>
             <ThemeSwitch />
           </NavbarItem>
@@ -75,7 +72,7 @@ export default function Component() {
                         <p>{user?.email}</p>
                       </div>
                     </div>
-                    <Divider className='mb-5'/>
+                    <Divider className="mb-5" />
                   </DropdownItem>
                   <DropdownItem key="profile">
                     <Link

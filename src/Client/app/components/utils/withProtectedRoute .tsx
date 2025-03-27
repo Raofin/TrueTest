@@ -18,9 +18,7 @@ const withProtectedRoute = <P extends object>(WrappedComponent: ComponentType<P>
     return user ? <WrappedComponent {...props} /> : null;
   };
 
-  ProtectedComponent.displayName = `WithProtectedRoute(${
-    WrappedComponent.displayName || WrappedComponent.name || 'Component'
-  })`;
+  ProtectedComponent.displayName = `WithProtectedRoute(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
   return ProtectedComponent;
 };
