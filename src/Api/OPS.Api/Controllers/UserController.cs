@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Contracts.Dtos;
-using OPS.Application.Features.Examinations.Queries;
 using OPS.Application.Features.User.Commands;
 using OPS.Application.Features.User.Queries;
 using OPS.Domain.Contracts.Core.Authentication;
@@ -86,18 +85,6 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command)
     {
         var response = await _mediator.Send(command);
-        return ToResult(response);
-    }
-
-    /// <summary>Retrieves exams of the authenticated user.</summary>
-    /// <returns>List of exams by user.</returns>
-    [HttpGet("Exams")]
-    [EndpointDescription("Retrieves exams of the authenticated user.")]
-    [ProducesResponseType<List<ExamResponse>>(Status200OK)]
-    public async Task<IActionResult> GetExamsAsync()
-    {
-        var query = new GetExamsByUserQuery();
-        var response = await _mediator.Send(query);
         return ToResult(response);
     }
 }

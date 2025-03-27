@@ -58,21 +58,6 @@ public class SubmissionController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Retrieves a specific problem-solving submission.</summary>
-    /// <param name="problemSubmissionId">Problem-solving submission Id.</param>
-    /// <returns>Details of the problem-solving submission.</returns>
-    [HttpGet("Problem/{problemSubmissionId:guid}")]
-    [EndpointDescription("Retrieves a specific problem-solving submission.")]
-    [ProducesResponseType<ProblemSubmitResponse>(Status200OK)]
-    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> GetProblemSubmissionAsync(Guid problemSubmissionId)
-    {
-        var query = new GetProblemSubmissionQuery(problemSubmissionId);
-        var response = await _mediator.Send(query);
-        return ToResult(response);
-    }
-
     /// <summary>Retrieves problem-solving submissions for a specific exam and user.</summary>
     /// <param name="examId">Exam Id.</param>
     /// <param name="accountId">User Account Id.</param>

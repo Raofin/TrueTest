@@ -1,5 +1,4 @@
 ﻿using OPS.Application.Contracts.Dtos;
-using OPS.Domain.Entities.Enum;
 using OPS.Domain.Entities.Exam;
 using QuestionType = OPS.Domain.Enums.QuestionType;
 
@@ -48,12 +47,44 @@ public static class ExamExtensions
             GetExamStatus(exam),
             exam.OpensAt,
             exam.ClosesAt,
-            exam.CreatedAt,
-            exam.UpdatedAt,
-            exam.IsActive,
-            problemQuestions,
-            writtenQuestions,
-            mcqQuestions
+            new QuestionResponses(
+                problemQuestions,
+                writtenQuestions,
+                mcqQuestions
+            )
+        );
+    }
+
+    public static OngoingExamResponse ToOngoingExamDto(this Examination exam)
+    {
+        var problemQuestionsWithSubmissions = exam.Questions
+            .Where(q => q.QuestionTypeId == (int)QuestionType.ProblemSolving)
+            .Select(q => q.ToQuesProblemSubmissionDto())
+            .ToList();
+
+        var writtenQuestionsWithSubmissions = exam.Questions
+            .Where(q => q.QuestionTypeId == (int)QuestionType.Written)
+            .Select(q => q.ToWrittenWithSubmissionDto())
+            .ToList();
+
+        var mcqQuestionsWithSubmissions = exam.Questions
+            .Where(q => q.QuestionTypeId == (int)QuestionType.MCQ)
+            .Select(q => q.ToMcqWithSubmissionDto())
+            .ToList();
+
+        return new OngoingExamResponse(
+            exam.Id,
+            exam.Title,
+            exam.DescriptionMarkdown,
+            exam.DurationMinutes,
+            GetExamStatus(exam),
+            exam.OpensAt,
+            exam.ClosesAt,
+            new QuestionsWithSubmission(
+                problemQuestionsWithSubmissions,
+                writtenQuestionsWithSubmissions,
+                mcqQuestionsWithSubmissions
+            )
         );
     }
 
