@@ -25,7 +25,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> CreateMcqAsync(CreateMcqCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -41,7 +40,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     {
         var query = new GetMcqQuestionByIdQuery(questionId);
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
@@ -56,7 +54,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     {
         var query = new GetMcqByExamQuery(examId);
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
@@ -71,7 +68,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> UpdateAsync(UpdateMcqCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -87,7 +83,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     {
         var query = new DeleteMcqCommand(questionId);
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 }

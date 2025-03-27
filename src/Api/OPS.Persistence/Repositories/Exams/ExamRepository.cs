@@ -17,4 +17,14 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
             .OrderBy(exam => exam.OpensAt)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<Examination?> GetWithQuestionsAsync(Guid examId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Examinations
+            .AsNoTracking()
+            .Where(e => e.Id == examId)
+            .Include(e => e.Questions).ThenInclude(q => q.TestCases)
+            .Include(e => e.Questions).ThenInclude(q => q.McqOption)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

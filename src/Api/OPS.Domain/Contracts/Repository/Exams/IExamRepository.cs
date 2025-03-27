@@ -5,5 +5,6 @@ namespace OPS.Domain.Contracts.Repository.Exams;
 
 public interface IExamRepository : IBaseRepository<Examination>
 {
-    Task<List<Examination>> GetByAccountIdAsync(Guid accountId,CancellationToken cancellationToken);
+    Task<List<Examination>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken);
+    Task<Examination?> GetWithQuestionsAsync(Guid examId, CancellationToken cancellationToken);
 }

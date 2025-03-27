@@ -30,13 +30,15 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
 
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
         question.Points = request.Points ?? question.Points;
-        question.DifficultyId = request.DifficultyType.HasValue ? (int)request.DifficultyType.Value : question.DifficultyId;
+        question.DifficultyId = request.DifficultyType.HasValue
+            ? (int)request.DifficultyType.Value
+            : question.DifficultyId;
 
         foreach (var tc in request.TestCases)
         {
-            if (tc.Id.HasValue && tc.Id != Guid.Empty)
+            if (tc.TestCaseId.HasValue && tc.TestCaseId != Guid.Empty)
             {
-                var testCase = await _unitOfWork.TestCase.GetAsync(tc.Id.Value, cancellationToken);
+                var testCase = await _unitOfWork.TestCase.GetAsync(tc.TestCaseId.Value, cancellationToken);
                 testCase.ThrowIfNull();
 
                 testCase.Input = tc.Input ?? testCase.Input;
@@ -78,7 +80,7 @@ public class UpdateProblemSolvingCommandValidator : AbstractValidator<UpdateProb
             .GreaterThan(0)
             .LessThanOrEqualTo(100)
             .When(x => x.Points.HasValue);
-        
+
         RuleFor(x => x.DifficultyType)
             .IsInEnum()
             .When(x => x.DifficultyType.HasValue);
@@ -94,13 +96,13 @@ public class TestCaseUpdateRequestValidator : AbstractValidator<TestCaseUpdateRe
     {
         RuleFor(x => x.Input)
             .NotEmpty()
-            .When(x => x.Id == null);
+            .When(x => x.TestCaseId == null);
 
         RuleFor(x => x.Output)
             .NotEmpty()
-            .When(x => x.Id == null);
+            .When(x => x.TestCaseId == null);
 
-        RuleFor(x => x.Id)
+        RuleFor(x => x.TestCaseId)
             .Must(id => id == null || id != Guid.Empty);
     }
 }

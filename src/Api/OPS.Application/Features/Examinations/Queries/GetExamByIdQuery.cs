@@ -6,19 +6,20 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Examinations.Queries;
 
-public record GetExamByIdQuery(Guid ExamId) : IRequest<ErrorOr<ExamResponse>>;
+public record GetExamByIdQuery(Guid ExamId) : IRequest<ErrorOr<ExamWithQuestionsResponse>>;
 
 public class GetExamByIdQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetExamByIdQuery, ErrorOr<ExamResponse>>
+    : IRequestHandler<GetExamByIdQuery, ErrorOr<ExamWithQuestionsResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ExamResponse>> Handle(GetExamByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ExamWithQuestionsResponse>> Handle(
+        GetExamByIdQuery request, CancellationToken cancellationToken)
     {
-        var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
+        var exam = await _unitOfWork.Exam.GetWithQuestionsAsync(request.ExamId, cancellationToken);
 
         return exam is null
             ? Error.NotFound()
-            : exam.ToDto();
+            : exam.ToDtoWithQuestions();
     }
 }

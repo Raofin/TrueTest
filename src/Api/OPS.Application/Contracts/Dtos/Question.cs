@@ -3,7 +3,7 @@
 namespace OPS.Application.Contracts.Dtos;
 
 public record ProblemQuestionResponse(
-    Guid Id,
+    Guid QuestionId,
     string StatementMarkdown,
     decimal Points,
     Guid ExaminationId,
@@ -16,13 +16,13 @@ public record ProblemQuestionResponse(
 );
 
 public record TestCaseResponse(
-    Guid Id,
+    Guid TestCaseId,
     string Input,
     string Output
 );
 
 public record TestCaseUpdateRequest(
-    Guid? Id,
+    Guid? TestCaseId,
     string? Input,
     string? Output
 );
@@ -33,7 +33,7 @@ public record TestCaseRequest(
 );
 
 public record McqQuestionResponse(
-    Guid Id,
+    Guid QuestionId,
     string StatementMarkdown,
     decimal Score,
     Guid ExaminationId,
@@ -73,7 +73,7 @@ public record UpdateMcqOptionRequest(
 );
 
 public record WrittenQuestionResponse(
-    Guid Id,
+    Guid QuestionId,
     bool HasLongAnswer,
     string StatementMarkdown,
     decimal Score,
@@ -85,7 +85,7 @@ public record WrittenQuestionResponse(
 );
 
 public record WrittenQuestionUpdateRequest(
-    Guid? Id,
+    Guid? QuestionId,
     bool? HasLongAnswer,
     string? StatementMarkdown,
     decimal? Score,

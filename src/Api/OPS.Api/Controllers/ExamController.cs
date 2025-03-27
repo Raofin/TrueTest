@@ -25,16 +25,15 @@ public class ExamController(IMediator mediator) : BaseApiController
     {
         var query = new GetAllExamsQuery();
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
-    /// <summary>Retrieves a specific exam.</summary>
+    /// <summary>Retrieves a specific exam with all questions.</summary>
     /// <param name="examId">Exam Id.</param>
     /// <returns>Exam details.</returns>
     [HttpGet("{examId:guid}")]
-    [EndpointDescription("Retrieves a specific exam.")]
-    [ProducesResponseType<ExamResponse>(Status200OK)]
+    [EndpointDescription("Retrieves a specific exam with all questions.")]
+    [ProducesResponseType<ExamWithQuestionsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> GetExamByIdAsync(Guid examId)
