@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain.Contracts.Repository.Exams;
 using OPS.Domain.Entities.Exam;
+using OPS.Domain.Entities.User;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Exams;
@@ -28,16 +29,24 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<Examination?> GetWithAllQuesAndSubmission(
+    public async Task<Account> GetWithAllQuesAndSubmission(
         Guid examId, Guid accountId, CancellationToken cancellationToken)
     {
-        return await _dbContext.Examinations
+        var account = await _dbContext.Accounts
+            .Where(a => a.Id == accountId)
+            .Include(a => a.ExamCandidates.Where(ec => ec.ExaminationId == examId))
+            .SingleAsync(cancellationToken);
+
+        var exam = await _dbContext.Examinations
             .Where(e => e.Id == examId)
             .Include(e => e.Questions).ThenInclude(q => q.McqOption)
             .Include(e => e.Questions).ThenInclude(q => q.McqSubmissions.Where(s => s.AccountId == accountId))
             .Include(e => e.Questions).ThenInclude(q => q.TestCases).ThenInclude(tc => tc.TestCaseOutputs)
             .Include(e => e.Questions).ThenInclude(q => q.ProblemSubmissions.Where(ps => ps.AccountId == accountId))
             .Include(e => e.Questions).ThenInclude(q => q.WrittenSubmissions.Where(s => s.AccountId == accountId))
-            .FirstOrDefaultAsync(cancellationToken);
+            .SingleAsync(cancellationToken);
+
+        account.ExamCandidates.First().Examination = exam;
+        return account;
     }
 }

@@ -19,7 +19,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <returns>Exam with questions and submissions.</returns>
     [HttpGet("Exam/{examId:guid}/{accountId:guid}")]
     [EndpointDescription("Retrieves an exam with questions and submissions of a candidate.")]
-    [ProducesResponseType<OngoingExamResponse>(Status200OK)]
+    [ProducesResponseType<ExamReviewResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> GetOngoingExamAsync(Guid examId, Guid accountId)
     {

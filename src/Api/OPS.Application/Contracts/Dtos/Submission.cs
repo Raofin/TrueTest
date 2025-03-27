@@ -2,14 +2,21 @@
 
 namespace OPS.Application.Contracts.Dtos;
 
-public record ProblemSubmitResponse(
+public record ProblemSubmissionResponse(
     Guid ProblemSubmissionId,
     string Code,
     int Attempts,
     decimal? Score,
     bool IsFlagged,
     string? FlagReason,
-    ProgLanguageType ProgLanguageType,
+    ProgLanguageType Language,
+    List<TestCaseOutputResponse> TestCaseOutputs
+);
+
+public record ProblemSubmitResponse(
+    Guid ProblemSubmissionId,
+    string Code,
+    ProgLanguageType Language,
     List<TestCaseOutputResponse> TestCaseOutputs
 );
 
@@ -26,7 +33,7 @@ public record ProblemQuesWithSubmissionResponse(
     string StatementMarkdown,
     decimal Points,
     DifficultyType DifficultyType,
-    ProblemSubmitResponse? ProblemSubmission
+    ProblemSubmissionResponse? ProblemSubmission
 );
 
 public record McqSubmitResponse(

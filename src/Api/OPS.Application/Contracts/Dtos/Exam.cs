@@ -30,15 +30,21 @@ public record QuestionResponses(
     List<McqQuestionResponse> Mcq
 );
 
-public record OngoingExamResponse(
+public record ExamReviewResponse(
     Guid ExamId,
     string Title,
-    string Description,
     int DurationMinutes,
-    string Status,
-    DateTime OpensAt,
-    DateTime ClosesAt,
+    int TotalPoints,
+    AccountResponse Account,
+    ExamResultsResponse Results,
     QuestionsWithSubmission QuestionsWithSubmission
+);
+
+public record ExamResultsResponse(
+    decimal Score,
+    DateTime? StartedAt,
+    DateTime? SubmittedAt,
+    bool HasCheated
 );
 
 public record QuestionsWithSubmission(

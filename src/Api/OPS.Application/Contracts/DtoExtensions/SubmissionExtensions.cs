@@ -7,28 +7,46 @@ namespace OPS.Application.Contracts.DtoExtensions;
 
 public static class SubmissionExtensions
 {
-    public static ProblemSubmitResponse? ToProblemSubmissionDto(
+    public static ProblemSubmitResponse? ToProblemSubmitDto(
         this ProblemSubmission? submission, List<TestCase> testCases)
     {
-        return submission is null
-            ? null
-            : new ProblemSubmitResponse(
-                submission.Id,
-                submission.Code,
-                submission.Attempts,
-                submission.Score,
-                submission.IsFlagged,
-                submission.FlagReason,
-                (ProgLanguageType)submission.ProgLanguageId,
-                submission.TestCaseOutputs
-                    .Zip(testCases, (output, testCase) => new TestCaseOutputResponse(
-                        output.TestCaseId,
-                        output.IsAccepted,
-                        testCase.Input,
-                        testCase.ExpectedOutput,
-                        output.ReceivedOutput
-                    )).ToList()
-            );
+        if (submission is null) return null;
+
+        return new ProblemSubmitResponse(
+            submission.Id,
+            submission.Code,
+            (ProgLanguageType)submission.ProgLanguageId,
+            MapTestCaseOutputs(submission.TestCaseOutputs, testCases)
+        );
+    }
+
+    public static ProblemSubmissionResponse? ToProblemSubmissionDto(
+        this ProblemSubmission? submission, List<TestCase> testCases)
+    {
+        if (submission is null) return null;
+
+        return new ProblemSubmissionResponse(
+            submission.Id,
+            submission.Code,
+            submission.Attempts,
+            submission.Score,
+            submission.IsFlagged,
+            submission.FlagReason,
+            (ProgLanguageType)submission.ProgLanguageId,
+            MapTestCaseOutputs(submission.TestCaseOutputs, testCases)
+        );
+    }
+
+    private static List<TestCaseOutputResponse> MapTestCaseOutputs(
+        IEnumerable<TestCaseOutput> outputs, List<TestCase> testCases)
+    {
+        return outputs.Zip(testCases, (output, testCase) => new TestCaseOutputResponse(
+            output.TestCaseId,
+            output.IsAccepted,
+            testCase.Input,
+            testCase.ExpectedOutput,
+            output.ReceivedOutput
+        )).ToList();
     }
 
     public static ProblemQuesWithSubmissionResponse ToQuesProblemSubmissionDto(this Question question)

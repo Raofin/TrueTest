@@ -82,7 +82,7 @@ public class SaveProblemSubmissionCommandHandler(
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? submission.ToProblemSubmissionDto(testCases)!
+            ? submission.ToProblemSubmitDto(testCases)!
             : Error.Failure();
     }
 }
@@ -94,7 +94,7 @@ public class SaveProblemSubmissionCommandValidator : AbstractValidator<SaveProbl
         RuleFor(x => x.QuestionId)
             .NotEmpty()
             .NotEqual(Guid.Empty);
-        
+
         RuleFor(x => x.ProgLanguageType).IsInEnum();
         RuleFor(x => x.Code).NotEmpty();
     }

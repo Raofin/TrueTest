@@ -13,7 +13,7 @@ public static class ExamExtensions
             exam.Title,
             exam.DescriptionMarkdown,
             exam.DurationMinutes,
-            GetExamStatus(exam),
+            exam.Status(),
             exam.OpensAt,
             exam.ClosesAt,
             exam.CreatedAt,
@@ -44,7 +44,7 @@ public static class ExamExtensions
             exam.Title,
             exam.DescriptionMarkdown,
             exam.DurationMinutes,
-            GetExamStatus(exam),
+            Status(exam),
             exam.OpensAt,
             exam.ClosesAt,
             new QuestionResponses(
@@ -55,40 +55,7 @@ public static class ExamExtensions
         );
     }
 
-    public static OngoingExamResponse ToOngoingExamDto(this Examination exam)
-    {
-        var problemQuestionsWithSubmissions = exam.Questions
-            .Where(q => q.QuestionTypeId == (int)QuestionType.ProblemSolving)
-            .Select(q => q.ToQuesProblemSubmissionDto())
-            .ToList();
-
-        var writtenQuestionsWithSubmissions = exam.Questions
-            .Where(q => q.QuestionTypeId == (int)QuestionType.Written)
-            .Select(q => q.ToWrittenWithSubmissionDto())
-            .ToList();
-
-        var mcqQuestionsWithSubmissions = exam.Questions
-            .Where(q => q.QuestionTypeId == (int)QuestionType.MCQ)
-            .Select(q => q.ToMcqWithSubmissionDto())
-            .ToList();
-
-        return new OngoingExamResponse(
-            exam.Id,
-            exam.Title,
-            exam.DescriptionMarkdown,
-            exam.DurationMinutes,
-            GetExamStatus(exam),
-            exam.OpensAt,
-            exam.ClosesAt,
-            new QuestionsWithSubmission(
-                problemQuestionsWithSubmissions,
-                writtenQuestionsWithSubmissions,
-                mcqQuestionsWithSubmissions
-            )
-        );
-    }
-
-    private static string GetExamStatus(Examination exam)
+    private static string Status(this Examination exam)
     {
         var now = DateTime.UtcNow;
 
