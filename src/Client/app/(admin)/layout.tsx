@@ -2,12 +2,13 @@
 
 import '@/app/globals.css'
 import SideBar from '@/app/(admin)/sidebar/page'
+import withProtectedRoute from '../components/utils/withProtectedRoute '
 
 interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+const AdminLayout=({ children }: RootLayoutProps)=> {
   return (
     <div className="flex min-h-screen ">
       <SideBar />
@@ -15,3 +16,4 @@ export default function RootLayout({ children }: RootLayoutProps) {
     </div>
   )
 }
+export default withProtectedRoute(AdminLayout);

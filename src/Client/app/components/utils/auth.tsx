@@ -1,8 +1,10 @@
 import Cookies from 'js-cookie'
 
-export default function setAuthToken(token: string) {
+export function setAuthToken(token: string) {
   Cookies.set('token', token, {
-    sameSite: 'strict',
+    secure: true,
+    httpOnly:true,
+    sameSite: 'Strict',
     path: '/',
   })
 }

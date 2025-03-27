@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getAuthToken, removeAuthToken } from './auth'
 
 const api = axios.create({
   baseURL: 'https://truetest.rawfin.net/api/', 
@@ -11,7 +12,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token')
+      const token = getAuthToken()
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
@@ -35,13 +36,13 @@ api.interceptors.response.use(
 
       try {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('token')
+          removeAuthToken()
           window.location.href = '/login'
         }
         return Promise.reject(error)
       } catch (refreshError) {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('token')
+          removeAuthToken()
           window.location.href = '/login'
         }
         return Promise.reject(refreshError)

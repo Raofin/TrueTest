@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Link,
   Dropdown,
@@ -20,16 +20,11 @@ import {
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
-import { removeAuthToken } from '../components/utils/auth'
+import { useAuth } from '../context/AuthProvider'
+
 
 export default function Component() {
-  const [user,setUser]=useState<{username?:string,email?:string}>({});
-  useEffect(() => {
-    if (typeof window !== "undefined") { 
-        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-        setUser(storedUser);
-    }
-}, []);
+  const { user, logout } = useAuth();
   return (
     <div>
       <Navbar
@@ -76,8 +71,8 @@ export default function Component() {
                     <div className="flex gap-2 my-4">
                       <Avatar size="md" src="" alt="User Avatar" />
                       <div>
-                        <p>{user.username}</p>
-                        <p>{user.email}</p>
+                        <p>{user?.username}</p>
+                        <p>{user?.email}</p>
                       </div>
                     </div>
                     <Divider className='mb-5'/>
@@ -111,7 +106,7 @@ export default function Component() {
                       style={{ color: 'inherit', textDecoration: 'none' }}
                     >
                       <Icon icon="lucide:log-out" className="w-5 h-5" />
-                      <p onClick={()=>removeAuthToken()}>Logout</p>
+                      <p onClick={logout}>Logout</p>
                     </Link>
                   </DropdownItem>
                 </DropdownMenu>

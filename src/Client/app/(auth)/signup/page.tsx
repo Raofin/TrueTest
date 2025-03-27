@@ -140,7 +140,6 @@ export default function Signup() {
           otp: data.otp,
         })
         toast.success('Signup successful!')
-        localStorage.setItem("user",JSON.stringify({username:formData.username,email:formData.email}))
         router.push('/userprofile/setup')
       } else {
         toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.')
