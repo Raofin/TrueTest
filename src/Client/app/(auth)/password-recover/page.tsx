@@ -19,7 +19,7 @@ const PasswordRecoverPage = () => {
             className="w-full mb-4 bg-[#eeeef0] dark:bg-[#24242b] rounded-xl"
           />
           <Button className="my-4 w-full" color="primary" type="submit">
-            Verify Email
+            <Link href="/password-recover/reset-password" className='text-white'>Verify Email</Link>
           </Button>
           <p>
             Want to create a new account?
