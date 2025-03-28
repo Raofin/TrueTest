@@ -22,7 +22,6 @@ export default function LoginComponent() {
     login(user.email, user.password, setError)
   }
 
-
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 py-5 bg-white dark:bg-[#18181b]`}>

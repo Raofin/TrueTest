@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 export function setAuthToken(token: string) {
   Cookies.set('token', token, {
     secure: true,
-    httpOnly:true,
+    // httpOnly:true,
     sameSite: 'Strict',
     path: '/',
   })

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { getAuthToken, removeAuthToken } from './auth'
 
 const api = axios.create({
-  baseURL: `${process.env.TRUETEST_URL}/api/`,
+  baseURL: `${process.env.NEXT_PUBLIC_TRUETEST_URL}/api/`,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '../components/utils/api'
+import api from '@/app/components/utils/api'
 import { getAuthToken, setAuthToken, removeAuthToken } from '@/app/components/utils/auth'
 
 interface User {
