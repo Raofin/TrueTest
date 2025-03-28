@@ -27,4 +27,49 @@ public class ReviewController(IMediator mediator) : BaseApiController
         var response = await _mediator.Send(query);
         return ToResult(response);
     }
+
+    /// <summary>Retrieves problem-solving submissions for a specific exam and user.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <param name="accountId">User Account Id.</param>
+    /// <returns>List of problem-solving submissions.</returns>
+    [HttpGet("Exam/Problem/{examId:guid}/{accountId:guid}")]
+    [EndpointDescription("Retrieves problem-solving submissions for a specific exam and user.")]
+    [ProducesResponseType<List<ProblemQuesWithSubmissionResponse>>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> GetProblemSubmissionsByExamAsync(Guid examId, Guid accountId)
+    {
+        var query = new GetProblemQuesWithSubmissionQuery(examId, accountId);
+        var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
+
+    /// <summary>Retrieves written submissions for a specific exam and user.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <param name="accountId">User Account Id.</param>
+    /// <returns>List of written submissions.</returns>
+    [HttpGet("Exam/Written/{examId:guid}/{accountId:guid}")]
+    [EndpointDescription("Retrieves written submissions for a specific exam and user.")]
+    [ProducesResponseType<List<WrittenQuesWithSubmissionResponse>>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> GetWrittenSubmissionsAsync(Guid examId, Guid accountId)
+    {
+        var query = new GetWrittenQuesWithSubmissionQuery(examId, accountId);
+        var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
+
+    /// <summary>Retrieves MCQ submissions for a specific exam and user.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <param name="accountId">User Account Id.</param>
+    /// <returns>List of MCQ submissions.</returns>
+    [HttpGet("Exam/Mcq/{examId:guid}/{accountId:guid}")]
+    [EndpointDescription("Retrieves MCQ submissions for a specific exam and user.")]
+    [ProducesResponseType<List<McqSubmissionResponse>>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> GetMcqSubmissionsAsync(Guid examId, Guid accountId)
+    {
+        var query = new GetMcqQuesWithSubmissionQuery(examId, accountId);
+        var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
 }

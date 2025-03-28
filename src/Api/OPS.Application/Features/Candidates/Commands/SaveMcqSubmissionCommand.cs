@@ -7,11 +7,10 @@ using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
 
-namespace OPS.Application.Features.Submissions.Commands;
+namespace OPS.Application.Features.Candidates.Commands;
 
-public record SaveMcqSubmissionCommand(
-    Guid QuestionId,
-    string AnswerOptions) : IRequest<ErrorOr<McqSubmitResponse>>;
+public record SaveMcqSubmissionCommand(Guid QuestionId, string CandidateAnswerOptions)
+    : IRequest<ErrorOr<McqSubmitResponse>>;
 
 public class SaveMcqSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
     : IRequestHandler<SaveMcqSubmissionCommand, ErrorOr<McqSubmitResponse>>
@@ -29,8 +28,8 @@ public class SaveMcqSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoPr
 
         var submission = new McqSubmission
         {
-            AnswerOptions = request.AnswerOptions,
-            Score = question.McqOption!.AnswerOptions == request.AnswerOptions ? question.Points : 0,
+            AnswerOptions = request.CandidateAnswerOptions,
+            Score = question.McqOption!.AnswerOptions == request.CandidateAnswerOptions ? question.Points : 0,
             AccountId = userAccountId,
             McqOptionId = question.McqOption!.Id,
             QuestionId = question.Id
@@ -64,7 +63,7 @@ public class SaveMcqSubmissionCommandValidator : AbstractValidator<SaveMcqSubmis
             .NotEmpty()
             .NotEqual(Guid.Empty);
 
-        RuleFor(x => x.AnswerOptions)
+        RuleFor(x => x.CandidateAnswerOptions)
             .NotEmpty()
             .Matches("^([1-4](,[1-4]){0,3})?$")
             .WithMessage("AnswerOptions must contain numbers 1-4, separated by commas.");

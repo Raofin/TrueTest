@@ -5,7 +5,7 @@ using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Submissions.Queries;
+namespace OPS.Application.Features.Review.Queries;
 
 public record GetWrittenQuesWithSubmissionQuery(Guid ExamId, Guid AccountId)
     : IRequest<ErrorOr<List<WrittenQuesWithSubmissionResponse>>>;

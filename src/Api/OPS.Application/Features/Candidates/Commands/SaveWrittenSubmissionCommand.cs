@@ -7,9 +7,9 @@ using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
 
-namespace OPS.Application.Features.Submissions.Commands;
+namespace OPS.Application.Features.Candidates.Commands;
 
-public record SaveWrittenSubmissionCommand(Guid QuestionId, string Answer)
+public record SaveWrittenSubmissionCommand(Guid QuestionId, string CandidateAnswer)
     : IRequest<ErrorOr<WrittenSubmitResponse>>;
 
 public class SaveWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
@@ -31,7 +31,7 @@ public class SaveWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserIn
 
         var submission = new WrittenSubmission
         {
-            Answer = request.Answer,
+            Answer = request.CandidateAnswer,
             QuestionId = request.QuestionId,
             AccountId = userAccountId
         };
@@ -42,7 +42,7 @@ public class SaveWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserIn
         }
         else
         {
-            existingSubmission.Answer = request.Answer;
+            existingSubmission.Answer = request.CandidateAnswer;
             submission = existingSubmission;
         }
 
@@ -59,7 +59,7 @@ public class SaveWrittenSubmissionCommandValidator : AbstractValidator<SaveWritt
         RuleFor(x => x.QuestionId)
             .NotEmpty()
             .NotEqual(Guid.Empty);
-        
-        RuleFor(x => x.Answer).NotEmpty();
+
+        RuleFor(x => x.CandidateAnswer).NotEmpty();
     }
 }

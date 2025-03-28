@@ -9,7 +9,7 @@ using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
 
-namespace OPS.Application.Features.Submissions.Commands;
+namespace OPS.Application.Features.Candidates.Commands;
 
 public record SaveProblemSubmissionCommand(
     Guid QuestionId,
