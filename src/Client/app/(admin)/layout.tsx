@@ -12,9 +12,9 @@ const AdminLayout = ({ children }: RootLayoutProps) => {
   return (
     <div className="flex min-h-screen ">
       <SideBar />
-      <main suppressHydrationWarning className="flex-grow w-full ">
+      <div className="flex-grow w-full ">
         {children}
-      </main>
+      </div>
     </div>
   )
 }

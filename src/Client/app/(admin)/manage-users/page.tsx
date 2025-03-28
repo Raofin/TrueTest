@@ -19,6 +19,7 @@ import PaginationButtons from '@/app/components/ui/pagination-button'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
 import api from '@/app/components/utils/api'
 import { AxiosError } from 'axios'
+import FormattedDate from '@/app/components/format-date-time'
 
 const columns = [
   { label: 'Username', key: 'username' },
@@ -41,34 +42,34 @@ export default function Component() {
   const rowsPerPage = 10
   const [page, setPage] = useState(1)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [usersData,setUserData]=useState<User[]>([])
-  const [error,setError]=useState('');
+  const [usersData, setUserData] = useState<User[]>([])
+  const [error, setError] = useState('')
+  
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const hasSearchFilter = Boolean(filterValue)
-  useEffect(()=>{
-    const ManageUser=async()=>{
-   
-        try{
-          const response=await api.get('Account/All')
-          if(response.status===200){
-             setUserData(response.data)
-          }
-        }catch(err){
-            const error=err as AxiosError
-            setError(error.message)
+
+  useEffect(() => {
+    const ManageUser = async () => {
+      try {
+        const response = await api.get('Account/All')
+        if (response.status === 200) {
+          setUserData(response.data)
         }
+      } catch (err) {
+        const error = err as AxiosError
+        setError(error.message)
+      }
     }
-    ManageUser();
-  },[])
+    ManageUser()
+  }, [])
   const filteredItems = useMemo(() => {
     let filteredUsers = [...usersData]
-    console.log(filteredUsers)
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter(
         (user) =>
           user.email?.toLowerCase().includes(filterValue.toLowerCase()) ||
           user.username?.toLowerCase().includes(filterValue.toLowerCase())
-      );
+      )
     }
     return filteredUsers
   }, [filterValue, hasSearchFilter, usersData])
@@ -78,38 +79,23 @@ export default function Component() {
     const end = start + rowsPerPage
     return filteredItems.slice(start, end)
   }, [page, filteredItems, rowsPerPage])
-  const formatDate = useCallback((date: Date) => {
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    })
+
+  const renderCell = useCallback((user: User, columnKey: React.Key) => {
+    const cellValue = user[columnKey as keyof User]
+    if (columnKey === 'action') {
+      return (
+        <div className="flex gap-4 ml-16">
+          <button aria-label="Edit User" onClick={() => setIsEditModalOpen(true)}>
+            <FaEdit className={'text-xl'} />
+          </button>
+          <button aria-label="Delete User" onClick={() => setIsDeleteModalOpen(true)}>
+            <MdDelete className={'text-xl'} />
+          </button>
+        </div>
+      )
+    } else if (columnKey === 'createdAt') return <FormattedDate date={cellValue as string} />
+    else return cellValue as React.ReactNode
   }, [])
-  const renderCell = useCallback(
-    (user: User, columnKey: React.Key) => {
-      const cellValue = user[columnKey as keyof User]
-      switch (columnKey) {
-        case 'action':
-          return (
-            <div className="flex gap-4 ml-16">
-              <button aria-label="Edit User" onClick={() => setIsEditModalOpen(true)}>
-                <FaEdit className={'text-xl'} />
-              </button>
-              <button aria-label="Delete User" onClick={() => setIsDeleteModalOpen(true)}>
-                <MdDelete className={'text-xl'} />
-              </button>
-            </div>
-          )
-        case 'createdAt':
-          return formatDate(cellValue as Date)
-        default:
-          return cellValue as React.ReactNode
-      }
-    },
-    [formatDate]
-  )
   const onSearchChange = useCallback((value?: string) => {
     if (value) {
       setFilterValue(value)
@@ -146,7 +132,7 @@ export default function Component() {
     <div className="flex  flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Manage Users</h2>
       <div className="mx-12 flex min-h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
-        {error && <p className='text-red-500 text-xl'>{error}</p>}
+        {error && <p className="text-red-500 text-xl">{error}</p>}
         <Table
           aria-label="Example table with custom cells, pagination"
           topContent={topContent}
