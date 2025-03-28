@@ -1,28 +1,72 @@
 'use client'
 
+
+import isValidPassword from '@/app/components/check-valid-password'
+import api from '@/app/components/utils/api'
 import { Button, Input, Link } from '@heroui/react'
 import { Icon } from '@iconify/react/dist/iconify.js'
-import { useState } from 'react'
+import { AxiosError } from 'axios'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { FormEvent, useState } from 'react'
+import toast from 'react-hot-toast'
+
 
 export default function Component() {
+  const searchParams = useSearchParams()
+  const email = searchParams.get('email')
+  const otp = searchParams.get('otp')
+  const [error, setError] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const router = useRouter()
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false)
 
+
+  const handleResetPassword = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match.')
+      return
+    }
+    if (!isValidPassword(newPassword)) {
+      setError(
+        'Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character.'
+      )
+      return
+    }
+    try {
+      const response = await api.post('Auth/PasswordRecovery', {
+        email: email,
+        newPassword: newPassword,
+        otp: otp,
+      })
+      if (response.status === 200) {
+        toast.success('password recover successfully')
+        router.push('/login')
+      } else {
+        toast.error('failed to recover password.Please try again later!')
+      }
+    } catch (err) {
+      const error = err as AxiosError
+      setError(error.message)
+    }
+  }
   return (
     <div className="flex h-screnn w-full items-center justify-center mb-16">
       <div className="flex w-full max-w-sm flex-col mt-16 gap-4 rounded-large px-8 py-5 bg-white dark:bg-[#18181b] ">
         <div className="flex flex-col gap-3">
           <h1 className="text-2xl font-bold text-center mb-6">Reset Password</h1>
         </div>
-        <form id="#" className={`flex w-full flex-wrap md:flex-nowrap gap-4 flex-col`}>
+        <form id="#" className={`flex w-full flex-wrap md:flex-nowrap gap-4 flex-col`} onSubmit={handleResetPassword}>
+          {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
           <Input
             isRequired
             label="Email Address"
             name="email"
             type="email"
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+            defaultValue={email || ''}
           />
           <Input
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"

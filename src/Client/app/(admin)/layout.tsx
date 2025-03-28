@@ -2,7 +2,7 @@
 
 import '@/app/globals.css'
 import SideBar from '@/app/(admin)/sidebar/page'
-// import withProtectedRoute from '../components/utils/withProtectedRoute '
+import withProtectedRoute from '@/app/components/utils/withProtectedRoute '
 
 interface RootLayoutProps {
   readonly children: React.ReactNode
@@ -18,5 +18,4 @@ const AdminLayout = ({ children }: RootLayoutProps) => {
     </div>
   )
 }
-// export default withProtectedRoute(AdminLayout)
-export default AdminLayout
+export default withProtectedRoute(AdminLayout)

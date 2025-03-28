@@ -1,13 +1,27 @@
 'use client'
 
+
 import React, { useState } from 'react'
 import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
+import { useAuth } from '@/app/context/AuthProvider'
+
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)
   const [user, setUser] = useState({ email: '', password: '' })
   const toggleVisibility = () => setIsVisible((prev) => !prev)
+  const [error, setError] = useState('')
+  const { login } = useAuth()
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user.email || !user.password) {
+      setError('Email and password are required.')
+      return
+    }
+    login(user.email, user.password, setError)
+  }
+
 
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -15,7 +29,13 @@ export default function LoginComponent() {
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold my-3 text-center ">Log In</h1>
         </div>
-        <Form id="#" className="flex w-full flex-wrap gap-4 flex-col" validationBehavior="native">
+        <Form
+          onSubmit={handleLogin}
+          id="#"
+          className="flex w-full flex-wrap gap-4 flex-col"
+          validationBehavior="native"
+        >
+          {error && <p className="text-red-500">{error}</p>}
           <Input
             isRequired
             label="Username or Email Address"
