@@ -1,7 +1,7 @@
 'use client'
 
 import '@/app/globals.css'
-import withProtectedRoute from '@/app/components/utils/withProtectedRoute '
+// import withProtectedRoute from '@/app/components/utils/withProtectedRoute '
 
 
 const RootLayout=({ children }: {children: React.ReactNode})=> {
@@ -11,4 +11,5 @@ const RootLayout=({ children }: {children: React.ReactNode})=> {
     </div>
   )
 }
-export default withProtectedRoute(RootLayout);
+// export default withProtectedRoute(RootLayout);
+export default RootLayout;

@@ -1,15 +1,15 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Card, DatePicker, Input, Textarea, TimeInput, useDisclosure } from '@heroui/react'
 import { CalendarDate, Time } from '@internationalized/date'
 import { Toaster } from 'react-hot-toast'
 import CommonModal from '@/app/components/ui/Modal/common-modal'
 import ProblemSolve from '@/app/components/ques/problem-solving-ques'
 import WrittenQues from '@/app/components/ques/written-ques'
-import MCQ from '@/app/components/ques/mcq-ques'
+import McqQues from '@/app/components/ques/mcq-ques'
 import '@/app/globals.css'
-
+import { v4 as uuidv4 } from 'uuid'
 
 interface FormData {
   title: string
@@ -28,13 +28,10 @@ function parseTime(time: string): Time | null {
 export default function App() {
   const [date] = React.useState<CalendarDate | null>(null)
   const { isOpen, onOpenChange } = useDisclosure()
-  const [activeComponents, setActiveComponents] = React.useState<string[]>([])
- 
+  const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([])
 
   const handleAddComponent = (componentType: string) => {
-    if (!activeComponents.includes(componentType)) {
-      setActiveComponents([...activeComponents, componentType])
-    }
+    setActiveComponents([...activeComponents, { id: uuidv4(), type: componentType }])
   }
 
   const [formData] = React.useState<FormData>({
@@ -85,22 +82,22 @@ export default function App() {
         </form>
       </Card>
 
-      {activeComponents.map((component, index) => (
-        <div key={index} className="w-full">
-          {component === 'problemSolve' && <ProblemSolve />}
-          {component === 'writtenQues' && <WrittenQues />}
-          {component === 'mcq' && <MCQ />}
+      {activeComponents.map((component) => (
+        <div key={component.id} className="w-full">
+          {component.type === 'problemSolve' && <ProblemSolve />}
+          {component.type === 'writtenQues' && <WrittenQues />}
+          {component.type === 'mcq' && <McqQues />}
         </div>
       ))}
 
       <div className="flex gap-3 justify-center my-4">
-        {!activeComponents.includes('problemSolve') && (
+      {!activeComponents.some((comp) => comp.type === 'problemSolve')&& (
           <Button onPress={() => handleAddComponent('problemSolve')}>Add Problem Solving Question</Button>
         )}
-        {!activeComponents.includes('writtenQues') && (
+        {!activeComponents.some(comp=>comp.type==='writtenQues') && (
           <Button onPress={() => handleAddComponent('writtenQues')}>Add Written Question</Button>
         )}
-        {!activeComponents.includes('mcq') && (
+        {!activeComponents.some(comp=>comp.type==='mcq') && (
           <Button onPress={() => handleAddComponent('mcq')}>Add MCQ Question</Button>
         )}
       </div>

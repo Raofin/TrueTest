@@ -20,10 +20,10 @@ import {
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
-import { useAuth } from '../context/AuthProvider'
+// import { useAuth } from '../context/AuthProvider'
 
 export default function Component() {
-  const { user, logout } = useAuth()
+  // const { user, logout } = useAuth()
   return (
     <div>
       <Navbar
@@ -68,8 +68,8 @@ export default function Component() {
                     <div className="flex gap-2 my-4">
                       <Avatar size="md" src="" alt="User Avatar" />
                       <div>
-                        <p>{user?.username}</p>
-                        <p>{user?.email}</p>
+                        <p>username</p>
+                        <p>useremail@gmail.com</p>
                       </div>
                     </div>
                     <Divider className="mb-5" />
@@ -103,7 +103,7 @@ export default function Component() {
                       style={{ color: 'inherit', textDecoration: 'none' }}
                     >
                       <Icon icon="lucide:log-out" className="w-5 h-5" />
-                      <p onClick={logout}>Logout</p>
+                      <p >Logout</p>
                     </Link>
                   </DropdownItem>
                 </DropdownMenu>
