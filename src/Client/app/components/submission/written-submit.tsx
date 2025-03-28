@@ -9,9 +9,9 @@ interface Question {
   points: number
 }
 interface PageProps {
-  question: Question
-  setAnswers: React.Dispatch<React.SetStateAction<{ [key: number]: string | string[] }>>
-  answers: { [key: number]: string | string[] }
+ readonly question: Question
+ readonly setAnswers: React.Dispatch<React.SetStateAction<{ [key: number]: string | string[] }>>
+ readonly answers: { [key: number]: string | string[] }
 }
 
 export default function WrittenSubmission({ question, setAnswers, answers }: PageProps) {

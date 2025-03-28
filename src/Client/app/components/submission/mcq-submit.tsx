@@ -9,10 +9,10 @@ interface Question {
   points: number
 }
 interface PageProps {
-  question: Question
-  setAnswers: React.Dispatch<React.SetStateAction<{ [key: number]: string | string[] }>>
-  answers: { [key: number]: string | string[] }
-  options:string[]
+ readonly question: Question
+ readonly setAnswers: React.Dispatch<React.SetStateAction<{ [key: number]: string | string[] }>>
+ readonly answers: { [key: number]: string | string[] }
+ readonly options:string[]
 }
 
 export default function MCQSubmission({ question,answers,setAnswers,options}: PageProps) {
@@ -34,8 +34,8 @@ export default function MCQSubmission({ question,answers,setAnswers,options}: Pa
       </div>
       <div className={`space-y-4 p-4 rounded-lg `}>
         <p>{question.description}</p>
-        {options.map((option, index) => (
-          <div key={index} className="flex items-center gap-2 p-3 rounded-lg hover:bg-white/5">
+        {options.map((option) => (
+          <div key={option} className="flex items-center gap-2 p-3 rounded-lg hover:bg-white/5">
             <Checkbox
               value={option}
               isSelected={Array.isArray(answers[question.id]) && (answers[question.id] as string[]).includes(option)}

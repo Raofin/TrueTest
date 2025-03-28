@@ -4,11 +4,11 @@ import { Button, InputOtp, Modal, ModalBody, ModalContent } from '@heroui/react'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
 
 interface OTPModalProps {
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  control: Control<{ otp: string }>
-  handleFormSubmit: (event: React.FormEvent<HTMLFormElement>) => void
-  errors: FieldErrors<{ otp: string }>
+ readonly isOpen: boolean
+ readonly onOpenChange: (isOpen: boolean) => void
+ readonly control: Control<{ otp: string }>
+ readonly handleFormSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+ readonly errors: FieldErrors<{ otp: string }>
 }
 
 export default function OTPModal({ isOpen, onOpenChange, control, handleFormSubmit, errors }: OTPModalProps) {

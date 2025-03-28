@@ -7,6 +7,7 @@ import PaginationButtons from '@/app/components/ui/pagination-button'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
 
 interface Exam {
+  id: number
   examId: string
   title: string
   description: string
@@ -26,6 +27,7 @@ interface Exam {
 const ITEMS_PER_PAGE = 2
 const Exams: Exam[] = [
   {
+    id: 1,
     title: 'Star Coder 2026',
     description: 'Running',
     durationMinutes: 60,
@@ -42,6 +44,7 @@ const Exams: Exam[] = [
     acceptedCandidates: 0,
   },
   {
+    id: 2,
     title: 'Learnathon 4.0',
     description: 'Upcoming',
     durationMinutes: 90,
@@ -58,6 +61,7 @@ const Exams: Exam[] = [
     acceptedCandidates: 0,
   },
   {
+    id: 3,
     title: 'Star Coder 2005',
     description: 'Ended',
     durationMinutes: 60,
@@ -99,56 +103,82 @@ export default function ExamList() {
   return (
     <>
       <div className={`h-screen flex flex-col justify-between w-full`}>
-        <h1 className='w-full text-center text-3xl font-bold my-3'>Exams</h1>
-        {paginatedExams.map((exam, index) => (
-          <Card key={index} className="mx-8 p-4 shadow-none">
+        <h1 className="w-full text-center text-3xl font-bold my-3">Exams</h1>
+        {paginatedExams.map((exam) => (
+          <Card key={exam.id} className="mx-8 p-4 shadow-none">
             <CardHeader className="flex justify-between items-center ">
               <div className="flex items-end gap-1">
                 <h1 className="text-2xl font-bold flex gap-1 items-end text-[#3f3f46] dark:text-white">{exam.title}</h1>
-                {exam.status === 'Published' ? (
-                  <p className="text-green-500">{exam.status}</p>
-                ) : exam.status === 'Draft' ? (
-                  <p className="text-yellow-500">{exam.status}</p>
-                ) : (
-                  <p className="text-blue-600">{exam.status}</p>
-                )}
+                {(() => {
+                  if (exam.status === 'Published') {
+                    return <p className="text-green-500">{exam.status}</p>
+                  } else if (exam.status === 'Draft') {
+                    return <p className="text-yellow-500">{exam.status}</p>
+                  } else {
+                    return <p className="text-blue-600">{exam.status}</p>
+                  }
+                })()}
               </div>
               <div className="flex gap-2">
-                {exam.status === 'Ended' ? (
-                  <Button color="primary">
-                    <Link href="/exams/review-results" className={'text-white'}>
-                      Review Results
-                    </Link>
-                  </Button>
-                ) : exam.status === 'Draft' ? (
-                  <>
-                    <Button onPress={() => handleEdit(exam)}>Edit</Button>
-                    <Button color="primary">Publish</Button>
-                  </>
-                ) : (
-                  <>
-                    <Button onPress={() => handleEdit(exam)}>Edit</Button>
-                  </>
-                )}
+                {(() => {
+                  if (exam.status === 'Ended') {
+                    return (
+                      <Button color="primary">
+                        <Link href="/exams/review-results" className={'text-white'}>
+                          Review Results
+                        </Link>
+                      </Button>
+                    )
+                  } else if (exam.status === 'Draft') {
+                    return (
+                      <>
+                        <Button onPress={() => handleEdit(exam)}>Edit</Button>
+                        <Button color="primary">Publish</Button>
+                      </>
+                    )
+                  } else {
+                    return <Button onPress={() => handleEdit(exam)}>Edit</Button>
+                  }
+                })()}
               </div>
             </CardHeader>
             <CardBody className="px-3">
               <div className="flex">
                 <div className="flex flex-col flex-1">
-                  <p><span className='text-[#71717a] dark:text-white'>Date:</span> Friday, 21 Nov 2026</p>
-                  <p><span className='text-[#71717a] dark:text-white'>Duration:</span> 2 hr</p>
-                  <p><span className='text-[#71717a] dark:text-white'>Starts at:</span> 9:00 PM</p>
-                  <p><span className='text-[#71717a] dark:text-white'>Closes at:</span> 10:20 PM</p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Date:</span> Friday, 21 Nov 2026
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Duration:</span> 2 hr
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Starts at:</span> 9:00 PM
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Closes at:</span> 10:20 PM
+                  </p>
                 </div>
                 <div className="flex flex-col flex-1">
-                  <p><span className='text-[#71717a] dark:text-white'>Problem Solving:</span> 10</p>
-                  <p><span className='text-[#71717a] dark:text-white'>Written:</span> 10</p>
-                  <p><span className='text-[#71717a] dark:text-white'>MCQ:</span> 10</p>
-                  <p><span className='text-[#71717a] dark:text-white'>Score:</span> 100</p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Problem Solving:</span> 10
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Written:</span> 10
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">MCQ:</span> 10
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Score:</span> 100
+                  </p>
                 </div>
                 <div className="flex flex-col flex-1">
-                  <p><span className='text-[#71717a] dark:text-white'>Invited Candidates:</span> 120</p>
-                  <p><span className='text-[#71717a] dark:text-white'>Accepted:</span> 90</p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Invited Candidates:</span> 120
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Accepted:</span> 90
+                  </p>
                 </div>
               </div>
             </CardBody>

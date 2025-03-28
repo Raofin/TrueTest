@@ -137,7 +137,9 @@ int main() {
     },
   ]
 
-  const [flaggedCandidates, setFlaggedCandidates] = useState<{ [candidateId: string]: { [questionId: number]: boolean } }>({});
+  const [flaggedCandidates, setFlaggedCandidates] = useState<{
+    [candidateId: string]: { [questionId: number]: boolean }
+  }>({})
   const [selectedCandidate, setSelectedCandidate] = useState('Candidate-1')
   const currentExamData = examData[0]
   const currentCandidateSubmission = currentExamData.submissions.find((sub) => sub.candidateId === selectedCandidate)
@@ -162,18 +164,20 @@ int main() {
   }
   const handleFlagChange = (candidateId: string, questionId: number) => {
     setFlaggedCandidates((prevFlags) => {
-      const newFlags = { ...prevFlags };
+      const newFlags = { ...prevFlags }
       if (!newFlags[candidateId]) {
-        newFlags[candidateId] = {};
+        newFlags[candidateId] = {}
       }
-      newFlags[candidateId][questionId] = !newFlags[candidateId][questionId];
-      return newFlags;
-    });
-  };
+      newFlags[candidateId][questionId] = !newFlags[candidateId][questionId]
+      return newFlags
+    })
+  }
 
   const isQuestionFlagged = (candidateId: string, questionId: number) => {
-    return flaggedCandidates[candidateId] && flaggedCandidates[candidateId][questionId] ? flaggedCandidates[candidateId][questionId] : false;
-  };
+    return flaggedCandidates[candidateId] && flaggedCandidates[candidateId][questionId]
+      ? flaggedCandidates[candidateId][questionId]
+      : false
+  }
   return (
     <div className="min-h-screen flex flex-col  justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Review Results</h2>
@@ -325,15 +329,15 @@ int main() {
                       type="checkbox"
                       checked={isQuestionFlagged(selectedCandidate, curr.id)}
                       onChange={() => handleFlagChange(selectedCandidate, curr.id)}
-                     />
+                    />
                     Flag Solution
                   </Button>
                 </div>
               </div>
 
               {isQuestionFlagged(selectedCandidate, curr.id) && (
-              <Textarea className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl" placeholder="Flag reason" />
-            )}
+                <Textarea className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl" placeholder="Flag reason" />
+              )}
 
               <div className="w-full flex justify-center">
                 <Button className="my-3" color="primary">

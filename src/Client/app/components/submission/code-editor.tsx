@@ -22,8 +22,8 @@ interface Question {
   testCases: TestCase[]
 }
 interface PageProps {
-  questionId: number
-  setAnswers: React.Dispatch<React.SetStateAction<{ [key: number]: string | string[] }>>
+ readonly questionId: number
+ readonly setAnswers: React.Dispatch<React.SetStateAction<{ [key: number]: string | string[] }>>
 }
 
 interface CodeState {
@@ -56,6 +56,7 @@ export default function CodeEditor({ setAnswers, questionId }: PageProps) {
   const [selectedLanguage, setSelectedLanguage] = React.useState('cpp')
   const [codeStates, setCodeStates] = React.useState<CodeState>({})
   const [selectedTestCase, setSelectedTestCase] = React.useState<number>(0)
+  
   const question: Question = {
     id: 1,
     title: 'Alice and Bob',
@@ -82,7 +83,9 @@ export default function CodeEditor({ setAnswers, questionId }: PageProps) {
       { input: '1000000000 1000000000', receivedOutput: '2000000000', expectedOutput: '2000000000' },
     ],
   }
+
   const displayedTestCases = [question.testCases[selectedTestCase]]
+
   useEffect(() => {
     const initialStates: CodeState = {}
     languages.forEach((lang) => {
@@ -126,8 +129,8 @@ export default function CodeEditor({ setAnswers, questionId }: PageProps) {
           </div>
           <div>
             <h3 className="font-semibold">Examples:</h3>
-            {question.examples.map((example, index) => (
-              <div key={index} className="mt-2 p-3 rounded-lg">
+            {question.examples.map((example) => (
+              <div key={example.input} className="mt-2 p-3 rounded-lg">
                 <div>
                   <span className="font-semibold">Input:</span> {example.input}
                 </div>
@@ -184,15 +187,15 @@ export default function CodeEditor({ setAnswers, questionId }: PageProps) {
             <div className="flex justify-between">
               <p className="font-bold">Test Cases</p>
               <div className="flex items-center gap-2">
-                {question.testCases.map((_, index) => (
+                {question.testCases.map((testCase) => (
                   <button
-                    key={index}
-                    onClick={() => setSelectedTestCase(index)}
+                    key={testCase.input} 
+                    onClick={() => setSelectedTestCase(question.testCases.indexOf(testCase))}
                     className={`w-8 h-8 rounded-lg flex items-center justify-center text-white 
-                        ${_.receivedOutput === _.expectedOutput ? 'bg-green-500' : 'bg-red-500'}
-                        ${selectedTestCase === index ? 'ring-2 ring-blue-500' : ''}`}
+                        ${testCase.receivedOutput === testCase.expectedOutput ? 'bg-green-500' : 'bg-red-500'}
+                        ${selectedTestCase === question.testCases.indexOf(testCase) ? 'ring-2 ring-blue-500' : ''}`}
                   >
-                    {index + 1}
+                    {question.testCases.indexOf(testCase) + 1}
                   </button>
                 ))}
               </div>
@@ -202,16 +205,12 @@ export default function CodeEditor({ setAnswers, questionId }: PageProps) {
               <p className="p-2">Expected Output</p>
               <p className="p-2">Received Output</p>
             </div>
-            {displayedTestCases.map((testCase, index) => (
-              <div key={index} className="p-2 rounded-lg ">
+            {displayedTestCases.map((testCase) => (
+              <div key={testCase.input} className="p-2 rounded-lg "> 
                 <div className={`grid grid-cols-3 gap-4 h-[140px]`}>
                   <div className={`font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg `}>{testCase.input}</div>
-                  <div className={`font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg`}>
-                    {testCase.expectedOutput}
-                  </div>
-                  <div className={`font-mono p-2 bg-[#eeeef0] dark:bg-[#27272a] rounded-lg`}>
-                    {testCase.receivedOutput}
-                  </div>
+                  <div className={`font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg`}>{testCase.expectedOutput}</div>
+                  <div className={`font-mono p-2 bg-[#eeeef0] dark:bg-[#27272a] rounded-lg`}>{testCase.receivedOutput}</div>
                 </div>
               </div>
             ))}

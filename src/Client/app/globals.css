@@ -23,8 +23,3 @@ body {
     margin: 0;
     padding: 0;
 }
-@layer utilities {
-  /* .background-light850_dark100 {
-    @apply bg-white dark:bg-[#18181b];
-  } */
-}

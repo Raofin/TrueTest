@@ -25,13 +25,15 @@ export default function Component() {
   const [currentPage, setCurrentPage] = useState(1)
   const [timeLeft, setTimeLeft] = useState(3600)
   const [examStarted, setExamStarted] = useState(false)
-  const [totalpage, setTotalPage] = useState(1)
+  const [totalPage, setTotalPage] = useState(1);
   const [answers, setAnswers] = useState<{ [key: number]: string | string[] }>({})
   const [regularQues, setRegularQues] = useState(0)
   const [codingQues, setCodingQues] = useState(0)
-  const [isExitfullscreen, setExitfullscreen] = useState(false)
-  const [quesleft, setQuesLeft] = useState(0)
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [questionsLeft, setQuestionsLeft] = useState(0);
+  
   const examData = {
+    id:1,
     title: 'Star Coder 2025',
     totalQuestions: 30,
     duration: '1:00:00',
@@ -79,7 +81,7 @@ export default function Component() {
     setRegularQues(regularQuestionsCount)
     setCodingQues(codingQuestionsCount)
     setTotalPage(Math.ceil(regularQuestionsCount / 5) + codingQuestionsCount)
-    setQuesLeft(regularQuestionsCount + codingQuestionsCount)
+    setQuestionsLeft(regularQuestionsCount + codingQuestionsCount)
   }, [questions])
 
   useEffect(() => {
@@ -113,12 +115,12 @@ export default function Component() {
         }
       }
     })
-    setQuesLeft(regularQues + codingQues - count)
+    setQuestionsLeft(regularQues + codingQues - count)
   }, [answers, questions, regularQues, codingQues])
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      if (!document.fullscreenElement && !isExitfullscreen) {
+      if (!document.fullscreenElement && !isFullscreen) {
         alert('You cannot exit fullscreen during the exam!')
         document.documentElement.requestFullscreen().catch((err) => {
           console.error('Error re-entering fullscreen:', err)
@@ -129,11 +131,11 @@ export default function Component() {
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
     }
-  }, [isExitfullscreen])
+  }, [isFullscreen])
 
   const exitFullscreen = () => {
     if (document.exitFullscreen) {
-      setExitfullscreen(true)
+      setIsFullscreen(true)
       document.exitFullscreen().catch((err) => {
         console.error('Error exiting fullscreen:', err)
       })
@@ -171,7 +173,7 @@ export default function Component() {
             </div>
             <div className="flex gap-4 rounded-full border-small border-default-200/20 bg-background/60 px-4 py-2 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
               <div>
-                Questions Left: {quesleft}/{codingQues + regularQues}
+                Questions Left: {questionsLeft}/{codingQues + regularQues}
               </div>
               <div className="flex items-center gap-1 before:content-[''] before:w-2 before:h-2 before:bg-red-500 before:rounded-full">
                 <p>Time Left : </p>
@@ -217,7 +219,7 @@ export default function Component() {
         </div>
         <div className="flex justify-center items-end py-6">
           <Pagination
-            total={totalpage}
+            total={totalPage}
             page={currentPage}
             onChange={setCurrentPage}
             color="primary"

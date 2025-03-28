@@ -4,7 +4,11 @@ import { Providers } from '@/app/providers'
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+interface PageProps{
+  readonly children: React.ReactNode 
+}
+
+export default function RootLayout({ children }: PageProps) {
   return (
     <html className={inter.className} lang="en" suppressHydrationWarning>
       <body className='bg-[#eeeef0] dark:bg-[#000000]'>

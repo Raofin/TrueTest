@@ -96,7 +96,7 @@ export default function Component() {
       skipEmptyLines: true,
       complete: (result) => {
         const emailList = (result.data as CsvRow[])
-          .map((row) => row.email || Object.values(row)[0])
+          .map((row) => row.email ?? Object.values(row)[0])
           .filter((email): email is string => typeof email === 'string')
 
         const userList: User[] = emailList.map((email) => ({ email }))
@@ -109,8 +109,7 @@ export default function Component() {
   const renderCell = useCallback(
     (user: User, columnKey: React.Key) => {
       const cellValue = user[columnKey as keyof User]
-      switch (columnKey) {
-        case 'action':
+      if(columnKey === 'action') {
           return (
             <div className="flex justify-center gap-4">
               <button onClick={() => setIsEditModalOpen(true)}>
@@ -121,7 +120,8 @@ export default function Component() {
               </button>
             </div>
           )
-        default:
+        }
+        else{
           return (
             <div className="flex items-center gap-2">
               <span>{cellValue}</span>

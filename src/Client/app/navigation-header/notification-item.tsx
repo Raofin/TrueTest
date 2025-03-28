@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Avatar, Badge } from '@heroui/react'
-import { cn } from '@heroui/react'
+import { Avatar, Badge,cn } from '@heroui/react'
 
 export type NotificationType = 'default' | 'request'
 
