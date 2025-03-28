@@ -36,6 +36,14 @@ public record ProblemQuesWithSubmissionResponse(
     ProblemSubmissionResponse? ProblemSubmission
 );
 
+public record ProblemQuesWithSubmitResponse(
+    Guid QuestionId,
+    string StatementMarkdown,
+    decimal Points,
+    DifficultyType DifficultyType,
+    ProblemSubmitResponse? ProblemSubmit
+);
+
 public record McqSubmitResponse(
     Guid McqSubmissionId,
     string AnswerOptions,
@@ -55,6 +63,13 @@ public record McqQuesWithSubmissionResponse(
     McqSubmissionResponse? McqSubmission
 );
 
+public record McqQuesWithSubmitResponse(
+    Guid QuestionId,
+    string StatementMarkdown,
+    decimal Points,
+    McqSubmitResponse? McqSubmit
+);
+
 public record WrittenSubmitResponse(
     Guid WrittenSubmissionId,
     string Answer,
@@ -72,4 +87,11 @@ public record WrittenQuesWithSubmissionResponse(
     string StatementMarkdown,
     decimal Points,
     WrittenSubmissionResponse? WrittenSubmission
+);
+
+public record WrittenQuesWithSubmitResponse(
+    Guid QuestionId,
+    string StatementMarkdown,
+    decimal Points,
+    WrittenSubmitResponse? WrittenSubmit
 );

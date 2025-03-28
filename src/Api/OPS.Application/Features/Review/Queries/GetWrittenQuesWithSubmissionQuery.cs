@@ -8,22 +8,20 @@ using OPS.Domain;
 namespace OPS.Application.Features.Review.Queries;
 
 public record GetWrittenQuesWithSubmissionQuery(Guid ExamId, Guid AccountId)
-    : IRequest<ErrorOr<List<WrittenQuesWithSubmissionResponse>>>;
+    : IRequest<ErrorOr<List<WrittenQuesWithSubmissionResponse?>>>;
 
 public class GetWrittenQuesWithSubmissionQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetWrittenQuesWithSubmissionQuery, ErrorOr<List<WrittenQuesWithSubmissionResponse>>>
+    : IRequestHandler<GetWrittenQuesWithSubmissionQuery, ErrorOr<List<WrittenQuesWithSubmissionResponse?>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<WrittenQuesWithSubmissionResponse>>> Handle(
+    public async Task<ErrorOr<List<WrittenQuesWithSubmissionResponse?>>> Handle(
         GetWrittenQuesWithSubmissionQuery request, CancellationToken cancellationToken)
     {
         var questions = await _unitOfWork.WrittenSubmission
             .GetQuesWithSubmission(request.ExamId, request.AccountId, cancellationToken);
 
-        return questions.Count == 0
-            ? Error.Unexpected(description: "Invalid ExamId or AccountId")
-            : questions.Select(q => q.ToWrittenWithSubmissionDto()).ToList();
+        return questions.Select(q => q.ToWrittenWithSubmissionDto()).ToList();
     }
 }
 

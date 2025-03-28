@@ -49,16 +49,32 @@ public static class SubmissionExtensions
         )).ToList();
     }
 
-    public static ProblemQuesWithSubmissionResponse ToQuesProblemSubmissionDto(this Question question)
+    public static ProblemQuesWithSubmissionResponse? ToProblemWithSubmissionDto(this Question question)
     {
-        return new ProblemQuesWithSubmissionResponse(
-            question.Id,
-            question.StatementMarkdown,
-            question.Points,
-            (DifficultyType)question.DifficultyId,
-            question.ProblemSubmissions.FirstOrDefault()?
-                .ToProblemSubmissionDto(question.TestCases.ToList())
-        );
+        return question.QuestionTypeId != (int)QuestionType.ProblemSolving
+            ? null
+            : new ProblemQuesWithSubmissionResponse(
+                question.Id,
+                question.StatementMarkdown,
+                question.Points,
+                (DifficultyType)question.DifficultyId,
+                question.ProblemSubmissions.FirstOrDefault()?
+                    .ToProblemSubmissionDto(question.TestCases.ToList())
+            );
+    }
+
+    public static ProblemQuesWithSubmitResponse? ToProblemWithSubmitDto(this Question question)
+    {
+        return question.QuestionTypeId != (int)QuestionType.ProblemSolving
+            ? null
+            : new ProblemQuesWithSubmitResponse(
+                question.Id,
+                question.StatementMarkdown,
+                question.Points,
+                (DifficultyType)question.DifficultyId,
+                question.ProblemSubmissions.FirstOrDefault()?
+                    .ToProblemSubmitDto(question.TestCases.ToList())
+            );
     }
 
     public static McqSubmitResponse ToDto(this McqSubmission submission)
@@ -70,16 +86,32 @@ public static class SubmissionExtensions
         );
     }
 
-    public static McqQuesWithSubmissionResponse ToMcqWithSubmissionDto(this Question question)
+    public static McqQuesWithSubmissionResponse? ToMcqWithSubmissionDto(this Question question)
     {
-        return new McqQuesWithSubmissionResponse(
-            question.Id,
-            question.StatementMarkdown,
-            question.Points,
-            question.McqSubmissions.FirstOrDefault() is { } submission
-                ? new McqSubmissionResponse(submission.Id, submission.AnswerOptions, submission.Score)
-                : null
-        );
+        return question.QuestionTypeId != (int)QuestionType.MCQ
+            ? null
+            : new McqQuesWithSubmissionResponse(
+                question.Id,
+                question.StatementMarkdown,
+                question.Points,
+                question.McqSubmissions.FirstOrDefault() is { } submission
+                    ? new McqSubmissionResponse(submission.Id, submission.AnswerOptions, submission.Score)
+                    : null
+            );
+    }
+
+    public static McqQuesWithSubmitResponse? ToMcqWithSubmitDto(this Question question)
+    {
+        return question.QuestionTypeId != (int)QuestionType.MCQ
+            ? null
+            : new McqQuesWithSubmitResponse(
+                question.Id,
+                question.StatementMarkdown,
+                question.Points,
+                question.McqSubmissions.FirstOrDefault() is { } submission
+                    ? new McqSubmitResponse(submission.Id, submission.AnswerOptions, question.Id)
+                    : null
+            );
     }
 
     public static WrittenSubmitResponse ToDto(this WrittenSubmission submission)
@@ -91,15 +123,31 @@ public static class SubmissionExtensions
         );
     }
 
-    public static WrittenQuesWithSubmissionResponse ToWrittenWithSubmissionDto(this Question question)
+    public static WrittenQuesWithSubmissionResponse? ToWrittenWithSubmissionDto(this Question question)
     {
-        return new WrittenQuesWithSubmissionResponse(
-            question.Id,
-            question.StatementMarkdown,
-            question.Points,
-            question.WrittenSubmissions.FirstOrDefault() is { } submission
-                ? new WrittenSubmissionResponse(submission.Id, submission.Answer, submission.Score)
-                : null
-        );
+        return question.QuestionTypeId != (int)QuestionType.Written
+            ? null
+            : new WrittenQuesWithSubmissionResponse(
+                question.Id,
+                question.StatementMarkdown,
+                question.Points,
+                question.WrittenSubmissions.FirstOrDefault() is { } submission
+                    ? new WrittenSubmissionResponse(submission.Id, submission.Answer, submission.Score)
+                    : null
+            );
+    }
+
+    public static WrittenQuesWithSubmitResponse? ToWrittenWithSubmitDto(this Question question)
+    {
+        return question.QuestionTypeId != (int)QuestionType.Written
+            ? null
+            : new WrittenQuesWithSubmitResponse(
+                question.Id,
+                question.StatementMarkdown,
+                question.Points,
+                question.WrittenSubmissions.FirstOrDefault() is { } submission
+                    ? new WrittenSubmitResponse(submission.Id, submission.Answer, question.Id)
+                    : null
+            );
     }
 }

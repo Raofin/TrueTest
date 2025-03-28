@@ -10,6 +10,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 namespace OPS.Api.Controllers;
 
 [Route("api/Candidate")]
+[ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class CandidateController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
@@ -23,6 +24,20 @@ public class CandidateController(IMediator mediator) : BaseApiController
     {
         var query = new GetAllExamsByCandidateQuery();
         var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
+
+    /// <summary>Starts an exam for the authenticated user.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <returns>Exam details, questions, and submitted answers.</returns>
+    [HttpPost("Exam/Start/{examId:guid}")]
+    [EndpointDescription("Starts an exam for the authenticated user.")]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<ExamStartResponse>(Status200OK)]
+    public async Task<IActionResult> StartExamAsync(Guid examId)
+    {
+        var command = new StartExamCommand(examId);
+        var response = await _mediator.Send(command);
         return ToResult(response);
     }
 

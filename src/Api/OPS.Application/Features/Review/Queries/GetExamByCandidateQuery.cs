@@ -4,7 +4,6 @@ using MediatR;
 using OPS.Application.Contracts.DtoExtensions;
 using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
-using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Review.Queries;
 
@@ -18,38 +17,30 @@ public class GetExamByCandidateQueryHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<ExamReviewResponse>> Handle(
         GetExamByCandidateQuery request, CancellationToken cancellationToken)
     {
-        var account = await _unitOfWork.Exam.GetWithAllQuesAndSubmission(
+        var candidate = await _unitOfWork.Exam.GetCandidateAsync(
             request.ExamId, request.AccountId, cancellationToken);
+        if (candidate is null) return Error.NotFound(description: "Candidate not found");
 
-        var candidate = account.ExamCandidates.First();
-        var exam = candidate.Examination;
-
-        var problemQuestionsWithSubmissions = exam.Questions
-            .Where(q => q.QuestionTypeId == (int)QuestionType.ProblemSolving)
-            .Select(q => q.ToQuesProblemSubmissionDto())
-            .ToList();
-
-        var writtenQuestionsWithSubmissions = exam.Questions
-            .Where(q => q.QuestionTypeId == (int)QuestionType.Written)
-            .Select(q => q.ToWrittenWithSubmissionDto())
-            .ToList();
-
-        var mcqQuestionsWithSubmissions = exam.Questions
-            .Where(q => q.QuestionTypeId == (int)QuestionType.MCQ)
-            .Select(q => q.ToMcqWithSubmissionDto())
-            .ToList();
+        var exam = await _unitOfWork.Exam.GetWithQuesAndSubmissionsAsync(
+            request.ExamId, request.AccountId, cancellationToken);
+        if (exam is null) return Error.NotFound(description: "Exam not found");
 
         var examReview = new ExamReviewResponse(
             exam.Id,
             exam.Title,
             exam.DurationMinutes,
             100,
-            account.ToDto(),
-            new ExamResultsResponse(100, candidate.StartedAt, candidate.SubmittedAt, candidate.HasCheated),
-            new QuestionsWithSubmission(
-                problemQuestionsWithSubmissions,
-                writtenQuestionsWithSubmissions,
-                mcqQuestionsWithSubmissions
+            candidate.Account!.ToDto(),
+            new ExamResultsResponse(
+                100,
+                candidate.StartedAt,
+                candidate.SubmittedAt,
+                candidate.HasCheated
+            ),
+            new QuestionsWithSubmissionResponse(
+                exam.Questions.Select(q => q.ToProblemWithSubmissionDto()).ToList(),
+                exam.Questions.Select(q => q.ToWrittenWithSubmissionDto()).ToList(),
+                exam.Questions.Select(q => q.ToMcqWithSubmissionDto()).ToList()
             )
         );
 

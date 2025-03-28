@@ -37,7 +37,7 @@ public record ExamReviewResponse(
     int TotalPoints,
     AccountResponse Account,
     ExamResultsResponse Results,
-    QuestionsWithSubmission QuestionsWithSubmission
+    QuestionsWithSubmissionResponse QuestionsWithSubmission
 );
 
 public record ExamResultsResponse(
@@ -47,8 +47,21 @@ public record ExamResultsResponse(
     bool HasCheated
 );
 
-public record QuestionsWithSubmission(
-    List<ProblemQuesWithSubmissionResponse> Problem,
-    List<WrittenQuesWithSubmissionResponse> Written,
-    List<McqQuesWithSubmissionResponse> Mcq
+public record QuestionsWithSubmissionResponse(
+    List<ProblemQuesWithSubmissionResponse?> Problem,
+    List<WrittenQuesWithSubmissionResponse?> Written,
+    List<McqQuesWithSubmissionResponse?> Mcq
+);
+
+public record ExamStartResponse(
+    DateTime StartedAt,
+    DateTime ClosesAt,
+    ExamResponse Exam,
+    QuestionsWithSubmitsResposne QuestionsWithSubmits
+);
+
+public record QuestionsWithSubmitsResposne(
+    List<ProblemQuesWithSubmitResponse?> Problem,
+    List<WrittenQuesWithSubmitResponse?> Written,
+    List<McqQuesWithSubmitResponse?> Mcq
 );
