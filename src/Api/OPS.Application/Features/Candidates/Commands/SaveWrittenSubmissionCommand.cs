@@ -48,7 +48,7 @@ public class SaveWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserIn
 
         await _unitOfWork.CommitAsync(cancellationToken);
 
-        return submission.ToDto();
+        return submission.ToSubmitDto();
     }
 }
 

@@ -32,8 +32,8 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <returns>Exam details, questions, and submitted answers.</returns>
     [HttpPost("Exam/Start/{examId:guid}")]
     [EndpointDescription("Starts an exam for the authenticated user.")]
-    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<ExamStartResponse>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> StartExamAsync(Guid examId)
     {
         var command = new StartExamCommand(examId);

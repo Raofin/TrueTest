@@ -10,14 +10,11 @@ public static class QuestionExtensions
     {
         return new ProblemQuestionResponse(
             question.Id,
+            question.ExaminationId,
+            (QuestionType)question.QuestionTypeId,
             question.StatementMarkdown,
             question.Points,
-            question.ExaminationId,
             (DifficultyType)question.DifficultyId,
-            (QuestionType)question.QuestionTypeId,
-            question.CreatedAt,
-            question.UpdatedAt,
-            question.IsActive,
             question.TestCases.Select(tc => tc.ToDto()).ToList()
         );
     }
@@ -35,14 +32,11 @@ public static class QuestionExtensions
     {
         return new McqQuestionResponse(
             question.Id,
+            question.ExaminationId,
+            (QuestionType)question.QuestionTypeId,
             question.StatementMarkdown,
             question.Points,
-            question.ExaminationId,
             (DifficultyType)question.DifficultyId,
-            (QuestionType)question.QuestionTypeId,
-            question.CreatedAt,
-            question.UpdatedAt,
-            question.IsActive,
             question.McqOption!.ToDto()
         );
     }
@@ -63,14 +57,12 @@ public static class QuestionExtensions
     {
         return new WrittenQuestionResponse(
             question.Id,
+            question.ExaminationId,
+            (QuestionType)question.QuestionTypeId,
             question.HasLongAnswer,
             question.StatementMarkdown,
             question.Points,
-            question.ExaminationId,
-            (DifficultyType)question.DifficultyId,
-            (QuestionType)question.QuestionTypeId,
-            question.CreatedAt,
-            question.UpdatedAt
+            (DifficultyType)question.DifficultyId
         );
     }
 }

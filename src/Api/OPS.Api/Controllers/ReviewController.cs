@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using ErrorOr;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
@@ -21,9 +22,24 @@ public class ReviewController(IMediator mediator) : BaseApiController
     [EndpointDescription("Retrieves an exam with questions and submissions of a candidate.")]
     [ProducesResponseType<ExamReviewResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    public async Task<IActionResult> GetOngoingExamAsync(Guid examId, Guid accountId)
+    public async Task<IActionResult> GetExamByCandidateAsync(Guid examId, Guid accountId)
     {
         var query = new GetExamByCandidateQuery(examId, accountId);
+        var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
+
+    /// <summary>Retrieves all submissions of a candidate for a specific exam.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <param name="accountId">Account Id of a candidate.</param>
+    /// <returns>Submissions of a candidate for a specific exam</returns>
+    [HttpGet("Submissions/{examId:guid}/{accountId:guid}")]
+    [EndpointDescription("Retrieves all submissions of a candidate for a specific exam.")]
+    [ProducesResponseType<ExamSubmissionResponse>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> GetSubmissionsAsync(Guid examId, Guid accountId)
+    {
+        var query = new GetSubmissionsQuery(examId, accountId);
         var response = await _mediator.Send(query);
         return ToResult(response);
     }

@@ -39,7 +39,7 @@ public record ProfileResponse(
 );
 
 public record ProfileLinkRequest(
-    Guid? Id,
+    Guid? ProfileLinkId,
     string? Name,
     string? Link
 );

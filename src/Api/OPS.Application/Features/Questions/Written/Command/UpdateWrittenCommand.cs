@@ -9,7 +9,7 @@ using OPS.Domain.Enums;
 namespace OPS.Application.Features.Questions.Written.Command;
 
 public record UpdateWrittenCommand(
-    Guid Id,
+    Guid QuestionId,
     string? StatementMarkdown,
     decimal? Points,
     bool? HasLongAnswer,
@@ -21,7 +21,7 @@ public class UpdateWrittenCommandHandler(IUnitOfWork unitOfWork) : IRequestHandl
 
     public async Task<ErrorOr<WrittenQuestionResponse>> Handle(UpdateWrittenCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetAsync(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;

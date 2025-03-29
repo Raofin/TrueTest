@@ -7,7 +7,7 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Queries;
 
-public record GetProblemSolvingByIdQuery(Guid Id) : IRequest<ErrorOr<ProblemQuestionResponse>>;
+public record GetProblemSolvingByIdQuery(Guid QuestionId) : IRequest<ErrorOr<ProblemQuestionResponse>>;
 
 public class GetProblemSolvingByIdQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetProblemSolvingByIdQuery, ErrorOr<ProblemQuestionResponse>>
@@ -16,7 +16,7 @@ public class GetProblemSolvingByIdQueryHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<ProblemQuestionResponse>> Handle(GetProblemSolvingByIdQuery request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetWithTestCases(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithTestCases(request.QuestionId, cancellationToken);
 
         return question is null
             ? Error.NotFound()
@@ -28,7 +28,7 @@ public class GetProblemSolvingByIdQueryValidator : AbstractValidator<GetProblemS
 {
     public GetProblemSolvingByIdQueryValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.QuestionId)
             .NotEmpty()
             .NotEqual(Guid.Empty);
     }

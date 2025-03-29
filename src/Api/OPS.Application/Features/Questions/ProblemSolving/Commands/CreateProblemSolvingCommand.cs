@@ -10,9 +10,9 @@ using OPS.Domain.Enums;
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
 
 public record CreateProblemSolvingCommand(
+    Guid ExamId,
     string StatementMarkdown,
     decimal Points,
-    Guid ExaminationId,
     DifficultyType DifficultyType,
     List<TestCaseRequest> TestCases) : IRequest<ErrorOr<ProblemQuestionResponse>>;
 
@@ -24,14 +24,14 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<ProblemQuestionResponse>> Handle(CreateProblemSolvingCommand request,
         CancellationToken cancellationToken)
     {
-        var examExists = await _unitOfWork.Exam.GetAsync(request.ExaminationId, cancellationToken);
+        var examExists = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
         if (examExists == null) return Error.NotFound();
 
         var question = new Question
         {
             StatementMarkdown = request.StatementMarkdown,
             Points = request.Points,
-            ExaminationId = request.ExaminationId,
+            ExaminationId = request.ExamId,
             DifficultyId = (int)request.DifficultyType,
             QuestionTypeId = (int)QuestionType.ProblemSolving
         };
@@ -62,17 +62,17 @@ public class CreateProblemSolvingCommandValidator : AbstractValidator<CreateProb
     {
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10);
-        
+
         RuleFor(x => x.Points)
             .GreaterThan(0)
             .LessThanOrEqualTo(100);
-        
-        RuleFor(x => x.ExaminationId)
+
+        RuleFor(x => x.ExamId)
             .NotEqual(Guid.Empty);
-        
+
         RuleFor(x => x.DifficultyType)
             .IsInEnum();
-        
+
         RuleForEach(x => x.TestCases)
             .SetValidator(new TestCaseRequestValidator());
     }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain.Contracts.Repository.Exams;
 using OPS.Domain.Entities.Exam;
-using OPS.Domain.Entities.User;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Exams;
@@ -14,19 +13,26 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
     {
         return await _dbContext.Examinations
             .AsNoTracking()
-            .Where(e => e.ExamCandidates.Any(candidate => candidate.AccountId == accountId))
-            .OrderBy(exam => exam.OpensAt)
+            .Where(e => e.ExamCandidates.Any(ec => ec.AccountId == accountId))
+            .OrderBy(e => e.OpensAt)
             .ToListAsync(cancellationToken);
     }
 
     public async Task<Examination?> GetWithQuestionsAsync(Guid examId, CancellationToken cancellationToken)
     {
-        return await _dbContext.Examinations
+        var exam = await _dbContext.Examinations
             .AsNoTracking()
             .Where(e => e.Id == examId)
             .Include(e => e.Questions).ThenInclude(q => q.TestCases)
             .Include(e => e.Questions).ThenInclude(q => q.McqOption)
             .SingleOrDefaultAsync(cancellationToken);
+
+        if (exam is not null)
+        {
+            exam.Questions = exam.Questions.OrderBy(q => q.CreatedAt).ToList();
+        }
+
+        return exam;
     }
 
     public async Task<ExamCandidate?> GetCandidateAsync(Guid examId, Guid accountId,
@@ -36,13 +42,14 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
             .Where(ec => ec.AccountId == accountId && ec.ExaminationId == examId)
             .Include(ec => ec.Account)
             .Include(ec => ec.Examination)
+            .OrderBy(ec => ec.CreatedAt)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<Examination?> GetWithQuesAndSubmissionsAsync(Guid examId, Guid accountId,
         CancellationToken cancellationToken)
     {
-        return await _dbContext.Examinations
+        var exam = await _dbContext.Examinations
             .Where(e => e.Id == examId)
             .Include(e => e.Questions).ThenInclude(q => q.McqOption)
             .Include(e => e.Questions).ThenInclude(q => q.McqSubmissions.Where(s => s.AccountId == accountId))
@@ -50,5 +57,12 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
             .Include(e => e.Questions).ThenInclude(q => q.ProblemSubmissions.Where(ps => ps.AccountId == accountId))
             .Include(e => e.Questions).ThenInclude(q => q.WrittenSubmissions.Where(s => s.AccountId == accountId))
             .SingleOrDefaultAsync(cancellationToken);
+
+        if (exam is not null)
+        {
+            exam.Questions = exam.Questions.OrderBy(q => q.CreatedAt).ToList();
+        }
+
+        return exam;
     }
 }

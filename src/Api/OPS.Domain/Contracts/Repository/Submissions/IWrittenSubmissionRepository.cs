@@ -9,4 +9,5 @@ public interface IWrittenSubmissionRepository : IBaseRepository<WrittenSubmissio
     Task<List<WrittenSubmission>> GetByQuestionIdAsync(Guid questionId, CancellationToken cancellationToken);
     Task<WrittenSubmission?> GetByAccountIdAsync(Guid questionId, Guid accountId, CancellationToken cancellationToken);
     Task<List<Question>> GetQuesWithSubmission(Guid examId, Guid accountId, CancellationToken cancellationToken);
+    Task<List<WrittenSubmission>> GetAllAsync(Guid examId, Guid accountId, CancellationToken cancellationToken);
 }

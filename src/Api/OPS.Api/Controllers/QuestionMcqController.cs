@@ -18,6 +18,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <summary>Creates an MCQ Question.</summary>
     /// <param name="command">A new MCQ question with details.</param>
     /// <returns>Newly created MCQ question.</returns>
+    [HttpPost("Create")]
     [EndpointDescription("Creates an MCQ Question.")]
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

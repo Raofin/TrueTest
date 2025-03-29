@@ -10,9 +10,9 @@ using OPS.Domain.Enums;
 namespace OPS.Application.Features.Questions.Mcq.Commands;
 
 public record CreateMcqCommand(
+    Guid ExamId,
     string StatementMarkdown,
     decimal Points,
-    Guid ExaminationId,
     DifficultyType DifficultyType,
     CreateMcqOptionRequest McqOption) : IRequest<ErrorOr<McqQuestionResponse>>;
 
@@ -24,14 +24,14 @@ public class CreateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<McqQuestionResponse>> Handle(
         CreateMcqCommand request, CancellationToken cancellationToken)
     {
-        var examExists = await _unitOfWork.Exam.GetAsync(request.ExaminationId, cancellationToken);
+        var examExists = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
         if (examExists == null) return Error.NotFound();
 
         var question = new Question
         {
             StatementMarkdown = request.StatementMarkdown,
             Points = request.Points,
-            ExaminationId = request.ExaminationId,
+            ExaminationId = request.ExamId,
             DifficultyId = (int)request.DifficultyType,
             QuestionTypeId = (int)QuestionType.MCQ,
             McqOption = new McqOption
@@ -66,7 +66,7 @@ public class CreateMcqCommandValidator : AbstractValidator<CreateMcqCommand>
             .GreaterThan(0)
             .LessThanOrEqualTo(100);
 
-        RuleFor(x => x.ExaminationId)
+        RuleFor(x => x.ExamId)
             .NotEmpty();
 
         RuleFor(x => x.DifficultyType)

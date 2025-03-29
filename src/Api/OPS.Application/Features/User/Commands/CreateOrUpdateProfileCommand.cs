@@ -25,7 +25,8 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    public async Task<ErrorOr<ProfileResponse>> Handle(CreateOrUpdateProfileCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ProfileResponse>> Handle(CreateOrUpdateProfileCommand request,
+        CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
 
@@ -70,7 +71,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
 
             foreach (var linkRequest in request.ProfileLinks)
             {
-                if (!linkRequest.Id.HasValue)
+                if (!linkRequest.ProfileLinkId.HasValue)
                 {
                     var profileLink = new ProfileLinks
                     {
@@ -83,7 +84,8 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
                 }
                 else
                 {
-                    var profileLink = await _unitOfWork.ProfileLink.GetAsync(linkRequest.Id!.Value, cancellationToken);
+                    var profileLink = await _unitOfWork.ProfileLink.GetAsync(
+                        linkRequest.ProfileLinkId!.Value, cancellationToken);
                     profileLink.ThrowIfNull("Profile link not found.");
 
                     profileLink.Name = linkRequest.Name ?? profileLink.Name;
@@ -98,7 +100,6 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
         profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
         return profile.ToDto()!;
-
     }
 }
 
@@ -135,9 +136,9 @@ public class ProfileLinkRequestValidator : AbstractValidator<ProfileLinkRequest>
 {
     public ProfileLinkRequestValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.ProfileLinkId)
             .Must(x => !x.HasValue || x.Value != Guid.Empty)
-            .When(x => x.Id.HasValue);
+            .When(x => x.ProfileLinkId.HasValue);
 
         RuleFor(x => x.Name)
             .NotEmpty()

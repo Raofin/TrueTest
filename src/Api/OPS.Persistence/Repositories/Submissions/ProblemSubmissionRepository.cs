@@ -38,6 +38,16 @@ internal class ProblemSubmissionRepository(AppDbContext dbContext)
             .Include(q => q.TestCases)
             .ThenInclude(tc => tc.TestCaseOutputs)
             .Include(q => q.ProblemSubmissions.Where(ps => ps.AccountId == accountId))
+            .OrderBy(q => q.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<ProblemSubmission>> GetAllAsync(
+        Guid examId, Guid accountId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ProblemSubmissions
+            .Where(ps => ps.AccountId == accountId && ps.Question.ExaminationId == examId)
+            .Include(ps => ps.TestCaseOutputs)
             .ToListAsync(cancellationToken);
     }
 }

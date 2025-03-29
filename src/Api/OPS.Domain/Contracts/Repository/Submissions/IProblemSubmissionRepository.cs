@@ -9,4 +9,5 @@ public interface IProblemSubmissionRepository : IBaseRepository<ProblemSubmissio
     Task<ProblemSubmission?> GetWithOutputsAsync(Guid questionId, Guid accountId, CancellationToken cancellationToken);
     Task<ProblemSubmission?> GetWithOutputsAsync(Guid problemSubmissionId, CancellationToken cancellationToken);
     Task<List<Question>> GetAllProblemsWithSubmission(Guid examId, Guid accountId, CancellationToken cancellationToken);
+    Task<List<ProblemSubmission>> GetAllAsync(Guid examId, Guid accountId, CancellationToken cancellationToken);
 }

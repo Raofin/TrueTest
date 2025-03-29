@@ -10,21 +10,40 @@ public record ProblemSubmissionResponse(
     bool IsFlagged,
     string? FlagReason,
     ProgLanguageType Language,
+    List<TestCaseInputOutputResponse> TestCaseOutputs
+);
+
+public record ProblemSubmisionResponse(
+    Guid QuestionId,
+    Guid ProblemSubmissionId,
+    string Code,
+    int Attempts,
+    decimal? Score,
+    bool IsFlagged,
+    string? FlagReason,
+    ProgLanguageType Language,
     List<TestCaseOutputResponse> TestCaseOutputs
 );
 
 public record ProblemSubmitResponse(
+    Guid QuestionId,
     Guid ProblemSubmissionId,
     string Code,
     ProgLanguageType Language,
     List<TestCaseOutputResponse> TestCaseOutputs
 );
 
-public record TestCaseOutputResponse(
+public record TestCaseInputOutputResponse(
     Guid TestCaseId,
     bool IsAccepted,
     string Input,
     string ExpectedOutput,
+    string ReceivedOutput
+);
+
+public record TestCaseOutputResponse(
+    Guid TestCaseId,
+    bool IsAccepted,
     string ReceivedOutput
 );
 
@@ -45,12 +64,13 @@ public record ProblemQuesWithSubmitResponse(
 );
 
 public record McqSubmitResponse(
+    Guid QuestionId,
     Guid McqSubmissionId,
-    string AnswerOptions,
-    Guid QuestionId
+    string AnswerOptions
 );
 
 public record McqSubmissionResponse(
+    Guid QuestionId,
     Guid McqSubmissionId,
     string AnswerOptions,
     decimal? Score
@@ -71,12 +91,13 @@ public record McqQuesWithSubmitResponse(
 );
 
 public record WrittenSubmitResponse(
+    Guid QuestionId,
     Guid WrittenSubmissionId,
-    string Answer,
-    Guid QuestionId
+    string Answer
 );
 
 public record WrittenSubmissionResponse(
+    Guid QuestionId,
     Guid WrittenSubmissionId,
     string Answer,
     decimal? Score
@@ -94,4 +115,22 @@ public record WrittenQuesWithSubmitResponse(
     string StatementMarkdown,
     decimal Points,
     WrittenSubmitResponse? WrittenSubmit
+);
+
+public record ExamSubmissionResponse(
+    Guid ExamId,
+    Guid AccountId,
+    SubmissionResponse Submission
+);
+
+public record SubmissionResponse(
+    List<ProblemSubmisionResponse> Problem,
+    List<WrittenSubmissionResponse> Written,
+    List<McqSubmissionResponse> Mcq
+);
+
+public record TestCaseOutputsResponse(
+    Guid TestCaseId,
+    bool IsAccepted,
+    string ReceivedOutput
 );

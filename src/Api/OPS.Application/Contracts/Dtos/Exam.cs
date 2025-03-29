@@ -7,10 +7,7 @@ public record ExamResponse(
     int DurationMinutes,
     string Status,
     DateTime OpensAt,
-    DateTime ClosesAt,
-    DateTime CreatedAt,
-    DateTime? UpdatedAt,
-    bool IsActive
+    DateTime ClosesAt
 );
 
 public record ExamWithQuestionsResponse(
@@ -54,14 +51,21 @@ public record QuestionsWithSubmissionResponse(
 );
 
 public record ExamStartResponse(
+    Guid ExamId,
     DateTime StartedAt,
     DateTime ClosesAt,
-    ExamResponse Exam,
-    QuestionsWithSubmitsResposne QuestionsWithSubmits
+    QuestionResponses Questions,
+    SubmitResponse Submits
 );
 
-public record QuestionsWithSubmitsResposne(
+public record QuestionsWithSubmitsResponse(
     List<ProblemQuesWithSubmitResponse?> Problem,
     List<WrittenQuesWithSubmitResponse?> Written,
     List<McqQuesWithSubmitResponse?> Mcq
+);
+
+public record SubmitResponse(
+    List<ProblemSubmitResponse?> Problem,
+    List<WrittenSubmitResponse?> Written,
+    List<McqSubmitResponse?> Mcq
 );

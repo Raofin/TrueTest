@@ -4,14 +4,11 @@ namespace OPS.Application.Contracts.Dtos;
 
 public record ProblemQuestionResponse(
     Guid QuestionId,
+    Guid ExamId,
+    QuestionType QuestionType,
     string StatementMarkdown,
     decimal Points,
-    Guid ExaminationId,
     DifficultyType DifficultyType,
-    QuestionType QuestionType,
-    DateTime CreatedAt,
-    DateTime? UpdatedAt,
-    bool IsActive,
     List<TestCaseResponse> TestCases
 );
 
@@ -34,14 +31,11 @@ public record TestCaseRequest(
 
 public record McqQuestionResponse(
     Guid QuestionId,
+    Guid ExamId,
+    QuestionType QuestionType,
     string StatementMarkdown,
     decimal Score,
-    Guid ExaminationId,
     DifficultyType DifficultyType,
-    QuestionType QuestionType,
-    DateTime CreatedAt,
-    DateTime? UpdatedAt,
-    bool IsActive,
     McqOptionResponse McqOption
 );
 
@@ -74,14 +68,12 @@ public record UpdateMcqOptionRequest(
 
 public record WrittenQuestionResponse(
     Guid QuestionId,
+    Guid ExamId,
+    QuestionType QuestionType,
     bool HasLongAnswer,
     string StatementMarkdown,
     decimal Score,
-    Guid ExaminationId,
-    DifficultyType DifficultyType,
-    QuestionType QuestionType,
-    DateTime CreatedAt,
-    DateTime? UpdatedAt
+    DifficultyType DifficultyType
 );
 
 public record WrittenQuestionUpdateRequest(

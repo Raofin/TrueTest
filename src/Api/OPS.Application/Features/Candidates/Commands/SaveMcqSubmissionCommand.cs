@@ -51,7 +51,7 @@ public class SaveMcqSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoPr
 
         await _unitOfWork.CommitAsync(cancellationToken);
 
-        return submission.ToDto();
+        return submission.ToSubmitDto();
     }
 }
 

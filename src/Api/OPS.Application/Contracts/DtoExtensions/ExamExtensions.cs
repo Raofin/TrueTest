@@ -15,10 +15,7 @@ public static class ExamExtensions
             exam.DurationMinutes,
             exam.Status(),
             exam.OpensAt,
-            exam.ClosesAt,
-            exam.CreatedAt,
-            exam.UpdatedAt,
-            exam.IsActive
+            exam.ClosesAt
         );
     }
 

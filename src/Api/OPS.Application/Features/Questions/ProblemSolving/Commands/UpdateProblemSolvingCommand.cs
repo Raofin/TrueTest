@@ -11,7 +11,7 @@ using Throw;
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
 
 public record UpdateProblemSolvingCommand(
-    Guid Id,
+    Guid QuestionId,
     string? StatementMarkdown,
     decimal? Points,
     DifficultyType? DifficultyType,
@@ -25,7 +25,7 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<ProblemQuestionResponse>> Handle(
         UpdateProblemSolvingCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetWithTestCases(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithTestCases(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
@@ -68,7 +68,7 @@ public class UpdateProblemSolvingCommandValidator : AbstractValidator<UpdateProb
 {
     public UpdateProblemSolvingCommandValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.QuestionId)
             .NotEmpty()
             .NotEqual(Guid.Empty);
 

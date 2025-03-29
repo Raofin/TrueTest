@@ -47,13 +47,18 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
         exam.ThrowIfNull();
 
         var examReview = new ExamStartResponse(
+            exam.Id,
             candidate.StartedAt.Value,
             candidate.StartedAt.Value.AddMinutes(exam.DurationMinutes),
-            exam.ToDto(),
-            new QuestionsWithSubmitsResposne(
-                exam.Questions.Select(q => q.ToProblemWithSubmitDto()).ToList(),
-                exam.Questions.Select(q => q.ToWrittenWithSubmitDto()).ToList(),
-                exam.Questions.Select(q => q.ToMcqWithSubmitDto()).ToList()
+            new QuestionResponses(
+                exam.Questions.Select(q => q.ToProblemQuestionDto()).ToList(),
+                exam.Questions.Select(q => q.ToWrittenQuestionDto()).ToList(),
+                exam.Questions.Select(q => q.ToMcqQuestionDto()).ToList()
+            ),
+            new SubmitResponse(
+                exam.Questions.Select(q => q.ToProblemSubmitDto()).ToList(),
+                exam.Questions.Select(q => q.ToWrittenSubmitDto()).ToList(),
+                exam.Questions.Select(q => q.ToMcqSubmitDto()).ToList()
             )
         );
 
