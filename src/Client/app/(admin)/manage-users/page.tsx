@@ -38,13 +38,13 @@ type User = {
 }
 
 export default function Component() {
+  
   const [filterValue, setFilterValue] = useState('')
   const rowsPerPage = 10
   const [page, setPage] = useState(1)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [usersData, setUserData] = useState<User[]>([])
   const [error, setError] = useState('')
-  
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const hasSearchFilter = Boolean(filterValue)
 
