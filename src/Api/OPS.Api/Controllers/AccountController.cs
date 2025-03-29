@@ -83,4 +83,19 @@ public class AccountController(IMediator mediator) : BaseApiController
         var response = await _mediator.Send(command);
         return ToResult(response);
     }
+
+    /// <summary>Deletes an account.</summary>
+    /// <param name="accountId">Account ID.</param>
+    /// <returns>A success response if the account was deleted.</returns>
+    [HttpDelete("Delete/{accountId:guid}")]
+    [EndpointDescription("Deletes an account.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    public async Task<IActionResult> DeleteAccount(Guid accountId)
+    {
+        var command = new DeleteAccountCommand(accountId);
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
 }
