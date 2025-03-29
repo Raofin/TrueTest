@@ -14,7 +14,7 @@ internal class TestCaseRepository(AppDbContext dbContext) : Repository<TestCase>
         return await _dbContext.TestCases
            .AsNoTracking()
            .Where(q => q.QuestionId == questionId)
-           .OrderBy(exam => exam.CreatedAt)
+           .OrderBy(q => q.CreatedAt)
            .ToListAsync(cancellationToken);
     }
 }

@@ -47,6 +47,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
     {
         return await GetWithDetailsQuery()
             .AsNoTracking()
+            .OrderBy(a => a.CreatedAt)
             .ToListAsync(cancellationToken);
     }
 
