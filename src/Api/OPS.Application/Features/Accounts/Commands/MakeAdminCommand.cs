@@ -1,44 +1,42 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
 using OPS.Domain;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Accounts.Commands;
 
-public record MakeAdminCommand(Guid AccountId) : IRequest<ErrorOr<AccountWithDetailsResponse>>;
+public record MakeAdminCommand(List<Guid> AccountIds) : IRequest<ErrorOr<Success>>;
 
 public class MakeAdminCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<MakeAdminCommand, ErrorOr<AccountWithDetailsResponse>>
+    : IRequestHandler<MakeAdminCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(
+    public async Task<ErrorOr<Success>> Handle(
         MakeAdminCommand request, CancellationToken cancellationToken)
     {
-        var account = await _unitOfWork.Account.GetWithDetails(request.AccountId, cancellationToken);
-        if (account is null) return Error.NotFound();
+        var accounts = await _unitOfWork.Account.GetNonAdminAccounts(request.AccountIds, cancellationToken);
 
-        if (account.AccountRoles.Any(q => q.RoleId == (int)RoleType.Admin))
+        if (accounts.Count == 0)
         {
-            return account.ToDtoWithDetails();
+            return Error.NotFound(description: "No non-admin accounts found.");
         }
 
-        var accountRole = new AccountRole
+        foreach (var account in accounts)
         {
-            AccountId = request.AccountId,
-            RoleId = (int)RoleType.Admin
-        };
-
-        account.AccountRoles.Add(accountRole);
+            _unitOfWork.AccountRole.Add(new AccountRole
+            {
+                AccountId = account.Id,
+                RoleId = (int)RoleType.Admin
+            });
+        }
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? account.ToDtoWithDetails()
+            ? Result.Success
             : Error.Failure();
     }
 }
@@ -47,6 +45,8 @@ public class MakeAdminCommandValidator : AbstractValidator<MakeAdminCommand>
 {
     public MakeAdminCommandValidator()
     {
-        RuleFor(x => x.AccountId).NotEmpty();
+        RuleForEach(x => x.AccountIds)
+            .NotEmpty()
+            .NotEqual(Guid.Empty);
     }
 }

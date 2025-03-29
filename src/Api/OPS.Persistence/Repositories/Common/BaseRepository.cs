@@ -4,7 +4,7 @@ using OPS.Domain.Contracts.Repository.Common;
 
 namespace OPS.Persistence.Repositories.Common;
 
-internal class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEntity> where TEntity : class
+public class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEntity> where TEntity : class
 {
     private readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 

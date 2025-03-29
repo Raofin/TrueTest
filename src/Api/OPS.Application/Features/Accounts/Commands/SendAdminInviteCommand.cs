@@ -8,7 +8,7 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Accounts.Commands;
 
-public record SendAdminInviteCommand(string Email) : IRequest<ErrorOr<Success>>;
+public record SendAdminInviteCommand(List<string> Email) : IRequest<ErrorOr<Success>>;
 
 public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<SendAdminInviteCommand, ErrorOr<Success>>
@@ -17,36 +17,28 @@ public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork)
 
     public async Task<ErrorOr<Success>> Handle(SendAdminInviteCommand request, CancellationToken cancellationToken)
     {
-        var isExists = await _unitOfWork.AdminInvite.IsExistsAsync(request.Email, cancellationToken);
-        if (isExists) return Result.Success;
+        var emails = await _unitOfWork.AdminInvite.GetUninvitedEmails(request.Email, cancellationToken);
+        var existingAccounts = await _unitOfWork.Account.GetByEmailsAsync(emails, cancellationToken);
 
-        var account = await _unitOfWork.Account.GetByEmailAsync(request.Email, cancellationToken);
+        var nonAdminEmails = existingAccounts
+            .Where(ea => ea.AccountRoles.All(ar => ar.RoleId != (int)RoleType.Admin))
+            .ToList();
 
-        if (account is null)
-        {
-            var adminInvite = new AdminInvite { Email = request.Email };
-            _unitOfWork.AdminInvite.Add(adminInvite);
-        }
-        else if (account.AccountRoles.All(role => role.RoleId != (int)RoleType.Admin))
-        {
-            var accountRole = new AccountRole
-            {
-                AccountId = account.Id,
-                RoleId = (int)RoleType.Admin
-            };
+        var newAdminRoles = nonAdminEmails.Select(account => new AccountRole
+            { AccountId = account.Id, RoleId = (int)RoleType.Admin }
+        );
 
-            account.AccountRoles.Add(accountRole);
-        }
-        else
-        {
-            return Result.Success;
-        }
+        _unitOfWork.AccountRole.AddRange(newAdminRoles);
+        var updatedAccountEmails = nonAdminEmails.Select(a => a.Email).ToList();
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        emails = emails.Except(existingAccounts.Select(e => e.Email)).ToList();
 
-        return result > 0
-            ? Result.Success
-            : Error.Failure();
+        var adminInvites = emails.Select(email => new AdminInvite { Email = email }).ToList();
+        _unitOfWork.AdminInvite.AddRange(adminInvites);
+
+        await _unitOfWork.CommitAsync(cancellationToken);
+
+        return Result.Success;
     }
 }
 
@@ -54,7 +46,7 @@ public class SendAdminInviteCommandValidator : AbstractValidator<SendAdminInvite
 {
     public SendAdminInviteCommandValidator()
     {
-        RuleFor(x => x.Email)
+        RuleForEach(x => x.Email)
             .NotEmpty()
             .Matches(ValidationConstants.EmailRegex);
     }

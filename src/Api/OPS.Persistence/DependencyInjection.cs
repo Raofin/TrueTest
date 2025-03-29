@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
         services.AddScoped<IOtpRepository, OtpRepository>();
         services.AddScoped<IExamRepository, ExamRepository>();
         services.AddScoped<IExamCandidatesRepository, ExamCandidatesRepository>();
@@ -32,7 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IProblemSubmissionRepository, ProblemSubmissionRepository>();
         services.AddScoped<ITestCaseOutputRepository, TestCaseOutputRepository>();
         services.AddScoped<ICloudFileRepository, CloudFIleRepository>();
-        services.AddScoped<ITestCaseRepository, TestCaseRepository>();  
+        services.AddScoped<ITestCaseRepository, TestCaseRepository>();
         services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();
 
         return services;

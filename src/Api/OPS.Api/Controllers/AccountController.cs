@@ -57,12 +57,12 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Upgrades an account to admin.</summary>
-    /// <param name="command">Account ID to make admin.</param>
-    /// <returns>The updated account object.</returns>
+    /// <summary>Upgrades a list of accounts to admin.</summary>
+    /// <param name="command">Account ID List.</param>
+    /// <returns>A success response if the accounts are upgraded.</returns>
     [HttpPost("MakeAdmin")]
-    [EndpointDescription("Upgrades an account to admin.")]
-    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
+    [EndpointDescription("Upgrades a list of accounts to admin")]
+    [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
@@ -71,11 +71,11 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Sends admin invite to an email address.</summary>
-    /// <param name="command">Email address to send admin invite.</param>
-    /// <returns>A success response if the invite was sent.</returns>
+    /// <summary>Sends admin invite to a list of email addresses.</summary>
+    /// <param name="command">Email address list.</param>
+    /// <returns>Void.</returns>
     [HttpPost("SendAdminInvite")]
-    [EndpointDescription("Sends admin invite to an email address.")]
+    [EndpointDescription("Sends admin invite to a list of email addresses.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
