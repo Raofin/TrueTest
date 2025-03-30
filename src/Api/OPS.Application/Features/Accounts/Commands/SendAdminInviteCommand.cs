@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using OPS.Application.CrossCutting.Constants;
 using OPS.Domain;
+using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
@@ -10,10 +11,11 @@ namespace OPS.Application.Features.Accounts.Commands;
 
 public record SendAdminInviteCommand(List<string> Email) : IRequest<ErrorOr<Success>>;
 
-public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork)
+public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork, IAccountEmails accountEmails)
     : IRequestHandler<SendAdminInviteCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IAccountEmails _accountEmails = accountEmails;
 
     public async Task<ErrorOr<Success>> Handle(SendAdminInviteCommand request, CancellationToken cancellationToken)
     {
@@ -37,6 +39,9 @@ public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork)
         _unitOfWork.AdminInvite.AddRange(adminInvites);
 
         await _unitOfWork.CommitAsync(cancellationToken);
+
+        _accountEmails.SendAdminInvitation(emails, cancellationToken);
+        _accountEmails.SendAdminGranted(updatedAccountEmails, cancellationToken);
 
         return Result.Success;
     }
