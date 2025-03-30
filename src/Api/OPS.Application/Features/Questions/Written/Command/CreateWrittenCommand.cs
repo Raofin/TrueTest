@@ -41,7 +41,7 @@ public class CreateWrittenCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.ToWrittenQuestionDto()
+            ? question.MapToWrittenQuestionDto()
             : Error.Failure();
     }
 }

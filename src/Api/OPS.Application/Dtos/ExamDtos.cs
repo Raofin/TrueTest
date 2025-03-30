@@ -58,14 +58,8 @@ public record ExamStartResponse(
     SubmitResponse Submits
 );
 
-public record QuestionsWithSubmitsResponse(
-    List<ProblemQuesWithSubmitResponse?> Problem,
-    List<WrittenQuesWithSubmitResponse?> Written,
-    List<McqQuesWithSubmitResponse?> Mcq
-);
-
-public record SubmitResponse(
-    List<ProblemSubmitResponse?> Problem,
-    List<WrittenSubmitResponse?> Written,
-    List<McqSubmitResponse?> Mcq
+public record ExamSubmissionResponse(
+    Guid ExamId,
+    Guid AccountId,
+    SubmissionResponse Submission
 );

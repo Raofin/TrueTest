@@ -19,7 +19,7 @@ public class GetAllWrittenByExamIdQueryHandler(IUnitOfWork unitOfWork)
     {
         var questions = await _unitOfWork.Question.GetWrittenByExamIdAsync(request.ExamId, cancellationToken);
 
-        return questions.Select(q => q.ToWrittenQuestionDto()).ToList();
+        return questions.Select(q => q.MapToWrittenQuestionDto()).ToList();
     }
 }
 

@@ -99,7 +99,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
         if (result <= 0) return Error.Failure();
         profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
-        return profile.ToDto()!;
+        return profile.MapToDto()!;
     }
 }
 

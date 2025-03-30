@@ -11,11 +11,6 @@ public record AccountResponse(
     bool IsActive
 );
 
-public record AuthenticationResponse(
-    string Token,
-    AccountWithDetailsResponse AccountWithDetails
-);
-
 public record AccountWithDetailsResponse(
     Guid AccountId,
     string Username,
@@ -42,4 +37,9 @@ public record ProfileLinkRequest(
     Guid? ProfileLinkId,
     string? Name,
     string? Link
+);
+
+public record AuthenticationResponse(
+    string Token,
+    AccountWithDetailsResponse Account
 );

@@ -30,7 +30,7 @@ public class GetExamByCandidateQueryHandler(IUnitOfWork unitOfWork)
             exam.Title,
             exam.DurationMinutes,
             100,
-            candidate.Account!.ToDto(),
+            candidate.Account!.MapToDto(),
             new ExamResultsResponse(
                 100,
                 candidate.StartedAt,

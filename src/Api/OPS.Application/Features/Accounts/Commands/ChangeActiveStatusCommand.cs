@@ -25,7 +25,7 @@ public class ChangeActiveStatusCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? account.ToDto()
+            ? account.MapToDto()
             : Error.Failure();
     }
 }

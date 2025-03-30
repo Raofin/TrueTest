@@ -41,7 +41,7 @@ public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? exam.ToDto()
+            ? exam.MapToDto()
             : Error.Failure();
     }
 }

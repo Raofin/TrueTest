@@ -17,6 +17,6 @@ public class GetAllExamsQueryHandler(IUnitOfWork unitOfWork)
     {
         var exams = await _unitOfWork.Exam.GetAsync(cancellationToken);
 
-        return exams.Select(e => e.ToDto()).ToList();
+        return exams.Select(e => e.MapToDto()).ToList();
     }
 }

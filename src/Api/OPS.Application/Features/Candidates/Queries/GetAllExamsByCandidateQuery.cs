@@ -20,6 +20,6 @@ public class GetAllExamsByCandidateQueryHandler(IUnitOfWork unitOfWork, IUserInf
     {
         var userAccountId = _userInfoProvider.AccountId();
         var exams = await _unitOfWork.Exam.GetByAccountIdAsync(userAccountId, cancellationToken);
-        return exams.Select(e => e.ToDto()).ToList();
+        return exams.Select(e => e.MapToDto()).ToList();
     }
 }

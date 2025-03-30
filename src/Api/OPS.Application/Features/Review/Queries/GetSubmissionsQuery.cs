@@ -2,8 +2,9 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
-using OPS.Application.Mappers;
 using OPS.Domain.Contracts.Repository.Submissions;
+using OPS.Domain.Entities.Submit;
+using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Review.Queries;
 
@@ -31,10 +32,31 @@ public class GetSubmissionsQueryHandler(
             request.ExamId,
             request.AccountId,
             new SubmissionResponse(
-                problemTask.Result.Select(q => q.ToSubmissionDto()).ToList(),
-                writtenTask.Result.Select(q => q.ToSubmissionDto()).ToList(),
-                mcqTask.Result.Select(q => q.ToSubmissionDto()).ToList()
+                problemTask.Result.Select(ToSubmissionDto).ToList(),
+                writtenTask.Result.Select(
+                    ws => new WrittenSubmissionResponse(ws.QuestionId, ws.Id, ws.Answer, ws.Score)
+                ).ToList(),
+                mcqTask.Result.Select(
+                    ms => new McqSubmissionResponse(ms.QuestionId, ms.Id, ms.AnswerOptions, ms.Score)
+                ).ToList()
             )
+        );
+    }
+
+    private static ProblemSubmissionResponse ToSubmissionDto(ProblemSubmission submission)
+    {
+        return new ProblemSubmissionResponse(
+            submission.QuestionId,
+            submission.Id,
+            submission.Code,
+            submission.Attempts,
+            submission.Score,
+            submission.IsFlagged,
+            submission.FlagReason,
+            (ProgLanguageType)submission.ProgLanguageId,
+            submission.TestCaseOutputs.Select(
+                to => new TestCaseOutputResponse(to.TestCaseId, to.IsAccepted, to.ReceivedOutput)
+            ).ToList()
         );
     }
 }

@@ -21,7 +21,7 @@ public class GetMcqQuestionByIdQueryHandler(IUnitOfWork unitOfWork)
 
         return questions is null
             ? Error.NotFound()
-            : questions.ToMcqQuestionDto();
+            : questions.MapToMcqQuestionDto();
     }
 }
 

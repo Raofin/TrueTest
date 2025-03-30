@@ -9,6 +9,15 @@ using Throw;
 
 namespace OPS.Application.Features.Questions.Mcq.Commands;
 
+public record UpdateMcqOptionRequest(
+    string? Option1,
+    string? Option2,
+    string? Option3,
+    string? Option4,
+    bool? IsMultiSelect,
+    string? AnswerOptions
+);
+
 public record UpdateMcqCommand(
     Guid Id,
     string? StatementMarkdown,
@@ -47,7 +56,7 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.ToMcqQuestionDto()
+            ? question.MapToMcqQuestionDto()
             : Error.Failure();
     }
 }

@@ -19,7 +19,7 @@ public class GetMcqByExamQueryHandler(IUnitOfWork unitOfWork)
     {
         var questions = await _unitOfWork.Question.GetMcqByExamIdAsync(request.ExamId, cancellationToken);
 
-        return questions.Select(q => q.ToMcqQuestionDto()).ToList();
+        return questions.Select(q => q.MapToMcqQuestionDto()).ToList();
     }
 }
 

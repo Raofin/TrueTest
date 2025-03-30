@@ -5,6 +5,8 @@ using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
+using OPS.Domain.Entities.Exam;
+using OPS.Domain.Enums;
 using Throw;
 
 namespace OPS.Application.Features.Candidates.Commands;
@@ -51,18 +53,69 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             candidate.StartedAt.Value,
             candidate.StartedAt.Value.AddMinutes(exam.DurationMinutes),
             new QuestionResponses(
-                exam.Questions.Select(q => q.ToProblemQuestionDto()).ToList(),
-                exam.Questions.Select(q => q.ToWrittenQuestionDto()).ToList(),
-                exam.Questions.Select(q => q.ToMcqQuestionDto()).ToList()
+                exam.Questions.Select(q => q.MapToProblemQuestionDto()).ToList(),
+                exam.Questions.Select(q => q.MapToWrittenQuestionDto()).ToList(),
+                exam.Questions.Select(q => q.MapToMcqQuestionDto()).ToList()
             ),
             new SubmitResponse(
-                exam.Questions.Select(q => q.ToProblemSubmitDto()).ToList(),
-                exam.Questions.Select(q => q.ToWrittenSubmitDto()).ToList(),
-                exam.Questions.Select(q => q.ToMcqSubmitDto()).ToList()
+                exam.Questions.Select(ToProblemSubmitDto).ToList(),
+                exam.Questions.Select(ToWrittenSubmitDto).ToList(),
+                exam.Questions.Select(ToMcqSubmitDto).ToList()
             )
         );
 
         return examReview;
+    }
+
+    private static ProblemSubmitResponse? ToProblemSubmitDto(Question question)
+    {
+        if (question.QuestionTypeId != (int)QuestionType.ProblemSolving
+            || question.ProblemSubmissions.FirstOrDefault() is not null)
+            return null;
+
+        var submission = question.ProblemSubmissions.First();
+
+        return new ProblemSubmitResponse(
+            question.Id,
+            submission.Id,
+            submission.Code,
+            (ProgLanguageType)submission.ProgLanguageId,
+            submission.TestCaseOutputs.Select(tco => new TestCaseOutputResponse(
+                tco.TestCaseId,
+                tco.IsAccepted,
+                tco.ReceivedOutput
+            )).ToList()
+        );
+    }
+
+    private static WrittenSubmitResponse? ToWrittenSubmitDto(Question question)
+    {
+        if (question.QuestionTypeId != (int)QuestionType.Written ||
+            question.WrittenSubmissions.FirstOrDefault() is not null)
+            return null;
+
+        var submission = question.WrittenSubmissions.First();
+
+        return new WrittenSubmitResponse(
+            question.Id,
+            submission.Id,
+            submission.Answer
+        );
+    }
+
+    private static McqSubmitResponse? ToMcqSubmitDto(Question question)
+    {
+        if (question.QuestionTypeId != (int)QuestionType.MCQ ||
+            question.McqSubmissions.FirstOrDefault() is not null)
+            return null;
+
+        var submission = question.McqSubmissions.First();
+
+        return new McqSubmitResponse(
+            question.Id,
+            submission.Id,
+            submission.AnswerOptions
+        );
     }
 }
 

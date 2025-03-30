@@ -17,7 +17,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="examId">Exam Id.</param>
     /// <param name="accountId">Account Id of a candidate.</param>
     /// <returns>Exam with questions and submissions.</returns>
-    [HttpGet("Exam/{examId:guid}/{accountId:guid}")]
+    [HttpGet("Questions/{examId:guid}/{accountId:guid}")]
     [EndpointDescription("Retrieves an exam with questions and submissions of a candidate.")]
     [ProducesResponseType<ExamReviewResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -47,7 +47,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="examId">Exam Id.</param>
     /// <param name="accountId">User Account Id.</param>
     /// <returns>List of problem-solving submissions.</returns>
-    [HttpGet("Exam/Problem/{examId:guid}/{accountId:guid}")]
+    [HttpGet("Problem/{examId:guid}/{accountId:guid}")]
     [EndpointDescription("Retrieves problem-solving submissions for a specific exam and user.")]
     [ProducesResponseType<List<ProblemQuesWithSubmissionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -62,7 +62,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="examId">Exam Id.</param>
     /// <param name="accountId">User Account Id.</param>
     /// <returns>List of written submissions.</returns>
-    [HttpGet("Exam/Written/{examId:guid}/{accountId:guid}")]
+    [HttpGet("Written/{examId:guid}/{accountId:guid}")]
     [EndpointDescription("Retrieves written submissions for a specific exam and user.")]
     [ProducesResponseType<List<WrittenQuesWithSubmissionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -77,7 +77,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="examId">Exam Id.</param>
     /// <param name="accountId">User Account Id.</param>
     /// <returns>List of MCQ submissions.</returns>
-    [HttpGet("Exam/Mcq/{examId:guid}/{accountId:guid}")]
+    [HttpGet("Mcq/{examId:guid}/{accountId:guid}")]
     [EndpointDescription("Retrieves MCQ submissions for a specific exam and user.")]
     [ProducesResponseType<List<McqSubmissionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

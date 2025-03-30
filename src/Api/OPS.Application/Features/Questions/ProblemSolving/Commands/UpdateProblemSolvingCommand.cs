@@ -10,6 +10,8 @@ using Throw;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
 
+public record TestCaseUpdateRequest(Guid? TestCaseId, string? Input, string? Output);
+
 public record UpdateProblemSolvingCommand(
     Guid QuestionId,
     string? StatementMarkdown,
@@ -59,7 +61,7 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.ToProblemQuestionDto()
+            ? question.MapToProblemQuestionDto()
             : Error.Failure();
     }
 }

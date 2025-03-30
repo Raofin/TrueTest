@@ -2,7 +2,15 @@
 
 namespace OPS.Application.Dtos;
 
-public record ProblemSubmissionResponse(
+public record ProblemQuesWithSubmissionResponse(
+    Guid QuestionId,
+    string StatementMarkdown,
+    decimal Points,
+    DifficultyType DifficultyType,
+    ProblemSubmissionTcResponse? ProblemSubmission
+);
+
+public record ProblemSubmissionTcResponse(
     Guid ProblemSubmissionId,
     string Code,
     int Attempts,
@@ -13,7 +21,15 @@ public record ProblemSubmissionResponse(
     List<TestCaseInputOutputResponse> TestCaseOutputs
 );
 
-public record ProblemSubmisionResponse(
+public record TestCaseInputOutputResponse(
+    Guid TestCaseId,
+    bool IsAccepted,
+    string Input,
+    string ExpectedOutput,
+    string ReceivedOutput
+);
+
+public record ProblemSubmissionResponse(
     Guid QuestionId,
     Guid ProblemSubmissionId,
     string Code,
@@ -33,47 +49,10 @@ public record ProblemSubmitResponse(
     List<TestCaseOutputResponse> TestCaseOutputs
 );
 
-public record TestCaseInputOutputResponse(
-    Guid TestCaseId,
-    bool IsAccepted,
-    string Input,
-    string ExpectedOutput,
-    string ReceivedOutput
-);
-
 public record TestCaseOutputResponse(
     Guid TestCaseId,
     bool IsAccepted,
     string ReceivedOutput
-);
-
-public record ProblemQuesWithSubmissionResponse(
-    Guid QuestionId,
-    string StatementMarkdown,
-    decimal Points,
-    DifficultyType DifficultyType,
-    ProblemSubmissionResponse? ProblemSubmission
-);
-
-public record ProblemQuesWithSubmitResponse(
-    Guid QuestionId,
-    string StatementMarkdown,
-    decimal Points,
-    DifficultyType DifficultyType,
-    ProblemSubmitResponse? ProblemSubmit
-);
-
-public record McqSubmitResponse(
-    Guid QuestionId,
-    Guid McqSubmissionId,
-    string AnswerOptions
-);
-
-public record McqSubmissionResponse(
-    Guid QuestionId,
-    Guid McqSubmissionId,
-    string AnswerOptions,
-    decimal? Score
 );
 
 public record McqQuesWithSubmissionResponse(
@@ -83,24 +62,17 @@ public record McqQuesWithSubmissionResponse(
     McqSubmissionResponse? McqSubmission
 );
 
-public record McqQuesWithSubmitResponse(
+public record McqSubmissionResponse(
     Guid QuestionId,
-    string StatementMarkdown,
-    decimal Points,
-    McqSubmitResponse? McqSubmit
-);
-
-public record WrittenSubmitResponse(
-    Guid QuestionId,
-    Guid WrittenSubmissionId,
-    string Answer
-);
-
-public record WrittenSubmissionResponse(
-    Guid QuestionId,
-    Guid WrittenSubmissionId,
-    string Answer,
+    Guid McqSubmissionId,
+    string AnswerOptions,
     decimal? Score
+);
+
+public record McqSubmitResponse(
+    Guid QuestionId,
+    Guid McqSubmissionId,
+    string AnswerOptions
 );
 
 public record WrittenQuesWithSubmissionResponse(
@@ -110,27 +82,27 @@ public record WrittenQuesWithSubmissionResponse(
     WrittenSubmissionResponse? WrittenSubmission
 );
 
-public record WrittenQuesWithSubmitResponse(
+public record WrittenSubmissionResponse(
     Guid QuestionId,
-    string StatementMarkdown,
-    decimal Points,
-    WrittenSubmitResponse? WrittenSubmit
+    Guid WrittenSubmissionId,
+    string Answer,
+    decimal? Score
 );
 
-public record ExamSubmissionResponse(
-    Guid ExamId,
-    Guid AccountId,
-    SubmissionResponse Submission
+public record WrittenSubmitResponse(
+    Guid QuestionId,
+    Guid WrittenSubmissionId,
+    string Answer
 );
 
 public record SubmissionResponse(
-    List<ProblemSubmisionResponse> Problem,
+    List<ProblemSubmissionResponse> Problem,
     List<WrittenSubmissionResponse> Written,
     List<McqSubmissionResponse> Mcq
 );
 
-public record TestCaseOutputsResponse(
-    Guid TestCaseId,
-    bool IsAccepted,
-    string ReceivedOutput
+public record SubmitResponse(
+    List<ProblemSubmitResponse?> Problem,
+    List<WrittenSubmitResponse?> Written,
+    List<McqSubmitResponse?> Mcq
 );

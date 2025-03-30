@@ -21,7 +21,7 @@ public class GetWrittenByIdQueryHandler(IUnitOfWork unitOfWork)
 
         return question is null
             ? Error.NotFound()
-            : question.ToWrittenQuestionDto();
+            : question.MapToWrittenQuestionDto();
     }
 }
 

@@ -9,6 +9,8 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
 
+public record TestCaseRequest(string Input, string Output);
+
 public record CreateProblemSolvingCommand(
     Guid ExamId,
     string StatementMarkdown,
@@ -51,7 +53,7 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.ToProblemQuestionDto()
+            ? question.MapToProblemQuestionDto()
             : Error.Failure();
     }
 }

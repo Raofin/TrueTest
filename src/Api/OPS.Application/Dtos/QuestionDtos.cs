@@ -18,17 +18,6 @@ public record TestCaseResponse(
     string Output
 );
 
-public record TestCaseUpdateRequest(
-    Guid? TestCaseId,
-    string? Input,
-    string? Output
-);
-
-public record TestCaseRequest(
-    string Input,
-    string Output
-);
-
 public record McqQuestionResponse(
     Guid QuestionId,
     Guid ExamId,
@@ -48,24 +37,6 @@ public record McqOptionResponse(
     string AnswerOptions
 );
 
-public record CreateMcqOptionRequest(
-    string Option1,
-    string Option2,
-    string? Option3,
-    string? Option4,
-    bool IsMultiSelect,
-    string AnswerOptions
-);
-
-public record UpdateMcqOptionRequest(
-    string? Option1,
-    string? Option2,
-    string? Option3,
-    string? Option4,
-    bool? IsMultiSelect,
-    string? AnswerOptions
-);
-
 public record WrittenQuestionResponse(
     Guid QuestionId,
     Guid ExamId,
@@ -73,13 +44,5 @@ public record WrittenQuestionResponse(
     bool HasLongAnswer,
     string StatementMarkdown,
     decimal Score,
-    DifficultyType DifficultyType
-);
-
-public record WrittenQuestionUpdateRequest(
-    Guid? QuestionId,
-    bool? HasLongAnswer,
-    string? StatementMarkdown,
-    decimal? Score,
     DifficultyType DifficultyType
 );

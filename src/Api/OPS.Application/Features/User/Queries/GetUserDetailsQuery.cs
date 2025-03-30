@@ -25,6 +25,6 @@ public class GetUserDetailsQueryHandler(
 
         return account is null
             ? Error.NotFound()
-            : account.ToDtoWithDetails();
+            : account.MapToDtoWithDetails();
     }
 }

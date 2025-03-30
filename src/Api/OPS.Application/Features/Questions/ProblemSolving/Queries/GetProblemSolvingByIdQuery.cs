@@ -21,7 +21,7 @@ public class GetProblemSolvingByIdQueryHandler(IUnitOfWork unitOfWork)
 
         return question is null
             ? Error.NotFound()
-            : question.ToProblemQuestionDto();
+            : question.MapToProblemQuestionDto();
     }
 }
 

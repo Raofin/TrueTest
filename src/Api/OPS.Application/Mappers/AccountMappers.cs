@@ -6,7 +6,7 @@ namespace OPS.Application.Mappers;
 
 public static class AccountExtensions
 {
-    public static AccountResponse ToDto(this Account account)
+    public static AccountResponse MapToDto(this Account account)
     {
         return new AccountResponse(
             account.Id,
@@ -18,7 +18,7 @@ public static class AccountExtensions
         );
     }
 
-    public static AccountWithDetailsResponse ToDtoWithDetails(this Account account)
+    public static AccountWithDetailsResponse MapToDtoWithDetails(this Account account)
     {
         var roles = account.AccountRoles
             .Select(accountRole => (RoleType)accountRole.RoleId)
@@ -32,11 +32,11 @@ public static class AccountExtensions
             account.UpdatedAt,
             account.IsActive,
             roles,
-            account.Profile.ToDto()
+            account.Profile.MapToDto()
         );
     }
 
-    public static ProfileResponse? ToDto(this Profile? profile)
+    public static ProfileResponse? MapToDto(this Profile? profile)
     {
         return profile is null
             ? null

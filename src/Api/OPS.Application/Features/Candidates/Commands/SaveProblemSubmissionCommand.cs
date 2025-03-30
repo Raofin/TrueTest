@@ -2,7 +2,6 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
-using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Exam;
@@ -79,10 +78,22 @@ public class SaveProblemSubmissionCommandHandler(
             submission = existingSubmission;
         }
 
+        var response = new ProblemSubmitResponse(
+            submission.QuestionId,
+            submission.Id,
+            submission.Code,
+            (ProgLanguageType)submission.ProgLanguageId,
+            submission.TestCaseOutputs.Select(tco => new TestCaseOutputResponse(
+                tco.TestCaseId,
+                tco.IsAccepted,
+                tco.ReceivedOutput
+            )).ToList()
+        );
+
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? submission.ToProblemSubmitDto(testCases)!
+            ? response
             : Error.Failure();
     }
 }

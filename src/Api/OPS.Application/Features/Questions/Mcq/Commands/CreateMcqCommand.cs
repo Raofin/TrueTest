@@ -9,6 +9,15 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Questions.Mcq.Commands;
 
+public record CreateMcqOptionRequest(
+    string Option1,
+    string Option2,
+    string? Option3,
+    string? Option4,
+    bool IsMultiSelect,
+    string AnswerOptions
+);
+
 public record CreateMcqCommand(
     Guid ExamId,
     string StatementMarkdown,
@@ -49,7 +58,7 @@ public class CreateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.ToMcqQuestionDto()
+            ? question.MapToMcqQuestionDto()
             : Error.Failure();
     }
 }

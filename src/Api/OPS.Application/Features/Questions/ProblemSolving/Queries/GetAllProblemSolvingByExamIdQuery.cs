@@ -19,7 +19,7 @@ public class GetProblemSolvingByExamQueryHandler(IUnitOfWork unitOfWork)
     {
         var questions = await _unitOfWork.Question.GetProblemSolvingByExamIdAsync(request.ExamId, cancellationToken);
 
-        return questions.Select(q => q.ToProblemQuestionDto()).ToList();
+        return questions.Select(q => q.MapToProblemQuestionDto()).ToList();
     }
 }
 

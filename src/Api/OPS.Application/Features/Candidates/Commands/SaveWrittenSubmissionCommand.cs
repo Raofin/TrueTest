@@ -2,7 +2,6 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
-using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
@@ -48,7 +47,11 @@ public class SaveWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserIn
 
         await _unitOfWork.CommitAsync(cancellationToken);
 
-        return submission.ToSubmitDto();
+        return new WrittenSubmitResponse(
+            submission.QuestionId,
+            submission.Id,
+            submission.Answer
+        );
     }
 }
 

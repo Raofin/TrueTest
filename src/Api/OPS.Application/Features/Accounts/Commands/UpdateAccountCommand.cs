@@ -39,7 +39,7 @@ public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? account.ToDtoWithDetails()
+            ? account.MapToDtoWithDetails()
             : Error.Failure();
     }
 }

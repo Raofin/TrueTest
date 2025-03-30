@@ -18,6 +18,6 @@ public class GetAllAccountsQueryHandler(IUnitOfWork unitOfWork)
     {
         var accounts = await _unitOfWork.Account.GetAllWithDetails(cancellationToken);
 
-        return accounts.Select(a => a.ToDtoWithDetails()).ToList();
+        return accounts.Select(a => a.MapToDtoWithDetails()).ToList();
     }
 }
