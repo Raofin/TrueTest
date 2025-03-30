@@ -1,8 +1,8 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Enums;
 
@@ -15,11 +15,13 @@ public record UpdateWrittenCommand(
     bool? HasLongAnswer,
     DifficultyType? DifficultyType) : IRequest<ErrorOr<WrittenQuestionResponse>>;
 
-public class UpdateWrittenCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<UpdateWrittenCommand, ErrorOr<WrittenQuestionResponse>>
+public class UpdateWrittenCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<UpdateWrittenCommand, ErrorOr<WrittenQuestionResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<WrittenQuestionResponse>> Handle(UpdateWrittenCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<WrittenQuestionResponse>> Handle(UpdateWrittenCommand request,
+        CancellationToken cancellationToken)
     {
         var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
@@ -27,7 +29,9 @@ public class UpdateWrittenCommandHandler(IUnitOfWork unitOfWork) : IRequestHandl
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
         question.Points = request.Points ?? question.Points;
         question.HasLongAnswer = request.HasLongAnswer ?? question.HasLongAnswer;
-        question.DifficultyId = request.DifficultyType.HasValue ? (int)request.DifficultyType.Value : question.DifficultyId;
+        question.DifficultyId = request.DifficultyType.HasValue
+            ? (int)request.DifficultyType.Value
+            : question.DifficultyId;
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 

@@ -2,8 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OPS.Application.CrossCutting.BackgroundServices;
 using OPS.Application.CrossCutting.Behaviors;
-using OPS.Application.Interfaces;
-using OPS.Application.Services;
+using OPS.Application.Services.AuthService;
 
 namespace OPS.Application;
 

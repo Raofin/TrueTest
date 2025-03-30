@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Enums;
 using Throw;
@@ -30,9 +30,11 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
 
         question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
         question.Points = command.Points ?? question.Points;
-        question.DifficultyId = command.DifficultyType.HasValue ? (int)command.DifficultyType.Value : question.DifficultyId;
+        question.DifficultyId = command.DifficultyType.HasValue
+            ? (int)command.DifficultyType.Value
+            : question.DifficultyId;
 
-        if(command.McqOption is not null)
+        if (command.McqOption is not null)
         {
             question.McqOption.Option1 = command.McqOption.Option1 ?? question.McqOption.Option1;
             question.McqOption.Option2 = command.McqOption.Option2 ?? question.McqOption.Option2;

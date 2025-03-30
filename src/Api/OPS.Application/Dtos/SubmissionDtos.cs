@@ -1,6 +1,6 @@
 ﻿using OPS.Domain.Enums;
 
-namespace OPS.Application.Contracts.Dtos;
+namespace OPS.Application.Dtos;
 
 public record ProblemSubmissionResponse(
     Guid ProblemSubmissionId,

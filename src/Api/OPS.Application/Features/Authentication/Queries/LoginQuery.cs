@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.Interfaces;
+using OPS.Application.Dtos;
+using OPS.Application.Services.AuthService;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 

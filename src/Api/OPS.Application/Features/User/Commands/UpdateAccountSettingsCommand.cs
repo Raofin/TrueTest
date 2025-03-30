@@ -1,9 +1,9 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
 using OPS.Application.CrossCutting.Constants;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using Throw;
@@ -24,7 +24,8 @@ public class UpdateAccountSettingsCommandHandler(
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(UpdateAccountSettingsCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(UpdateAccountSettingsCommand request,
+        CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
 
@@ -33,7 +34,8 @@ public class UpdateAccountSettingsCommandHandler(
 
         if (request.Username is not null)
         {
-            var isUnique = await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(request.Username, null, cancellationToken);
+            var isUnique = await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
+                request.Username, null, cancellationToken);
 
             if (!isUnique) return Error.Conflict(description: "Username is already taken");
 
@@ -42,7 +44,12 @@ public class UpdateAccountSettingsCommandHandler(
 
         if (request.NewPassword is not null)
         {
-            var isVerified = _passwordHasher.VerifyPassword(account.PasswordHash, account.Salt, request.CurrentPassword!);
+            var isVerified = _passwordHasher.VerifyPassword(
+                account.PasswordHash,
+                account.Salt,
+                request.CurrentPassword!
+            );
+
             if (!isVerified) return Error.Unauthorized(description: "Invalid current password");
 
             var (hashedPassword, salt) = _passwordHasher.HashPassword(request.NewPassword);

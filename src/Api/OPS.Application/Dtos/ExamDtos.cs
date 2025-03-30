@@ -1,4 +1,4 @@
-﻿namespace OPS.Application.Contracts.Dtos;
+﻿namespace OPS.Application.Dtos;
 
 public record ExamResponse(
     Guid ExamId,

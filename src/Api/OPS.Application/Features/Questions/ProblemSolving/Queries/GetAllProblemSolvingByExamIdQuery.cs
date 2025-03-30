@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Queries;
@@ -14,7 +14,8 @@ public class GetProblemSolvingByExamQueryHandler(IUnitOfWork unitOfWork)
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<ProblemQuestionResponse>>> Handle(GetProblemSolvingByExamQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<ProblemQuestionResponse>>> Handle(GetProblemSolvingByExamQuery request,
+        CancellationToken cancellationToken)
     {
         var questions = await _unitOfWork.Question.GetProblemSolvingByExamIdAsync(request.ExamId, cancellationToken);
 

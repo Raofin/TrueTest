@@ -1,10 +1,9 @@
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.Interfaces;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
 
-namespace OPS.Application.Services;
+namespace OPS.Application.Services.AuthService;
 
 internal class AuthService(IJwtGenerator jwtGenerator) : IAuthService
 {

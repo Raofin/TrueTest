@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Mcq.Queries;
@@ -14,7 +14,8 @@ public class GetMcqQuestionByIdQueryHandler(IUnitOfWork unitOfWork)
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<McqQuestionResponse>> Handle(GetMcqQuestionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<McqQuestionResponse>> Handle(GetMcqQuestionByIdQuery request,
+        CancellationToken cancellationToken)
     {
         var questions = await _unitOfWork.Question.GetWithMcqOption(request.QuestionId, cancellationToken);
 

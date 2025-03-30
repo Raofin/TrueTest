@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.User.Commands;
 using OPS.Application.Features.User.Queries;
 using OPS.Domain.Contracts.Core.Authentication;

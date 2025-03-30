@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 
@@ -16,7 +16,8 @@ public class GetUserDetailsQueryHandler(
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(GetUserDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(GetUserDetailsQuery request,
+        CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
 

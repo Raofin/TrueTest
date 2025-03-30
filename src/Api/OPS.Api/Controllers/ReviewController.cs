@@ -1,9 +1,8 @@
-﻿using ErrorOr;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Review.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 

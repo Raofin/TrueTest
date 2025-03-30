@@ -1,7 +1,7 @@
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Domain.Entities.User;
 
-namespace OPS.Application.Interfaces;
+namespace OPS.Application.Services.AuthService;
 
 public interface IAuthService
 {

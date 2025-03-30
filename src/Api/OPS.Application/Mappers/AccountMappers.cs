@@ -1,8 +1,8 @@
-﻿using OPS.Application.Contracts.Dtos;
+﻿using OPS.Application.Dtos;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
-namespace OPS.Application.Contracts.DtoExtensions;
+namespace OPS.Application.Mappers;
 
 public static class AccountExtensions
 {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.Mcq.Commands;
 using OPS.Application.Features.Questions.Mcq.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
