@@ -6,7 +6,7 @@ using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Entities.Exam;
 
-namespace OPS.Application.Features.Examinations.Commands;
+namespace OPS.Application.Features.Exams.Commands;
 
 public record CreateExamCommand(
     string Title,

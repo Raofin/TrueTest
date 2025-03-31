@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Examinations.Commands;
+namespace OPS.Application.Features.Exams.Commands;
 
 public record DeleteExamCommand(Guid ExamId) : IRequest<ErrorOr<Success>>;
 

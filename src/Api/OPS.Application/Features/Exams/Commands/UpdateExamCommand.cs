@@ -5,7 +5,7 @@ using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Examinations.Commands;
+namespace OPS.Application.Features.Exams.Commands;
 
 public record UpdateExamCommand(
     Guid ExamId,

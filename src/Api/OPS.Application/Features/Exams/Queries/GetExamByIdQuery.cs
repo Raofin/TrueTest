@@ -5,7 +5,7 @@ using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Enums;
 
-namespace OPS.Application.Features.Examinations.Queries;
+namespace OPS.Application.Features.Exams.Queries;
 
 public record GetExamByIdQuery(Guid ExamId) : IRequest<ErrorOr<ExamWithQuestionsResponse>>;
 

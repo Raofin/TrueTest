@@ -4,7 +4,7 @@ using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
 
-namespace OPS.Application.Features.Examinations.Queries;
+namespace OPS.Application.Features.Exams.Queries;
 
 public record GetAllExamsQuery : IRequest<ErrorOr<List<ExamResponse>>>;
 

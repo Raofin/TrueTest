@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
-using OPS.Application.Features.Examinations.Commands;
-using OPS.Application.Features.Examinations.Queries;
+using OPS.Application.Features.Exams.Commands;
+using OPS.Application.Features.Exams.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
@@ -18,7 +18,7 @@ public class ExamController(IMediator mediator) : BaseApiController
 
     /// <summary>Retrieves all exams.</summary>
     /// <returns>List of all exams.</returns>
-    [HttpGet("All")]
+    [HttpGet]
     [EndpointDescription("Retrieves all exams.")]
     [ProducesResponseType<List<ExamResponse>>(Status200OK)]
     public async Task<IActionResult> GetAllExamsAsync()
