@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using OPS.Domain.Contracts.Repository.Common;
+using OPS.Domain.Entities.Common;
 
 namespace OPS.Persistence.Repositories.Common;
 
@@ -28,6 +29,13 @@ public class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEntity
         CancellationToken cancellationToken = default)
     {
         return await _entities.SingleOrDefaultAsync(predicate, cancellationToken);
+    }
+
+    public async Task<PaginatedList<TEntity>> GetPaginatedListAsync(int pageIndex, int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _entities.AsQueryable();
+        return await PaginatedList<TEntity>.CreateAsync(query, pageIndex, pageSize, cancellationToken);
     }
 
     public void Add(TEntity entity)

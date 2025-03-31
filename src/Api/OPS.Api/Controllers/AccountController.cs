@@ -16,14 +16,18 @@ public class AccountController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    /// <summary>Retrieves all accounts with details.</summary>
-    /// <returns>A list of account objects.</returns>
-    [HttpGet("All")]
-    [EndpointDescription("Retrieves all accounts with details.")]
-    [ProducesResponseType<List<AccountWithDetailsResponse>>(Status200OK)]
-    public async Task<IActionResult> GetAllAccounts()
+    /// <summary>Retrieves accounts with details.</summary>
+    /// <param name="pageIndex">Page number.</param>
+    /// <param name="pageSize">Accounts per page.</param>
+    /// <param name="searchTerm">Optional search filter.</param>
+    /// <returns>Paginated account list.</returns>
+    [HttpGet]
+    [EndpointDescription("Retrieves accounts with details.")]
+    [ProducesResponseType<PaginatedAccountResponse>(Status200OK)]
+    public async Task<IActionResult> GetAllAccounts(int pageIndex = 1, int pageSize = 10,
+        string? searchTerm = null)
     {
-        var query = new GetAllAccountsQuery();
+        var query = new GetAllAccountsQuery(pageIndex, pageSize, searchTerm);
         var response = await _mediator.Send(query);
         return ToResult(response);
     }

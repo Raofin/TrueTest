@@ -6,18 +6,25 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Accounts.Queries;
 
-public record GetAllAccountsQuery : IRequest<ErrorOr<List<AccountWithDetailsResponse>>>;
+public record PaginatedAccountResponse(PageResponse Page, List<AccountWithDetailsResponse> Accounts);
+
+public record GetAllAccountsQuery(int PageIndex, int PageSize, string? SearchTerm)
+    : IRequest<ErrorOr<PaginatedAccountResponse>>;
 
 public class GetAllAccountsQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetAllAccountsQuery, ErrorOr<List<AccountWithDetailsResponse>>>
+    : IRequestHandler<GetAllAccountsQuery, ErrorOr<PaginatedAccountResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<AccountWithDetailsResponse>>> Handle(GetAllAccountsQuery request,
+    public async Task<ErrorOr<PaginatedAccountResponse>> Handle(GetAllAccountsQuery request,
         CancellationToken cancellationToken)
     {
-        var accounts = await _unitOfWork.Account.GetAllWithDetails(cancellationToken);
+        var paginatedAccounts = await _unitOfWork.Account.GetAllWithDetails(
+            request.PageIndex, request.PageSize, request.SearchTerm, cancellationToken);
 
-        return accounts.Select(a => a.MapToDtoWithDetails()).ToList();
+        return new PaginatedAccountResponse(
+            paginatedAccounts.MapToPage(),
+            paginatedAccounts.Items.Select(a => a.MapToDtoWithDetails()).ToList()
+        );
     }
 }

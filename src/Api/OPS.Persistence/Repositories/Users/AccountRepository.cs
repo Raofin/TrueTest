@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain.Contracts.Repository.Users;
+using OPS.Domain.Entities.Common;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 using OPS.Persistence.Repositories.Common;
@@ -44,12 +45,20 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .AnyAsync(cancellationToken);
     }
 
-    public async Task<List<Account>> GetAllWithDetails(CancellationToken cancellationToken)
+    public async Task<PaginatedList<Account>> GetAllWithDetails(int pageIndex, int pageSize,
+        string? searchTerm = null, CancellationToken cancellationToken = default)
     {
-        return await GetWithDetailsQuery()
-            .AsNoTracking()
-            .OrderBy(a => a.CreatedAt)
-            .ToListAsync(cancellationToken);
+        var query = GetWithDetailsQuery().AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var trimmedSearch = searchTerm.Trim();
+            query = query.Where(a => a.Username.Contains(trimmedSearch) || a.Email.Contains(trimmedSearch));
+        }
+
+        query = query.OrderBy(a => a.CreatedAt);
+
+        return await PaginatedList<Account>.CreateAsync(query, pageIndex, pageSize, cancellationToken);
     }
 
     public async Task<Account?> GetWithDetails(string usernameOrEmail, CancellationToken cancellationToken)
