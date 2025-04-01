@@ -32,7 +32,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             return Error.Unauthorized(description: "Candidate was not invited to this exam");
         }
 
-        if (candidate.SubmittedAt != null || candidate.Examination.ClosesAt > DateTime.UtcNow)
+        if (candidate.SubmittedAt != null || candidate.Examination.ClosesAt < DateTime.UtcNow)
         {
             return Error.Unauthorized(description: "Exam is already submitted or ended");
         }
@@ -53,14 +53,29 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             candidate.StartedAt.Value,
             candidate.StartedAt.Value.AddMinutes(exam.DurationMinutes),
             new QuestionResponses(
-                exam.Questions.Select(q => q.MapToProblemQuestionDto()).ToList(),
-                exam.Questions.Select(q => q.MapToWrittenQuestionDto()).ToList(),
-                exam.Questions.Select(q => q.MapToMcqQuestionDto()).ToList()
+                exam.Questions
+                    .Where(q => q.QuestionTypeId == (int)QuestionType.ProblemSolving)
+                    .Select(q => q.MapToProblemQuestionDto())
+                    .ToList(),
+                exam.Questions
+                    .Where(q => q.QuestionTypeId == (int)QuestionType.Written)
+                    .Select(q => q.MapToWrittenQuestionDto())
+                    .ToList(),
+                exam.Questions
+                    .Where(q => q.QuestionTypeId == (int)QuestionType.MCQ)
+                    .Select(q => q.MapToMcqQuestionDto())
+                    .ToList()
             ),
             new SubmitResponse(
-                exam.Questions.Select(ToProblemSubmitDto).ToList(),
-                exam.Questions.Select(ToWrittenSubmitDto).ToList(),
-                exam.Questions.Select(ToMcqSubmitDto).ToList()
+                exam.Questions
+                    .Where(q => q.ProblemSubmissions.Count != 0)
+                    .Select(ToProblemSubmitDto).ToList(),
+                exam.Questions
+                    .Where(q => q.WrittenSubmissions.Count != 0)
+                    .Select(ToWrittenSubmitDto).ToList(),
+                exam.Questions
+                    .Where(q => q.McqSubmissions.Count != 0)
+                    .Select(ToMcqSubmitDto).ToList()
             )
         );
 
@@ -69,8 +84,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
 
     private static ProblemSubmitResponse? ToProblemSubmitDto(Question question)
     {
-        if (question.QuestionTypeId != (int)QuestionType.ProblemSolving
-            || question.ProblemSubmissions.FirstOrDefault() is not null)
+        if (question.ProblemSubmissions.FirstOrDefault() is null)
             return null;
 
         var submission = question.ProblemSubmissions.First();
@@ -90,8 +104,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
 
     private static WrittenSubmitResponse? ToWrittenSubmitDto(Question question)
     {
-        if (question.QuestionTypeId != (int)QuestionType.Written ||
-            question.WrittenSubmissions.FirstOrDefault() is not null)
+        if (question.WrittenSubmissions.FirstOrDefault() is null)
             return null;
 
         var submission = question.WrittenSubmissions.First();
@@ -105,8 +118,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
 
     private static McqSubmitResponse? ToMcqSubmitDto(Question question)
     {
-        if (question.QuestionTypeId != (int)QuestionType.MCQ ||
-            question.McqSubmissions.FirstOrDefault() is not null)
+        if (question.McqSubmissions.FirstOrDefault() is null)
             return null;
 
         var submission = question.McqSubmissions.First();

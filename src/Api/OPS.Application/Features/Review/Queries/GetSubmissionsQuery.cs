@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
-using OPS.Domain.Contracts.Repository.Submissions;
+using OPS.Domain;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
 
@@ -10,33 +10,32 @@ namespace OPS.Application.Features.Review.Queries;
 
 public record GetSubmissionsQuery(Guid ExamId, Guid AccountId) : IRequest<ErrorOr<ExamSubmissionResponse>>;
 
-public class GetSubmissionsQueryHandler(
-    IProblemSubmissionRepository problemSubmissionRepo,
-    IWrittenSubmissionRepository writtenSubmissionRepo,
-    IMcqSubmissionRepository mcqSubmissionRepo) : IRequestHandler<GetSubmissionsQuery, ErrorOr<ExamSubmissionResponse>>
+public class GetSubmissionsQueryHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<GetSubmissionsQuery, ErrorOr<ExamSubmissionResponse>>
 {
-    private readonly IProblemSubmissionRepository _problemSubmissionRepo = problemSubmissionRepo;
-    private readonly IWrittenSubmissionRepository _writtenSubmissionRepo = writtenSubmissionRepo;
-    private readonly IMcqSubmissionRepository _mcqSubmissionRepo = mcqSubmissionRepo;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ErrorOr<ExamSubmissionResponse>> Handle(
         GetSubmissionsQuery request, CancellationToken cancellationToken)
     {
-        var problemTask = _problemSubmissionRepo.GetAllAsync(request.ExamId, request.AccountId, cancellationToken);
-        var writtenTask = _writtenSubmissionRepo.GetAllAsync(request.ExamId, request.AccountId, cancellationToken);
-        var mcqTask = _mcqSubmissionRepo.GetAllAsync(request.ExamId, request.AccountId, cancellationToken);
+        var problemSubmissions = await _unitOfWork.ProblemSubmission.GetAllAsync(
+            request.ExamId, request.AccountId, cancellationToken);
 
-        await Task.WhenAll(writtenTask, problemTask, mcqTask);
+        var writtenSubmissions = await _unitOfWork.WrittenSubmission.GetAllAsync(
+            request.ExamId, request.AccountId, cancellationToken);
+
+        var mcqSubmissions = await _unitOfWork.McqSubmission.GetAllAsync(
+            request.ExamId, request.AccountId, cancellationToken);
 
         return new ExamSubmissionResponse(
             request.ExamId,
             request.AccountId,
             new SubmissionResponse(
-                problemTask.Result.Select(ToSubmissionDto).ToList(),
-                writtenTask.Result.Select(
+                problemSubmissions.Select(ToSubmissionDto).ToList(),
+                writtenSubmissions.Select(
                     ws => new WrittenSubmissionResponse(ws.QuestionId, ws.Id, ws.Answer, ws.Score)
                 ).ToList(),
-                mcqTask.Result.Select(
+                mcqSubmissions.Select(
                     ms => new McqSubmissionResponse(ms.QuestionId, ms.Id, ms.AnswerOptions, ms.Score)
                 ).ToList()
             )

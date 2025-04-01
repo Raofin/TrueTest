@@ -4,17 +4,18 @@ using MediatR;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
+using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Review.Queries;
 
-public record GetExamByCandidateQuery(Guid ExamId, Guid AccountId) : IRequest<ErrorOr<ExamReviewResponse>>;
+public record GetExamByCandidateQuery(Guid ExamId, Guid AccountId) : IRequest<ErrorOr<ExamQuesWithSubmissionResponse>>;
 
 public class GetExamByCandidateQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetExamByCandidateQuery, ErrorOr<ExamReviewResponse>>
+    : IRequestHandler<GetExamByCandidateQuery, ErrorOr<ExamQuesWithSubmissionResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ExamReviewResponse>> Handle(
+    public async Task<ErrorOr<ExamQuesWithSubmissionResponse>> Handle(
         GetExamByCandidateQuery request, CancellationToken cancellationToken)
     {
         var candidate = await _unitOfWork.Exam.GetCandidateAsync(
@@ -25,7 +26,7 @@ public class GetExamByCandidateQueryHandler(IUnitOfWork unitOfWork)
             request.ExamId, request.AccountId, cancellationToken);
         if (exam is null) return Error.NotFound(description: "Exam not found");
 
-        var examReview = new ExamReviewResponse(
+        var examReview = new ExamQuesWithSubmissionResponse(
             exam.Id,
             exam.Title,
             exam.DurationMinutes,
@@ -38,9 +39,18 @@ public class GetExamByCandidateQueryHandler(IUnitOfWork unitOfWork)
                 candidate.HasCheated
             ),
             new QuestionsWithSubmissionResponse(
-                exam.Questions.Select(q => q.ToProblemWithSubmissionDto()).ToList(),
-                exam.Questions.Select(q => q.ToWrittenWithSubmissionDto()).ToList(),
-                exam.Questions.Select(q => q.ToMcqWithSubmissionDto()).ToList()
+                exam.Questions
+                    .Where(q => q.QuestionTypeId == (int)QuestionType.ProblemSolving)
+                    .Select(q => q.ToProblemWithSubmissionDto())
+                    .ToList(),
+                exam.Questions
+                    .Where(q => q.QuestionTypeId == (int)QuestionType.Written)
+                    .Select(q => q.ToWrittenWithSubmissionDto())
+                    .ToList(),
+                exam.Questions
+                    .Where(q => q.QuestionTypeId == (int)QuestionType.MCQ)
+                    .Select(q => q.ToMcqWithSubmissionDto())
+                    .ToList()
             )
         );
 
