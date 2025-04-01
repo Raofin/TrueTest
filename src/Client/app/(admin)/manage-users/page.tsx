@@ -17,7 +17,7 @@ import {
 import SearchIcon from '@/app/components/ui/search_icon/page'
 import PaginationButtons from '@/app/components/ui/pagination-button'
 import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
-import api from '@/app/components/utils/api'
+import api from '@/app/utils/api'
 import { AxiosError } from 'axios'
 import FormattedDate from '@/app/components/format-date-time'
 
@@ -38,7 +38,6 @@ type User = {
 }
 
 export default function Component() {
-  
   const [filterValue, setFilterValue] = useState('')
   const rowsPerPage = 10
   const [page, setPage] = useState(1)

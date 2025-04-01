@@ -1,36 +1,36 @@
-'use client';
+'use client'
 
-import React, { useState, useMemo } from 'react';
-import { Form, Button, Textarea, Card, Input } from '@heroui/react';
-import { Icon } from '@iconify/react';
-import toast from 'react-hot-toast';
-import PaginationButtons from '@/app/components/ui/pagination-button';
-import MDEditor from '@uiw/react-md-editor';
-import he from 'he';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useState, useMemo } from 'react'
+import { Form, Button, Textarea, Card, Input } from '@heroui/react'
+import { Icon } from '@iconify/react'
+import toast from 'react-hot-toast'
+import PaginationButtons from '@/app/components/ui/pagination-button'
+import he from 'he'
+import { v4 as uuidv4 } from 'uuid'
+import MdEditor from '../katex-mermaid'
 
 interface TestCase {
-  id: string; 
-  input: string;
-  output: string;
+  id: string
+  input: string
+  output: string
 }
 
 interface Problem {
-  id: string; 
-  question: string;
-  testCases: TestCase[];
+  id: string
+  question: string
+  testCases: TestCase[]
 }
 
 export default function ProblemSolvingFormp() {
   const [problems, setProblems] = useState<Problem[]>([
     { id: uuidv4(), question: '', testCases: [{ id: uuidv4(), input: '', output: '' }] },
-  ]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const problemsPerPage = 1;
-  const [value, setValue] = React.useState('"Hello, World!"');
-  const escaped: string = he.escape(value);
-  const unescaped: string = he.unescape(escaped);
-  console.log(unescaped);
+  ])
+  const [currentPage, setCurrentPage] = useState(0)
+  const problemsPerPage = 1
+  const [value, setValue] = React.useState('"Hello, World!"')
+  const escaped: string = he.escape(value)
+  const unescaped: string = he.unescape(escaped)
+  console.log(unescaped)
 
   const addTestCase = (problemId: string) => {
     setProblems((prevProblems) => {
@@ -39,13 +39,13 @@ export default function ProblemSolvingFormp() {
           return {
             ...problem,
             testCases: [...problem.testCases, { id: uuidv4(), input: '', output: '' }],
-          };
+          }
         }
-        return problem;
-      });
-    });
-    setValue('');
-  };
+        return problem
+      })
+    })
+    setValue('')
+  }
 
   const handleDelete = (problemId: string, testCaseId: string) => {
     setProblems((prevProblems) => {
@@ -54,14 +54,14 @@ export default function ProblemSolvingFormp() {
           return {
             ...problem,
             testCases: problem.testCases.filter((testCase) => testCase.id !== testCaseId),
-          };
+          }
         }
-        return problem;
-      });
-    });
+        return problem
+      })
+    })
 
-    toast.success('Test case deleted successfully');
-  };
+    toast.success('Test case deleted successfully')
+  }
 
   const handleRefresh = (problemId: string, testCaseId: string) => {
     setProblems((prevProblems) => {
@@ -72,23 +72,26 @@ export default function ProblemSolvingFormp() {
             testCases: problem.testCases.map((testCase) =>
               testCase.id === testCaseId ? { ...testCase, input: '', output: '' } : testCase
             ),
-          };
+          }
         }
-        return problem;
-      });
-    });
+        return problem
+      })
+    })
 
-    toast.success('Test case refreshed successfully');
-  };
+    toast.success('Test case refreshed successfully')
+  }
 
   const handleAddProblem = () => {
     setProblems((prevProblems) => {
-      const newProblems = [...prevProblems, { id: uuidv4(), question: '', testCases: [{ id: uuidv4(), input: '', output: '' }] }];
-      const newTotalPages = Math.ceil(newProblems.length / problemsPerPage);
-      setCurrentPage(newTotalPages - 1);
-      return newProblems;
-    });
-  };
+      const newProblems = [
+        ...prevProblems,
+        { id: uuidv4(), question: '', testCases: [{ id: uuidv4(), input: '', output: '' }] },
+      ]
+      const newTotalPages = Math.ceil(newProblems.length / problemsPerPage)
+      setCurrentPage(newTotalPages - 1)
+      return newProblems
+    })
+  }
 
   const handleTestCaseInputChange = (problemId: string, testCaseId: string, newInput: string) => {
     setProblems((prevProblems) => {
@@ -99,12 +102,12 @@ export default function ProblemSolvingFormp() {
             testCases: problem.testCases.map((testCase) =>
               testCase.id === testCaseId ? { ...testCase, input: newInput } : testCase
             ),
-          };
+          }
         }
-        return problem;
-      });
-    });
-  };
+        return problem
+      })
+    })
+  }
 
   const handleTestCaseOutputChange = (problemId: string, testCaseId: string, newOutput: string) => {
     setProblems((prevProblems) => {
@@ -115,15 +118,18 @@ export default function ProblemSolvingFormp() {
             testCases: problem.testCases.map((testCase) =>
               testCase.id === testCaseId ? { ...testCase, output: newOutput } : testCase
             ),
-          };
+          }
         }
-        return problem;
-      });
-    });
-  };
+        return problem
+      })
+    })
+  }
 
-  const totalPages = useMemo(() => Math.ceil(problems.length / problemsPerPage), [problems, problemsPerPage]);
-  const currentProblems = useMemo(() => problems.slice(currentPage * problemsPerPage, (currentPage + 1) * problemsPerPage), [problems, currentPage, problemsPerPage]);
+  const totalPages = useMemo(() => Math.ceil(problems.length / problemsPerPage), [problems, problemsPerPage])
+  const currentProblems = useMemo(
+    () => problems.slice(currentPage * problemsPerPage, (currentPage + 1) * problemsPerPage),
+    [problems, currentPage, problemsPerPage]
+  )
 
   return (
     <div>
@@ -133,13 +139,7 @@ export default function ProblemSolvingFormp() {
           <Form id="#" className="w-full flex flex-col gap-4 p-5 border-none">
             {currentProblems.map((problem) => (
               <div key={problem.id} className="rounded-lg w-full flex flex-col justify-center items-center">
-                <MDEditor
-                  className="rounded-lg w-full"
-                  value={value}
-                  onChange={(val) => {
-                    setValue(val || '');
-                  }}
-                />
+                <MdEditor/>
                 {problem.testCases.map((testCase) => (
                   <div key={testCase.id} className="w-full flex gap-2 mt-2">
                     <div className="flex flex-col gap-2">
@@ -151,11 +151,7 @@ export default function ProblemSolvingFormp() {
                       >
                         <Icon icon="lucide:trash-2" width={20} />
                       </Button>
-                      <Button
-                        isIconOnly
-                        variant="flat"
-                        onPress={() => handleRefresh(problem.id, testCase.id)}
-                      >
+                      <Button isIconOnly variant="flat" onPress={() => handleRefresh(problem.id, testCase.id)}>
                         <Icon icon="lucide:refresh-cw" width={20} />
                       </Button>
                     </div>
@@ -203,9 +199,7 @@ export default function ProblemSolvingFormp() {
                 >
                   Add Test Case
                 </Button>
-                <Button color="primary">
-                  Save
-                </Button>
+                <Button color="primary">Save</Button>
               </div>
             </div>
           </Form>
@@ -215,5 +209,5 @@ export default function ProblemSolvingFormp() {
         <Button onPress={handleAddProblem}>Add Problem Solving Question</Button>
       </div>
     </div>
-  );
+  )
 }

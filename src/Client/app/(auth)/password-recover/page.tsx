@@ -1,23 +1,20 @@
 'use client'
 
-
 import React, { ChangeEvent, useState } from 'react'
 import '@/app/globals.css'
 import { Button, Card, Input, useDisclosure } from '@heroui/react'
 import Link from 'next/link'
-import api from '@/app/components/utils/api'
+import api from '@/app/utils/api'
 import OTPModal from '@/app/components/ui/Modal/otp-verification'
 import { useForm } from 'react-hook-form'
 import toast, { Toaster } from 'react-hot-toast'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 
-
 const PasswordRecoverPage = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [error, setError] = useState('')
   const router = useRouter()
-
 
   const {
     control,
@@ -106,6 +103,5 @@ const PasswordRecoverPage = () => {
     </div>
   )
 }
-
 
 export default PasswordRecoverPage

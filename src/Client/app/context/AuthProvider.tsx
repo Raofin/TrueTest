@@ -2,12 +2,14 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/app/components/utils/api'
-import { getAuthToken, setAuthToken, removeAuthToken } from '@/app/components/utils/auth'
+import api from '@/app/utils/api'
+import { getAuthToken, setAuthToken, removeAuthToken } from '@/app/utils/auth'
+import useGetUser from '../hooks/useGetUser'
 
 interface User {
   username: string
   email: string
+  roles: string[]
 }
 
 interface AuthContextType {
@@ -28,15 +30,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login')
   }, [router])
 
+  const { userData } = useGetUser()
   const fetchUser = useCallback(async () => {
-    try {
-      const response = await api.get('/User/Info')
-      setUser(response.data)
-    } catch (error) {
-      console.error('Failed to fetch user data', error)
-      logout()
+    if (!userData) return
+      if (userData.roles.some((role: string) => role.toLowerCase() === 'admin')) {
+        router.push('/overview')
+      } else {
+        router.push('/home')
+      }
     }
-  }, [logout])
+ ,[router, userData])
 
   useEffect(() => {
     const token = getAuthToken()
@@ -59,12 +62,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAuthToken(token)
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`
         await fetchUser()
-        router.push('/home')
       } catch {
-        setError('Login failed. Please try again.')
+        setError('Useremail or password invalid. Please try again.')
       }
     },
-    [fetchUser, router]
+    [fetchUser]
   )
 
   const contextValue = useMemo(

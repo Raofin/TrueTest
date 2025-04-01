@@ -15,7 +15,7 @@ import {
 } from '@heroui/react'
 import SearchIcon from '@/app/components/ui/search_icon/page'
 import { AxiosError } from 'axios'
-import api from '@/app/components/utils/api'
+import api from '@/app/utils/api'
 import FormattedDate from '@/app/components/format-date-time'
 type User = {
   isActive: boolean

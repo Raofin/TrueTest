@@ -1,15 +1,13 @@
 'use client'
 
-
 import isValidPassword from '@/app/components/check-valid-password'
-import api from '@/app/components/utils/api'
+import api from '@/app/utils/api'
 import { Button, Input, Link } from '@heroui/react'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import toast from 'react-hot-toast'
-
 
 export default function Component() {
   const searchParams = useSearchParams()
@@ -21,7 +19,6 @@ export default function Component() {
   const router = useRouter()
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false)
-
 
   const handleResetPassword = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

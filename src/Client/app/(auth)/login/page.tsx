@@ -1,11 +1,9 @@
 'use client'
 
-
 import React, { useState } from 'react'
 import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import { useAuth } from '@/app/context/AuthProvider'
-
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)

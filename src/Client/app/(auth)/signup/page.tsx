@@ -5,7 +5,7 @@ import { Button, Input, Checkbox, Link, Divider, Card, Form, useDisclosure } fro
 import { Icon } from '@iconify/react'
 import '@/app/globals.css'
 import toast, { Toaster } from 'react-hot-toast'
-import api from '@/app/components/utils/api'
+import api from '@/app/utils/api'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'

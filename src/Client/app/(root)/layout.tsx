@@ -1,7 +1,7 @@
 'use client'
 
 import '@/app/globals.css'
-import withProtectedRoute from '@/app/components/utils/withProtectedRoute '
+import withProtectedRoute from '@/app/components/withProtectedRoute '
 
 interface RootLayoutProps {
   readonly children: React.ReactNode

@@ -169,7 +169,8 @@ export default function Component() {
           </div>
           <h1 className="ml-6 my-2">Candidate Email Import</h1>
           <div className="flex gap-2 px-5">
-            <Textarea type="file" value={fileContent} className=" " />
+            <Textarea type="file" value={fileContent} 
+            className="Insert candidate emails (separated by line breaks or commas)." />
             <div className="flex flex-col gap-2">
               <input
                 type="file"
