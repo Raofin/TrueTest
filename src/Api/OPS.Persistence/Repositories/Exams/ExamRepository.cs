@@ -51,6 +51,7 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
     {
         var exam = await _dbContext.Examinations
             .Where(e => e.Id == examId)
+            .Include(e => e.ExamCandidates.Where(ec => ec.AccountId == accountId)).ThenInclude(ec => ec.Account)
             .Include(e => e.Questions).ThenInclude(q => q.McqOption)
             .Include(e => e.Questions).ThenInclude(q => q.McqSubmissions.Where(s => s.AccountId == accountId))
             .Include(e => e.Questions).ThenInclude(q => q.TestCases).ThenInclude(tc => tc.TestCaseOutputs)

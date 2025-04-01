@@ -27,7 +27,7 @@ public record QuestionResponses(
     List<McqQuestionResponse> Mcq
 );
 
-public record ExamReviewResponse(
+public record ExamQuesWithSubmissionResponse(
     Guid ExamId,
     string Title,
     int DurationMinutes,
@@ -62,4 +62,35 @@ public record ExamSubmissionResponse(
     Guid ExamId,
     Guid AccountId,
     SubmissionResponse Submission
+);
+
+public record ExamCandidatesResponse(
+    Guid AccountId,
+    string Username,
+    string Email,
+    
+    int DurationMinutes,
+    DateTime OpensAt,
+    DateTime ClosesAt,
+    List<CandidateResultResponse> Candidates
+);
+
+public record CandidateResultResponse(
+    Guid AccountId,
+    string Username,
+    string Email,
+    Guid ExamId,
+    int DurationMinutes,
+    bool IsReviewed,
+    DateTime StartedAt,
+    DateTime? SubmittedAt,
+    bool HasCheated,
+    decimal TotalPoints,
+    decimal? TotalScore,
+    decimal ProblemSolvingPoints,
+    decimal? ProblemSolvingScore,
+    decimal WrittenPoints,
+    decimal? WrittenScore,
+    decimal McqPoints,
+    decimal? McqScore
 );

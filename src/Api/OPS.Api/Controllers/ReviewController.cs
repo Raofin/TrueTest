@@ -17,9 +17,9 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="examId">Exam Id.</param>
     /// <param name="accountId">Account Id of a candidate.</param>
     /// <returns>Exam with questions and submissions.</returns>
-    [HttpGet("Questions/{examId:guid}/{accountId:guid}")]
+    [HttpGet("Exam/QuestionsWithSubmission/{examId:guid}/{accountId:guid}")]
     [EndpointDescription("Retrieves an exam with questions and submissions of a candidate.")]
-    [ProducesResponseType<ExamReviewResponse>(Status200OK)]
+    [ProducesResponseType<ExamQuesWithSubmissionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> GetExamByCandidateAsync(Guid examId, Guid accountId)
     {
@@ -39,6 +39,21 @@ public class ReviewController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> GetSubmissionsAsync(Guid examId, Guid accountId)
     {
         var query = new GetSubmissionsQuery(examId, accountId);
+        var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
+
+    /// <summary>Retrieves exam results of a candidates.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <param name="accountId">Account Id.</param>
+    /// <returns>Candidate exam result.</returns>
+    [HttpGet("Candidate/{examId:guid}/{accountId:guid}")]
+    [EndpointDescription("Retrieves exam results of a candidates.")]
+    [ProducesResponseType<List<CandidateResultResponse>>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> GetResultsByExamAsync(Guid examId, Guid accountId)
+    {
+        var query = new GetResultByCandidateQuery(examId, accountId);
         var response = await _mediator.Send(query);
         return ToResult(response);
     }
