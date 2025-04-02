@@ -1,4 +1,6 @@
-﻿namespace OPS.Application.Dtos;
+﻿using OPS.Application.Features.Review.Queries;
+
+namespace OPS.Application.Dtos;
 
 public record ExamResponse(
     Guid ExamId,
@@ -58,33 +60,28 @@ public record ExamStartResponse(
     SubmitResponse Submits
 );
 
-public record ExamSubmissionResponse(
-    Guid ExamId,
-    Guid AccountId,
-    SubmissionResponse Submission
-);
-
 public record ExamCandidatesResponse(
     Guid AccountId,
     string Username,
     string Email,
-    
     int DurationMinutes,
     DateTime OpensAt,
     DateTime ClosesAt,
     List<CandidateResultResponse> Candidates
 );
 
-public record CandidateResultResponse(
-    Guid AccountId,
-    string Username,
-    string Email,
+public record ExamResultResponse(
     Guid ExamId,
-    int DurationMinutes,
+    string Title,
+    AccountBasicInfoResponse Account,
+    CandidateResultResponse Result,
+    SubmissionResponse Submission
+);
+
+public record CandidateResultResponse(
     bool IsReviewed,
     DateTime StartedAt,
-    DateTime? SubmittedAt,
-    bool HasCheated,
+    DateTime SubmittedAt,
     decimal TotalPoints,
     decimal? TotalScore,
     decimal ProblemSolvingPoints,
@@ -92,5 +89,6 @@ public record CandidateResultResponse(
     decimal WrittenPoints,
     decimal? WrittenScore,
     decimal McqPoints,
-    decimal? McqScore
+    decimal? McqScore,
+    bool HasCheated
 );

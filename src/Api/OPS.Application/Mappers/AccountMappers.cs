@@ -17,6 +17,15 @@ public static class AccountExtensions
             account.IsActive
         );
     }
+    
+    public static AccountBasicInfoResponse MapToBasicInfoDto(this Account account)
+    {
+        return new AccountBasicInfoResponse(
+            account.Id,
+            account.Username,
+            account.Email
+        );
+    }
 
     public static AccountWithDetailsResponse MapToDtoWithDetails(this Account account)
     {

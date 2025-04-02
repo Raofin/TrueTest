@@ -11,6 +11,12 @@ public record AccountResponse(
     bool IsActive
 );
 
+public record AccountBasicInfoResponse(
+    Guid AccountId,
+    string Username,
+    string Email
+);
+
 public record AccountWithDetailsResponse(
     Guid AccountId,
     string Username,

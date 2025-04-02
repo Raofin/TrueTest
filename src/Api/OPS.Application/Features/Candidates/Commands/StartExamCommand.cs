@@ -28,25 +28,24 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             request.ExamId, userAccountId, cancellationToken);
 
         if (candidate == null)
-        {
             return Error.Unauthorized(description: "Candidate was not invited to this exam");
-        }
 
         if (candidate.SubmittedAt != null || candidate.Examination.ClosesAt < DateTime.UtcNow)
-        {
             return Error.Unauthorized(description: "Exam is already submitted or ended");
-        }
-
-        if (candidate.StartedAt == null)
-        {
-            candidate.StartedAt = DateTime.UtcNow;
-            await _unitOfWork.CommitAsync(cancellationToken);
-        }
 
         var exam = await _unitOfWork.Exam.GetWithQuesAndSubmissionsAsync(
             request.ExamId, userAccountId, cancellationToken);
 
         exam.ThrowIfNull();
+
+        if (candidate.StartedAt == null)
+        {
+            var now = DateTime.UtcNow;
+            candidate.StartedAt = now;
+            candidate.SubmittedAt = now > exam.ClosesAt ? exam.ClosesAt : now.AddMinutes(exam.DurationMinutes);
+
+            await _unitOfWork.CommitAsync(cancellationToken);
+        }
 
         var examReview = new ExamStartResponse(
             exam.Id,

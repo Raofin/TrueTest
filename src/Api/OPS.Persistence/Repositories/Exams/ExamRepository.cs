@@ -50,6 +50,7 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
         CancellationToken cancellationToken)
     {
         var exam = await _dbContext.Examinations
+            .AsNoTracking()
             .Where(e => e.Id == examId)
             .Include(e => e.ExamCandidates.Where(ec => ec.AccountId == accountId)).ThenInclude(ec => ec.Account)
             .Include(e => e.Questions).ThenInclude(q => q.McqOption)
