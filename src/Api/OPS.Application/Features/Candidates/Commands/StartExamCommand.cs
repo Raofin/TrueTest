@@ -30,7 +30,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
         if (candidate == null)
             return Error.Unauthorized(description: "Candidate was not invited to this exam");
 
-        if (candidate.SubmittedAt != null || candidate.Examination.ClosesAt < DateTime.UtcNow)
+        if (candidate.Examination.ClosesAt < DateTime.UtcNow)
             return Error.Unauthorized(description: "Exam is already submitted or ended");
 
         var exam = await _unitOfWork.Exam.GetWithQuesAndSubmissionsAsync(
@@ -51,20 +51,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             exam.Id,
             candidate.StartedAt.Value,
             candidate.StartedAt.Value.AddMinutes(exam.DurationMinutes),
-            new QuestionResponses(
-                exam.Questions
-                    .Where(q => q.QuestionTypeId == (int)QuestionType.ProblemSolving)
-                    .Select(q => q.MapToProblemQuestionDto())
-                    .ToList(),
-                exam.Questions
-                    .Where(q => q.QuestionTypeId == (int)QuestionType.Written)
-                    .Select(q => q.MapToWrittenQuestionDto())
-                    .ToList(),
-                exam.Questions
-                    .Where(q => q.QuestionTypeId == (int)QuestionType.MCQ)
-                    .Select(q => q.MapToMcqQuestionDto())
-                    .ToList()
-            ),
+            exam.MapToQuestionDto(),
             new SubmitResponse(
                 exam.Questions
                     .Where(q => q.ProblemSubmissions.Count != 0)

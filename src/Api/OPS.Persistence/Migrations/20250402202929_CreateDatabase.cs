@@ -217,7 +217,10 @@ namespace OPS.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     CandidateEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    TotalScore = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    ProblemSolvingScore = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    WrittenScore = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    McqScore = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     StartedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     SubmittedAt = table.Column<DateTime>(type: "DateTime", nullable: true),
                     HasCheated = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),

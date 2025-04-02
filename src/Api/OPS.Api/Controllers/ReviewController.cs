@@ -18,7 +18,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <returns>List of candidates with results.</returns>
     [HttpGet("Candidates/{examId:guid}")]
     [EndpointDescription("Retrieves all candidates with results of an exam.")]
-    [ProducesResponseType<List<ExamCandidatesResponse>>(Status200OK)]
+    [ProducesResponseType<List<CandidateResultResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> GetCandidatesByExamAsync(Guid examId)
     {

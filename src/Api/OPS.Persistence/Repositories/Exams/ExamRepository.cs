@@ -53,16 +53,34 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
             .AsNoTracking()
             .Where(e => e.Id == examId)
             .Include(e => e.ExamCandidates.Where(ec => ec.AccountId == accountId)).ThenInclude(ec => ec.Account)
-            .Include(e => e.Questions).ThenInclude(q => q.McqOption)
-            .Include(e => e.Questions).ThenInclude(q => q.McqSubmissions.Where(s => s.AccountId == accountId))
-            .Include(e => e.Questions).ThenInclude(q => q.TestCases).ThenInclude(tc => tc.TestCaseOutputs)
             .Include(e => e.Questions).ThenInclude(q => q.ProblemSubmissions.Where(ps => ps.AccountId == accountId))
+            .ThenInclude(tc => tc.TestCaseOutputs)
+            .Include(e => e.Questions).ThenInclude(q => q.TestCases)
+            .Include(e => e.Questions).ThenInclude(q => q.McqSubmissions.Where(s => s.AccountId == accountId))
+            .Include(e => e.Questions).ThenInclude(q => q.McqOption)
             .Include(e => e.Questions).ThenInclude(q => q.WrittenSubmissions.Where(s => s.AccountId == accountId))
             .SingleOrDefaultAsync(cancellationToken);
 
         if (exam is not null)
         {
             exam.Questions = exam.Questions.OrderBy(q => q.CreatedAt).ToList();
+        }
+
+        return exam;
+    }
+
+    public async Task<Examination?> GetResultsAsync(Guid examId, CancellationToken cancellationToken)
+    {
+        var exam = await _dbContext.Examinations
+            .AsNoTracking()
+            .Where(e => e.Id == examId)
+            .Include(e => e.ExamCandidates.Where(ec => ec.AccountId != null))
+            .ThenInclude(ec => ec.Account)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (exam is not null)
+        {
+            exam.ExamCandidates = exam.ExamCandidates.OrderBy(ec => ec.SubmittedAt).ToList();
         }
 
         return exam;

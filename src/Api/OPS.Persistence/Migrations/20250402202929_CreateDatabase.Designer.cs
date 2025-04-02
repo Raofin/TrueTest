@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250402065006_CreateDatabase")]
+    [Migration("20250402202929_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -345,7 +345,10 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<decimal>("Score")
+                    b.Property<decimal?>("McqScore")
+                        .HasColumnType("decimal(10, 2)");
+
+                    b.Property<decimal?>("ProblemSolvingScore")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<DateTime?>("StartedAt")
@@ -354,9 +357,15 @@ namespace OPS.Persistence.Migrations
                     b.Property<DateTime?>("SubmittedAt")
                         .HasColumnType("DateTime");
 
+                    b.Property<decimal?>("TotalScore")
+                        .HasColumnType("decimal(10, 2)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
+
+                    b.Property<decimal?>("WrittenScore")
+                        .HasColumnType("decimal(10, 2)");
 
                     b.HasKey("Id");
 

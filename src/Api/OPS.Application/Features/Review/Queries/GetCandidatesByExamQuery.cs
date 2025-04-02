@@ -1,32 +1,37 @@
 ﻿using ErrorOr;
 using MediatR;
 using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Review.Queries;
 
-public record GetCandidatesByExamQuery(Guid ExamId) : IRequest<ErrorOr<List<ExamCandidatesResponse>>>;
+public record CandidateResultResponse(AccountBasicInfoResponse Account, ResultResponse Result);
+
+public record ExamResultsResponse(ExamResponse Exam, List<CandidateResultResponse> Candidates);
+
+public record GetCandidatesByExamQuery(Guid ExamId) : IRequest<ErrorOr<ExamResultsResponse>>;
 
 public class GetCandidatesByExamQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetCandidatesByExamQuery, ErrorOr<List<ExamCandidatesResponse>>>
+    : IRequestHandler<GetCandidatesByExamQuery, ErrorOr<ExamResultsResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<ExamCandidatesResponse>>> Handle(
+    public async Task<ErrorOr<ExamResultsResponse>> Handle(
         GetCandidatesByExamQuery request, CancellationToken cancellationToken)
     {
-        var candidates = await _unitOfWork.ExamCandidate.GetExamParticipantsAsync(request.ExamId, cancellationToken);
-        
-        return candidates.Select(
-            candidate => new ExamCandidatesResponse(
-                candidate.Account!.Id,
-                candidate.Account.Username,
-                candidate.Account.Email,
-                candidate.Score,
-                "status", // TODO: Add column in DB
-                candidate.StartedAt!.Value,
-                candidate.SubmittedAt!.Value
-            )
-        ).ToList();
+        var exam = await _unitOfWork.Exam.GetResultsAsync(request.ExamId, cancellationToken);
+
+        if (exam is null) return Error.NotFound();
+
+        return new ExamResultsResponse(
+            exam.MapToDto(),
+            exam.ExamCandidates.Select(
+                candidate => new CandidateResultResponse(
+                    candidate.Account!.MapToBasicInfoDto(),
+                    candidate.MapToResultDto()
+                )
+            ).ToList()
+        );
     }
 }
