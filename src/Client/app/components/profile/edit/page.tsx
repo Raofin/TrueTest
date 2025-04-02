@@ -25,10 +25,10 @@ export default function ProfileDetails() {
     if (!file) return
     setImageFileId('some-image-file-id')
   }, [])
-
+ 
   return (
     <div className="w-full flex justify-center">
-      <form id="#">
+      <div id="#">
         <div className="flex justify-center items-end text-center my-7">
           <div className="relative">
             <Avatar
@@ -99,7 +99,7 @@ export default function ProfileDetails() {
           </div>
           <div className="flex justify-start mt-2"></div>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

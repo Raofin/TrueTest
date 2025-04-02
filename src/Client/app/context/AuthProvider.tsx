@@ -4,7 +4,6 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 import { useRouter } from 'next/navigation'
 import api from '@/app/utils/api'
 import { getAuthToken, setAuthToken, removeAuthToken } from '@/app/utils/auth'
-import useGetUser from '../hooks/useGetUser'
 
 interface User {
   username: string
@@ -30,16 +29,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login')
   }, [router])
 
-  const { userData } = useGetUser()
+
   const fetchUser = useCallback(async () => {
-    if (!userData) return
+    const response=await api.get('/User/Info')
+       if(response.status===200){
+        const userData=response.data;
       if (userData.roles.some((role: string) => role.toLowerCase() === 'admin')) {
         router.push('/overview')
       } else {
         router.push('/home')
       }
     }
- ,[router, userData])
+    }
+ ,[router])
 
   useEffect(() => {
     const token = getAuthToken()
