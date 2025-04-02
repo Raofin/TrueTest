@@ -8,6 +8,24 @@ namespace OPS.Persistence.Repositories.Common;
 public class Repository<TEntity>(AppDbContext context) : IBaseRepository<TEntity> where TEntity : class
 {
     private readonly DbSet<TEntity> _entities = context.Set<TEntity>();
+    
+    public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        return await _entities.AnyAsync(predicate, cancellationToken);
+    }
+    
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        return await _entities.CountAsync(predicate, cancellationToken);
+    }
+    
+    public async Task<IEnumerable<TResult>> SelectAsync<TResult>(
+        Expression<Func<TEntity, bool>> predicate,
+        Expression<Func<TEntity, TResult>> selector,
+        CancellationToken cancellationToken = default)
+    {
+        return await _entities.Where(predicate).Select(selector).ToListAsync(cancellationToken);
+    }
 
     public async Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
