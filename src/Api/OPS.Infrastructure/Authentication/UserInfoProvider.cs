@@ -9,19 +9,37 @@ public class UserInfoProvider(IHttpContextAccessor httpContextAccessor) : IUserI
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-    public string? AccountId()
+    public bool IsAuthenticated()
     {
-        return _httpContextAccessor.HttpContext?.User.FindFirst("accountId")?.Value;
+        var user = _httpContextAccessor.HttpContext?.User;
+        return user?.Identity?.IsAuthenticated ?? false;
     }
 
-    public string? Username()
+    public Guid AccountId()
     {
-        return _httpContextAccessor.HttpContext?.User.FindFirst("username")?.Value;
+        var accountIdStr = _httpContextAccessor.HttpContext?.User.FindFirst("accountId")?.Value;
+
+        return Guid.TryParse(accountIdStr, out var accountId)
+            ? accountId
+            : throw new UnauthorizedAccessException("Account ID is missing or invalid.");
     }
 
-    public string? Email()
+    public string Username()
     {
-        return _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
+        var username = _httpContextAccessor.HttpContext?.User.FindFirst("username")?.Value;
+
+        return !string.IsNullOrEmpty(username) 
+            ? username 
+            : throw new UnauthorizedAccessException("Username is missing.");
+    }
+
+    public string Email()
+    {
+        var email = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
+
+        return !string.IsNullOrEmpty(email) 
+            ? email 
+            : throw new UnauthorizedAccessException("Email is missing.");
     }
 
     public List<RoleType> Roles()

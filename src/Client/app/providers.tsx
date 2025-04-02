@@ -1,9 +1,12 @@
 'use client'
 
-
-import {DashboardProvider} from "./DashboardContext";
-
+import { ThemeProvider } from 'next-themes'
+import { AuthProvider } from './context/AuthProvider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <DashboardProvider>{children}</DashboardProvider>
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <AuthProvider>{children}</AuthProvider>
+    </ThemeProvider>
+  )
 }

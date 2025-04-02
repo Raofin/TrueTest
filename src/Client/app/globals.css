@@ -1,0 +1,25 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    color: #3f3f46;
+}
+
+html.light {
+    color: #3f3f46;
+    background-color: #eeeef0;
+}
+
+html.dark {
+    color: #ffffff;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}

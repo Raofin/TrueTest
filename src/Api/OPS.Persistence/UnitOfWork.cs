@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain;
-using OPS.Domain.Contracts;
-using OPS.Domain.Contracts.Repository;
+using OPS.Domain.Contracts.Repository.Core;
+using OPS.Domain.Contracts.Repository.Exams;
+using OPS.Domain.Contracts.Repository.Questions;
+using OPS.Domain.Contracts.Repository.Submissions;
+using OPS.Domain.Contracts.Repository.Users;
 using OPS.Domain.Entities.Common;
 
 namespace OPS.Persistence;
@@ -13,7 +16,16 @@ internal class UnitOfWork(
     IExamRepository examRepository,
     IExamCandidatesRepository examCandidatesRepository,
     IQuestionRepository questionRepository,
-    IWrittenSubmissionRepository writtenSubmissionRepository) : IUnitOfWork
+    IWrittenSubmissionRepository writtenSubmissionRepository,
+    IMcqSubmissionRepository mcqSubmissionRepository,
+    IMcqOptionRepository mcqOptionRepository,
+    IProfileRepository profileRepository,
+    IProfileLinkRepository profileLinkRepository,
+    IProblemSubmissionRepository problemSubmissionRepository,
+    ITestCaseOutputRepository testCaseOutputRepository,
+    ICloudFileRepository cloudFileRepository,
+    ITestCaseRepository testCaseRepository,
+    IAdminInviteRepository adminInviteRepository) : IUnitOfWork
 {
     private readonly AppDbContext _dbContext = dbContext;
 
@@ -23,6 +35,15 @@ internal class UnitOfWork(
     public IExamCandidatesRepository ExamCandidate { get; } = examCandidatesRepository;
     public IQuestionRepository Question { get; } = questionRepository;
     public IWrittenSubmissionRepository WrittenSubmission { get; } = writtenSubmissionRepository;
+    public IMcqSubmissionRepository McqSubmission { get; } = mcqSubmissionRepository;
+    public IMcqOptionRepository McqOption { get; } = mcqOptionRepository;
+    public IProfileRepository Profile { get; } = profileRepository;
+    public IProfileLinkRepository ProfileLink { get; } = profileLinkRepository;
+    public IProblemSubmissionRepository ProblemSubmission { get; } = problemSubmissionRepository;
+    public ITestCaseOutputRepository TestCaseOutput { get; } = testCaseOutputRepository;
+    public ITestCaseRepository TestCase { get; } = testCaseRepository;
+    public ICloudFileRepository CloudFile { get; } = cloudFileRepository;
+    public IAdminInviteRepository AdminInvite { get; } = adminInviteRepository;
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
@@ -42,6 +63,7 @@ internal class UnitOfWork(
             .ToList();
 
         foreach (var entityEntry in updatedEntities) entityEntry.Property(nameof(IBaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow;
+        
 
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }

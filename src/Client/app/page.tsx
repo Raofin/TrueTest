@@ -1,23 +1,48 @@
-"use client"
-import '../styles/globals.css'
+'use client'
 
-export default function Component(){
+import '@/app/globals.css'
+import { Link } from '@heroui/react'
+import Login from '@/app/(auth)/login/page'
+import Logo from '@/app/components/ui/logo/page'
+import NavBar from '@/app/(auth)/NavBar'
 
-    return(
-        <>
-            <div className="flex justify-center items-center w-full gap-10 h-screen text-xl">
-                <div className={"flex flex-col gap-5 ml-7"}>
-                    <h2 className={" text-5xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent"}>Online
-                        Proctoring System</h2>
-                    <p className={"text-white text-sm border-4 border-double rounded-r-full bg-blue-800 p-3"}>A digital
-                        method of monitoring exams that ensures test integrity and
-                        prevents cheating conducted via online software that enables students to sit for tests from any
-                        location.</p>
-                </div>
-                <img src="https://i.ibb.co.com/m5C10Wmb/ops-banner-removebg-preview.png"
-                     alt="ops-banner-removebg-preview" className={"mt-12 w-[700px] h-[400px]"}/>
-            </div>
-        </>
-
-    )
+export default function Component() {
+  return (
+    <div className='h-screen flex flex-col justify-between'>
+      <div className=" w-full flex justify-between items-center h-16">
+       
+      
+          <NavBar/>
+       
+      
+       
+      </div>
+      <div className="flex justify-around items-center gap-12 ">
+        <div className="flex flex-col items-center gap-4 flex-1">
+          <div className="flex items-center gap-2">
+           <Logo/>
+          </div>
+          <div className="flex flex-col items-center justify-center text-5xl font-bold ">
+            <p> Your Secure Platform</p>
+            <p>for Assessments</p>
+          </div>
+          <p className="text-[#71717A] light:text-black max-w-md text-center">
+            TrueTest ensures a fair, secure environment with real-time proctoring and anti-cheating features, so you can
+            focus on showcasing your skills!
+          </p>
+        </div>
+        <div className="flex-1">
+          <Login />
+        </div>
+      </div>
+      <footer className="w-full h-12 px-5 py-4 mb-5 pb-5">
+        <div className="flex justify-between items-center text-[#3f3f46] dark:text-white py-4">
+          <p>© 2025 TrueTest. All rights reserved.</p>
+          <p>
+            Contact Us: <Link href="#">support@truetest.com</Link>
+          </p>
+        </div>
+      </footer>
+    </div>
+  )
 }

@@ -8,20 +8,20 @@ internal class OtpCleanupService(IServiceScopeFactory serviceScopeFactory) : Bac
 {
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
 
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            await Task.Delay(TimeSpan.FromDays(1), cancellationToken);
+            await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
 
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                var otps = await unitOfWork.Otp.GetExpiredOtpsAsync(cancellationToken);
+                var otps = await unitOfWork.Otp.GetExpiredOtpsAsync(stoppingToken);
 
                 unitOfWork.Otp.RemoveRange(otps);
 
-                await unitOfWork.CommitAsync(cancellationToken);
+                await unitOfWork.CommitAsync(stoppingToken);
             }
         }
     }
