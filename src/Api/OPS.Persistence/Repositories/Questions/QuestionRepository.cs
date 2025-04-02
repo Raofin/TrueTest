@@ -13,6 +13,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
     public async Task<Question?> GetWithTestCases(Guid questionId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
+            .Include(q => q.Examination)
             .Include(q => q.TestCases)
             .Where(q => q.Id == questionId)
             .OrderBy(q => q.CreatedAt)
@@ -32,6 +33,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
     public async Task<Question?> GetWithMcqOption(Guid questionId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
+            .Include(q => q.Examination)
             .Include(q => q.McqOption)
             .Where(q => q.Id == questionId)
             .OrderBy(q => q.CreatedAt)
@@ -48,10 +50,19 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Question?> GetWrittenByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Question?> GetWrittenByIdAsync(Guid questionId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
-            .Where(q => q.Id == id && q.QuestionTypeId == (int)QuestionType.Written)
+            .Where(q => q.Id == questionId && q.QuestionTypeId == (int)QuestionType.Written)
+            .OrderBy(q => q.CreatedAt)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+    
+    public async Task<Question?> GetWithExamAsync(Guid questionId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Questions
+            .Include(q => q.Examination)
+            .Where(q => q.Id == questionId)
             .OrderBy(q => q.CreatedAt)
             .SingleOrDefaultAsync(cancellationToken);
     }
