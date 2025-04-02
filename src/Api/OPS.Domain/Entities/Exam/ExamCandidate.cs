@@ -10,6 +10,7 @@ public class ExamCandidate : SoftDeletableEntity
     public DateTime? StartedAt { get; set; }
     public DateTime? SubmittedAt { get; set; }
     public bool HasCheated { get; set; }
+    public bool IsReviewed { get; set; }
 
     public Guid? AccountId { get; set; }
     public Guid ExaminationId { get; set; }

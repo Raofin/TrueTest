@@ -16,6 +16,8 @@ public class ExamCandidateConfiguration : IEntityTypeConfiguration<ExamCandidate
         entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
         entity.Property(e => e.StartedAt).HasColumnType("DateTime").HasDefaultValue(null);
         entity.Property(e => e.SubmittedAt).HasColumnType("DateTime").HasDefaultValue(null);
+        entity.Property(e => e.HasCheated).HasDefaultValue(false);
+        entity.Property(e => e.IsReviewed).HasDefaultValue(false);
 
         new BaseEntityConfig<ExamCandidate>().Configure(entity);
         new SoftDeletableEntityConfig<ExamCandidate>().Configure(entity);
