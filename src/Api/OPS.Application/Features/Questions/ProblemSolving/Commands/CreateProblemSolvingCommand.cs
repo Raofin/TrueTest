@@ -17,9 +17,8 @@ public record CreateProblemQuestionRequest(
     DifficultyType DifficultyType,
     List<TestCaseRequest> TestCases);
 
-public record CreateProblemSolvingCommand(
-    Guid ExamId,
-    List<CreateProblemQuestionRequest> ProblemQuestions) : IRequest<ErrorOr<List<ProblemQuestionResponse>>>;
+public record CreateProblemSolvingCommand(Guid ExamId, List<CreateProblemQuestionRequest> ProblemQuestions)
+    : IRequest<ErrorOr<List<ProblemQuestionResponse>>>;
 
 public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<CreateProblemSolvingCommand, ErrorOr<List<ProblemQuestionResponse>>>

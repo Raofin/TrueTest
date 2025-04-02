@@ -20,7 +20,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <returns>Newly created MCQ question.</returns>
     [HttpPost("Create")]
     [EndpointDescription("Creates an MCQ Question.")]
-    [ProducesResponseType<McqQuestionResponse>(Status200OK)]
+    [ProducesResponseType<List<McqQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> CreateMcqAsync(CreateMcqCommand command)

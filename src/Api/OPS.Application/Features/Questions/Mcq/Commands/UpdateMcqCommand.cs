@@ -19,7 +19,7 @@ public record UpdateMcqOptionRequest(
 );
 
 public record UpdateMcqCommand(
-    Guid Id,
+    Guid QuestionId,
     string? StatementMarkdown,
     decimal? Points,
     DifficultyType? DifficultyType,
@@ -33,7 +33,7 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<McqQuestionResponse>> Handle(
         UpdateMcqCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetWithMcqOption(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithMcqOption(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
         question.McqOption.ThrowIfNull();
 
@@ -73,7 +73,7 @@ public class UpdateMcqCommandValidator : AbstractValidator<UpdateMcqCommand>
 {
     public UpdateMcqCommandValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.QuestionId)
             .NotEmpty();
 
         RuleFor(x => x.StatementMarkdown)
