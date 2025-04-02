@@ -3,4 +3,6 @@
 public interface IAccountEmails
 {
     void SendOtp(string emailAddress, string code, CancellationToken cancellationToken);
+    void SendAdminInvitation(List<string> emailAddresses, CancellationToken cancellationToken);
+    void SendAdminGranted(List<string> emailAddresses, CancellationToken cancellationToken);
 }

@@ -36,6 +36,61 @@ public class AccountEmails(IFluentEmail fluentEmail) : IAccountEmails
         Send(email, cancellationToken);
     }
 
+    public void SendAdminInvitation(List<string> emailAddresses, CancellationToken cancellationToken)
+    {
+        emailAddresses.ForEach(e => { AdminInvitation(e, cancellationToken); });
+    }
+
+    private void AdminInvitation(string emailAddress, CancellationToken cancellationToken)
+    {
+        var email = _fluentEmail
+            .To(emailAddress)
+            .Subject($"{ProjectConstants.ProjectName} - Admin Invitation")
+            .Body($"""
+                     <body style='font-family: Inter, Arial, sans-serif;'>
+                       <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;'>
+                         <h2 style='color: #333; text-align: center;'>You're Invited to Join {ProjectConstants.ProjectName}</h2>
+                         <p>Hello,</p>
+                         <p>You have been invited to join {ProjectConstants.ProjectName} as an administrator.</p>
+                         <p>Please register your account to gain admin access.</p>
+                         <p>Once registered, you will be able to manage the platform as an administrator.</p>
+                         <p>If you did not expect this invitation, please ignore this email.</p>
+                         <p>Best,<br>{ProjectConstants.ProjectName} Team</p>
+                       </div>
+                     </body>
+                   """,
+                isHtml: true);
+
+        Send(email, cancellationToken);
+    }
+
+    public void SendAdminGranted(List<string> emailAddresses, CancellationToken cancellationToken)
+    {
+        emailAddresses.ForEach(e => { AdminAccessGranted(e, cancellationToken); });
+    }
+
+    private void AdminAccessGranted(string emailAddress, CancellationToken cancellationToken)
+    {
+        var email = _fluentEmail
+            .To(emailAddress)
+            .Subject($"{ProjectConstants.ProjectName} - Admin Access Granted")
+            .Body($"""
+                     <body style='font-family: Inter, Arial, sans-serif;'>
+                       <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;'>
+                         <h2 style='color: #333; text-align: center;'>Admin Access Granted</h2>
+                         <p>Hello,</p>
+                         <p>You have been granted admin access to {ProjectConstants.ProjectName}.</p>
+                         <p>Please log in to your account and start managing the platform!</p>
+                         <p>If you were not expecting this access, please contact support.</p>
+                         <p>Best,<br>{ProjectConstants.ProjectName} Team</p>
+                       </div>
+                     </body>
+                   """,
+                isHtml: true);
+
+        Send(email, cancellationToken);
+    }
+
     private static void Send(IFluentEmail email, CancellationToken cancellationToken)
     {
         try

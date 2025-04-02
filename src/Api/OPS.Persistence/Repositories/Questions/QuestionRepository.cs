@@ -10,29 +10,12 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<List<Question>> GetAllByExamIdAsync(Guid examId, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Questions
-            .AsNoTracking()
-            .Where(q => q.ExaminationId == examId)
-            .OrderBy(exam => exam.CreatedAt)
-            .ToListAsync(cancellationToken);
-    }
-
-    public async Task<List<Question>> GetAllQuestionByExamIdQuestionTypeIdAsync(Guid examId, int questionTypeId, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Questions
-            .AsNoTracking()
-            .Where(q => q.ExaminationId == examId && q.QuestionTypeId == questionTypeId)
-            .OrderBy(exam => exam.CreatedAt)
-            .ToListAsync(cancellationToken);
-    }
-
     public async Task<Question?> GetWithTestCases(Guid questionId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
             .Include(q => q.TestCases)
             .Where(q => q.Id == questionId)
+            .OrderBy(q => q.CreatedAt)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
@@ -42,7 +25,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
             .AsNoTracking()
             .Include(q => q.TestCases)
             .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.ProblemSolving)
-            .OrderBy(exam => exam.CreatedAt)
+            .OrderBy(q => q.CreatedAt)
             .ToListAsync(cancellationToken);
     }
 
@@ -51,6 +34,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
         return await _dbContext.Questions
             .Include(q => q.McqOption)
             .Where(q => q.Id == questionId)
+            .OrderBy(q => q.CreatedAt)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
@@ -68,6 +52,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
     {
         return await _dbContext.Questions
             .Where(q => q.Id == id && q.QuestionTypeId == (int)QuestionType.Written)
+            .OrderBy(q => q.CreatedAt)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
@@ -75,6 +60,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
     {
         return await _dbContext.Questions
             .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.Written)
+            .OrderBy(q => q.CreatedAt)
             .ToListAsync(cancellationToken);
     }
 }

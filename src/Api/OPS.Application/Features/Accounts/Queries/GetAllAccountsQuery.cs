@@ -1,22 +1,30 @@
 ﻿using ErrorOr;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Accounts.Queries;
 
-public record GetAllAccountsQuery : IRequest<ErrorOr<List<AccountResponse>>>;
+public record PaginatedAccountResponse(PageResponse Page, List<AccountWithDetailsResponse> Accounts);
+
+public record GetAllAccountsQuery(int PageIndex, int PageSize, string? SearchTerm)
+    : IRequest<ErrorOr<PaginatedAccountResponse>>;
 
 public class GetAllAccountsQueryHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<GetAllAccountsQuery, ErrorOr<List<AccountResponse>>>
+    : IRequestHandler<GetAllAccountsQuery, ErrorOr<PaginatedAccountResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<AccountResponse>>> Handle(GetAllAccountsQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<PaginatedAccountResponse>> Handle(GetAllAccountsQuery request,
+        CancellationToken cancellationToken)
     {
-        var accounts = await _unitOfWork.Account.GetAllWithDetails(cancellationToken);
+        var paginatedAccounts = await _unitOfWork.Account.GetAllWithDetails(
+            request.PageIndex, request.PageSize, request.SearchTerm, cancellationToken);
 
-        return accounts.Select(a => a.ToDto()).ToList();
+        return new PaginatedAccountResponse(
+            paginatedAccounts.MapToPage(),
+            paginatedAccounts.Items.Select(a => a.MapToDtoWithDetails()).ToList()
+        );
     }
 }

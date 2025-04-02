@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.Features.Examinations.Commands;
-using OPS.Application.Features.Examinations.Queries;
+using OPS.Application.Dtos;
+using OPS.Application.Features.Exams.Commands;
+using OPS.Application.Features.Exams.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
@@ -18,23 +18,22 @@ public class ExamController(IMediator mediator) : BaseApiController
 
     /// <summary>Retrieves all exams.</summary>
     /// <returns>List of all exams.</returns>
-    [HttpGet("All")]
+    [HttpGet]
     [EndpointDescription("Retrieves all exams.")]
     [ProducesResponseType<List<ExamResponse>>(Status200OK)]
     public async Task<IActionResult> GetAllExamsAsync()
     {
         var query = new GetAllExamsQuery();
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
-    /// <summary>Retrieves a specific exam.</summary>
+    /// <summary>Retrieves a specific exam with all questions.</summary>
     /// <param name="examId">Exam Id.</param>
     /// <returns>Exam details.</returns>
     [HttpGet("{examId:guid}")]
-    [EndpointDescription("Retrieves a specific exam.")]
-    [ProducesResponseType<ExamResponse>(Status200OK)]
+    [EndpointDescription("Retrieves a specific exam with all questions.")]
+    [ProducesResponseType<ExamWithQuestionsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> GetExamByIdAsync(Guid examId)

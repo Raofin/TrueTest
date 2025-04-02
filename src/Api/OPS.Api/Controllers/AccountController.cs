@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Accounts.Commands;
 using OPS.Application.Features.Accounts.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -16,14 +16,18 @@ public class AccountController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    /// <summary>Retrieves all accounts with details.</summary>
-    /// <returns>A list of account objects.</returns>
-    [HttpGet("All")]
-    [EndpointDescription("Retrieves all accounts with details.")]
-    [ProducesResponseType<List<AccountResponse>>(Status200OK)]
-    public async Task<IActionResult> GetAllAccounts()
+    /// <summary>Retrieves accounts with details.</summary>
+    /// <param name="pageIndex">Page number.</param>
+    /// <param name="pageSize">Accounts per page.</param>
+    /// <param name="searchTerm">Optional search filter.</param>
+    /// <returns>Paginated account list.</returns>
+    [HttpGet]
+    [EndpointDescription("Retrieves accounts with details.")]
+    [ProducesResponseType<PaginatedAccountResponse>(Status200OK)]
+    public async Task<IActionResult> GetAllAccounts(int pageIndex = 1, int pageSize = 10,
+        string? searchTerm = null)
     {
-        var query = new GetAllAccountsQuery();
+        var query = new GetAllAccountsQuery(pageIndex, pageSize, searchTerm);
         var response = await _mediator.Send(query);
         return ToResult(response);
     }
@@ -47,7 +51,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <returns>The updated account object.</returns>
     [HttpPut("Update")]
     [EndpointDescription("Updates details of an account.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
@@ -57,12 +61,12 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Upgrades an account to admin.</summary>
-    /// <param name="command">Account ID to make admin.</param>
-    /// <returns>The updated account object.</returns>
+    /// <summary>Upgrades a list of accounts to admin.</summary>
+    /// <param name="command">Account ID List.</param>
+    /// <returns>A success response if the accounts are upgraded.</returns>
     [HttpPost("MakeAdmin")]
-    [EndpointDescription("Upgrades an account to admin.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [EndpointDescription("Upgrades a list of accounts to admin")]
+    [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> MakeAdmin(MakeAdminCommand command)
@@ -71,15 +75,30 @@ public class AccountController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Sends admin invite to an email address.</summary>
-    /// <param name="command">Email address to send admin invite.</param>
-    /// <returns>A success response if the invite was sent.</returns>
+    /// <summary>Sends admin invite to a list of email addresses.</summary>
+    /// <param name="command">Email address list.</param>
+    /// <returns>Void.</returns>
     [HttpPost("SendAdminInvite")]
-    [EndpointDescription("Sends admin invite to an email address.")]
+    [EndpointDescription("Sends admin invite to a list of email addresses.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> SendAdminInvite(SendAdminInviteCommand command)
     {
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
+
+    /// <summary>Deletes an account.</summary>
+    /// <param name="accountId">Account ID.</param>
+    /// <returns>A success response if the account was deleted.</returns>
+    [HttpDelete("Delete/{accountId:guid}")]
+    [EndpointDescription("Deletes an account.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    public async Task<IActionResult> DeleteAccount(Guid accountId)
+    {
+        var command = new DeleteAccountCommand(accountId);
         var response = await _mediator.Send(command);
         return ToResult(response);
     }

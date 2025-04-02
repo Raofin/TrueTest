@@ -1,13 +1,22 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Enums;
 using Throw;
 
 namespace OPS.Application.Features.Questions.Mcq.Commands;
+
+public record UpdateMcqOptionRequest(
+    string? Option1,
+    string? Option2,
+    string? Option3,
+    string? Option4,
+    bool? IsMultiSelect,
+    string? AnswerOptions
+);
 
 public record UpdateMcqCommand(
     Guid Id,
@@ -30,9 +39,11 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
 
         question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
         question.Points = command.Points ?? question.Points;
-        question.DifficultyId = command.DifficultyType.HasValue ? (int)command.DifficultyType.Value : question.DifficultyId;
+        question.DifficultyId = command.DifficultyType.HasValue
+            ? (int)command.DifficultyType.Value
+            : question.DifficultyId;
 
-        if(command.McqOption is not null)
+        if (command.McqOption is not null)
         {
             question.McqOption.Option1 = command.McqOption.Option1 ?? question.McqOption.Option1;
             question.McqOption.Option2 = command.McqOption.Option2 ?? question.McqOption.Option2;
@@ -45,7 +56,7 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.ToMcqQuestionDto()
+            ? question.MapToMcqQuestionDto()
             : Error.Failure();
     }
 }

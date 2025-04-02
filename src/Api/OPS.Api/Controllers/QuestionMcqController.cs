@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.Mcq.Commands;
 using OPS.Application.Features.Questions.Mcq.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -18,6 +18,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <summary>Creates an MCQ Question.</summary>
     /// <param name="command">A new MCQ question with details.</param>
     /// <returns>Newly created MCQ question.</returns>
+    [HttpPost("Create")]
     [EndpointDescription("Creates an MCQ Question.")]
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -25,7 +26,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> CreateMcqAsync(CreateMcqCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -41,7 +41,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     {
         var query = new GetMcqQuestionByIdQuery(questionId);
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
@@ -56,7 +55,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     {
         var query = new GetMcqByExamQuery(examId);
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
@@ -71,7 +69,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     public async Task<IActionResult> UpdateAsync(UpdateMcqCommand command)
     {
         var response = await _mediator.Send(command);
-
         return ToResult(response);
     }
 
@@ -87,7 +84,6 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     {
         var query = new DeleteMcqCommand(questionId);
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 }
