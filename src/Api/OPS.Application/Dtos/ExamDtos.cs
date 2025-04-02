@@ -64,10 +64,10 @@ public record ExamCandidatesResponse(
     Guid AccountId,
     string Username,
     string Email,
-    int DurationMinutes,
-    DateTime OpensAt,
-    DateTime ClosesAt,
-    List<CandidateResultResponse> Candidates
+    decimal Score,
+    string Status,
+    DateTime StartedAt,
+    DateTime SubmittedAt
 );
 
 public record ExamResultResponse(
