@@ -12,6 +12,7 @@ public record CreateExamCommand(
     string Title,
     string Description,
     int DurationMinutes,
+    Decimal TotalPoints,
     DateTime OpensAt,
     DateTime ClosesAt) : IRequest<ErrorOr<ExamResponse>>;
 
@@ -27,6 +28,7 @@ public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
             Title = request.Title,
             DescriptionMarkdown = request.Description,
             DurationMinutes = request.DurationMinutes,
+            TotalPoints = request.TotalPoints,
             OpensAt = request.OpensAt,
             ClosesAt = request.ClosesAt
         };
@@ -36,7 +38,7 @@ public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? exam.MapToDto()
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 

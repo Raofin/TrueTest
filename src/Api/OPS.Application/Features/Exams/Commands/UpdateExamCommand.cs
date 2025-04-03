@@ -13,36 +13,30 @@ public record UpdateExamCommand(
     string? Description,
     int? DurationMinutes,
     DateTime? OpensAt,
-    DateTime? ClosesAt,
-    bool? IsActive,
-    bool? IsDeleted) : IRequest<ErrorOr<ExamResponse>>;
+    DateTime? ClosesAt) : IRequest<ErrorOr<ExamResponse>>;
 
 public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateExamCommand, ErrorOr<ExamResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ExamResponse>> Handle(UpdateExamCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ExamResponse>> Handle(UpdateExamCommand request, CancellationToken cancellationToken)
     {
-        var exam = await _unitOfWork.Exam.GetAsync(command.ExamId, cancellationToken);
+        var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
+        if (exam is null) return Error.NotFound();
+        if (exam.IsPublished) return Error.Conflict(description: "Exam is already published");
 
-        if (exam is null)
-            return Error.NotFound();
-
-        exam.Title = command.Title ?? exam.Title;
-        exam.DescriptionMarkdown = command.Description ?? exam.DescriptionMarkdown;
-        exam.DurationMinutes = command.DurationMinutes ?? exam.DurationMinutes;
-        exam.OpensAt = command.OpensAt ?? exam.OpensAt;
-        exam.ClosesAt = command.ClosesAt ?? exam.ClosesAt;
-        exam.UpdatedAt = DateTime.UtcNow;
-        exam.IsActive = command.IsActive ?? exam.IsActive;
-        exam.IsDeleted = command.IsDeleted ?? exam.IsDeleted;
+        exam.Title = request.Title ?? exam.Title;
+        exam.DescriptionMarkdown = request.Description ?? exam.DescriptionMarkdown;
+        exam.DurationMinutes = request.DurationMinutes ?? exam.DurationMinutes;
+        exam.OpensAt = request.OpensAt ?? exam.OpensAt;
+        exam.ClosesAt = request.ClosesAt ?? exam.ClosesAt;
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
             ? exam.MapToDto()
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 
@@ -73,11 +67,5 @@ public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
         RuleFor(x => x.ClosesAt)
             .GreaterThan(x => x.OpensAt)
             .When(x => x.ClosesAt.HasValue && x.OpensAt.HasValue);
-
-        RuleFor(x => x.IsActive)
-            .NotNull().When(x => x.IsActive.HasValue);
-
-        RuleFor(x => x.IsDeleted)
-            .NotNull().When(x => x.IsDeleted.HasValue);
     }
 }
