@@ -17,6 +17,9 @@ public class DeleteWrittenCommandHandler(IUnitOfWork unitOfWork)
         var question = await _unitOfWork.Question.GetWithExamAsync(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         question.Examination.WrittenPoints -= question.Points;
         question.Examination.TotalPoints -= question.Points;
 
@@ -25,7 +28,7 @@ public class DeleteWrittenCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? Result.Success
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 

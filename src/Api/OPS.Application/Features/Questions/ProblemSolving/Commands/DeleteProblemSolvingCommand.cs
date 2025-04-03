@@ -17,6 +17,9 @@ public class DeleteProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         var question = await _unitOfWork.Question.GetWithTestCases(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         question.Examination.ProblemSolvingPoints -= question.Points;
         question.Examination.TotalPoints -= question.Points;
 
@@ -26,7 +29,7 @@ public class DeleteProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? Result.Success
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 

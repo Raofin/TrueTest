@@ -35,8 +35,11 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
     {
         var question = await _unitOfWork.Question.GetWithMcqOption(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
-        question.McqOption.ThrowIfNull();
 
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+        
+        question.McqOption.ThrowIfNull();
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
 
         if (request.Points is not null)
