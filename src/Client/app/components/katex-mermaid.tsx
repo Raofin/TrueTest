@@ -5,6 +5,7 @@ import { getCodeString } from 'rehype-rewrite';
 import mermaid from "mermaid";
 import katex from 'katex';
 import 'katex/dist/katex.css';
+import rehypeSanitize from "rehype-sanitize";
 
 const mdMixed = `
 This is to display the KaTeX in one line:
@@ -97,6 +98,7 @@ export default function MdEditor() {
       height={500}
       value={value}
       previewOptions={{
+        rehypePlugins: [[rehypeSanitize]],
         components: {
           code: Code,
         },

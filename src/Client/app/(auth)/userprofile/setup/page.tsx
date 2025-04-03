@@ -13,7 +13,7 @@ interface FormData {
   instituteName: string;
   phoneNumber: string;
   imageFileId: File | string | null;
-  profileLinks: {profileLinkId:null, name: string; link: string }[];
+  profileLinks: { name: string; link: string }[];
 }
 
 export default function ProfileSetUp() {
@@ -26,7 +26,7 @@ export default function ProfileSetUp() {
     instituteName: '',
     phoneNumber: '',
     imageFileId: null,
-    profileLinks: [{ profileLinkId:null, name: '', link: '' }] 
+    profileLinks: [{ name: '', link: '' }] 
   });
   
   const handleProfileEdit = async (e: React.FormEvent) => {

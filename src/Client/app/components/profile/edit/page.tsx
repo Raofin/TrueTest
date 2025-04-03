@@ -12,7 +12,7 @@ interface FormData {
   instituteName: string;
   phoneNumber: string;
   imageFileId: File | string | null;
-  profileLinks: {profileLinkId:null, name: string; link: string }[];
+  profileLinks: { name: string; link: string }[];
 }
 
 interface ProfileDetailsProps {
@@ -24,7 +24,7 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
   const handleAddSocialLink = () => {
     setFormData(prev => ({
       ...prev,
-      profileLinks: [...prev.profileLinks, {profileLinkId:null, name: '', link: '' }]
+      profileLinks: [...prev.profileLinks, { name: '', link: '' }]
     }));
   };
 
