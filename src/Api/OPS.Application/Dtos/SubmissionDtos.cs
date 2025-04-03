@@ -45,8 +45,7 @@ public record ProblemSubmitResponse(
     Guid QuestionId,
     Guid ProblemSubmissionId,
     string Code,
-    ProgLanguageType Language,
-    List<TestCaseOutputResponse> TestCaseOutputs
+    ProgLanguageType Language
 );
 
 public record TestCaseOutputResponse(
@@ -96,9 +95,9 @@ public record WrittenSubmitResponse(
 );
 
 public record SubmissionResponse(
-    List<ProblemSubmissionResponse> Problem,
-    List<WrittenSubmissionResponse> Written,
-    List<McqSubmissionResponse> Mcq
+    List<ProblemSubmissionResponse?> Problem,
+    List<WrittenSubmissionResponse?> Written,
+    List<McqSubmissionResponse?> Mcq
 );
 
 public record SubmitResponse(

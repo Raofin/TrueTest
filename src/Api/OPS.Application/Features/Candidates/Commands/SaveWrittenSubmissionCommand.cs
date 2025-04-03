@@ -1,68 +1,73 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Dtos;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
 
 namespace OPS.Application.Features.Candidates.Commands;
 
-public record SaveWrittenSubmissionCommand(Guid QuestionId, string CandidateAnswer)
-    : IRequest<ErrorOr<WrittenSubmitResponse>>;
+public record WrittenSubmissionRequest(Guid QuestionId, string CandidateAnswer);
 
-public class SaveWrittenSubmissionCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
-    : IRequestHandler<SaveWrittenSubmissionCommand, ErrorOr<WrittenSubmitResponse>>
+public record SaveWrittenSubmissionsCommand(Guid ExamId, List<WrittenSubmissionRequest> Submissions)
+    : IRequest<ErrorOr<Success>>;
+
+public class SaveWrittenSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
+    : IRequestHandler<SaveWrittenSubmissionsCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    public async Task<ErrorOr<WrittenSubmitResponse>> Handle(SaveWrittenSubmissionCommand request,
+    public async Task<ErrorOr<Success>> Handle(SaveWrittenSubmissionsCommand request,
         CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
 
-        var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
-        if (question == null) return Error.NotFound();
+        var isValidCandidate = await _unitOfWork.ExamCandidate
+            .IsValidCandidate(userAccountId, request.ExamId, cancellationToken);
+        
+        if (!isValidCandidate) return Error.Unauthorized();
 
-        var existingSubmission = await _unitOfWork.WrittenSubmission.GetByAccountIdAsync(
-            request.QuestionId, userAccountId, cancellationToken);
+        foreach (var req in request.Submissions)
+        {
+            var submission = await _unitOfWork.WrittenSubmission
+                .GetByAccountIdAsync(req.QuestionId, userAccountId, cancellationToken);
 
-        var submission = new WrittenSubmission
-        {
-            Answer = request.CandidateAnswer,
-            QuestionId = request.QuestionId,
-            AccountId = userAccountId
-        };
+            if (submission is not null)
+            {
+                submission.Answer = req.CandidateAnswer;
+            }
+            else
+            {
+                submission = new WrittenSubmission
+                {
+                    Answer = req.CandidateAnswer,
+                    QuestionId = req.QuestionId,
+                    AccountId = userAccountId
+                };
 
-        if (existingSubmission is null)
-        {
-            _unitOfWork.WrittenSubmission.Add(submission);
-        }
-        else
-        {
-            existingSubmission.Answer = request.CandidateAnswer;
-            submission = existingSubmission;
+                _unitOfWork.WrittenSubmission.Add(submission);
+            }
         }
 
         await _unitOfWork.CommitAsync(cancellationToken);
 
-        return new WrittenSubmitResponse(
-            submission.QuestionId,
-            submission.Id,
-            submission.Answer
-        );
+        return Result.Success;
     }
 }
 
-public class SaveWrittenSubmissionCommandValidator : AbstractValidator<SaveWrittenSubmissionCommand>
+public class SaveWrittenSubmissionsCommandValidator : AbstractValidator<SaveWrittenSubmissionsCommand>
 {
-    public SaveWrittenSubmissionCommandValidator()
+    public SaveWrittenSubmissionsCommandValidator()
     {
-        RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+        RuleForEach(x => x.Submissions).ChildRules(sub =>
+        {
+            sub.RuleFor(x => x.QuestionId)
+                .NotEmpty()
+                .NotEqual(Guid.Empty);
 
-        RuleFor(x => x.CandidateAnswer).NotEmpty();
+            sub.RuleFor(x => x.CandidateAnswer)
+                .NotEmpty();
+        });
     }
 }

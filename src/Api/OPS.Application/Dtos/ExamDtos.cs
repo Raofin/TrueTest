@@ -6,6 +6,10 @@ public record ExamResponse(
     Guid ExamId,
     string Title,
     string Description,
+    decimal TotalPoints,
+    decimal ProblemSolvingPoints,
+    decimal WrittenPoints,
+    decimal McqPoints,
     int DurationMinutes,
     string Status,
     DateTime OpensAt,
@@ -13,13 +17,7 @@ public record ExamResponse(
 );
 
 public record ExamWithQuestionsResponse(
-    Guid ExamId,
-    string Title,
-    string Description,
-    int DurationMinutes,
-    string Status,
-    DateTime OpensAt,
-    DateTime ClosesAt,
+    ExamResponse Exam,
     QuestionResponses Questions
 );
 
@@ -30,12 +28,9 @@ public record QuestionResponses(
 );
 
 public record ExamQuesWithSubmissionResponse(
-    Guid ExamId,
-    string Title,
-    int DurationMinutes,
-    int TotalPoints,
-    AccountResponse Account,
-    ExamResultsResponse Results,
+    ExamResponse Exam,
+    AccountBasicInfoResponse Account,
+    ResultResponse Result,
     QuestionsWithSubmissionResponse QuestionsWithSubmission
 );
 
@@ -60,35 +55,13 @@ public record ExamStartResponse(
     SubmitResponse Submits
 );
 
-public record ExamCandidatesResponse(
-    Guid AccountId,
-    string Username,
-    string Email,
-    decimal Score,
-    string Status,
-    DateTime StartedAt,
-    DateTime SubmittedAt
-);
-
-public record ExamResultResponse(
-    Guid ExamId,
-    string Title,
-    AccountBasicInfoResponse Account,
-    CandidateResultResponse Result,
-    SubmissionResponse Submission
-);
-
-public record CandidateResultResponse(
-    bool IsReviewed,
+public record ResultResponse(
+    decimal? TotalScore,
+    decimal? ProblemSolvingScore,
+    decimal? WrittenScore,
+    decimal? McqScore,
     DateTime StartedAt,
     DateTime SubmittedAt,
-    decimal TotalPoints,
-    decimal? TotalScore,
-    decimal ProblemSolvingPoints,
-    decimal? ProblemSolvingScore,
-    decimal WrittenPoints,
-    decimal? WrittenScore,
-    decimal McqPoints,
-    decimal? McqScore,
-    bool HasCheated
+    bool HasCheated,
+    bool IsReviewed
 );

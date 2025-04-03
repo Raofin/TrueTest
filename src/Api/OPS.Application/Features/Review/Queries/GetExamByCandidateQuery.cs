@@ -27,17 +27,9 @@ public class GetExamByCandidateQueryHandler(IUnitOfWork unitOfWork)
         if (exam is null) return Error.NotFound(description: "Exam not found");
 
         var examReview = new ExamQuesWithSubmissionResponse(
-            exam.Id,
-            exam.Title,
-            exam.DurationMinutes,
-            100,
-            candidate.Account!.MapToDto(),
-            new ExamResultsResponse(
-                100,
-                candidate.StartedAt,
-                candidate.SubmittedAt,
-                candidate.HasCheated
-            ),
+            exam.MapToDto(),
+            candidate.Account!.MapToBasicInfoDto(),
+            candidate.MapToResultDto(),
             new QuestionsWithSubmissionResponse(
                 exam.Questions
                     .Where(q => q.QuestionTypeId == (int)QuestionType.ProblemSolving)

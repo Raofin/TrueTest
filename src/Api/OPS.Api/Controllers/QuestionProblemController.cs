@@ -20,7 +20,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <returns>Newly created problem-solving question.</returns>
     [HttpPost("Create")]
     [EndpointDescription("Creates a problem-solving question.")]
-    [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]
+    [ProducesResponseType<List<ProblemQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> CreateProblemSolvingAsync(CreateProblemSolvingCommand command)

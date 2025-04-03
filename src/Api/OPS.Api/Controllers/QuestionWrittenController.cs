@@ -20,7 +20,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <returns>Newly created written question.</returns>
     [HttpPost("Create")]
     [EndpointDescription("Creates a written question.")]
-    [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
+    [ProducesResponseType<List<WrittenQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> CreateWrittenAsync(CreateWrittenCommand command)

@@ -5,6 +5,7 @@ using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Enums;
+using Throw;
 
 namespace OPS.Application.Features.Questions.Written.Command;
 
@@ -23,21 +24,29 @@ public class UpdateWrittenCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<WrittenQuestionResponse>> Handle(UpdateWrittenCommand request,
         CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetAsync(request.QuestionId, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithExamAsync(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
-        question.Points = request.Points ?? question.Points;
         question.HasLongAnswer = request.HasLongAnswer ?? question.HasLongAnswer;
+
+        if (request.Points is not null)
+        {
+            question.Examination.WrittenPoints -= question.Points;
+            question.Examination.TotalPoints -= question.Points;
+
+            question.Points = request.Points.Value;
+            question.Examination.WrittenPoints += question.Points;
+            question.Examination.TotalPoints += question.Points;
+        }
+
         question.DifficultyId = request.DifficultyType.HasValue
             ? (int)request.DifficultyType.Value
             : question.DifficultyId;
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? question.MapToWrittenQuestionDto()
-            : Error.Failure();
+        return question.MapToWrittenQuestionDto();
     }
 }
 
@@ -45,6 +54,10 @@ public class UpdateWrittenCommandValidator : AbstractValidator<UpdateWrittenComm
 {
     public UpdateWrittenCommandValidator()
     {
+        RuleFor(x => x.QuestionId)
+            .NotEmpty()
+            .NotEqual(Guid.Empty);
+
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10)
             .When(x => !string.IsNullOrEmpty(x.StatementMarkdown));

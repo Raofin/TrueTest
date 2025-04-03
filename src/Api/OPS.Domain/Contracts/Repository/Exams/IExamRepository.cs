@@ -9,4 +9,5 @@ public interface IExamRepository : IBaseRepository<Examination>
     Task<Examination?> GetWithQuestionsAsync(Guid examId, CancellationToken cancellationToken);
     Task<ExamCandidate?> GetCandidateAsync(Guid examId, Guid accountId, CancellationToken cancellationToken);
     Task<Examination?> GetWithQuesAndSubmissionsAsync(Guid examId, Guid accountId, CancellationToken cancellationToken);
+    Task<Examination?> GetResultsAsync(Guid examId, CancellationToken cancellationToken);
 }

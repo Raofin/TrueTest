@@ -11,49 +11,60 @@ namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
 
 public record TestCaseRequest(string Input, string Output);
 
-public record CreateProblemSolvingCommand(
-    Guid ExamId,
+public record CreateProblemQuestionRequest(
     string StatementMarkdown,
     decimal Points,
     DifficultyType DifficultyType,
-    List<TestCaseRequest> TestCases) : IRequest<ErrorOr<ProblemQuestionResponse>>;
+    List<TestCaseRequest> TestCases);
+
+public record CreateProblemSolvingCommand(Guid ExamId, List<CreateProblemQuestionRequest> ProblemQuestions)
+    : IRequest<ErrorOr<List<ProblemQuestionResponse>>>;
 
 public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<CreateProblemSolvingCommand, ErrorOr<ProblemQuestionResponse>>
+    : IRequestHandler<CreateProblemSolvingCommand, ErrorOr<List<ProblemQuestionResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<ProblemQuestionResponse>> Handle(CreateProblemSolvingCommand request,
+    public async Task<ErrorOr<List<ProblemQuestionResponse>>> Handle(CreateProblemSolvingCommand request,
         CancellationToken cancellationToken)
     {
-        var examExists = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
-        if (examExists == null) return Error.NotFound();
+        var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
+        if (exam == null) return Error.NotFound();
 
-        var question = new Question
-        {
-            StatementMarkdown = request.StatementMarkdown,
-            Points = request.Points,
-            ExaminationId = request.ExamId,
-            DifficultyId = (int)request.DifficultyType,
-            QuestionTypeId = (int)QuestionType.ProblemSolving
-        };
+        var questions = new List<Question>();
 
-        foreach (var tc in request.TestCases)
+        foreach (var problem in request.ProblemQuestions)
         {
-            question.TestCases.Add(
-                new TestCase
+            var question = new Question
+            {
+                StatementMarkdown = problem.StatementMarkdown,
+                Points = problem.Points,
+                ExaminationId = request.ExamId,
+                DifficultyId = (int)problem.DifficultyType,
+                QuestionTypeId = (int)QuestionType.ProblemSolving
+            };
+
+            foreach (var tc in problem.TestCases)
+            {
+                question.TestCases.Add(new TestCase
                 {
                     Input = tc.Input,
-                    ExpectedOutput = tc.Output,
-                }
-            );
+                    ExpectedOutput = tc.Output
+                });
+            }
+
+            questions.Add(question);
         }
 
-        _unitOfWork.Question.Add(question);
+        var newPoints = questions.Sum(q => q.Points);
+        exam.ProblemSolvingPoints += newPoints;
+        exam.TotalPoints += newPoints;
+
+        _unitOfWork.Question.AddRange(questions);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.MapToProblemQuestionDto()
+            ? questions.Select(q => q.MapToProblemQuestionDto()).ToList()
             : Error.Failure();
     }
 }
@@ -62,6 +73,21 @@ public class CreateProblemSolvingCommandValidator : AbstractValidator<CreateProb
 {
     public CreateProblemSolvingCommandValidator()
     {
+        RuleFor(x => x.ExamId)
+            .NotEqual(Guid.Empty);
+
+        RuleFor(x => x.ProblemQuestions)
+            .NotEmpty();
+
+        RuleForEach(x => x.ProblemQuestions)
+            .SetValidator(new ProblemQuestionRequestValidator());
+    }
+}
+
+public class ProblemQuestionRequestValidator : AbstractValidator<CreateProblemQuestionRequest>
+{
+    public ProblemQuestionRequestValidator()
+    {
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10);
 
@@ -69,11 +95,12 @@ public class CreateProblemSolvingCommandValidator : AbstractValidator<CreateProb
             .GreaterThan(0)
             .LessThanOrEqualTo(100);
 
-        RuleFor(x => x.ExamId)
-            .NotEqual(Guid.Empty);
-
         RuleFor(x => x.DifficultyType)
             .IsInEnum();
+
+        RuleFor(x => x.TestCases)
+            .NotEmpty()
+            .WithMessage("At least one test case is required for a problem-solving question.");
 
         RuleForEach(x => x.TestCases)
             .SetValidator(new TestCaseRequestValidator());

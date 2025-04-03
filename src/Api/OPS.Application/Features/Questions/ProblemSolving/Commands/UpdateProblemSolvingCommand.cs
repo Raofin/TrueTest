@@ -31,7 +31,17 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         if (question is null) return Error.NotFound();
 
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
-        question.Points = request.Points ?? question.Points;
+
+        if (request.Points is not null)
+        {
+            question.Examination.ProblemSolvingPoints -= question.Points;
+            question.Examination.TotalPoints -= question.Points;
+
+            question.Points = request.Points.Value;
+            question.Examination.ProblemSolvingPoints += question.Points;
+            question.Examination.TotalPoints += question.Points;
+        }
+
         question.DifficultyId = request.DifficultyType.HasValue
             ? (int)request.DifficultyType.Value
             : question.DifficultyId;
@@ -58,11 +68,9 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
             }
         }
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? question.MapToProblemQuestionDto()
-            : Error.Failure();
+        return question.MapToProblemQuestionDto();
     }
 }
 

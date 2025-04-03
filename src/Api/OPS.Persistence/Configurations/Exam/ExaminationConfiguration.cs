@@ -14,6 +14,10 @@ public class ExaminationConfiguration : IEntityTypeConfiguration<Examination>
 
         entity.Property(e => e.Title).IsRequired().HasMaxLength(255);
         entity.Property(e => e.DescriptionMarkdown).IsRequired();
+        entity.Property(e => e.TotalPoints).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
+        entity.Property(e => e.ProblemSolvingPoints).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
+        entity.Property(e => e.WrittenPoints).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
+        entity.Property(e => e.McqPoints).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
         entity.Property(e => e.DurationMinutes).IsRequired();
         entity.Property(e => e.IsPublished).HasDefaultValue(false);
         entity.Property(e => e.OpensAt).HasColumnType("DateTime");

@@ -17,6 +17,9 @@ public class DeleteMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
         var question = await _unitOfWork.Question.GetWithMcqOption(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
+        question.Examination.McqPoints -= question.Points;
+        question.Examination.TotalPoints -= question.Points;
+
         if (question.McqOption is not null)
             _unitOfWork.McqOption.Remove(question.McqOption);
 

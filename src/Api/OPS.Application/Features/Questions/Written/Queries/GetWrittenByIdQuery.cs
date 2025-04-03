@@ -7,7 +7,7 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Written.Queries;
 
-public record GetWrittenByIdQuery(Guid Id) : IRequest<ErrorOr<WrittenQuestionResponse>>;
+public record GetWrittenByIdQuery(Guid QuestionId) : IRequest<ErrorOr<WrittenQuestionResponse>>;
 
 public class GetWrittenByIdQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetWrittenByIdQuery, ErrorOr<WrittenQuestionResponse>>
@@ -17,7 +17,7 @@ public class GetWrittenByIdQueryHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<WrittenQuestionResponse>> Handle(GetWrittenByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetWrittenByIdAsync(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWrittenByIdAsync(request.QuestionId, cancellationToken);
 
         return question is null
             ? Error.NotFound()
@@ -29,7 +29,7 @@ public class GetWrittenByIdQueryValidator : AbstractValidator<GetWrittenByIdQuer
 {
     public GetWrittenByIdQueryValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.QuestionId)
             .NotEmpty()
             .NotEqual(Guid.Empty);
     }

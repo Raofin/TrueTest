@@ -7,18 +7,22 @@ namespace OPS.Application.Features.Questions.Written.Command;
 
 public record DeleteWrittenCommand(Guid QuestionId) : IRequest<ErrorOr<Success>>;
 
-public class DeleteWrittenCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteWrittenCommand, ErrorOr<Success>>
+public class DeleteWrittenCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<DeleteWrittenCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ErrorOr<Success>> Handle(DeleteWrittenCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetWrittenByIdAsync(request.QuestionId, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithExamAsync(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
-        
+
+        question.Examination.WrittenPoints -= question.Points;
+        question.Examination.TotalPoints -= question.Points;
+
         _unitOfWork.Question.Remove(question);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
-        
+
         return result > 0
             ? Result.Success
             : Error.Failure();
