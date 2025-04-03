@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 import { useRouter } from 'next/navigation'
 import api from '@/app/utils/api'
 import { getAuthToken, setAuthToken, removeAuthToken } from '@/app/utils/auth'
+import Swal from 'sweetalert2'
 
 interface User {
   username: string
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const response=await api.get('/User/Info')
        if(response.status===200){
         const userData=response.data;
+        setUser(userData)
       if (userData.roles.some((role: string) => role.toLowerCase() === 'admin')) {
         router.push('/overview')
       } else {
@@ -60,10 +62,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           usernameOrEmail: email,
           password: password,
         })
+      if(response.status===200){
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          text: "logged in successfully",
+          showConfirmButton: false,
+          timer: 1500
+        });
         const { token } = response.data
         setAuthToken(token)
+        setUser(response.data)
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`
         await fetchUser()
+      }
       } catch {
         setError('Useremail or password invalid. Please try again.')
       }
