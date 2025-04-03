@@ -13,5 +13,5 @@ export default function FormattedDate({ date }: { date: string }) {
     minute: 'numeric',
     hour12: true,
   });
-  return <p>{formattedDate.format(getdate)}</p>;
+  return <>{formattedDate.format(getdate)}</>;
 }

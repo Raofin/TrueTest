@@ -5,16 +5,7 @@ import { Button, Form } from '@heroui/react'
 import ProfileEdit from '@/app/components/profile/edit/page'
 import { useRouter } from 'next/navigation'
 import api from '@/app/utils/api'
-
-interface FormData {
-  firstName: string;
-  lastName: string;
-  bio: string;
-  instituteName: string;
-  phoneNumber: string;
-  imageFileId: File | string | null;
-  profileLinks: { name: string; link: string }[];
-}
+import {FormData} from '@/app/components/types/profile'
 
 export default function ProfileSetUp() {
   const router = useRouter();

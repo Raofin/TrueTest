@@ -1,38 +1,11 @@
 'use client'
-
 import React, { useEffect, useState } from 'react'
 import { Avatar, Card, Link, Button } from '@heroui/react'
 import { FaLink } from 'react-icons/fa6'
 import { usePathname } from 'next/navigation'
 import api from '@/app/utils/api'
 import FormattedDate from '../format-date-time'
-
-interface ProfileLink {
-  profileListId: string
-  name: string
-  link: string
-}
-
-interface UserProfile {
-  profileId: string
-  firstName: string
-  lastName: string
-  bioMarkdown?: string
-  instituteName?: string
-  phoneNumber?: string
-  imageFileId: string | null
-  profileList?: ProfileLink[] 
-}
-
-interface User {
-  accountId: string
-  username: string
-  email: string
-  createdAt: string
-  isActive: boolean
-  profile: UserProfile | null
-  roles: string[]
-}
+import { ProfileLink, User } from '../types/profile'
 
 export default function ProfilePage() {
   const path = usePathname()
@@ -54,9 +27,12 @@ export default function ProfilePage() {
             ...response.data,
             profile: response.data.profile ? {
               ...response.data.profile,
-              profileList: response.data.profile.profileList || [] 
+              profileList: response.data.profile.profileList?.map((link:ProfileLink) => ({
+                name: link.name || "Unknown",
+                link: link.link || "#",
+              })) || []
             } : null
-          }
+          };
           setUserInfo(normalizedData)
         }
       } catch (error) {
@@ -68,7 +44,7 @@ export default function ProfilePage() {
           createdAt: new Date().toISOString(),
           isActive: false,
           roles: [],
-          profile: null
+          profile: null,
         })
       } finally {
         setLoading(false)
@@ -97,77 +73,63 @@ export default function ProfilePage() {
           />
           <div className="ml-64">
             <h2 className="text-3xl font-semibold">
-              {userInfo?.profile?.firstName || 'No first name'} {userInfo?.profile?.lastName || 'No last name'}
+              {userInfo?.profile?.firstName || ''} {userInfo?.profile?.lastName || ''}
             </h2>
-            <p className="text-gray-400">@{userInfo?.username || 'username not provided'}</p>
+            <p className="text-gray-400">@{userInfo?.username || 'not provided'}</p>
           </div>
         </div>
-        {userInfo?.profile ? (
-          <>
-            <p className="text-md mb-4">{userInfo.profile.bioMarkdown || 'No bio provided'}</p>
-            <hr />
-            <div className="space-y-2 mb-4 mt-4">
-              <p className="text-md flex gap-3">
-                <strong>Email:</strong>
-                <Link href={`mailto:${userInfo.email}`} className="text-[#71717a] dark:text-white">
-                  {userInfo.email}
-                </Link>
-              </p>
-              {userInfo.profile.instituteName && (
-                <p className="text-md flex gap-3">
-                  <strong>Institute:</strong>
-                  <span className="text-[#71717a] dark:text-white">
-                    {userInfo.profile.instituteName}
-                  </span>
-                </p>
+        <p className="text-md mb-4">{userInfo?.profile?.bioMarkdown || 'No bio provided'}</p>
+        <hr />
+        <div className="space-y-2 mb-4 mt-4">
+          <p className="text-md flex gap-3">
+            <strong>Email:</strong>
+            <Link href={`mailto:${userInfo?.email}`} className="text-[#71717a] dark:text-white">
+              {userInfo?.email || 'not provided'}
+            </Link>
+          </p>
+
+          <p className="text-md flex gap-3">
+            <strong>Institute:</strong>
+            <span className="text-[#71717a] dark:text-white">{userInfo?.profile?.instituteName || 'not provided'}</span>
+          </p>
+
+          <p className="text-md flex gap-3">
+            <strong>Phone:</strong>
+            <span className="text-[#71717a] dark:text-white">{userInfo?.profile?.phoneNumber || 'not provided'}</span>
+          </p>
+
+          <p className="text-md flex gap-3 items-center">
+            <strong>Links:</strong>
+            <span className="flex flex-wrap gap-3">
+              {userInfo?.profile?.profileLinks?.length ? (
+                userInfo.profile.profileLinks.map((link) => (
+                  <Link
+                    key={link.link}
+                    href={link.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-[#71717a] dark:text-white"
+                  >
+                    {link.name} <FaLink />
+                  </Link>
+                ))
+              ) : (
+                <span className="text-gray-500">not provided</span>
               )}
-              {userInfo.profile.phoneNumber && (
-                <p className="text-md flex gap-3">
-                  <strong>Phone:</strong>
-                  <span className="text-[#71717a] dark:text-white">
-                    {userInfo.profile.phoneNumber}
-                  </span>
-                </p>
-              )}
-              {userInfo.profile.profileList && userInfo.profile.profileList.length > 0 && (
-                <p className="text-md flex gap-3 items-center">
-                  <strong>Links:</strong>
-                  <span className="flex flex-wrap gap-3">
-                    {userInfo.profile.profileList.map((link) => (
-                      <Link
-                        key={link.profileListId}
-                        href={link.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-[#71717a] dark:text-white"
-                      >
-                        {link.name} <FaLink />
-                      </Link>
-                    ))}
-                  </span>
-                </p>
-              )}
-              <div className="text-md flex gap-3">
-                <strong>Joined:</strong>
-                <span className="text-[#71717a] dark:text-white">
-                  <FormattedDate date={userInfo.createdAt} />
-                </span>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-lg mb-4">You haven&apos;t set up your profile yet</p>
+            </span>
+          </p>
+
+          <div className="text-md flex gap-3">
+            <strong>Joined:</strong>
+            <span className="text-[#71717a] dark:text-white">
+              <FormattedDate date={userInfo?.createdAt || 'not provided'} />
+            </span>
           </div>
-        )}
+        </div>
+
         <div className="flex justify-center">
-          <Button
-            color="primary"
-            className="font-semibold py-2 px-4 rounded-lg"
-            as={Link}
-            href={`/${route}/edit`}
-          >
-            {userInfo?.profile ? 'Update Profile' : 'Create Profile'}
+          <Button color="primary" className="font-semibold py-2 px-4 rounded-lg" as={Link} href={`/${route}/edit`}>
+            Update Profile
           </Button>
         </div>
       </Card>

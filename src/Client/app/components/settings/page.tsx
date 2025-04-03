@@ -4,6 +4,7 @@ import api from '@/app/utils/api'
 import { Button, Card, Link } from '@heroui/react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import FormattedDate from '../format-date-time'
 
 interface User{
   username:string,
@@ -55,12 +56,12 @@ useEffect(()=>{
           </div>
           <div className="flex items-center">
             <p className=" font-semibold">Joined : </p>
-            <p className="text-sm ml-3">{userSetting?.createdAt}</p>
+            <p className="text-sm ml-3">{userSetting ? <FormattedDate date={userSetting?.createdAt}/>:""}</p>
           </div>
         </div>
         <div className="mt-5 flex w-full justify-center">
           <Button color="primary">
-            <Link className="text-white" href={`/${route}/edit`}>
+            <Link className="text-white" href={`/${route}/edit/?username=${userSetting?.username}`}>
               Change Settings
             </Link>
           </Button>

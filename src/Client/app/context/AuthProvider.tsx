@@ -36,14 +36,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
        if(response.status===200){
         const userData=response.data;
         setUser(userData)
-      if (userData.roles.some((role: string) => role.toLowerCase() === 'admin')) {
-        router.push('/overview')
-      } else {
-        router.push('/home')
-      }
     }
     }
- ,[router])
+ ,[])
 
   useEffect(() => {
     const token = getAuthToken()
