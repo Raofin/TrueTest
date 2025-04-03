@@ -82,4 +82,17 @@ public class CandidateController(IMediator mediator) : BaseApiController
         var response = await _mediator.Send(command);
         return ToResult(response);
     }
+
+    /// <summary>Tests the code for a specific question.</summary>
+    /// <param name="command">Code with the Question Id to test</param>
+    /// <returns>Test results</returns>
+    [HttpPost("TestCode")]
+    [EndpointDescription("Tests the code for a specific question.")]
+    [ProducesResponseType<List<TestCodeResponse>>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> TestCodeAsync(TestCodeCommand command)
+    {
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
 }
