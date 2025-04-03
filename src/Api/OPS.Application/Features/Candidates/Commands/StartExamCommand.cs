@@ -7,7 +7,6 @@ using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
-using Throw;
 
 namespace OPS.Application.Features.Candidates.Commands;
 
@@ -36,7 +35,8 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
         var exam = await _unitOfWork.Exam.GetWithQuesAndSubmissionsAsync(
             request.ExamId, userAccountId, cancellationToken);
 
-        exam.ThrowIfNull();
+        if (exam is null)
+            return Error.Unexpected(description: "Invalid exam");
 
         if (candidate.StartedAt == null)
         {
@@ -47,7 +47,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        var examReview = new ExamStartResponse(
+        return new ExamStartResponse(
             exam.Id,
             candidate.StartedAt.Value,
             candidate.StartedAt.Value.AddMinutes(exam.DurationMinutes),
@@ -64,8 +64,6 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
                     .Select(ToMcqSubmitDto).ToList()
             )
         );
-
-        return examReview;
     }
 
     private static ProblemSubmitResponse? ToProblemSubmitDto(Question question)
@@ -79,12 +77,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             question.Id,
             submission.Id,
             submission.Code,
-            (ProgLanguageType)submission.ProgLanguageId,
-            submission.TestCaseOutputs.Select(tco => new TestCaseOutputResponse(
-                tco.TestCaseId,
-                tco.IsAccepted,
-                tco.ReceivedOutput
-            )).ToList()
+            (ProgLanguageType)submission.ProgLanguageId
         );
     }
 

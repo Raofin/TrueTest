@@ -16,7 +16,7 @@ internal class McqSubmissionRepository(AppDbContext dbContext)
         CancellationToken cancellationToken)
     {
         return await _dbContext.McqSubmissions
-            .Where(submission => submission.AccountId == accountId && submission.QuestionId == questionId)
+            .Where(s => s.AccountId == accountId && s.QuestionId == questionId)
             .SingleOrDefaultAsync(cancellationToken);
     }
 

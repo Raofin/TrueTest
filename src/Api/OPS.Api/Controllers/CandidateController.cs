@@ -46,10 +46,10 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <returns>The saved or updated problem-solving submission.</returns>
     [HttpPost("Submit/Problem/Save")]
     [EndpointDescription("Creates or updates a problem-solving submission.")]
-    [ProducesResponseType<ProblemSubmitResponse>(Status200OK)]
+    [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> SaveProblemAsync(SaveProblemSubmissionCommand command)
+    public async Task<IActionResult> SaveProblemAsync(SaveProblemSubmissionsCommand command)
     {
         var response = await _mediator.Send(command);
         return ToResult(response);
@@ -60,10 +60,10 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <returns>The saved or updated written submission.</returns>
     [HttpPost("Submit/Written/Save")]
     [EndpointDescription("Creates or updates a written submission.")]
-    [ProducesResponseType<WrittenSubmitResponse>(Status200OK)]
+    [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> SaveWrittenSubmissionAsync(SaveWrittenSubmissionCommand command)
+    public async Task<IActionResult> SaveWrittenSubmissionAsync(SaveWrittenSubmissionsCommand command)
     {
         var response = await _mediator.Send(command);
         return ToResult(response);
@@ -74,10 +74,10 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <returns>The saved or updated MCQ submission.</returns>
     [HttpPost("Submit/Mcq/Save")]
     [EndpointDescription("Creates or updates an MCQ submission.")]
-    [ProducesResponseType<McqSubmitResponse>(Status200OK)]
+    [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> SaveMcqSubmissionAsync(SaveMcqSubmissionCommand command)
+    public async Task<IActionResult> SaveMcqSubmissionAsync(SaveMcqSubmissionsCommand command)
     {
         var response = await _mediator.Send(command);
         return ToResult(response);

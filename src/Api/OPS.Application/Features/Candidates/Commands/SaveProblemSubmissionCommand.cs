@@ -1,112 +1,84 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Dtos;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Candidates.Commands;
 
-public record SaveProblemSubmissionCommand(
+public record ProblemSubmissionRequest(
     Guid QuestionId,
     string Code,
-    ProgLanguageType ProgLanguageType) : IRequest<ErrorOr<ProblemSubmitResponse>>;
+    ProgLanguageType ProgLanguageType);
 
-public class SaveProblemSubmissionCommandHandler(
-    IUnitOfWork unitOfWork,
-    IUserInfoProvider userInfoProvider)
-    : IRequestHandler<SaveProblemSubmissionCommand, ErrorOr<ProblemSubmitResponse>>
+public record SaveProblemSubmissionsCommand(Guid ExamId, List<ProblemSubmissionRequest> Submissions)
+    : IRequest<ErrorOr<Success>>;
+
+public class SaveProblemSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
+    : IRequestHandler<SaveProblemSubmissionsCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    public async Task<ErrorOr<ProblemSubmitResponse>> Handle(
-        SaveProblemSubmissionCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> Handle(
+        SaveProblemSubmissionsCommand request, CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
-        var testCases = await _unitOfWork.TestCase.GetByQuestionIdAsync(request.QuestionId, cancellationToken);
 
-        // TODO: Add compiler service to compile the code
+        var isValidCandidate = await _unitOfWork.ExamCandidate
+            .IsValidCandidate(userAccountId, request.ExamId, cancellationToken);
+        
+        if (!isValidCandidate) return Error.Unauthorized();
 
-        var submission = new ProblemSubmission
+        foreach (var req in request.Submissions)
         {
-            Code = request.Code,
-            Attempts = 1,
-            Score = 0,
-            ProgLanguageId = (int)request.ProgLanguageType,
-            AccountId = userAccountId,
-            QuestionId = request.QuestionId,
-            TestCaseOutputs = testCases.Select(
-                testCase => new TestCaseOutput
+            var submission = await _unitOfWork.ProblemSubmission
+                .GetAsync(req.QuestionId, userAccountId, cancellationToken);
+
+            if (submission is not null)
+            {
+                submission.Code = req.Code;
+                submission.Attempts++;
+                submission.ProgLanguageId = (int)req.ProgLanguageType;
+            }
+            else
+            {
+                submission = new ProblemSubmission
                 {
-                    TestCaseId = testCase.Id,
-                    ReceivedOutput = "Compiler error",
-                    IsAccepted = false
-                }).ToList()
-        };
+                    Code = req.Code,
+                    Attempts = 1,
+                    ProgLanguageId = (int)req.ProgLanguageType,
+                    AccountId = userAccountId,
+                    QuestionId = req.QuestionId
+                };
 
-        return await SaveProblemSubmission(submission, testCases, cancellationToken);
-    }
-
-    private async Task<ErrorOr<ProblemSubmitResponse>> SaveProblemSubmission(
-        ProblemSubmission submission, List<TestCase> testCases, CancellationToken cancellationToken)
-    {
-        var existingSubmission = await _unitOfWork.ProblemSubmission.GetWithOutputsAsync(
-            submission.QuestionId, submission.AccountId, cancellationToken);
-
-        if (existingSubmission is null)
-        {
-            _unitOfWork.ProblemSubmission.Add(submission);
-        }
-        else
-        {
-            existingSubmission.Code = submission.Code;
-            existingSubmission.Attempts++;
-            existingSubmission.Score = submission.Score;
-            existingSubmission.ProgLanguageId = submission.ProgLanguageId;
-            existingSubmission.TestCaseOutputs = existingSubmission.TestCaseOutputs
-                .Zip(submission.TestCaseOutputs, (existing, updated) =>
-                {
-                    existing.ReceivedOutput = updated.ReceivedOutput;
-                    existing.IsAccepted = updated.IsAccepted;
-                    return existing;
-                }).ToList();
-
-            submission = existingSubmission;
+                _unitOfWork.ProblemSubmission.Add(submission);
+            }
         }
 
-        var response = new ProblemSubmitResponse(
-            submission.QuestionId,
-            submission.Id,
-            submission.Code,
-            (ProgLanguageType)submission.ProgLanguageId,
-            submission.TestCaseOutputs.Select(tco => new TestCaseOutputResponse(
-                tco.TestCaseId,
-                tco.IsAccepted,
-                tco.ReceivedOutput
-            )).ToList()
-        );
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
-
-        return result > 0
-            ? response
-            : Error.Failure();
+        return Result.Success;
     }
 }
 
-public class SaveProblemSubmissionCommandValidator : AbstractValidator<SaveProblemSubmissionCommand>
+public class SaveProblemSubmissionsCommandValidator : AbstractValidator<SaveProblemSubmissionsCommand>
 {
-    public SaveProblemSubmissionCommandValidator()
+    public SaveProblemSubmissionsCommandValidator()
     {
-        RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+        RuleForEach(x => x.Submissions).ChildRules(sub =>
+        {
+            sub.RuleFor(x => x.QuestionId)
+                .NotEmpty()
+                .NotEqual(Guid.Empty);
 
-        RuleFor(x => x.ProgLanguageType).IsInEnum();
-        RuleFor(x => x.Code).NotEmpty();
+            sub.RuleFor(x => x.ProgLanguageType)
+                .IsInEnum();
+
+            sub.RuleFor(x => x.Code)
+                .NotEmpty();
+        });
     }
 }
