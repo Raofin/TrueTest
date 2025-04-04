@@ -1,11 +1,11 @@
 'use client'
-import React, { useState, useRef, useEffect, Fragment, useCallback } from "react";
-import MDEditor from "@uiw/react-md-editor";
-import { getCodeString } from 'rehype-rewrite';
-import mermaid from "mermaid";
-import katex from 'katex';
-import 'katex/dist/katex.css';
-import rehypeSanitize from "rehype-sanitize";
+
+import React, { useState, useRef, useEffect, Fragment, useCallback } from 'react'
+import MDEditor from '@uiw/react-md-editor'
+import mermaid from 'mermaid'
+import katex from 'katex'
+import 'katex/dist/katex.css'
+import rehypeSanitize from 'rehype-sanitize'
 
 const mdMixed = `
 This is to display the KaTeX in one line:
@@ -24,19 +24,28 @@ B --> C{Decision}
 C -->|One| D[Result 1]
 C -->|Two| E[Result 2]
 \`\`\`
-`;
+`
 
-const randomid = () => parseInt(String(Math.random() * 1e15), 10).toString(36);
+const randomid = () => parseInt(String(Math.random() * 1e15), 10).toString(36)
 
-const Code = ({ children = [], className, ...props }:{children:React.ReactNode, className:string}) => {
+interface CodeProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
   const demoid = useRef(`dome${randomid()}`);
-  const [container, setContainer] = useState(null);
-  const code = children ? getCodeString(props.node.children) : children[0]  || "";
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+  const code = Array.isArray(children)
+    ? children.map((child) => (typeof child === 'string' ? child : '')).join('')
+    : typeof children === 'string'
+    ? children
+    : '';
 
   useEffect(() => {
     if (container && code) {
-      const isMermaid = className && /^language-mermaid/.test(className.toLocaleLowerCase());
-      const isKaTeX = className && /^language-katex/.test(className.toLocaleLowerCase());
+      const isMermaid = className && /^language-mermaid/.test(className.toLowerCase());
+      const isKaTeX = className && /^language-katex/.test(className.toLowerCase());
 
       if (isMermaid) {
         mermaid
@@ -47,33 +56,30 @@ const Code = ({ children = [], className, ...props }:{children:React.ReactNode, 
               bindFunctions(container);
             }
           })
-          .catch((error) => {
-            console.log("mermaid error:", error);
-          });
-      } 
-      else if (isKaTeX) {
+          .catch((error) => console.log('mermaid error:', error));
+      } else if (isKaTeX) {
         const html = katex.renderToString(code, { throwOnError: false });
         container.innerHTML = html;
       }
     }
-  }, [container, className, code, demoid]);
+  }, [container, className, code]);
 
-  const refElement = useCallback((node) => {
+  const refElement = useCallback((node: HTMLElement | null) => {
     if (node !== null) {
       setContainer(node);
     }
   }, []);
 
-  if (className && /^language-mermaid/.test(className.toLocaleLowerCase())) {
+  if (className && /^language-mermaid/.test(className.toLowerCase())) {
     return (
       <Fragment>
-        <code id={demoid.current} style={{ display: "none" }} />
+        <code id={demoid.current} style={{ display: 'none' }} />
         <code className={className} ref={refElement} data-name="mermaid" />
       </Fragment>
     );
   }
 
-  if (className && /^language-katex/.test(className.toLocaleLowerCase())) {
+  if (className && /^language-katex/.test(className.toLowerCase())) {
     return <code className={className} ref={refElement} />;
   }
 
@@ -86,23 +92,23 @@ const Code = ({ children = [], className, ...props }:{children:React.ReactNode, 
 };
 
 export default function MdEditor() {
-  const [value, setValue] = useState(mdMixed);
+  const [value, setValue] = useState(mdMixed)
 
   return (
     <MDEditor
       className="w-full"
-      onChange={(newValue = "") => setValue(newValue)}
+      onChange={(newValue = '') => setValue(newValue)}
       textareaProps={{
-        placeholder: "Please enter Markdown text",
+        placeholder: 'Please enter Markdown text',
       }}
       height={500}
       value={value}
       previewOptions={{
         rehypePlugins: [[rehypeSanitize]],
         components: {
-          code: Code,
+          code: (props) => <Code {...props} />,
         },
       }}
     />
-  );
+  )
 }

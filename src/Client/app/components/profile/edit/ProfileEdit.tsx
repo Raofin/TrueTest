@@ -4,8 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Avatar, Input, Textarea } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import api from '@/app/utils/api'
-import {FormData} from '@/app/components/types/profile'
-
+import { FormData } from '@/app/components/types/profile'
 
 interface ProfileDetailsProps {
   formData?: FormData;
@@ -13,6 +12,7 @@ interface ProfileDetailsProps {
 }
 
 export default function ProfileEdit({ formData, setFormData }: ProfileDetailsProps) {
+
   const [localFormData, setLocalFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -24,13 +24,13 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
   });
 
   const isControlled = formData && setFormData;
-  const updateFormData = (updateFn: (prev: FormData) => FormData) => {
+  const updateFormData = useCallback((updateFn: (prev: FormData) => FormData) => {
     if (isControlled) {
       setFormData!(updateFn);
     } else {
       setLocalFormData(updateFn);
     }
-  };
+  },[isControlled, setFormData]);
 
   const handleAddSocialLink = () => {
     updateFormData(prev => ({
@@ -54,10 +54,10 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
     }));
   };
 
-  const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
+  const handleImageUpload = useCallback(() => {
+    const file = null;
     updateFormData(prev => ({ ...prev, imageFileId: file }));
-  }, []);
+  }, [updateFormData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -85,7 +85,7 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
     };
 
     checkProfileStatus();
-  }, []);
+  }, [updateFormData]);
 
   const currentFormData = isControlled ? formData! : localFormData;
 

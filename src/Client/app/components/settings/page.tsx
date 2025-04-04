@@ -61,7 +61,7 @@ useEffect(()=>{
         </div>
         <div className="mt-5 flex w-full justify-center">
           <Button color="primary">
-            <Link className="text-white" href={`/${route}/edit/?username=${userSetting?.username}`}>
+            <Link className="text-white" href={`/${route}/edit`}>
               Change Settings
             </Link>
           </Button>

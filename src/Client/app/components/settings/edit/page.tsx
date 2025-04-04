@@ -4,21 +4,20 @@ import React, { useState } from 'react'
 import { Button, Input, Form, Card } from '@heroui/react'
 import '@/app/globals.css'
 import api from '@/app/utils/api'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import Swal from 'sweetalert2'
 
 export default function Component() {
   const [newconfirmpassword,setNewconfirmpassword]=useState("")
   const [error,setError]=useState("")
-  const searchParams = useSearchParams();
+
   const router=useRouter();
-  const username = searchParams.get('username') || '';
     const [isVisible, setIsVisible] = useState<boolean>(false)
     const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false)
     const [isVisibleCurrent, setIsVisibleCurrent] = useState<boolean>(false)
   const [formData, setFormData] = useState({
-    username: username,
+    username: '',
     currentPassword: '',
     newPassword: '',
   });
@@ -73,7 +72,6 @@ export default function Component() {
             className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
             value={formData.username}
             onChange={handleChange}
-            defaultValue={username}
           />
           <Input
             isRequired

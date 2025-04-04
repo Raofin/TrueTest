@@ -30,6 +30,6 @@ export interface FormData {
   bio: string
   instituteName: string
   phoneNumber: string
-  imageFileId: File | string | null
+  imageFileId: null
   profileLinks: { name: string; link: string }[];
 }
