@@ -34,8 +34,10 @@ export default function ProfileSetUp() {
                    timer: 1500,
                  })
         const response = await api.get('/User/Info')
+        if(response.status===200){
         const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
         router.push(isAdmin ? '/overview' : '/home')
+        }
       }
     }
     catch {
