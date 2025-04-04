@@ -37,15 +37,10 @@ public class AccountEmails(IFluentEmail fluentEmail) : IAccountEmails
         Send(email, cancellationToken);
     }
 
-    public void SendAdminInvitation(List<string> emailAddresses, CancellationToken cancellationToken)
-    {
-        emailAddresses.ForEach(e => { AdminInvitation(e, cancellationToken); });
-    }
-
-    private void AdminInvitation(string emailAddress, CancellationToken cancellationToken)
+    public void SendAdminInvitation(List<string> emails, CancellationToken cancellationToken)
     {
         var email = _fluentEmail
-            .To(emailAddress)
+            .BCC(emails.Select(e => new Address(e)))
             .Subject($"{ProjectConstants.ProjectName} - Admin Invitation")
             .Body($"""
                      <body style='font-family: Inter, Arial, sans-serif;'>
@@ -65,15 +60,10 @@ public class AccountEmails(IFluentEmail fluentEmail) : IAccountEmails
         Send(email, cancellationToken);
     }
 
-    public void SendAdminGranted(List<string> emailAddresses, CancellationToken cancellationToken)
-    {
-        emailAddresses.ForEach(e => { AdminAccessGranted(e, cancellationToken); });
-    }
-
-    private void AdminAccessGranted(string emailAddress, CancellationToken cancellationToken)
+    public void SendAdminGranted(List<string> emails, CancellationToken cancellationToken)
     {
         var email = _fluentEmail
-            .To(emailAddress)
+            .BCC(emails.Select(e => new Address(e)))
             .Subject($"{ProjectConstants.ProjectName} - Admin Access Granted")
             .Body($"""
                      <body style='font-family: Inter, Arial, sans-serif;'>

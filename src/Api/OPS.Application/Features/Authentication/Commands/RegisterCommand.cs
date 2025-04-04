@@ -29,12 +29,8 @@ public class RegisterCommandHandler(
     public async Task<ErrorOr<AuthenticationResponse>> Handle(
         RegisterCommand request, CancellationToken cancellationToken)
     {
-        var isUserUnique =
-            await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
-                request.Username,
-                request.Email,
-                cancellationToken
-            );
+        var isUserUnique = await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
+            request.Username, request.Email, cancellationToken);
 
         if (!isUserUnique) return Error.Conflict();
 
@@ -56,11 +52,41 @@ public class RegisterCommandHandler(
         };
 
         _unitOfWork.Account.Add(account);
+
+        await HandleAdminInvite(account, cancellationToken);
+        await HandleExamInvite(account, cancellationToken);
+
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
             ? _authService.AuthenticateUser(account)
             : Error.Failure();
+    }
+
+    private async Task HandleAdminInvite(Account account, CancellationToken cancellationToken)
+    {
+        var adminInvite = await _unitOfWork.AdminInvite.GetByEmailAsync(account.Email, cancellationToken);
+
+        if (adminInvite != null)
+        {
+            _unitOfWork.AdminInvite.Remove(adminInvite);
+            _unitOfWork.AccountRole.Add(new AccountRole
+            {
+                AccountId = account.Id,
+                RoleId = (int)RoleType.Admin
+            });
+        }
+    }
+
+    private async Task HandleExamInvite(Account account, CancellationToken cancellationToken)
+    {
+        var examInvites = await _unitOfWork.ExamCandidate.GetByEmailAsync(account.Email, cancellationToken);
+
+        if (examInvites.Count != 0)
+        {
+            foreach (var examInvite in examInvites)
+                examInvite.AccountId = account.Id;
+        }
     }
 }
 
