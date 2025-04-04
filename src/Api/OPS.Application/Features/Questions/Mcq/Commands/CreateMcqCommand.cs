@@ -63,9 +63,7 @@ public class CreateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
             }
         ).ToList();
 
-        var newPoints = questions.Sum(q => q.Points);
-        exam.McqPoints += newPoints;
-        exam.TotalPoints += newPoints;
+        exam.McqPoints += questions.Sum(q => q.Points);
 
         _unitOfWork.Question.AddRange(questions);
         var result = await _unitOfWork.CommitAsync(cancellationToken);

@@ -22,7 +22,6 @@ public class DeleteMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
             return Error.Conflict(description: "Exam of this question is already published");
 
         question.Examination.McqPoints -= question.Points;
-        question.Examination.TotalPoints -= question.Points;
 
         if (question.McqOption is not null)
             _unitOfWork.McqOption.Remove(question.McqOption);

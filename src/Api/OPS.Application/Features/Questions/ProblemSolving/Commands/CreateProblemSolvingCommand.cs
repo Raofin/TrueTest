@@ -60,9 +60,7 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
             questions.Add(question);
         }
 
-        var newPoints = questions.Sum(q => q.Points);
-        exam.ProblemSolvingPoints += newPoints;
-        exam.TotalPoints += newPoints;
+        exam.ProblemSolvingPoints += questions.Sum(q => q.Points);
 
         _unitOfWork.Question.AddRange(questions);
         var result = await _unitOfWork.CommitAsync(cancellationToken);

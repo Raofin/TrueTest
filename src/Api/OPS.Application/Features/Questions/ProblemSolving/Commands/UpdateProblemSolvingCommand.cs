@@ -39,11 +39,8 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         if (request.Points is not null)
         {
             question.Examination.ProblemSolvingPoints -= question.Points;
-            question.Examination.TotalPoints -= question.Points;
-
+            question.Examination.ProblemSolvingPoints += request.Points.Value;
             question.Points = request.Points.Value;
-            question.Examination.ProblemSolvingPoints += question.Points;
-            question.Examination.TotalPoints += question.Points;
         }
 
         question.DifficultyId = request.DifficultyType.HasValue

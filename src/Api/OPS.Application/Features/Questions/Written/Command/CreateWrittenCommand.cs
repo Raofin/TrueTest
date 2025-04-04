@@ -34,7 +34,7 @@ public class CreateWrittenCommandHandler(IUnitOfWork unitOfWork)
         if (exam.IsPublished)
             return Error.Conflict(description: "Exam of this question is already published");
 
-        var questions = request.WrittenQuestions.Select(
+        var newQuestions = request.WrittenQuestions.Select(
             written => new Question
             {
                 StatementMarkdown = written.StatementMarkdown,
@@ -46,15 +46,13 @@ public class CreateWrittenCommandHandler(IUnitOfWork unitOfWork)
             }
         ).ToList();
 
-        var newPoints = questions.Sum(q => q.Points);
-        exam.WrittenPoints += newPoints;
-        exam.TotalPoints += newPoints;
+        exam.WrittenPoints += newQuestions.Sum(q => q.Points);
 
-        _unitOfWork.Question.AddRange(questions);
+        _unitOfWork.Question.AddRange(newQuestions);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? questions.Select(q => q.MapToWrittenQuestionDto()).ToList()
+            ? newQuestions.Select(q => q.MapToWrittenQuestionDto()).ToList()
             : Error.Unexpected();
     }
 }

@@ -22,7 +22,6 @@ public class DeleteWrittenCommandHandler(IUnitOfWork unitOfWork)
             return Error.Conflict(description: "Exam of this question is already published");
 
         question.Examination.WrittenPoints -= question.Points;
-        question.Examination.TotalPoints -= question.Points;
 
         _unitOfWork.Question.Remove(question);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
