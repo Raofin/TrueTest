@@ -5,6 +5,7 @@ import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import { useAuth } from '@/app/context/AuthProvider'
 import { useRouter } from 'next/navigation'
+import { getAuthToken } from '@/app/utils/auth'
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)
@@ -20,11 +21,13 @@ export default function LoginComponent() {
       return
     }
     login(user.email, user.password, setError)
+   if(getAuthToken()){
     if (authenticatedUser?.roles.includes('Admin')) {
       router.push('/overview')
     } else {
       router.push('/home')
     }
+  }
   }
   return (
     <div className="flex h-full w-full items-center justify-center">
