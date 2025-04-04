@@ -1,6 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Written.Command;
@@ -35,7 +36,6 @@ public class DeleteWrittenCommandValidator : AbstractValidator<DeleteWrittenComm
     public DeleteWrittenCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }

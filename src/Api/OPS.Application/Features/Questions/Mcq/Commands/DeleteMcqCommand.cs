@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Mcq.Commands;
@@ -38,7 +39,6 @@ public class DeleteMcqCommandValidator : AbstractValidator<DeleteMcqCommand>
     public DeleteMcqCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -77,7 +78,7 @@ public class UpdateMcqCommandValidator : AbstractValidator<UpdateMcqCommand>
     public UpdateMcqCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty();
+            .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10)

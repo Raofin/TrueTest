@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
@@ -36,7 +37,6 @@ public class DeleteProblemSolvingCommandValidator : AbstractValidator<DeleteProb
     public DeleteProblemSolvingCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }

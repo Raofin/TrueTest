@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -80,7 +81,7 @@ public class CreateMcqCommandValidator : AbstractValidator<CreateMcqCommand>
     public CreateMcqCommandValidator()
     {
         RuleFor(x => x.ExamId)
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.McqQuestions)
             .NotEmpty();
