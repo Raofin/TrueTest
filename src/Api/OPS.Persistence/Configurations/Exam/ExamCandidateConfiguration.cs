@@ -13,10 +13,9 @@ public class ExamCandidateConfiguration : IEntityTypeConfiguration<ExamCandidate
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.CandidateEmail).IsRequired().HasMaxLength(255);
-        entity.Property(e => e.TotalScore).HasColumnType("decimal(10, 2)");
-        entity.Property(e => e.ProblemSolvingScore).HasColumnType("decimal(10, 2)");
-        entity.Property(e => e.WrittenScore).HasColumnType("decimal(10, 2)");
-        entity.Property(e => e.McqScore).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.ProblemSolvingScore).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
+        entity.Property(e => e.WrittenScore).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
+        entity.Property(e => e.McqScore).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
         entity.Property(e => e.StartedAt).HasColumnType("DateTime").HasDefaultValue(null);
         entity.Property(e => e.SubmittedAt).HasColumnType("DateTime").HasDefaultValue(null);
         entity.Property(e => e.HasCheated).HasDefaultValue(false);

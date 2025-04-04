@@ -41,18 +41,20 @@ public static class ExamExtensions
         );
     }
 
-    public static ResultResponse MapToResultDto(this ExamCandidate candidate)
+    public static ResultResponse? MapToResultDto(this ExamCandidate candidate)
     {
-        return new ResultResponse(
-            candidate.TotalScore,
-            candidate.ProblemSolvingScore,
-            candidate.WrittenScore,
-            candidate.McqScore,
-            candidate.StartedAt!.Value,
-            candidate.SubmittedAt!.Value,
-            candidate.IsReviewed,
-            candidate.HasCheated
-        );
+        return candidate.StartedAt is null
+            ? null
+            : new ResultResponse(
+                candidate.ProblemSolvingScore + candidate.WrittenScore + candidate.McqScore,
+                candidate.ProblemSolvingScore,
+                candidate.WrittenScore,
+                candidate.McqScore,
+                candidate.StartedAt,
+                candidate.SubmittedAt,
+                candidate.IsReviewed,
+                candidate.HasCheated
+            );
     }
 
     private static string Status(this Examination exam)

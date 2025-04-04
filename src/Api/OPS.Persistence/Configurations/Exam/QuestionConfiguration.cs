@@ -13,7 +13,7 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.StatementMarkdown).IsRequired();
-        entity.Property(e => e.Points).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.Points).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
         entity.Property(e => e.HasLongAnswer).HasDefaultValue(false);
 
         new BaseEntityConfig<Question>().Configure(entity);

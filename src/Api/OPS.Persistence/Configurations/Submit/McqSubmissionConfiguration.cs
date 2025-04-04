@@ -11,7 +11,7 @@ public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission
     {
         entity.ToTable("McqSubmissions", "Submit");
         entity.HasKey(e => e.Id);
-        entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.Score).HasColumnType("decimal(10, 2)").HasDefaultValueSql("((0))");
         entity.Property(e => e.AnswerOptions).IsRequired().HasMaxLength(50);
 
         new BaseEntityConfig<McqSubmission>().Configure(entity);

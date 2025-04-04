@@ -342,11 +342,15 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<decimal?>("McqScore")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<decimal>("McqScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValueSql("((0))");
 
-                    b.Property<decimal?>("ProblemSolvingScore")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<decimal>("ProblemSolvingScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("StartedAt")
                         .HasColumnType("DateTime");
@@ -354,15 +358,14 @@ namespace OPS.Persistence.Migrations
                     b.Property<DateTime?>("SubmittedAt")
                         .HasColumnType("DateTime");
 
-                    b.Property<decimal?>("TotalScore")
-                        .HasColumnType("decimal(10, 2)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
-                    b.Property<decimal?>("WrittenScore")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<decimal>("WrittenScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValueSql("((0))");
 
                     b.HasKey("Id");
 
@@ -544,7 +547,9 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<decimal>("Points")
-                        .HasColumnType("decimal(10, 2)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValueSql("((0))");
 
                     b.Property<int>("QuestionTypeId")
                         .HasColumnType("int");
@@ -634,8 +639,10 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Score")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<decimal>("Score")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -688,8 +695,10 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Score")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<decimal>("Score")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -776,8 +785,10 @@ namespace OPS.Persistence.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Score")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<decimal>("Score")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()

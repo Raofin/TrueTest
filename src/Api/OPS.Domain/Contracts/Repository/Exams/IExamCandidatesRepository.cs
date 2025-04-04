@@ -6,6 +6,7 @@ namespace OPS.Domain.Contracts.Repository.Exams;
 public interface IExamCandidatesRepository : IBaseRepository<ExamCandidate>
 {
     Task<bool> IsValidCandidate(Guid accountId, Guid examId, CancellationToken cancellationToken);
+    Task<ExamCandidate?> GetAsync(Guid accountId, Guid examId, CancellationToken cancellationToken);
     Task<List<ExamCandidate>> GetByEmailAsync(string email, CancellationToken cancellationToken);
     Task<List<ExamCandidate>> GetExamParticipantsAsync(Guid examId, CancellationToken cancellationToken);
     Task<List<ExamCandidate>> GetExamCandidateByAccountAsync(Guid id, CancellationToken cancellationToken);
