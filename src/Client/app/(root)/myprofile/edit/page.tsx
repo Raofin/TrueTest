@@ -5,12 +5,13 @@ import { Button, Form } from '@heroui/react'
 import ProfileEdit from '@/app/components/profile/edit/ProfileEdit'
 import RootNavBar from '../../root-navbar'
 import api from '@/app/utils/api'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { FormData } from '@/app/components/types/profile'
 import Swal from 'sweetalert2'
 
 export default function MyProfileEdit() {
   const router = useRouter()
+  const pathname = usePathname()
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -34,7 +35,9 @@ export default function MyProfileEdit() {
           showConfirmButton: false,
           timer: 1500,
         })
-        router.push('/myprofile')
+        const response = await api.get('/User/Info')
+        const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
+        router.push(isAdmin ? '/profile' : '/myprofile')
       }
     } catch {
       alert('Profile update failed. Please try again.')
@@ -42,7 +45,7 @@ export default function MyProfileEdit() {
   }
   return (
     <>
-      <RootNavBar />
+      {pathname.includes('/myprofile') && <RootNavBar />}
       <div className="flex justify-center items-center min-h-screen ">
         <Form className=" p-6 rounded-lg shadow-none bg-white dark:bg-[#18181b]" onSubmit={handleProfileUpdate}>
           <h2 className="w-full text-lg font-semibold text-center">Update Profile</h2>

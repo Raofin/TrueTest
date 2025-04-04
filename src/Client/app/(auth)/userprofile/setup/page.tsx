@@ -6,6 +6,7 @@ import ProfileEdit from '@/app/components/profile/edit/ProfileEdit'
 import { useRouter } from 'next/navigation'
 import api from '@/app/utils/api'
 import { FormData } from '@/app/components/types/profile'
+import Swal from 'sweetalert2'
 
 export default function ProfileSetUp() {
   const router = useRouter()
@@ -22,13 +23,22 @@ export default function ProfileSetUp() {
 
   const handleProfileEdit = async (e: React.FormEvent) => {
     e.preventDefault()
-    try {
+    try{
       const response = await api.post('/User/SaveProfile', formData)
-
       if (response.status === 200) {
-        router.push('/profile')
+        Swal.fire({
+                   position: 'center',
+                   icon: 'success',
+                   text: 'Profile Setup successfully',
+                   showConfirmButton: false,
+                   timer: 1500,
+                 })
+        const response = await api.get('/User/Info')
+        const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
+        router.push(isAdmin ? '/overview' : '/home')
       }
-    } catch {
+    }
+    catch {
       alert('Profile update failed. Please try again.')
     }
   }

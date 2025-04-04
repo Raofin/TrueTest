@@ -47,7 +47,7 @@ api.interceptors.response.use(
         return Promise.reject(new Error('Error during token refresh. Please log in again.'))
       }
     }
-    return Promise.reject(new Error(error.message || 'An unexpected error occurred.'))
+    return Promise.reject(new Error(error.message))
   }
 )
 

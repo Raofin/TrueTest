@@ -4,22 +4,28 @@ import React, { useState } from 'react'
 import { Button, Input, Checkbox, Link, Form, Divider } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import { useAuth } from '@/app/context/AuthProvider'
+import { useRouter } from 'next/navigation'
 
 export default function LoginComponent() {
   const [isVisible, setIsVisible] = useState(false)
   const [user, setUser] = useState({ email: '', password: '' })
   const toggleVisibility = () => setIsVisible((prev) => !prev)
+  const { login, user: authenticatedUser } = useAuth()
+  const router=useRouter();
   const [error, setError] = useState('')
-  const { login } = useAuth()
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin =(e: React.FormEvent) => {
     e.preventDefault()
     if (!user.email || !user.password) {
       setError('Email and password are required.')
       return
     }
     login(user.email, user.password, setError)
+    if (authenticatedUser?.roles.includes('Admin')) {
+      router.push('/overview')
+    } else {
+      router.push('/home')
+    }
   }
-
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className={`mt-12 flex w-full max-w-sm flex-col gap-4 rounded-large px-8 py-5 bg-white dark:bg-[#18181b]`}>

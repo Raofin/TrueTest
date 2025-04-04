@@ -30,15 +30,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login')
   }, [router])
 
-
   const fetchUser = useCallback(async () => {
-    const response=await api.get('/User/Info')
-       if(response.status===200){
-        const userData=response.data;
-        setUser(userData)
+    const response = await api.get('/User/Info')
+    if (response.status === 200) {
+      const userData = response.data
+      setUser(userData)
+      
     }
-    }
- ,[])
+  }, [])
 
   useEffect(() => {
     const token = getAuthToken()
@@ -57,20 +56,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           usernameOrEmail: email,
           password: password,
         })
-      if(response.status===200){
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          text: "logged in successfully",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        const { token } = response.data
-        setAuthToken(token)
-        setUser(response.data)
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        await fetchUser()
-      }
+        if (response.status === 200) {
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            text: 'logged in successfully',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          const { token } = response.data
+          setAuthToken(token)
+          setUser(response.data)
+          api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+          await fetchUser()
+        }
       } catch {
         setError('Useremail or password invalid. Please try again.')
       }

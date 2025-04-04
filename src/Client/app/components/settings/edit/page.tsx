@@ -7,50 +7,56 @@ import api from '@/app/utils/api'
 import { useRouter } from 'next/navigation'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import Swal from 'sweetalert2'
+import axios from 'axios'
+
 
 export default function Component() {
-  const [newconfirmpassword,setNewconfirmpassword]=useState("")
-  const [error,setError]=useState("")
+  const [newconfirmpassword, setNewconfirmpassword] = useState('')
+  const [error, setError] = useState('')
 
-  const router=useRouter();
-    const [isVisible, setIsVisible] = useState<boolean>(false)
-    const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false)
-    const [isVisibleCurrent, setIsVisibleCurrent] = useState<boolean>(false)
+  const router = useRouter()
+  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false)
+  const [isVisibleCurrent, setIsVisibleCurrent] = useState<boolean>(false)
   const [formData, setFormData] = useState({
     username: '',
     currentPassword: '',
     newPassword: '',
-  });
+  })
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
     if (formData.newPassword !== newconfirmpassword) {
-      setError("New password and confirm password do not match.");
-      return;
+      setError('New password and confirm password do not match.')
+      return
     }
     try {
-      const response = await api.patch('/User/AccountSettings', formData);
+      const response = await api.patch('/User/AccountSettings', formData)
       if (response.status === 200) {
-         Swal.fire({
-                  position: "center",
-                  icon: "success",
-                  text: "Account updated successfully",
-                  showConfirmButton: false,
-                  timer: 1500
-                });
-        if(response.data.roles==='Admin')
-        router.push('/settings')
-       else  router.push('/mysettings')
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          text: 'Account updated successfully',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        if (response.data.roles === 'Admin') router.push('/settings')
+        else router.push('/mysettings')
       }
     } catch (error) {
-      console.error("An error occurred:", error);
-      setError("An unexpected error has occurred");
+      console.log("Error object:", error);
+      if (axios.isAxiosError(error)) {
+          console.log("Error response:", error.response);
+          setError(error.response?.data?.detail);
+      } else {
+          setError("username or current password is not correct.");
+      }
     }
-  };
+  }
 
   return (
     <div className="flex mt-24 w-full items-center justify-center">
@@ -63,7 +69,7 @@ export default function Component() {
           validationBehavior="native"
           onSubmit={handleSubmit}
         >
-          {error && <p className='text-red-500'>{error}</p>}
+          {error && <p className="text-red-500">{error}</p>}
           <Input
             isRequired
             label="Username"
@@ -76,14 +82,14 @@ export default function Component() {
           <Input
             isRequired
             label="Current Password"
-              endContent={
-                            <button type="button" onClick={()=>setIsVisibleCurrent(!isVisibleCurrent)}>
-                              <Icon
-                                className="text-2xl text-default-400"
-                                icon={isVisibleCurrent ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                              />
-                            </button>
-                          }
+            endContent={
+              <button type="button" onClick={() => setIsVisibleCurrent(!isVisibleCurrent)}>
+                <Icon
+                  className="text-2xl text-default-400"
+                  icon={isVisibleCurrent ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
+                />
+              </button>
+            }
             name="currentPassword"
             type={isVisibleCurrent ? 'text' : 'password'}
             className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
@@ -92,15 +98,14 @@ export default function Component() {
           />
           <Input
             isRequired
-              endContent={
-                            <button type="button" onClick={()=>setIsVisible(!isVisible)}>
-                              <Icon
-                                className="text-2xl text-default-400"
-                                icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                              />
-                            </button>
-                          }
-                          
+            endContent={
+              <button type="button" onClick={() => setIsVisible(!isVisible)}>
+                <Icon
+                  className="text-2xl text-default-400"
+                  icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
+                />
+              </button>
+            }
             label="New Password"
             name="newPassword"
             type={isVisible ? 'text' : 'password'}
@@ -110,20 +115,20 @@ export default function Component() {
           />
           <Input
             isRequired
-              endContent={
-                            <button type="button" onClick={()=>setIsConfirmVisible(!isConfirmVisible)}>
-                              <Icon
-                                className="text-2xl text-default-400"
-                                icon={isConfirmVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                              />
-                            </button>
-                          }
+            endContent={
+              <button type="button" onClick={() => setIsConfirmVisible(!isConfirmVisible)}>
+                <Icon
+                  className="text-2xl text-default-400"
+                  icon={isConfirmVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
+                />
+              </button>
+            }
             label="Confirm Password"
             name="newconfirmpassword"
             type={isConfirmVisible ? 'text' : 'password'}
             className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
-            value={newconfirmpassword} 
-            onChange={(e) => setNewconfirmpassword(e.target.value)} 
+            value={newconfirmpassword}
+            onChange={(e) => setNewconfirmpassword(e.target.value)}
           />
           <Button className="w-full mt-2 text-medium" color="primary" type="submit">
             Save Changes
@@ -131,5 +136,5 @@ export default function Component() {
         </Form>
       </Card>
     </div>
-  );
+  )
 }
