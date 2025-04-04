@@ -87,6 +87,20 @@ public class ExamController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
+    /// <summary>Invites candidates to an exam.</summary>
+    /// <param name="command">Exam Id and a list of emails.</param>
+    /// <returns>Success response.</returns>
+    [HttpPost("InviteCandidates")]
+    [EndpointDescription("Invites candidates to an exam.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    public async Task<IActionResult> InviteCandidates(InviteCandidatesCommand command)
+    {
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
+
     /// <summary>Deletes an existing exam.</summary>
     /// <param name="examId">Exam Id.</param>
     /// <returns>Void.</returns>
