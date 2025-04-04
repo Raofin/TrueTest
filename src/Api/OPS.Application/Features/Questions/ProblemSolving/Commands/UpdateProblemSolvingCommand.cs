@@ -30,6 +30,9 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         var question = await _unitOfWork.Question.GetWithTestCases(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
 
         if (request.Points is not null)

@@ -4,6 +4,7 @@ using OPS.Domain.Entities.Submit;
 using OPS.Persistence.Configurations.Common;
 
 namespace OPS.Persistence.Configurations.Submit;
+using static OPS.Persistence.Configurations.Common.Constants;
 
 public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission>
 {
@@ -11,7 +12,7 @@ public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission
     {
         entity.ToTable("McqSubmissions", "Submit");
         entity.HasKey(e => e.Id);
-        entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.Score).HasColumnType(DecimalType).HasDefaultValueSql("((0))");
         entity.Property(e => e.AnswerOptions).IsRequired().HasMaxLength(50);
 
         new BaseEntityConfig<McqSubmission>().Configure(entity);

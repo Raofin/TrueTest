@@ -59,9 +59,7 @@ public class UpdateAccountSettingsCommandHandler(
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? account.MapToDtoWithDetails()
-            : Error.Failure();
+        return result > 0 ? account.MapToDtoWithDetails() : Error.Unexpected();
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using FluentEmail.Core;
+using FluentEmail.Core.Models;
 using OPS.Application.CrossCutting.Constants;
 using OPS.Domain.Contracts.Core.EmailSender;
 using Serilog;
@@ -36,15 +37,10 @@ public class AccountEmails(IFluentEmail fluentEmail) : IAccountEmails
         Send(email, cancellationToken);
     }
 
-    public void SendAdminInvitation(List<string> emailAddresses, CancellationToken cancellationToken)
-    {
-        emailAddresses.ForEach(e => { AdminInvitation(e, cancellationToken); });
-    }
-
-    private void AdminInvitation(string emailAddress, CancellationToken cancellationToken)
+    public void SendAdminInvitation(List<string> emails, CancellationToken cancellationToken)
     {
         var email = _fluentEmail
-            .To(emailAddress)
+            .BCC(emails.Select(e => new Address(e)))
             .Subject($"{ProjectConstants.ProjectName} - Admin Invitation")
             .Body($"""
                      <body style='font-family: Inter, Arial, sans-serif;'>
@@ -64,15 +60,10 @@ public class AccountEmails(IFluentEmail fluentEmail) : IAccountEmails
         Send(email, cancellationToken);
     }
 
-    public void SendAdminGranted(List<string> emailAddresses, CancellationToken cancellationToken)
-    {
-        emailAddresses.ForEach(e => { AdminAccessGranted(e, cancellationToken); });
-    }
-
-    private void AdminAccessGranted(string emailAddress, CancellationToken cancellationToken)
+    public void SendAdminGranted(List<string> emails, CancellationToken cancellationToken)
     {
         var email = _fluentEmail
-            .To(emailAddress)
+            .BCC(emails.Select(e => new Address(e)))
             .Subject($"{ProjectConstants.ProjectName} - Admin Access Granted")
             .Body($"""
                      <body style='font-family: Inter, Arial, sans-serif;'>
@@ -85,6 +76,39 @@ public class AccountEmails(IFluentEmail fluentEmail) : IAccountEmails
                          <p>Best,<br>{ProjectConstants.ProjectName} Team</p>
                        </div>
                      </body>
+                   """,
+                isHtml: true);
+
+        Send(email, cancellationToken);
+    }
+
+    public void SendExamInvitation(List<string> emails, string examTitle, DateTime startDateTime, int durationMinutes,
+        CancellationToken cancellationToken)
+    {
+        var hours = durationMinutes / 60;
+        var minutes = durationMinutes % 60;
+
+        var duration = hours > 0
+            ? $"{hours}h {minutes}m"
+            : $"{minutes} minutes";
+
+        var email = _fluentEmail
+            .BCC(emails.Select(e => new Address(e)))
+            .Subject($"{examTitle} - Exam Invitation")
+            .Body($"""
+                   <body style='font-family: Inter, Arial, sans-serif;'>
+                     <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;'>
+                       <h2 style='color: #333; text-align: center;'>Exam Invitation: {examTitle}</h2>
+                       <p>Dear Participant,</p>
+                       <p>You are invited to participate in the <strong>{examTitle}</strong> exam on {ProjectConstants.ProjectName}.</p>
+                       <p>The exam is scheduled to begin on <strong>{startDateTime:dddd, MMMM dd, yyyy hh:mm tt}</strong>, and the 
+                       duration is <strong>{duration}.</strong>.</p>
+                       <p>Please <a href='#'>log in</a> to your account to access the exam when it becomes available.</p>
+                       <p>If you do not yet have an account, you can create one <a href='#'>here</a>.</p>
+                       <p>We encourage you to prepare accordingly.</p>
+                       <p>Best regards,<br>{ProjectConstants.ProjectName} Team</p>
+                     </div>
+                   </body>
                    """,
                 isHtml: true);
 

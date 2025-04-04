@@ -66,6 +66,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateAsync(UpdateMcqCommand command)
     {
         var response = await _mediator.Send(command);
@@ -80,6 +81,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteAsync(Guid questionId)
     {
         var query = new DeleteMcqCommand(questionId);

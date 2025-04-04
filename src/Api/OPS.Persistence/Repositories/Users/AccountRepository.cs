@@ -35,6 +35,23 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<List<Account>> GetByEmailsAsync(List<string> emails, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Accounts
+            .AsNoTracking()
+            .Where(a => emails.Contains(a.Email))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<Account>> GetByEmailsWithRoleAsync(List<string> emails, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Accounts
+            .AsNoTracking()
+            .Where(a => emails.Contains(a.Email))
+            .Include(a => a.AccountRoles)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> IsExistsAsync(string? username, string? email, CancellationToken cancellationToken)
     {
         return await _dbContext.Accounts
@@ -88,17 +105,6 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
     {
         return await _dbContext.Accounts
             .Where(a => accountIds.Contains(a.Id) && a.AccountRoles.All(ar => ar.RoleId != (int)RoleType.Admin))
-            .ToListAsync(cancellationToken);
-    }
-
-
-    public async Task<List<Account>> GetByEmailsAsync(List<string> emails,
-        CancellationToken cancellationToken)
-    {
-        return await _dbContext.Accounts
-            .AsNoTracking()
-            .Where(a => emails.Contains(a.Email))
-            .Include(a => a.AccountRoles)
             .ToListAsync(cancellationToken);
     }
 }

@@ -27,6 +27,9 @@ public class UpdateWrittenCommandHandler(IUnitOfWork unitOfWork)
         var question = await _unitOfWork.Question.GetWithExamAsync(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
         question.HasLongAnswer = request.HasLongAnswer ?? question.HasLongAnswer;
 

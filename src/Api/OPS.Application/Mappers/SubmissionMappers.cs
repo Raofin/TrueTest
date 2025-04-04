@@ -49,39 +49,47 @@ public static class SubmissionExtensions
 
     public static McqQuesWithSubmissionResponse? ToMcqWithSubmissionDto(this Question question)
     {
-        return question.QuestionTypeId != (int)QuestionType.MCQ
+        if (question.QuestionTypeId != (int)QuestionType.MCQ)
+            return null;
+
+        var submission = question.McqSubmissions.FirstOrDefault();
+        var submissionResponse = submission is null
             ? null
-            : new McqQuesWithSubmissionResponse(
-                question.Id,
-                question.StatementMarkdown,
-                question.Points,
-                question.McqSubmissions.FirstOrDefault() is not { } submission
-                    ? null
-                    : new McqSubmissionResponse(
-                        submission.QuestionId,
-                        submission.Id,
-                        submission.AnswerOptions,
-                        submission.Score
-                    )
+            : new McqSubmissionResponse(
+                submission.QuestionId,
+                submission.Id,
+                submission.AnswerOptions,
+                submission.Score
             );
+
+        return new McqQuesWithSubmissionResponse(
+            question.Id,
+            question.StatementMarkdown,
+            question.Points,
+            submissionResponse
+        );
     }
 
     public static WrittenQuesWithSubmissionResponse? ToWrittenWithSubmissionDto(this Question question)
     {
-        return question.QuestionTypeId != (int)QuestionType.Written
+        if (question.QuestionTypeId != (int)QuestionType.Written)
+            return null;
+
+        var submission = question.WrittenSubmissions.FirstOrDefault();
+        var submissionResponse = submission is null
             ? null
-            : new WrittenQuesWithSubmissionResponse(
-                question.Id,
-                question.StatementMarkdown,
-                question.Points,
-                question.WrittenSubmissions.FirstOrDefault() is not { } submission
-                    ? null
-                    : new WrittenSubmissionResponse(
-                        submission.QuestionId,
-                        submission.Id,
-                        submission.Answer,
-                        submission.Score
-                    )
+            : new WrittenSubmissionResponse(
+                submission.QuestionId,
+                submission.Id,
+                submission.Answer,
+                submission.Score
             );
+
+        return new WrittenQuesWithSubmissionResponse(
+            question.Id,
+            question.StatementMarkdown,
+            question.Points,
+            submissionResponse
+        );
     }
 }

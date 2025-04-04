@@ -64,7 +64,38 @@ public class ExamController(IMediator mediator) : BaseApiController
     [ProducesResponseType<ExamResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateAsync(UpdateExamCommand command)
+    {
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
+
+    /// <summary>Publishes an existing exam.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <returns>Void.</returns>
+    [HttpPost("Publish")]
+    [EndpointDescription("Publishes an existing exam.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
+    public async Task<IActionResult> PublishAsync(Guid examId)
+    {
+        var command = new PublishExamCommand(examId);
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
+
+    /// <summary>Invites candidates to an exam.</summary>
+    /// <param name="command">Exam Id and a list of emails.</param>
+    /// <returns>Success response.</returns>
+    [HttpPost("InviteCandidates")]
+    [EndpointDescription("Invites candidates to an exam.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    public async Task<IActionResult> InviteCandidates(InviteCandidatesCommand command)
     {
         var response = await _mediator.Send(command);
         return ToResult(response);
@@ -78,6 +109,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteAsync(Guid examId)
     {
         var command = new DeleteExamCommand(examId);

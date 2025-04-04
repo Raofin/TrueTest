@@ -66,6 +66,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateWrittenAsync(UpdateWrittenCommand command)
     {
         var response = await _mediator.Send(command);
@@ -80,6 +81,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteWrittenAsync(Guid questionId)
     {
         var query = new DeleteWrittenCommand(questionId);

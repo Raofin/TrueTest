@@ -30,6 +30,9 @@ public class CreateWrittenCommandHandler(IUnitOfWork unitOfWork)
         var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
         if (exam == null) return Error.NotFound();
 
+        if (exam.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         var questions = request.WrittenQuestions.Select(
             written => new Question
             {
@@ -51,7 +54,7 @@ public class CreateWrittenCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? questions.Select(q => q.MapToWrittenQuestionDto()).ToList()
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 

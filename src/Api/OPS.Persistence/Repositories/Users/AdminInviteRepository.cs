@@ -17,6 +17,14 @@ internal class AdminInviteRepository(AppDbContext dbContext)
             .Where(a => a.Email == email)
             .AnyAsync(cancellationToken);
     }
+    
+    public async Task<AdminInvite?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await _dbContext.AdminInvites
+            .AsNoTracking()
+            .Where(a => a.Email == email)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 
     public async Task<List<string>> GetUninvitedEmails(List<string> emails, CancellationToken cancellationToken)
     {

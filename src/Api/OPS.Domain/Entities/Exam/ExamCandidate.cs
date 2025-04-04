@@ -6,10 +6,9 @@ namespace OPS.Domain.Entities.Exam;
 public class ExamCandidate : SoftDeletableEntity
 {
     public string CandidateEmail { get; set; } = null!;
-    public decimal? TotalScore { get; set; }
-    public decimal? ProblemSolvingScore { get; set; }
-    public decimal? WrittenScore { get; set; }
-    public decimal? McqScore { get; set; }
+    public decimal ProblemSolvingScore { get; set; }
+    public decimal WrittenScore { get; set; }
+    public decimal McqScore { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? SubmittedAt { get; set; }
     public bool HasCheated { get; set; }

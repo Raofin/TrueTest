@@ -66,6 +66,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateProblemSolvingAsync(UpdateProblemSolvingCommand command)
     {
         var response = await _mediator.Send(command);
@@ -80,6 +81,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteTestCaseAsync(Guid testCaseId)
     {
         var query = new DeleteTestCaseCommand(testCaseId);
@@ -95,6 +97,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [ProducesResponseType<EmptyResult>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteProblemSolvingAsync(Guid questionId)
     {
         var query = new DeleteProblemSolvingCommand(questionId);

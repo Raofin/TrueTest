@@ -31,6 +31,9 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
         if (exam == null) return Error.NotFound();
 
+        if (exam.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         var questions = new List<Question>();
 
         foreach (var problem in request.ProblemQuestions)
@@ -65,7 +68,7 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? questions.Select(q => q.MapToProblemQuestionDto()).ToList()
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 

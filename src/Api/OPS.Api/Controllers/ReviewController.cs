@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
+using OPS.Application.Features.Review.Commands;
 using OPS.Application.Features.Review.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
@@ -39,6 +40,34 @@ public class ReviewController(IMediator mediator) : BaseApiController
     {
         var query = new GetResultByCandidateQuery(examId, accountId);
         var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
+
+    /// <summary>Reviews a problem submission.</summary>
+    /// <param name="command">Problem submission id and review details.</param>
+    /// <returns>Result of the review operation.</returns>
+    [HttpPut("Submission/Problem")]
+    [EndpointDescription("Review a problem submission.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    public async Task<IActionResult> ReviewProblemSubmissionAsync(ReviewProblemCommand command)
+    {
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
+
+    /// <summary>Reviews a written submission.</summary>
+    /// <param name="command">Written submission id and review details.</param>
+    /// <returns>Result of the review operation.</returns>
+    [HttpPut("Submission/Written")]
+    [EndpointDescription("Review a written submission.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    public async Task<IActionResult> ReviewWrittenSubmissionAsync(ReviewWrittenCommand command)
+    {
+        var response = await _mediator.Send(command);
         return ToResult(response);
     }
 

@@ -19,6 +19,20 @@ internal class ExamCandidatesRepository(AppDbContext dbContext)
             .AnyAsync(cancellationToken);
     }
 
+    public async Task<ExamCandidate?> GetAsync(Guid accountId, Guid examId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ExamCandidates
+            .Where(ec => ec.ExaminationId == examId && ec.AccountId == accountId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<List<ExamCandidate>> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ExamCandidates
+            .Where(ec => ec.CandidateEmail == email)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<ExamCandidate>> GetExamParticipantsAsync(Guid examId, CancellationToken cancellationToken)
     {
         return await _dbContext.ExamCandidates

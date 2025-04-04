@@ -6,7 +6,7 @@ using OPS.Domain;
 
 namespace OPS.Application.Features.Review.Queries;
 
-public record CandidateResultResponse(AccountBasicInfoResponse Account, ResultResponse Result);
+public record CandidateResultResponse(AccountBasicInfoResponse Account, ResultResponse? Result);
 
 public record ExamResultsResponse(ExamResponse Exam, List<CandidateResultResponse> Candidates);
 

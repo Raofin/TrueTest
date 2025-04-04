@@ -30,7 +30,7 @@ public record QuestionResponses(
 public record ExamQuesWithSubmissionResponse(
     ExamResponse Exam,
     AccountBasicInfoResponse Account,
-    ResultResponse Result,
+    ResultResponse? Result,
     QuestionsWithSubmissionResponse QuestionsWithSubmission
 );
 
@@ -56,12 +56,12 @@ public record ExamStartResponse(
 );
 
 public record ResultResponse(
-    decimal? TotalScore,
-    decimal? ProblemSolvingScore,
-    decimal? WrittenScore,
-    decimal? McqScore,
-    DateTime StartedAt,
-    DateTime SubmittedAt,
+    decimal TotalScore,
+    decimal ProblemSolvingScore,
+    decimal WrittenScore,
+    decimal McqScore,
+    DateTime? StartedAt,
+    DateTime? SubmittedAt,
     bool HasCheated,
     bool IsReviewed
 );

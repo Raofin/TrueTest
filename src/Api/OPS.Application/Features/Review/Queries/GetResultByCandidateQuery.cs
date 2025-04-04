@@ -12,7 +12,7 @@ namespace OPS.Application.Features.Review.Queries;
 public record ExamResultResponse(
     ExamResponse Exam,
     AccountBasicInfoResponse Account,
-    ResultResponse Result,
+    ResultResponse? Result,
     SubmissionResponse Submission
 );
 

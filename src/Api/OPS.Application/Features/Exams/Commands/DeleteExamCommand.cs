@@ -16,13 +16,12 @@ public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
         var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
 
         if (exam is null) return Error.NotFound();
+        if (exam.IsPublished) return Error.Validation("Exam is already published");
 
         _unitOfWork.Exam.Remove(exam);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Failure();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 

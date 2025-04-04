@@ -33,7 +33,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
         if (request.ImageFileId.HasValue)
         {
             var isExists = await _unitOfWork.CloudFile.IsExistsAsync(request.ImageFileId.Value, cancellationToken);
-            if (!isExists) throw new NullReferenceException("Image file does not exist.");
+            if (!isExists) return Error.Unexpected(description: "Image file not found.");
         }
 
         var profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
@@ -96,7 +96,7 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        if (result <= 0) return Error.Failure();
+        if (result <= 0) return Error.Unexpected();
         profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
         return profile.MapToDto()!;

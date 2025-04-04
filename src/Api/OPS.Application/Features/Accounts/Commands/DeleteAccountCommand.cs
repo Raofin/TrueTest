@@ -21,9 +21,7 @@ public class DeleteAccountCommandHandler(IUnitOfWork unitOfWork)
         _unitOfWork.Account.Remove(account);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Failure();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 

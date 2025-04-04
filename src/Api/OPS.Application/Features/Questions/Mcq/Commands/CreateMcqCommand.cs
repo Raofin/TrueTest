@@ -39,6 +39,9 @@ public class CreateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
         var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
         if (exam == null) return Error.NotFound();
 
+        if (exam.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         var questions = request.McqQuestions.Select(
             mcq => new Question
             {
@@ -68,7 +71,7 @@ public class CreateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? questions.Select(q => q.MapToMcqQuestionDto()).ToList()
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 

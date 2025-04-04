@@ -40,9 +40,7 @@ public class MakeAdminCommandHandler(IUnitOfWork unitOfWork, IAccountEmails acco
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Failure();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 

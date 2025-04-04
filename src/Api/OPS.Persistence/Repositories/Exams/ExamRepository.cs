@@ -85,4 +85,13 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
 
         return exam;
     }
+
+    public async Task<bool> IsPublished(Guid questionId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.TestCases
+            .AsNoTracking()
+            .Where(q => q.QuestionId == questionId)
+            .Select(q => q.Question.Examination.IsPublished)
+            .FirstAsync(cancellationToken);
+    }
 }
