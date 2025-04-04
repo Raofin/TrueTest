@@ -6,7 +6,8 @@ namespace OPS.Application.Features.User.Commands;
 
 public record DeleteProfileLinkCommand(Guid ProfileLinkId) : IRequest<ErrorOr<Success>>;
 
-public class DeleteProfileLinkCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteProfileLinkCommand, ErrorOr<Success>>
+public class DeleteProfileLinkCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<DeleteProfileLinkCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
@@ -19,8 +20,6 @@ public class DeleteProfileLinkCommandHandler(IUnitOfWork unitOfWork) : IRequestH
         _unitOfWork.ProfileLink.Remove(profileLink);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Failure();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }

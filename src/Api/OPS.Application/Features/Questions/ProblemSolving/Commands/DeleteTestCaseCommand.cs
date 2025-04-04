@@ -23,9 +23,7 @@ public class DeleteTestCaseCommandHandler(IUnitOfWork unitOfWork)
         _unitOfWork.TestCase.Remove(testCase);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Unexpected();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 

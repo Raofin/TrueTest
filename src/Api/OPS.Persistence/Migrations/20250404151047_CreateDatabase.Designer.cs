@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250404143503_CreateDatabase")]
+    [Migration("20250404151047_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />

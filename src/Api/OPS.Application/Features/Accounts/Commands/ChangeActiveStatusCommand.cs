@@ -26,7 +26,7 @@ public class ChangeActiveStatusCommandHandler(IUnitOfWork unitOfWork)
 
         return result > 0
             ? account.MapToDto()
-            : Error.Failure();
+            : Error.Unexpected();
     }
 }
 

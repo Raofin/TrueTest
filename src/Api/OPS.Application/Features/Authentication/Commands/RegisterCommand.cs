@@ -58,9 +58,7 @@ public class RegisterCommandHandler(
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? _authService.AuthenticateUser(account)
-            : Error.Failure();
+        return result > 0 ? _authService.AuthenticateUser(account) : Error.Unexpected();
     }
 
     private async Task HandleAdminInvite(Account account, CancellationToken cancellationToken)

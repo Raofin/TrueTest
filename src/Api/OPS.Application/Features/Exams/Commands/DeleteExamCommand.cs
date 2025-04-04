@@ -21,9 +21,7 @@ public class DeleteExamCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<
         _unitOfWork.Exam.Remove(exam);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Unexpected();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 

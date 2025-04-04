@@ -36,9 +36,7 @@ public class CreateExamCommandHandler(IUnitOfWork unitOfWork)
         _unitOfWork.Exam.Add(exam);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? exam.MapToDto()
-            : Error.Unexpected();
+        return result > 0 ? exam.MapToDto() : Error.Unexpected();
     }
 }
 

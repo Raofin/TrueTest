@@ -32,11 +32,9 @@ public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
         exam.OpensAt = request.OpensAt ?? exam.OpensAt;
         exam.ClosesAt = request.ClosesAt ?? exam.ClosesAt;
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? exam.MapToDto()
-            : Error.Unexpected();
+        return exam.MapToDto();
     }
 }
 

@@ -27,9 +27,7 @@ public class DeleteProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         _unitOfWork.Question.Remove(question);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Unexpected();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 
