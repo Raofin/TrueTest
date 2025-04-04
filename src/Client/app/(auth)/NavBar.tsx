@@ -20,18 +20,7 @@ export default function Component() {
             >
             <NavbarContent
             className=" h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]  px-4 "
-            justify="end"
-          >
-            <NavbarItem>
-              <Link className="text-[#3f3f46] dark:text-white" href="/overview">
-                Admin Panel
-              </Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Link className="text-[#3f3f46] dark:text-white" href="/home">
-                Candidate Home
-              </Link>
-            </NavbarItem>
+            justify="end">
             <NavbarItem>
               <Link className="text-[#3f3f46] dark:text-white" href="/">
                 About Us
@@ -61,7 +50,7 @@ export default function Component() {
                 <NavbarItem className="text-[#3f3f46] dark:text-white "><ThemeSwitch/></NavbarItem>
               
                <NavbarItem>
-               <Link href="/userprofile/setup"> <FaCircleUser className="text-[#3f3f46] dark:text-white " size={24} /></Link>
+               <Link href="#"> <FaCircleUser className="text-[#3f3f46] dark:text-white " size={24} /></Link>
               </NavbarItem>
                <NavbarItem>
                <Link href="/login">  <BiSolidLogIn className="text-[#3f3f46] dark:text-white " size={24} /></Link>

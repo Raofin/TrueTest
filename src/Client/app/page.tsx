@@ -8,19 +8,14 @@ import NavBar from '@/app/(auth)/NavBar'
 
 export default function Component() {
   return (
-    <div className='h-screen flex flex-col justify-between'>
+    <div className="h-screen flex flex-col justify-between">
       <div className=" w-full flex justify-between items-center h-16">
-       
-      
-          <NavBar/>
-       
-      
-       
+        <NavBar />
       </div>
       <div className="flex justify-around items-center gap-12 ">
         <div className="flex flex-col items-center gap-4 flex-1">
           <div className="flex items-center gap-2">
-           <Logo/>
+            <Logo />
           </div>
           <div className="flex flex-col items-center justify-center text-5xl font-bold ">
             <p> Your Secure Platform</p>
