@@ -55,14 +55,16 @@ internal static class DependencyInjection
 
     public static void UseControllers(this WebApplication app)
     {
-        app.MapControllers();
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.UseHealthChecks("/health");
-        app.UseCors("CorsPolicy");
-
         app.UseMiddleware<GlobalRoutePrefixMiddleware>("/api");
         app.UsePathBase(new PathString("/api"));
+        app.UseHttpsRedirection();
+        
+        app.UseHealthChecks("/health");
+        app.UseCors("CorsPolicy");
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapControllers();
 
         if (app.Environment.IsProduction())
             app.UseMiddleware<ExceptionHandleMiddleware>();

@@ -9,11 +9,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using OPS.Application.CrossCutting.Constants;
+using OPS.Application.Common.Constants;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Enums;
-using OPS.Infrastructure.Authentication;
+using OPS.Infrastructure.Authentication.Jwt;
+using OPS.Infrastructure.Authentication.Password;
+using OPS.Infrastructure.Authentication.Permission;
 using OPS.Infrastructure.EmailSender;
 using OPS.Persistence;
 using Serilog;
@@ -58,7 +60,11 @@ public static class AppConfigurations
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString, m => m.MigrationsHistoryTable("Migrations", "Core"))
-                .ConfigureWarnings(builder => { builder.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning); })
+                .ConfigureWarnings(builder =>
+                {
+                    builder.Ignore(CoreEventId
+                        .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
+                })
         );
 
         return services;
@@ -115,15 +121,24 @@ public static class AppConfigurations
 
     private static IServiceCollection AddAuthorization(this IServiceCollection services)
     {
+        var builder = services.AddAuthorizationBuilder();
+
         foreach (var role in Enum.GetValues<RoleType>())
         {
             var roleName = Enum.GetName(role)!;
 
-            services
-                .AddAuthorizationBuilder()
-                .AddPolicy(roleName, policy => policy
-                    .RequireRole(roleName)
-                );
+            builder.AddPolicy(roleName, policy => policy.RequireRole(roleName));
+        }
+
+        var permissions = typeof(Permissions)
+            .GetFields()
+            .Select(f => f.GetValue(null)?.ToString())
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .ToList();
+
+        foreach (var permission in permissions)
+        {
+            builder.AddPolicy(permission!, policy => policy.RequireClaim("Permission", permission!));
         }
 
         return services;
