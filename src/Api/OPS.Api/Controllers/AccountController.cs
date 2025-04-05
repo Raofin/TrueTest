@@ -5,12 +5,13 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Accounts.Commands;
 using OPS.Application.Features.Accounts.Queries;
+using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OPS.Infrastructure.Authentication.Permission.Permissions;
 
 namespace OPS.Api.Controllers;
 
 [Route("Account")]
-// [AuthorizeRoles(RoleType.Admin)]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class AccountController(IMediator mediator) : BaseApiController
 {
@@ -23,6 +24,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Paginated account list.</returns>
     [HttpGet]
+    [HasPermission(ManageAccounts)]
     [EndpointDescription("Retrieves accounts with details.")]
     [ProducesResponseType<PaginatedAccountResponse>(Status200OK)]
     public async Task<IActionResult> GetAllAccountsAsync(int pageIndex = 1, int pageSize = 10,
@@ -38,6 +40,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated account object.</returns>
     [HttpPatch("ChangeActiveStatus")]
+    [HasPermission(ManageAccounts)]
     [EndpointDescription("Changes active status of an account.")]
     [ProducesResponseType<AccountResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -54,6 +57,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated account object.</returns>
     [HttpPut("Update")]
+    [HasPermission(ManageAccounts)]
     [EndpointDescription("Updates details of an account.")]
     [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -71,6 +75,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>A success response if the accounts are upgraded.</returns>
     [HttpPost("MakeAdmin")]
+    [HasPermission(ManageAccounts)]
     [EndpointDescription("Upgrades a list of accounts to admin")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -87,6 +92,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
     [HttpPost("SendAdminInvite")]
+    [HasPermission(ManageAccounts)]
     [EndpointDescription("Sends admin invite to a list of email addresses.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -102,6 +108,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>A success response if the account was deleted.</returns>
     [HttpDelete("Delete/{accountId:guid}")]
+    [HasPermission(ManageAccounts)]
     [EndpointDescription("Deletes an account.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

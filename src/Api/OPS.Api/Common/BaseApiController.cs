@@ -1,15 +1,16 @@
-﻿using System.Net.Mime;
-using ErrorOr;
+﻿using ErrorOr;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using static System.Net.Mime.MediaTypeNames.Application;
 
 namespace OPS.Api.Common;
 
-// [Authorize]
+[Authorize]
 [ApiController]
-[Produces(MediaTypeNames.Application.Json)]
-[Consumes(MediaTypeNames.Application.Json)]
+[Produces(Json)]
+[Consumes(Json)]
 public class BaseApiController : ControllerBase
 {
     protected IActionResult ToResult<T>(ErrorOr<T> result)

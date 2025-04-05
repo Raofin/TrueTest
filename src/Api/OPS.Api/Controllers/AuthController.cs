@@ -10,7 +10,6 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
-[AllowAnonymous]
 [Route("Auth")]
 public class AuthController(IMediator mediator) : BaseApiController
 {
@@ -21,6 +20,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Login token with account and profile details.</returns>
     [HttpPost("Login")]
+    [AllowAnonymous]
     [EndpointDescription("User login with provided credentials.")]
     [ProducesResponseType<AuthenticationResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -37,6 +37,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Account details with login token.</returns>
     [HttpPost("Register")]
+    [AllowAnonymous]
     [EndpointDescription("Registers a new user.")]
     [ProducesResponseType<AuthenticationResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -54,6 +55,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Account details with login token.</returns>
     [HttpPost("PasswordRecovery")]
+    [AllowAnonymous]
     [EndpointDescription("Recovers password for a user.")]
     [ProducesResponseType<AuthenticationResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -71,6 +73,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Boolean indicating if the user is unique.</returns>
     [HttpPost("IsUserUnique")]
+    [AllowAnonymous]
     [EndpointDescription("Checks if a user is unique.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -89,6 +92,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Void</returns>
     [HttpPost("SendOtp")]
+    [AllowAnonymous]
     [EndpointDescription("Sends an OTP to a user.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -103,6 +107,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Boolean indicating if the OTP is valid.</returns>
     [HttpPost("IsValidOtp")]
+    [AllowAnonymous]
     [EndpointDescription("Validates a provided OTP.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

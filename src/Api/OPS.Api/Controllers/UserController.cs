@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
@@ -20,7 +21,8 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     /// <summary>Gets authenticated user info.</summary>
     /// <returns>Authenticated user details.</returns>
     [HttpGet("Info")]
-    [EndpointDescription("")]
+    [Authorize]
+    [EndpointDescription("Gets authenticated user info")]
     [ProducesResponseType(Status200OK)]
     public IActionResult GetInfo()
     {
@@ -29,11 +31,26 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
             : Ok(_userInfoProvider.GetCurrentUser());
     }
 
+    /// <summary>Retrieves account details of the authenticated user.</summary>
+    /// <param name="cancellationToken">Request cancellation token.</param>
+    /// <returns>User details.</returns>
+    [HttpGet("Details")]
+    [Authorize]
+    [EndpointDescription("Retrieves account details of the authenticated user.")]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
+    public async Task<IActionResult> GetDetailsAsync(CancellationToken cancellationToken)
+    {
+        var query = new GetUserDetailsQuery();
+        var response = await _mediator.Send(query, cancellationToken);
+        return ToResult(response);
+    }
+
     /// <summary>Updates account settings of the authenticated user.</summary>
     /// <param name="command">Account setting details to update.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Updated account settings.</returns>
-    [HttpPatch("AccountSettings")]
+    [HttpPatch("Account/Settings")]
+    [Authorize]
     [EndpointDescription("Updates account settings of the authenticated user.")]
     [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -45,24 +62,12 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
         return ToResult(response);
     }
 
-    /// <summary>Retrieves account details of the authenticated user.</summary>
-    /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>User details.</returns>
-    [HttpGet("Details")]
-    [EndpointDescription("Retrieves account details of the authenticated user.")]
-    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
-    public async Task<IActionResult> GetDetailsAsync(CancellationToken cancellationToken)
-    {
-        var query = new GetUserDetailsQuery();
-        var response = await _mediator.Send(query, cancellationToken);
-        return ToResult(response);
-    }
-
     /// <summary>Creates or updates the authenticated user profile.</summary>
     /// <param name="command">Profile details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Updated or created profile.</returns>
-    [HttpPost("SaveProfile")]
+    [HttpPost("Profile/Save")]
+    [Authorize]
     [EndpointDescription("Creates or updates the authenticated user profile.")]
     [ProducesResponseType<ProfileResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -77,7 +82,8 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     /// <param name="command">Profile link Id.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns></returns>
-    [HttpDelete("ProfileLink")]
+    [HttpDelete("Profile/Link")]
+    [Authorize]
     [EndpointDescription("Deletes a profile link of the authenticated user.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

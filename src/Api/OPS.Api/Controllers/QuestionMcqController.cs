@@ -5,7 +5,9 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.Mcq.Commands;
 using OPS.Application.Features.Questions.Mcq.Queries;
+using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OPS.Infrastructure.Authentication.Permission.Permissions;
 
 namespace OPS.Api.Controllers;
 
@@ -20,6 +22,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Newly created MCQ question.</returns>
     [HttpPost("Create")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Creates an MCQ Question.")]
     [ProducesResponseType<List<McqQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -36,6 +39,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>MCQ question with details.</returns>
     [HttpGet("{questionId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Retrieves an MCQ question.")]
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -52,6 +56,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>List of all MCQ questions of an exam.</returns>
     [HttpGet("ByExam/{examId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Retrieves MCQ questions of an exam.")]
     [ProducesResponseType<List<McqQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -67,6 +72,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated MCQ question.</returns>
     [HttpPut("Update")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Updates an MCQ question.")]
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -84,6 +90,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
     [HttpDelete("Delete/{questionId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Deletes an MCQ question.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

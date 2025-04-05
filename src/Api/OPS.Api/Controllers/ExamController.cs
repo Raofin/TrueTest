@@ -5,7 +5,9 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Exams.Commands;
 using OPS.Application.Features.Exams.Queries;
+using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OPS.Infrastructure.Authentication.Permission.Permissions;
 
 namespace OPS.Api.Controllers;
 
@@ -20,6 +22,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>List of all exams.</returns>
     [HttpGet]
+    [HasPermission(ViewExams)]
     [EndpointDescription("Retrieves all exams.")]
     [ProducesResponseType<List<ExamResponse>>(Status200OK)]
     public async Task<IActionResult> GetAllExamsAsync(CancellationToken cancellationToken)
@@ -34,6 +37,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Exam details.</returns>
     [HttpGet("{examId:guid}")]
+    [HasPermission(ViewExams)]
     [EndpointDescription("Retrieves an exam with all questions.")]
     [ProducesResponseType<ExamWithQuestionsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -50,6 +54,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Newly created exam details.</returns>
     [HttpPost("Create")]
+    [HasPermission(ManageExams)]
     [EndpointDescription("Creates a new exam.")]
     [ProducesResponseType<ExamResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -65,6 +70,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Updated exam details.</returns>
     [HttpPut("Update")]
+    [HasPermission(ManageExams)]
     [EndpointDescription("Updates an exam.")]
     [ProducesResponseType<ExamResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -82,6 +88,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
     [HttpPost("Publish")]
+    [HasPermission(ManageExams)]
     [EndpointDescription("Publishes an exam.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -98,7 +105,8 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="command">Exam Id and a list of emails.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
-    [HttpPost("InviteCandidates")]
+    [HttpPost("Invite/Candidates")]
+    [HasPermission(ManageExams)]
     [EndpointDescription("Invites candidates to an exam.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -115,6 +123,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
     [HttpDelete("Delete/{examId:guid}")]
+    [HasPermission(ManageExams)]
     [EndpointDescription("Deletes an exam.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

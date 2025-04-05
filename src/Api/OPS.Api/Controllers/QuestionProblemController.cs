@@ -5,7 +5,9 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.ProblemSolving.Commands;
 using OPS.Application.Features.Questions.ProblemSolving.Queries;
+using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OPS.Infrastructure.Authentication.Permission.Permissions;
 
 namespace OPS.Api.Controllers;
 
@@ -20,6 +22,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Newly created problem-solving question.</returns>
     [HttpPost("Create")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Creates a problem-solving question.")]
     [ProducesResponseType<List<ProblemQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -36,6 +39,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Problem-solving question with details.</returns>
     [HttpGet("{questionId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Retrieves a problem-solving question.")]
     [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -52,6 +56,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>List of all problem-solving questions of an exam.</returns>
     [HttpGet("ByExam/{examId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Retrieves problem-solving questions of an exam.")]
     [ProducesResponseType<List<ProblemQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -68,6 +73,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated problem-solving question.</returns>
     [HttpPut("Update")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Updates a problem-solving question.")]
     [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -85,6 +91,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
     [HttpDelete("Delete/{questionId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Deletes a problem-solving question.")]
     [ProducesResponseType<EmptyResult>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -102,6 +109,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
     [HttpDelete("TestCase/{testCaseId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Deletes a test case.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

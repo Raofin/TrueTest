@@ -5,7 +5,9 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.Written.Command;
 using OPS.Application.Features.Questions.Written.Queries;
+using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OPS.Infrastructure.Authentication.Permission.Permissions;
 
 namespace OPS.Api.Controllers;
 
@@ -20,6 +22,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Newly created written question.</returns>
     [HttpPost("Create")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Creates a written question.")]
     [ProducesResponseType<List<WrittenQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -36,6 +39,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Written question with details.</returns>
     [HttpGet("{questionId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Retrieves a written question.")]
     [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -52,6 +56,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>List of all written questions of an exam.</returns>
     [HttpGet("ByExam/{examId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Retrieves written questions of an exam.")]
     [ProducesResponseType<List<WrittenQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -67,6 +72,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated written question.</returns>
     [HttpPut("Update")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Updates a written question.")]
     [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -84,6 +90,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Success response.</returns>
     [HttpDelete("Delete/{questionId:guid}")]
+    [HasPermission(ManageQuestions)]
     [EndpointDescription("Deletes a written question.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

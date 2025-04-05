@@ -5,7 +5,9 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Review.Commands;
 using OPS.Application.Features.Review.Queries;
+using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OPS.Infrastructure.Authentication.Permission.Permissions;
 
 namespace OPS.Api.Controllers;
 
@@ -20,6 +22,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>List of candidates with results.</returns>
     [HttpGet("Candidates/{examId:guid}")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Retrieves all candidates with results of an exam.")]
     [ProducesResponseType<List<CandidateResultResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -37,6 +40,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Candidate exam result.</returns>
     [HttpGet("Candidates/{examId:guid}/{accountId:guid}")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Retrieves exam results of a list of candidates.")]
     [ProducesResponseType<List<ExamResultResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -53,6 +57,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Result of the review operation.</returns>
     [HttpPut("Submission/Problem")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Review a problem submission.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -69,6 +74,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Result of the review operation.</returns>
     [HttpPut("Submission/Written")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Review a written submission.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -87,6 +93,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <returns>Exam with questions and submissions.</returns>
     [Obsolete]
     [HttpGet("Exam/QuestionsWithSubmission/{examId:guid}/{accountId:guid}")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Retrieves an exam with questions and submissions of a candidate.")]
     [ProducesResponseType<ExamQuesWithSubmissionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -105,6 +112,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <returns>List of problem-solving submissions.</returns>
     [Obsolete]
     [HttpGet("Problem/{examId:guid}/{accountId:guid}")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Retrieves problem-solving submissions for an exam of a user.")]
     [ProducesResponseType<List<ProblemQuesWithSubmissionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -123,6 +131,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <returns>List of written submissions.</returns>
     [Obsolete]
     [HttpGet("Written/{examId:guid}/{accountId:guid}")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Retrieves written submissions for an exam of a user.")]
     [ProducesResponseType<List<WrittenQuesWithSubmissionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
@@ -141,6 +150,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <returns>List of MCQ submissions.</returns>
     [Obsolete]
     [HttpGet("Mcq/{examId:guid}/{accountId:guid}")]
+    [HasPermission(ReviewSubmission)]
     [EndpointDescription("Retrieves MCQ submissions for an exam of a user.")]
     [ProducesResponseType<List<McqSubmissionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]

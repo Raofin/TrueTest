@@ -4,6 +4,7 @@ using OPS.Infrastructure.Authentication.Permission;
 
 namespace OPS.Api.Controllers;
 
+[Obsolete]
 public class TestController : ControllerBase
 {
     [HttpGet("Permission/Candidate")]
@@ -12,21 +13,21 @@ public class TestController : ControllerBase
     {
         return Ok();
     }
-    
+
     [HttpGet("Permission/Admin")]
     [HasPermission(Permissions.ManageAccounts)]
     public IActionResult Test2()
     {
         return Ok();
     }
-    
+
     [HttpGet("Permission/Moderator")]
     [HasPermission(Permissions.ReviewSubmission)]
     public IActionResult Test3()
     {
         return Ok();
     }
-    
+
     [HttpGet("Permission/Anonymous")]
     [AllowAnonymous]
     public IActionResult Test4()
