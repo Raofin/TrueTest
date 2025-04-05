@@ -11,7 +11,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 namespace OPS.Api.Controllers;
 
 [AllowAnonymous]
-[Route("api/Auth")]
+[Route("Auth")]
 public class AuthController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

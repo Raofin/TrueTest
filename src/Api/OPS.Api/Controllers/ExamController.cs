@@ -10,7 +10,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 namespace OPS.Api.Controllers;
 
 // [AuthorizeRoles(RoleType.Admin)]
-[Route("api/Exam")]
+[Route("Exam")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class ExamController(IMediator mediator) : BaseApiController
 {

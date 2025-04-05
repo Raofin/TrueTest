@@ -9,7 +9,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
-[Route("api/Questions/Mcq")]
+[Route("Questions/Mcq")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class QuestionMcqController(IMediator mediator) : BaseApiController
 {

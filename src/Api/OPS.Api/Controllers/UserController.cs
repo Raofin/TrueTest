@@ -10,7 +10,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
-[Route("api/User")]
+[Route("User")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class UserController(IMediator mediator, IUserInfoProvider userInfoProvider) : BaseApiController
 {

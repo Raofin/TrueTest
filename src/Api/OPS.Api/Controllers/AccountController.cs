@@ -9,7 +9,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
-[Route("api/Account")]
+[Route("Account")]
 // [AuthorizeRoles(RoleType.Admin)]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class AccountController(IMediator mediator) : BaseApiController

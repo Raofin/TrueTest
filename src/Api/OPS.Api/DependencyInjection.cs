@@ -61,6 +61,9 @@ internal static class DependencyInjection
         app.UseHealthChecks("/health");
         app.UseCors("CorsPolicy");
 
+        app.UseMiddleware<GlobalRoutePrefixMiddleware>("/api");
+        app.UsePathBase(new PathString("/api"));
+
         if (app.Environment.IsProduction())
             app.UseMiddleware<ExceptionHandleMiddleware>();
     }

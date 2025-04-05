@@ -9,7 +9,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
-[Route("api/Review")]
+[Route("Review")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class ReviewController(IMediator mediator) : BaseApiController
 {

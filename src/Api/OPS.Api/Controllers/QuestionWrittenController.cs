@@ -9,7 +9,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
-[Route("api/Questions/Written")]
+[Route("Questions/Written")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 public class QuestionWrittenController(IMediator mediator) : BaseApiController
 {
