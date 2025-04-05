@@ -1,7 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.CrossCutting.Constants;
+using OPS.Application.Common.Constants;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;

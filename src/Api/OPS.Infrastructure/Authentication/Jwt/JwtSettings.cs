@@ -1,4 +1,4 @@
-﻿namespace OPS.Infrastructure.Authentication;
+﻿namespace OPS.Infrastructure.Authentication.Jwt;
 
 public class JwtSettings
 {

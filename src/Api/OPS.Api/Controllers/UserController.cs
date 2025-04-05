@@ -26,13 +26,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     {
         return !_userInfoProvider.IsAuthenticated()
             ? Unauthorized("User is not authenticated.")
-            : Ok(new
-            {
-                AccountId = _userInfoProvider.AccountId(),
-                Username = _userInfoProvider.Username(),
-                Email = _userInfoProvider.Email(),
-                Roles = _userInfoProvider.Roles()
-            });
+            : Ok(_userInfoProvider.GetCurrentUser());
     }
 
     /// <summary>Updates account settings of the authenticated user.</summary>

@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.CrossCutting.Constants;
+using OPS.Application.Common.Constants;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Contracts.Core.EmailSender;
