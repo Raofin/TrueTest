@@ -19,9 +19,7 @@ app.ApplyMigration();
 
 if (true /*app.Environment.IsDevelopment()*/)
 {
-    app.UseScalar();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseApiDocumentation();
 }
 
 app.Run();

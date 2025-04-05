@@ -14,7 +14,7 @@ internal static class DependencyInjection
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
 
-        services.AddTransient<IOtpGenerator, OtpGenerator>();
+        services.AddSingleton<IOtpGenerator, OtpGenerator>();
         services.AddScoped<IUserInfoProvider, CurrentUserProvider>();
 
         return services;
