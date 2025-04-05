@@ -17,49 +17,55 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
 
     /// <summary>Creates a problem-solving question.</summary>
     /// <param name="command">A new problem-solving question with details.</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Newly created problem-solving question.</returns>
     [HttpPost("Create")]
     [EndpointDescription("Creates a problem-solving question.")]
     [ProducesResponseType<List<ProblemQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> CreateProblemSolvingAsync(CreateProblemSolvingCommand command)
+    public async Task<IActionResult> CreateProblemSolvingAsync(CreateProblemSolvingCommand command,
+        CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(command);
+        var response = await _mediator.Send(command, cancellationToken);
         return ToResult(response);
     }
 
-    /// <summary>Retrieves a specific problem-solving question.</summary>
+    /// <summary>Retrieves a problem-solving question.</summary>
     /// <param name="questionId">Problem-solving question Id.</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Problem-solving question with details.</returns>
     [HttpGet("{questionId:guid}")]
-    [EndpointDescription("Retrieves a specific problem-solving question.")]
+    [EndpointDescription("Retrieves a problem-solving question.")]
     [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> GetProblemSolvingByIdAsync(Guid questionId)
+    public async Task<IActionResult> GetProblemSolvingByIdAsync(Guid questionId, CancellationToken cancellationToken)
     {
         var query = new GetProblemSolvingByIdQuery(questionId);
-        var response = await _mediator.Send(query);
+        var response = await _mediator.Send(query, cancellationToken);
         return ToResult(response);
     }
 
-    /// <summary>Retrieves problem-solving questions of a specific exam.</summary>
+    /// <summary>Retrieves problem-solving questions of an exam.</summary>
     /// <param name="examId">Exam Id.</param>
-    /// <returns>List of all problem-solving questions of a specific exam.</returns>
+    /// <param name="cancellationToken">Request cancellation token.</param>
+    /// <returns>List of all problem-solving questions of an exam.</returns>
     [HttpGet("ByExam/{examId:guid}")]
-    [EndpointDescription("Retrieves problem-solving questions of a specific exam.")]
+    [EndpointDescription("Retrieves problem-solving questions of an exam.")]
     [ProducesResponseType<List<ProblemQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    public async Task<IActionResult> GetProblemSolvingByExamAsync(Guid examId)
+    public async Task<IActionResult> GetProblemSolvingByExamAsync(Guid examId,
+        CancellationToken cancellationToken = default)
     {
         var query = new GetProblemSolvingByExamQuery(examId);
-        var response = await _mediator.Send(query);
+        var response = await _mediator.Send(query, cancellationToken);
         return ToResult(response);
     }
 
     /// <summary>Updates a problem-solving question.</summary>
     /// <param name="command">Problem-solving question Id and updated details.</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated problem-solving question.</returns>
     [HttpPut("Update")]
     [EndpointDescription("Updates a problem-solving question.")]
@@ -67,41 +73,44 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
-    public async Task<IActionResult> UpdateProblemSolvingAsync(UpdateProblemSolvingCommand command)
+    public async Task<IActionResult> UpdateProblemSolvingAsync(UpdateProblemSolvingCommand command,
+        CancellationToken cancellationToken = default)
     {
-        var response = await _mediator.Send(command);
-        return ToResult(response);
-    }
-
-    /// <summary>Deletes a test case.</summary>
-    /// <param name="testCaseId">Test case Id.</param>
-    /// <returns>Void.</returns>
-    [HttpDelete("TestCase/{testCaseId:guid}")]
-    [EndpointDescription("Deletes a test case.")]
-    [ProducesResponseType(Status200OK)]
-    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
-    public async Task<IActionResult> DeleteTestCaseAsync(Guid testCaseId)
-    {
-        var query = new DeleteTestCaseCommand(testCaseId);
-        var response = await _mediator.Send(query);
+        var response = await _mediator.Send(command, cancellationToken);
         return ToResult(response);
     }
 
     /// <summary>Deletes a problem-solving question.</summary>
     /// <param name="questionId">Problem-solving question Id.</param>
-    /// <returns>Void.</returns>
+    /// <param name="cancellationToken">Request cancellation token.</param>
+    /// <returns>Success response.</returns>
     [HttpDelete("Delete/{questionId:guid}")]
     [EndpointDescription("Deletes a problem-solving question.")]
     [ProducesResponseType<EmptyResult>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
-    public async Task<IActionResult> DeleteProblemSolvingAsync(Guid questionId)
+    public async Task<IActionResult> DeleteProblemSolvingAsync(Guid questionId, CancellationToken cancellationToken)
     {
         var query = new DeleteProblemSolvingCommand(questionId);
-        var response = await _mediator.Send(query);
+        var response = await _mediator.Send(query, cancellationToken);
+        return ToResult(response);
+    }
+
+    /// <summary>Deletes a test case.</summary>
+    /// <param name="testCaseId">Test case Id.</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
+    /// <returns>Success response.</returns>
+    [HttpDelete("TestCase/{testCaseId:guid}")]
+    [EndpointDescription("Deletes a test case.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
+    public async Task<IActionResult> DeleteTestCaseAsync(Guid testCaseId, CancellationToken cancellationToken)
+    {
+        var query = new DeleteTestCaseCommand(testCaseId);
+        var response = await _mediator.Send(query, cancellationToken);
         return ToResult(response);
     }
 }

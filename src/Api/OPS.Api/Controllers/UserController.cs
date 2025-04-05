@@ -37,54 +37,61 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
 
     /// <summary>Updates account settings of the authenticated user.</summary>
     /// <param name="command">Account setting details to update.</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Updated account settings.</returns>
     [HttpPatch("AccountSettings")]
     [EndpointDescription("Updates account settings of the authenticated user.")]
     [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
-    public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command)
+    public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command,
+        CancellationToken cancellationToken = default)
     {
-        var response = await _mediator.Send(command);
+        var response = await _mediator.Send(command, cancellationToken);
         return ToResult(response);
     }
 
     /// <summary>Retrieves account details of the authenticated user.</summary>
+    /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>User details.</returns>
     [HttpGet("Details")]
     [EndpointDescription("Retrieves account details of the authenticated user.")]
     [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
-    public async Task<IActionResult> GetDetailsAsync()
+    public async Task<IActionResult> GetDetailsAsync(CancellationToken cancellationToken)
     {
         var query = new GetUserDetailsQuery();
-        var response = await _mediator.Send(query);
+        var response = await _mediator.Send(query, cancellationToken);
         return ToResult(response);
     }
 
     /// <summary>Creates or updates the authenticated user profile.</summary>
     /// <param name="command">Profile details.</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Updated or created profile.</returns>
     [HttpPost("SaveProfile")]
     [EndpointDescription("Creates or updates the authenticated user profile.")]
     [ProducesResponseType<ProfileResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    public async Task<IActionResult> CreateAsync(CreateOrUpdateProfileCommand command)
+    public async Task<IActionResult> CreateAsync(CreateOrUpdateProfileCommand command,
+        CancellationToken cancellationToken = default)
     {
-        var response = await _mediator.Send(command);
+        var response = await _mediator.Send(command, cancellationToken);
         return ToResult(response);
     }
 
     /// <summary>Deletes a profile link of the authenticated user.</summary>
     /// <param name="command">Profile link Id.</param>
-    /// <returns>Void.</returns>
+    /// <param name="cancellationToken">Request cancellation token.</param>
+    /// <returns></returns>
     [HttpDelete("ProfileLink")]
     [EndpointDescription("Deletes a profile link of the authenticated user.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command)
+    public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command,
+        CancellationToken cancellationToken = default)
     {
-        var response = await _mediator.Send(command);
+        var response = await _mediator.Send(command, cancellationToken);
         return ToResult(response);
     }
 }
