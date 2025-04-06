@@ -49,24 +49,22 @@ internal class UnitOfWork(
 
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
-        var softDeletableEntities = _dbContext.ChangeTracker
-            .Entries<ISoftDeletable>()
-            .Where(entry => entry.State == EntityState.Deleted);
-
-        foreach (var entityEntry in softDeletableEntities)
-        {
-            entityEntry.Property(nameof(ISoftDeletable.IsDeleted)).CurrentValue = true;
-            entityEntry.State = EntityState.Modified;
-        }
-
-        var updatedEntities = _dbContext.ChangeTracker
+        _dbContext.ChangeTracker
             .Entries<IBaseEntity>()
             .Where(entry => entry.State == EntityState.Modified)
-            .ToList();
+            .ToList()
+            .ForEach(entityEntry => entityEntry.Property(nameof(IBaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow);
 
-        foreach (var entityEntry in updatedEntities)
-            entityEntry.Property(nameof(IBaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow;
-
+        _dbContext.ChangeTracker
+            .Entries<ISoftDeletable>()
+            .Where(entry => entry.State == EntityState.Deleted)
+            .ToList()
+            .ForEach(entityEntry =>
+            {
+                entityEntry.Property(nameof(ISoftDeletable.IsDeleted)).CurrentValue = true;
+                entityEntry.Property(nameof(ISoftDeletable.DeletedAt)).CurrentValue = DateTime.UtcNow;
+                entityEntry.State = EntityState.Modified;
+            });
 
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }

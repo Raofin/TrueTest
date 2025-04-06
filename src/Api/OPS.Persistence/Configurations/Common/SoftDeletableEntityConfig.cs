@@ -6,13 +6,14 @@ namespace OPS.Persistence.Configurations.Common;
 
 public class SoftDeletableEntityConfig<T> : IEntityTypeConfiguration<T> where T : SoftDeletableEntity
 {
-    public void Configure(EntityTypeBuilder<T> builder)
+    public void Configure(EntityTypeBuilder<T> entity)
     {
-        builder.Property(e => e.IsActive).HasDefaultValue(true);
-        builder.Property(e => e.IsDeleted).HasDefaultValue(false);
-
-        builder.HasQueryFilter(e => !e.IsDeleted);
-        builder.HasIndex(e => e.IsDeleted).HasFilter("[IsDeleted] = 0");
-        builder.HasIndex(e => e.IsActive).HasFilter("[IsActive] = 1");
+        entity.Property(e => e.IsActive).HasDefaultValue(true);
+        entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+        entity.Property(e => e.DeletedAt).HasDefaultValueSql(null).HasColumnType("DateTime");
+        
+        entity.HasQueryFilter(e => !e.IsDeleted);
+        entity.HasIndex(e => e.IsDeleted).HasFilter("[IsDeleted] = 0");
+        entity.HasIndex(e => e.IsActive).HasFilter("[IsActive] = 1");
     }
 }
