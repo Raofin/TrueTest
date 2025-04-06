@@ -1,15 +1,15 @@
 'use client'
 
-import isValidPassword from '@/app/components/check-valid-password'
-import api from '@/app/utils/api'
+import isValidPassword from '@/components/check-valid-password'
+import api from '@/utils/api'
 import { Button, Input, Link } from '@heroui/react'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useState, Suspense } from 'react'
 import toast from 'react-hot-toast'
 
-export default function Component() {
+function ResetPasswordForm() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email')
   const otp = searchParams.get('otp')
@@ -39,19 +39,20 @@ export default function Component() {
         otp: otp,
       })
       if (response.status === 200) {
-        toast.success('password recover successfully')
+        toast.success('Password reset successfully')
         router.push('/login')
       } else {
-        toast.error('failed to recover password.Please try again later!')
+        toast.error('Failed to reset password. Please try again later!')
       }
     } catch (err) {
       const error = err as AxiosError
       setError(error.message)
     }
   }
+
   return (
-    <div className="flex h-screnn w-full items-center justify-center mb-16">
-      <div className="flex w-full max-w-sm flex-col mt-16 gap-4 rounded-large px-8 py-5 bg-white dark:bg-[#18181b] ">
+    <div className="flex h-screen w-full items-center justify-center mb-16">
+      <div className="flex w-full max-w-sm flex-col mt-16 gap-4 rounded-large px-8 py-5 bg-white dark:bg-[#18181b]">
         <div className="flex flex-col gap-3">
           <h1 className="text-2xl font-bold text-center mb-6">Reset Password</h1>
         </div>
@@ -111,5 +112,13 @@ export default function Component() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function Component() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }

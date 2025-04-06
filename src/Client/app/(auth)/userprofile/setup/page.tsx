@@ -1,34 +1,63 @@
 'use client'
 
-import React from 'react'
-import { Button, Form, Link } from '@heroui/react'
-import ProfileEdit from '@/app/components/profile/edit/page'
+import React, { useState } from 'react'
+import { Button, Form } from '@heroui/react'
+import ProfileEdit from '@/components/profile/edit/ProfileEdit'
 import { useRouter } from 'next/navigation'
-import useGetUser from '@/app/hooks/useGetUser'
+import api from '@/utils/api'
+import { FormData } from '@/components/types/profile'
+import SweetAlert from '@/components/ui/sweetalert'
 
-export default function ProfileDetails() {
+export default function ProfileSetUp() {
   const router = useRouter()
-  const { userData } = useGetUser()
-  const handleRoute = () => {
-    if (!userData) return
-    if (userData.roles.some((role) => role.toLowerCase() === 'admin')) {
-      router.push('/overview')
-    } else {
-      router.push('/home')
+
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    bio: '',
+    instituteName: '',
+    phoneNumber: '',
+    imageFileId: null,
+    profileLinks: [{ name: '', link: '' }],
+  })
+
+  const handleProfileEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await api.post('/User/SaveProfile', formData)
+      if (response.status === 200) {
+        ;<SweetAlert icon="success" text="Profile Setup successfully" showConfirmButton={false} timer={1500} />
+        const response = await api.get('/User/Info')
+        if (response.status === 200) {
+          const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
+          router.push(isAdmin ? '/overview' : '/home')
+        }
+      }
+    } catch {
+      alert('Profile update failed. Please try again.')
     }
   }
+
+  const handleSkipButton = async () => {
+    try {
+      const response = await api.get('/User/Info')
+      const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
+      router.push(isAdmin ? '/overview' : '/home')
+    } catch (error) {
+      alert('Failed to fetch user info. Please try again.')
+      console.log(error)
+    }
+  }
+
   return (
-    <div className="flex justify-center items-center ">
-      <Form className=" py-5 px-8 rounded-lg shadow-none bg-white dark:bg-[#18181b]" onSubmit={handleRoute}>
-        <h2 className="text-xl font-bold text-center">Add Details</h2>
-        <ProfileEdit />
-        <div className="flex justify-between mt-6">
-          <Button type="submit">
-            <Link href="/home" className="text-[#3f3f46] dark:text-white">
-              Skip for now
-            </Link>
-          </Button>
-          <Button color="primary" radius="full" type="submit">
+    <div className="flex justify-center items-center">
+      <Form className="py-5 px-8 rounded-lg shadow-none bg-white dark:bg-[#18181b]" onSubmit={handleProfileEdit}>
+        <h2 className="w-full text-xl font-bold text-center">Add Details</h2>
+        <ProfileEdit formData={formData} setFormData={setFormData} />
+
+        <div className="w-full flex justify-between mt-6">
+          <Button onPress={handleSkipButton}>Skip for now</Button>
+          <Button color="primary" radius="lg" type="submit">
             Save & Continue
           </Button>
         </div>

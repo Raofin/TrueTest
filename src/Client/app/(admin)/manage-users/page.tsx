@@ -14,12 +14,12 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from '@/app/components/ui/search_icon/page'
-import PaginationButtons from '@/app/components/ui/pagination-button'
-import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
-import api from '@/app/utils/api'
+import SearchIcon from '@/components/ui/search-icon'
+import PaginationButtons from '@/components/ui/pagination-button'
+import CommonModal from '@/components/ui/Modal/edit-delete-modal'
+import api from '@/utils/api'
 import { AxiosError } from 'axios'
-import FormattedDate from '@/app/components/format-date-time'
+import FormattedDate from '@/components/format-date-time'
 
 const columns = [
   { label: 'Username', key: 'username' },

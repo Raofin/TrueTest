@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import Link from 'next/link'
 import { useState } from 'react'
-import Logo from '@/app/components/ui/logo/page'
+import Logo from '@/components/ui/logo/page'
 import ThemeSwitch from '@/app/ThemeSwitch'
 import { Avatar } from '@heroui/react'
 import { PiNotepadFill } from 'react-icons/pi'
@@ -13,7 +13,7 @@ import { MdEmail } from 'react-icons/md'
 import { RiAdminFill, RiDashboardFill } from 'react-icons/ri'
 import { FaUser } from 'react-icons/fa6'
 import { IoLogOut, IoSettingsSharp } from 'react-icons/io5'
-import { useAuth } from '@/app/context/AuthProvider'
+import { useAuth } from '@/context/AuthProvider'
 
 const menuItems = [
   { key: 'dashboard', icon: <RiDashboardFill size={30} />, label: 'Dashboard', path: '/overview' },
@@ -27,7 +27,7 @@ const menuItems = [
 const Sidebar = () => {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const {user}=useAuth();
+  const { user } = useAuth()
   return (
     <div className={`min-h-screen flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b]  rounded-lg p-3`}>
       <div className={`min-h-full flex flex-col justify-between ${isCollapsed ? 'w-20' : 'w-56'}`}>
@@ -46,9 +46,9 @@ const Sidebar = () => {
             </div>
             {!isCollapsed && (
               <Link href={`/profile`} className="flex flex-col gap-1 w-full">
-              <p className="text-sm font-medium flex-wrap">{user?.username}</p>
-              <p className={`text-xs text-gray-500 flex-wrap`}>{user?.email}</p>
-            </Link>
+                <p className="text-sm font-medium flex-wrap">{user?.username}</p>
+                <p className={`text-xs text-gray-500 flex-wrap`}>{user?.email}</p>
+              </Link>
             )}
           </div>
           <ul className="pt-3">
