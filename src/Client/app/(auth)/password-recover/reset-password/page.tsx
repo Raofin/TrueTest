@@ -1,6 +1,6 @@
 'use client'
 
-import isValidPassword from '@/app/components/check-valid-password'
+import isValidPassword from '@/components/check-valid-password'
 import api from '@/app/utils/api'
 import { Button, Input, Link } from '@heroui/react'
 import { Icon } from '@iconify/react/dist/iconify.js'

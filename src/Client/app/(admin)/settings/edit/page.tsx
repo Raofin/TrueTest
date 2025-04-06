@@ -1,7 +1,7 @@
 'use client'
 
-import SettingsEdit from '@/app/components/settings/edit/page'
+import SettingsEdit from '@/components/settings/edit/page'
 
-export default function Component(){
-   return <SettingsEdit/>
+export default function Component() {
+  return <SettingsEdit />
 }

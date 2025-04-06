@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react'
 import { Button, Form } from '@heroui/react'
-import ProfileEdit from '@/app/components/profile/edit/ProfileEdit'
+import ProfileEdit from '@/components/profile/edit/ProfileEdit'
 import RootNavBar from '../../root-navbar'
 import api from '@/app/utils/api'
 import { usePathname, useRouter } from 'next/navigation'
-import { FormData } from '@/app/components/types/profile'
+import { FormData } from '@/components/types/profile'
 import Swal from 'sweetalert2'
 
 export default function MyProfileEdit() {

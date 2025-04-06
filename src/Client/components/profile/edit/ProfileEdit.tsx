@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Avatar, Input, Textarea } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import api from '@/app/utils/api'
-import { FormData } from '@/app/components/types/profile'
+import { FormData } from '@/components/types/profile'
 
 interface ProfileDetailsProps {
   formData?: FormData

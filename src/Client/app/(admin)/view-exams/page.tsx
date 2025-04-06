@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, Modal, ModalContent, ModalBody, useDisclosure, Link } from '@heroui/react'
 import { Controller, useForm } from 'react-hook-form'
-import PaginationButtons from '@/app/components/ui/pagination-button'
-import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
+import PaginationButtons from '@/components/ui/pagination-button'
+import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 
 interface Exam {
   id: number

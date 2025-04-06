@@ -2,15 +2,15 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Pagination } from '@heroui/react'
-import CodeEditor from '@/app/components/submission/code-editor'
+import CodeEditor from '@/components/submission/code-editor'
 import '@/app/globals.css'
-import getQuestionsForCurrentPage from '@/app/components/currpage-ques'
-import formatTime from '@/app/components/ui/format-time'
-import StartExam from '@/app/components/start-exam'
-import WrittenSubmission from '@/app/components/submission/written-submit'
-import MCQSubmission from '@/app/components/submission/mcq-submit'
+import getQuestionsForCurrentPage from '@/components/currpage-ques'
+import formatTime from '@/components/ui/format-time'
+import StartExam from '@/components/start-exam'
+import WrittenSubmission from '@/components/submission/written-submit'
+import MCQSubmission from '@/components/submission/mcq-submit'
 import Link from 'next/link'
-import Logo from '@/app/components/ui/logo/page'
+import Logo from '@/components/ui/logo/page'
 
 interface Question {
   id: number
@@ -25,15 +25,15 @@ export default function Component() {
   const [currentPage, setCurrentPage] = useState(1)
   const [timeLeft, setTimeLeft] = useState(3600)
   const [examStarted, setExamStarted] = useState(false)
-  const [totalPage, setTotalPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1)
   const [answers, setAnswers] = useState<{ [key: number]: string | string[] }>({})
   const [regularQues, setRegularQues] = useState(0)
   const [codingQues, setCodingQues] = useState(0)
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [questionsLeft, setQuestionsLeft] = useState(0);
-  
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [questionsLeft, setQuestionsLeft] = useState(0)
+
   const examData = {
-    id:1,
+    id: 1,
     title: 'Star Coder 2025',
     totalQuestions: 30,
     duration: '1:00:00',
@@ -169,7 +169,7 @@ export default function Component() {
         <div className="py-3 mx-3">
           <div className="w-full px-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Logo/>
+              <Logo />
             </div>
             <div className="flex gap-4 rounded-full border-small border-default-200/20 bg-background/60 px-4 py-2 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
               <div>
@@ -183,7 +183,7 @@ export default function Component() {
               </div>
             </div>
             <Link href="/my-exams">
-              <Button onPress={exitFullscreen} color="primary" size="md" radius='full'>
+              <Button onPress={exitFullscreen} color="primary" size="md" radius="full">
                 Submit Exam
               </Button>
             </Link>

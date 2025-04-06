@@ -2,6 +2,7 @@
 
 import { Providers } from '@/app/providers'
 import { Inter } from 'next/font/google'
+import { Toaster } from 'react-hot-toast'
 const inter = Inter({ subsets: ['latin'] })
 
 interface PageProps{
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: PageProps) {
     <html className={inter.className} lang="en" suppressHydrationWarning>
       <body className='bg-[#eeeef0] dark:bg-[#000000]'>
         <Providers>{children}</Providers>
+        {/* <Toaster /> */}
       </body>
     </html>
   )

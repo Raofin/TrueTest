@@ -1,6 +1,5 @@
 'use client'
 
-
 import React from 'react'
 import {
   Link,
@@ -21,8 +20,7 @@ import {
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
-import { useAuth } from '../context/AuthProvider'
-
+import { useAuth } from '../../context/AuthProvider'
 
 export default function Component() {
   const { user, logout } = useAuth()
@@ -87,7 +85,6 @@ export default function Component() {
                     </Link>
                   </DropdownItem>
 
-
                   <DropdownItem key="settings">
                     <Link
                       href="/mysettings"
@@ -98,7 +95,6 @@ export default function Component() {
                       Account Settings
                     </Link>
                   </DropdownItem>
-
 
                   <DropdownItem key="logout">
                     <Link

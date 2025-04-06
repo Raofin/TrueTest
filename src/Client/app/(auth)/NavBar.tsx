@@ -3,7 +3,7 @@
 import { Link, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
 import { FaCircleUser } from 'react-icons/fa6'
 import { BiSolidLogIn } from 'react-icons/bi'
-import Logo from '@/app/components/ui/logo/page'
+import Logo from '@/components/ui/logo/page'
 import ThemeSwitch from '../ThemeSwitch'
 
 export default function Component() {

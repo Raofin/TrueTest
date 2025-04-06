@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { Form, Button, Textarea, Card, Input } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
-import PaginationButtons from '@/app/components/ui/pagination-button'
+import PaginationButtons from '@/components/ui/pagination-button'
 import he from 'he'
 import { v4 as uuidv4 } from 'uuid'
 import MdEditor from '../katex-mermaid'
@@ -139,7 +139,7 @@ export default function ProblemSolvingFormp() {
           <Form id="#" className="w-full flex flex-col gap-4 p-5 border-none">
             {currentProblems.map((problem) => (
               <div key={problem.id} className="rounded-lg w-full flex flex-col justify-center items-center">
-                <MdEditor/>
+                <MdEditor />
                 {problem.testCases.map((testCase) => (
                   <div key={testCase.id} className="w-full flex gap-2 mt-2">
                     <div className="flex flex-col gap-2">

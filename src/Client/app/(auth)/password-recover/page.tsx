@@ -5,7 +5,7 @@ import '@/app/globals.css'
 import { Button, Card, Input, useDisclosure } from '@heroui/react'
 import Link from 'next/link'
 import api from '@/app/utils/api'
-import OTPModal from '@/app/components/ui/Modal/otp-verification'
+import OTPModal from '@/components/ui/Modal/otp-verification'
 import { useForm } from 'react-hook-form'
 import toast, { Toaster } from 'react-hot-toast'
 import { AxiosError } from 'axios'
@@ -99,7 +99,6 @@ const PasswordRecoverPage = () => {
         control={control}
         errors={errors}
       />
-      <Toaster />
     </div>
   )
 }

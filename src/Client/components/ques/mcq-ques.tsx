@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Form, Button, Textarea, Card, CardBody, CardHeader, Checkbox, Input } from '@heroui/react'
-import PaginationButtons from '@/app/components/ui/pagination-button'
+import PaginationButtons from '@/components/ui/pagination-button'
 
 interface MCQOption {
   id: number
@@ -87,7 +87,7 @@ export default function App() {
                   <div key={option.id} className="flex">
                     <Checkbox name="remember" size="sm"></Checkbox>
                     <Textarea
-                     className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+                      className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
                       label={`Option ${option.id}`}
                       value={option.text}
                       isRequired={option.id === 1 || option.id === 2}
@@ -101,16 +101,16 @@ export default function App() {
             </CardBody>
             <div className="w-full flex justify-between px-8 py-5">
               <Input className="w-32" type="number" placeholder="Points" />
-              <div className='flex items-center gap-2 '>
-              <span >
-            Page {currentPage + 1} of {questions.length}
-          </span>
-              <PaginationButtons
-                currentIndex={currentPage + 1}
-                totalItems={questions.length}
-                onPrevious={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-                onNext={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}
-              />
+              <div className="flex items-center gap-2 ">
+                <span>
+                  Page {currentPage + 1} of {questions.length}
+                </span>
+                <PaginationButtons
+                  currentIndex={currentPage + 1}
+                  totalItems={questions.length}
+                  onPrevious={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+                  onNext={() => setCurrentPage((prev) => Math.min(prev + 1, questions.length - 1))}
+                />
               </div>
 
               <Button color="primary" type="submit">
@@ -121,9 +121,7 @@ export default function App() {
         )}
 
         <div className="w-full  my-3 text-center">
-          <Button onPress={addNewQuestion}>
-            Add MCQ Question
-          </Button>
+          <Button onPress={addNewQuestion}>Add MCQ Question</Button>
         </div>
       </Form>
     </div>

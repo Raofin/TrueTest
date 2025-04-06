@@ -1,45 +1,45 @@
-'use client';
+'use client'
 
-import React, { useState, useMemo } from 'react';
-import { Button, Textarea, Checkbox, Card, Input } from '@heroui/react';
-import PaginationButtons from '@/app/components/ui/pagination-button';
-import { v4 as uuidv4 } from 'uuid';  
+import React, { useState, useMemo } from 'react'
+import { Button, Textarea, Checkbox, Card, Input } from '@heroui/react'
+import PaginationButtons from '@/components/ui/pagination-button'
+import { v4 as uuidv4 } from 'uuid'
 
 interface WrittenQuestion {
-  id: string; 
-  question: string;
-  isShortAnswer: boolean;
-  isLongAnswer: boolean;
-  shortAnswerText?: string;
-  longAnswerText?: string;
+  id: string
+  question: string
+  isShortAnswer: boolean
+  isLongAnswer: boolean
+  shortAnswerText?: string
+  longAnswerText?: string
 }
 
 export default function App() {
   const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestion[]>([
     { id: uuidv4(), question: '', isShortAnswer: false, isLongAnswer: false },
-  ]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const questionsPerPage = 1;
+  ])
+  const [currentPage, setCurrentPage] = useState(0)
+  const questionsPerPage = 1
 
   const handleAddWrittenQuestion = () => {
     setWrittenQuestions((prevQuestions) => {
       const newQuestions: WrittenQuestion[] = [
         ...prevQuestions,
         { id: uuidv4(), question: '', isShortAnswer: false, isLongAnswer: false },
-      ];
-      const newTotalPages = Math.ceil(newQuestions.length / questionsPerPage);
-      setCurrentPage(newTotalPages - 1);
-      return newQuestions;
-    });
-  };
+      ]
+      const newTotalPages = Math.ceil(newQuestions.length / questionsPerPage)
+      setCurrentPage(newTotalPages - 1)
+      return newQuestions
+    })
+  }
 
   const handleQuestionChange = (questionId: string, newQuestion: string) => {
     setWrittenQuestions((prevQuestions) => {
       return prevQuestions.map((question) =>
         question.id === questionId ? { ...question, question: newQuestion } : question
-      );
-    });
-  };
+      )
+    })
+  }
 
   const handleShortAnswerChange = (questionId: string, isChecked: boolean) => {
     setWrittenQuestions((prevQuestions) => {
@@ -53,9 +53,9 @@ export default function App() {
               longAnswerText: undefined,
             }
           : question
-      );
-    });
-  };
+      )
+    })
+  }
 
   const handleLongAnswerChange = (questionId: string, isChecked: boolean) => {
     setWrittenQuestions((prevQuestions) => {
@@ -69,12 +69,18 @@ export default function App() {
               shortAnswerText: undefined,
             }
           : question
-      );
-    });
-  };
+      )
+    })
+  }
 
-  const totalPages = useMemo(() => Math.ceil(writtenQuestions.length / questionsPerPage), [writtenQuestions, questionsPerPage]);
-  const currentQuestions = useMemo(() => writtenQuestions.slice(currentPage * questionsPerPage, (currentPage + 1) * questionsPerPage), [writtenQuestions, currentPage, questionsPerPage]);
+  const totalPages = useMemo(
+    () => Math.ceil(writtenQuestions.length / questionsPerPage),
+    [writtenQuestions, questionsPerPage]
+  )
+  const currentQuestions = useMemo(
+    () => writtenQuestions.slice(currentPage * questionsPerPage, (currentPage + 1) * questionsPerPage),
+    [writtenQuestions, currentPage, questionsPerPage]
+  )
 
   return (
     <div>
@@ -97,7 +103,9 @@ export default function App() {
                 <label>
                   <Checkbox
                     checked={question.isShortAnswer}
-                    onChange={(e: { target: { checked: boolean } }) => handleShortAnswerChange(question.id, e.target.checked)}
+                    onChange={(e: { target: { checked: boolean } }) =>
+                      handleShortAnswerChange(question.id, e.target.checked)
+                    }
                     isDisabled={question.isLongAnswer}
                   >
                     Short Answer
@@ -106,7 +114,9 @@ export default function App() {
                 <label>
                   <Checkbox
                     checked={question.isLongAnswer}
-                    onChange={(e: { target: { checked: boolean } }) => handleLongAnswerChange(question.id, e.target.checked)}
+                    onChange={(e: { target: { checked: boolean } }) =>
+                      handleLongAnswerChange(question.id, e.target.checked)
+                    }
                     isDisabled={question.isShortAnswer}
                   >
                     Long Answer
@@ -139,5 +149,5 @@ export default function App() {
         <Button onPress={handleAddWrittenQuestion}>Add Written Question</Button>
       </div>
     </div>
-  );
+  )
 }

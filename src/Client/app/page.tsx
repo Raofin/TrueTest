@@ -2,8 +2,8 @@
 
 import '@/app/globals.css'
 import { Link } from '@heroui/react'
-import Login from '@/app/(auth)/login/page'
-import Logo from '@/app/components/ui/logo/page'
+import Login from '@/app/(auth)/signin/page'
+import Logo from '@/components/ui/logo/page'
 import NavBar from '@/app/(auth)/NavBar'
 
 export default function Component() {

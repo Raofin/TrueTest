@@ -13,10 +13,10 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from '@/app/components/ui/search_icon/page'
+import SearchIcon from '@/components/ui/search_icon/page'
 import { AxiosError } from 'axios'
 import api from '@/app/utils/api'
-import FormattedDate from '@/app/components/format-date-time'
+import FormattedDate from '@/components/format-date-time'
 type User = {
   isActive: boolean
   profile: [] | null
