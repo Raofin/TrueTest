@@ -4,14 +4,15 @@ export const SignInSchema = z.object({
   email: z
     .string()
     .min(1, { message: 'Email is required' })
-    .regex(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/,{ message: 'Please provide a valid email address.' }),
+    .email({ message: 'Please provide a valid email address.' }),
 
     password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters long.' })
     .max(100, { message: 'Password cannot exceed 100 characters.' })
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/, {
-      message: 'Password must contain at least one uppercase letter,one lowercase letter,one number, one special character.',
+      message:
+        'Password must contain at least one uppercase letter,  lowercase letter, number, special character.',
     }),
 })
 
@@ -27,14 +28,15 @@ export const signUpSchema = z
     email: z
       .string()
       .min(1, { message: 'Email is required.' })
-      .regex(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/,{ message: 'Please provide a valid email address.' }),
+      .email({ message: 'Please provide a valid email address.' }),
 
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters long.' })
       .max(100, { message: 'Password cannot exceed 100 characters.' })
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/, {
-        message: 'Password must contain at least one uppercase letter,one lowercase letter,one number, one special character.',
+        message:
+          'Password must contain at least one uppercase , lowercase letter, number and special character.',
       }),
     confirmPassword: z.string(),
 

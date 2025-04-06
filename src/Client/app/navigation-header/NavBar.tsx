@@ -20,7 +20,7 @@ import {
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
-import { useAuth } from '../../context/AuthProvider'
+import { useAuth } from '@/context/AuthProvider'
 
 export default function Component() {
   const { user, logout } = useAuth()

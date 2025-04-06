@@ -23,7 +23,6 @@ interface AuthFormProps<T extends FieldValues> {
 
 const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>) => {
   const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up'
-  const toggleVisibility = () => setIsVisible((prev) => !prev)
   const { login, user: authenticatedUser } = useAuth()
   const router = useRouter()
   const [error, setError] = useState('')
@@ -99,7 +98,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
     try {
       const response = await api.post(ROUTES.SENDOTP, { email: data.email })
       if (response.status === 200) {
-        console.log('first time SendOtp')
         toast.success('OTP sent to your email. Please check your inbox.')
         setFormData(data)
         onOpen()
@@ -115,7 +113,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
 
   const onOtpSubmit = async (data: { otp: string }) => {
     if (otpVerified) return
-    setOtpVerified(true)
     try {
       if (!data.otp) {
         toast.error('OTP is required')
@@ -127,7 +124,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
       })
 
       if (verifyResponse.data.isValidOtp) {
-        console.log('first time isValidOtp')
         setOtpVerified(true)
         setFormData(null)
         toast.success('OTP verified successfully!')
@@ -150,19 +146,26 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
     }
   }
 
-  const handleSignin = async (data: T) => {
+  const handleSignin = (data: T) => {
     if (!data.email || !data.password) {
       setError('Email and password are required.')
       return
     }
+
     if (getAuthToken()) {
       if (authenticatedUser?.roles.includes('Admin')) {
         router.push(ROUTES.OVERVIEW)
       } else {
         router.push(ROUTES.HOME)
       }
+    }else{
+      login(data.email, data.password, setError,rememberMe)
+      if (authenticatedUser?.roles.includes('Admin')) {
+        router.push(ROUTES.OVERVIEW)
+      } else {
+        router.push(ROUTES.HOME)
+      }
     }
-    login(data.email, data.password, setError,rememberMe)
   }
   return (
     <div>
@@ -177,24 +180,26 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
               {...register('email' as Path<T>)}
               isRequired
               label="Username or Email Address"
-              type="email"
+              type="text"
               className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             />
+             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as Path<T>}</p>}
             <Input
-              isRequired
-              label="Password"
-              type={isVisible ? 'text' : 'password'}
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
               {...register('password' as Path<T>)}
+              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+              isRequired
               endContent={
-                <button type="button" onClick={toggleVisibility}>
+                <button type="button" onClick={() => setIsVisible(!isVisible)}>
                   <Icon
-                    className="pointer-events-none text-2xl text-default-400"
+                    className="text-2xl text-default-400"
                     icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
                   />
                 </button>
               }
+              label="Password"
+              type={isVisible ? 'text' : 'password'}
             />
+            {errors.password && <p className="text-sm text-red-500">{errors.password.message as Path<T>}</p>}
             <div className="flex w-full items-center justify-between px-1 py-2">
               <Checkbox name="remember" size="sm" isSelected={rememberMe} onChange={(e)=>setRememberMe(e.target.checked)}>
                 <p>Remember me</p>
@@ -280,6 +285,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         <Button className="w-full text-white" color="primary" type="submit" isDisabled={loading}>
           {!loading ? buttonText : 'Processing...'}
         </Button>
+        </form>
         <div className="flex items-center gap-4 py-2">
           <Divider className="flex-1" />
           <p className="shrink-0 text-tiny text-default-500">OR</p>
@@ -309,7 +315,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
             <Link href={ROUTES.SIGN_IN}>Sign in</Link>
           </p>
         )}
-      </form>
+     
       <OTPModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}

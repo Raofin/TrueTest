@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = useCallback(() => {
     removeAuthToken()
     setUser(null)
-    router.push('/login')
+    router.push('/signin')
   }, [router])
 
   const fetchUser = useCallback(async () => {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [fetchUser])
 
-  const login = useCallback(
+ const login = useCallback(
     async (email: string, password: string, setError: (error: string) => void,rememberMe:boolean) => {
       try {
         const response = await api.post('/Auth/Login', {
