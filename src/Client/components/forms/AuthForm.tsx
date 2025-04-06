@@ -11,7 +11,7 @@ import { FieldValues, Path, useForm } from 'react-hook-form'
 import { ZodType } from 'zod'
 import api from '@/app/utils/api'
 import { Icon } from '@iconify/react'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import axios from 'axios'
 import OTPModal from '@/components/ui/Modal/otp-verification'
 import { setAuthToken } from '@/app/utils/auth'
@@ -317,7 +317,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         control={control}
         errors={otpErrors}
       />
-      <Toaster/>
     </div>
   )
 }

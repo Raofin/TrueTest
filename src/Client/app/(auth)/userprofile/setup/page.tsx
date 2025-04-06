@@ -6,7 +6,7 @@ import ProfileEdit from '@/components/profile/edit/ProfileEdit'
 import { useRouter } from 'next/navigation'
 import api from '@/app/utils/api'
 import { FormData } from '@/components/types/profile'
-import Swal from 'sweetalert2'
+import SweetAlert from '@/components/ui/sweetalert'
 
 export default function ProfileSetUp() {
   const router = useRouter()
@@ -26,13 +26,7 @@ export default function ProfileSetUp() {
     try {
       const response = await api.post('/User/SaveProfile', formData)
       if (response.status === 200) {
-        Swal.fire({
-          position: 'center',
-          icon: 'success',
-          text: 'Profile Setup successfully',
-          showConfirmButton: false,
-          timer: 1500,
-        })
+        <SweetAlert icon="success" text="Profile Setup successfully" showConfirmButton={false} timer={1500} />
         const response = await api.get('/User/Info')
         if (response.status === 200) {
           const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')

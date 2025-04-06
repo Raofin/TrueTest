@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 import { useRouter } from 'next/navigation'
 import api from '@/app/utils/api'
 import { getAuthToken, setAuthToken, removeAuthToken } from '@/app/utils/auth'
-import Swal from 'sweetalert2'
+import SweetAlert from '@/components/ui/sweetalert'
 
 interface User {
   username: string
@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (response.status === 200) {
       const userData = response.data
       setUser(userData)
-      
     }
   }, [])
 
@@ -57,13 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           password: password,
         })
         if (response.status === 200) {
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            text: 'logged in successfully',
-            showConfirmButton: false,
-            timer: 1500,
-          })
+        <SweetAlert icon="success" text="logged in successfully" showConfirmButton={false} timer={1500} />
           const { token } = response.data
           setAuthToken(token)
           setUser(response.data)

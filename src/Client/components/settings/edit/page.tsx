@@ -6,9 +6,8 @@ import '@/app/globals.css'
 import api from '@/app/utils/api'
 import { useRouter } from 'next/navigation'
 import { Icon } from '@iconify/react/dist/iconify.js'
-import Swal from 'sweetalert2'
 import axios from 'axios'
-
+import SweetAlert from '@/components/ui/sweetalert'
 
 export default function Component() {
   const [newconfirmpassword, setNewconfirmpassword] = useState('')
@@ -37,23 +36,17 @@ export default function Component() {
     try {
       const response = await api.patch('/User/AccountSettings', formData)
       if (response.status === 200) {
-        Swal.fire({
-          position: 'center',
-          icon: 'success',
-          text: 'Account updated successfully',
-          showConfirmButton: false,
-          timer: 1500,
-        })
+        <SweetAlert icon="success" text="Account updated successfully" showConfirmButton={false} timer={1500} />
         if (response.data.roles === 'Admin') router.push('/settings')
         else router.push('/mysettings')
       }
     } catch (error) {
-      console.log("Error object:", error);
+      console.log('Error object:', error)
       if (axios.isAxiosError(error)) {
-          console.log("Error response:", error.response);
-          setError(error.response?.data?.detail);
+        console.log('Error response:', error.response)
+        setError(error.response?.data?.detail)
       } else {
-          setError("username or current password is not correct.");
+        setError('username or current password is not correct.')
       }
     }
   }
