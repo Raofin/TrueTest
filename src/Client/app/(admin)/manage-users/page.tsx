@@ -14,10 +14,10 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from '@/components/ui/search_icon/page'
+import SearchIcon from '@/components/ui/search_icon/search-icon'
 import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
-import api from '@/app/utils/api'
+import api from '@/utils/api'
 import { AxiosError } from 'axios'
 import FormattedDate from '@/components/format-date-time'
 

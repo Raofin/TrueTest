@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Avatar, Card, Link, Button } from '@heroui/react'
 import { FaLink } from 'react-icons/fa6'
 import { usePathname } from 'next/navigation'
-import api from '@/app/utils/api'
+import api from '@/utils/api'
 import FormattedDate from '../format-date-time'
 import { ProfileLink, User } from '../types/profile'
 
@@ -25,14 +25,17 @@ export default function ProfilePage() {
         if (response.status === 200) {
           const normalizedData = {
             ...response.data,
-            profile: response.data.profile ? {
-              ...response.data.profile,
-              profileList: response.data.profile.profileList?.map((link:ProfileLink) => ({
-                name: link.name || "Unknown",
-                link: link.link || "#",
-              })) || []
-            } : null
-          };
+            profile: response.data.profile
+              ? {
+                  ...response.data.profile,
+                  profileList:
+                    response.data.profile.profileList?.map((link: ProfileLink) => ({
+                      name: link.name || 'Unknown',
+                      link: link.link || '#',
+                    })) || [],
+                }
+              : null,
+          }
           setUserInfo(normalizedData)
         }
       } catch (error) {

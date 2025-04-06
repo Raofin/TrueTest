@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/app/utils/api'
-import { getAuthToken, setAuthToken, removeAuthToken } from '@/app/utils/auth'
+import api from '@/utils/api'
+import { getAuthToken, setAuthToken, removeAuthToken } from '@/utils/auth'
 import SweetAlert from '@/components/ui/sweetalert'
 
 interface User {
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           password: password,
         })
         if (response.status === 200) {
-        <SweetAlert icon="success" text="logged in successfully" showConfirmButton={false} timer={1500} />
+          ;<SweetAlert icon="success" text="logged in successfully" showConfirmButton={false} timer={1500} />
           const { token } = response.data
           setAuthToken(token)
           setUser(response.data)

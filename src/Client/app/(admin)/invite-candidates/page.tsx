@@ -19,7 +19,7 @@ import {
   Tooltip,
   Select,
 } from '@heroui/react'
-import SearchIcon from '@/components/ui/search_icon/page'
+import SearchIcon from '@/components/ui/search_icon/search-icon'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import PaginationButtons from '@/components/ui/pagination-button'

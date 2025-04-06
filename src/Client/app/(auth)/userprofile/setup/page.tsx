@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Button, Form } from '@heroui/react'
 import ProfileEdit from '@/components/profile/edit/ProfileEdit'
 import { useRouter } from 'next/navigation'
-import api from '@/app/utils/api'
+import api from '@/utils/api'
 import { FormData } from '@/components/types/profile'
 import SweetAlert from '@/components/ui/sweetalert'
 
@@ -26,7 +26,7 @@ export default function ProfileSetUp() {
     try {
       const response = await api.post('/User/SaveProfile', formData)
       if (response.status === 200) {
-        <SweetAlert icon="success" text="Profile Setup successfully" showConfirmButton={false} timer={1500} />
+        ;<SweetAlert icon="success" text="Profile Setup successfully" showConfirmButton={false} timer={1500} />
         const response = await api.get('/User/Info')
         if (response.status === 200) {
           const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')

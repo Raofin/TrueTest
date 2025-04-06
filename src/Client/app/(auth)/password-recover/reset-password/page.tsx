@@ -1,7 +1,7 @@
 'use client'
 
 import isValidPassword from '@/components/check-valid-password'
-import api from '@/app/utils/api'
+import api from '@/utils/api'
 import { Button, Input, Link } from '@heroui/react'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { AxiosError } from 'axios'

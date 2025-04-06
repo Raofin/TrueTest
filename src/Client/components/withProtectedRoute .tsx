@@ -2,7 +2,7 @@
 
 import React, { useEffect, ComponentType, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getAuthToken } from '@/app/utils/auth'
+import { getAuthToken } from '@/utils/auth'
 
 function withProtectedRoute<P extends object>(WrappedComponent: ComponentType<P>): ComponentType<P> {
   const ProtectedComponent: ComponentType<P> = (props: P) => {

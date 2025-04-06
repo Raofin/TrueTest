@@ -1,6 +1,6 @@
 'use client'
 
-import { getAuthToken } from '@/app/utils/auth'
+import { getAuthToken } from '@/utils/auth'
 import ROUTES from '@/constants/route'
 import { useAuth } from '@/context/AuthProvider'
 import { Button, Checkbox, Divider, Input, Link, useDisclosure } from '@heroui/react'
@@ -9,12 +9,12 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { FieldValues, Path, useForm } from 'react-hook-form'
 import { ZodType } from 'zod'
-import api from '@/app/utils/api'
+import api from '@/utils/api'
 import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import OTPModal from '@/components/ui/Modal/otp-verification'
-import { setAuthToken } from '@/app/utils/auth'
+import { setAuthToken } from '@/utils/auth'
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>
