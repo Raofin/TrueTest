@@ -71,7 +71,7 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
     /// <param name="command">MCQ question Id and updated details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated MCQ question.</returns>
-    [HttpPut("Update")]
+    [HttpPatch("Update")]
     [HasPermission(ManageQuestions)]
     [EndpointDescription("Updates an MCQ question.")]
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]

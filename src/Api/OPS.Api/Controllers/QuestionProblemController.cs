@@ -72,7 +72,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <param name="command">Problem-solving question Id and updated details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated problem-solving question.</returns>
-    [HttpPut("Update")]
+    [HttpPatch("Update")]
     [HasPermission(ManageQuestions)]
     [EndpointDescription("Updates a problem-solving question.")]
     [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]

@@ -71,7 +71,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <param name="command">Written question Id and updated details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated written question.</returns>
-    [HttpPut("Update")]
+    [HttpPatch("Update")]
     [HasPermission(ManageQuestions)]
     [EndpointDescription("Updates a written question.")]
     [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]

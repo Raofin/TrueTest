@@ -69,7 +69,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     /// <param name="command">Exam Id and the updated details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Updated exam details.</returns>
-    [HttpPut("Update")]
+    [HttpPatch("Update")]
     [HasPermission(ManageExams)]
     [EndpointDescription("Updates an exam.")]
     [ProducesResponseType<ExamResponse>(Status200OK)]

@@ -66,12 +66,12 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     /// <param name="command">Profile details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Updated or created profile.</returns>
-    [HttpPost("Profile/Save")]
+    [HttpPut("Profile/Save")]
     [Authorize]
     [EndpointDescription("Creates or updates the authenticated user profile.")]
     [ProducesResponseType<ProfileResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    public async Task<IActionResult> CreateAsync(CreateOrUpdateProfileCommand command,
+    public async Task<IActionResult> CreateAsync(SaveProfileCommand command,
         CancellationToken cancellationToken = default)
     {
         var response = await _mediator.Send(command, cancellationToken);

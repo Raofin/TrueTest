@@ -56,7 +56,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="command">Problem submission id and review details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Result of the review operation.</returns>
-    [HttpPut("Submission/Problem")]
+    [HttpPatch("Submission/Problem")]
     [HasPermission(ReviewSubmission)]
     [EndpointDescription("Review a problem submission.")]
     [ProducesResponseType(Status200OK)]
@@ -73,7 +73,7 @@ public class ReviewController(IMediator mediator) : BaseApiController
     /// <param name="command">Written submission id and review details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Result of the review operation.</returns>
-    [HttpPut("Submission/Written")]
+    [HttpPatch("Submission/Written")]
     [HasPermission(ReviewSubmission)]
     [EndpointDescription("Review a written submission.")]
     [ProducesResponseType(Status200OK)]

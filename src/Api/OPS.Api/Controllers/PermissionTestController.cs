@@ -5,30 +5,31 @@ using OPS.Infrastructure.Authentication.Permission;
 namespace OPS.Api.Controllers;
 
 [Obsolete]
-public class TestController : ControllerBase
+[Route("PermissionTest")]
+public class PermissionTestController : ControllerBase
 {
-    [HttpGet("Permission/Candidate")]
+    [HttpGet("Candidate")]
     [HasPermission(Permissions.SubmitAnswers)]
     public IActionResult Test1()
     {
         return Ok();
     }
 
-    [HttpGet("Permission/Admin")]
+    [HttpGet("Admin")]
     [HasPermission(Permissions.ManageAccounts)]
     public IActionResult Test2()
     {
         return Ok();
     }
 
-    [HttpGet("Permission/Moderator")]
+    [HttpGet("Moderator")]
     [HasPermission(Permissions.ReviewSubmission)]
     public IActionResult Test3()
     {
         return Ok();
     }
 
-    [HttpGet("Permission/Anonymous")]
+    [HttpGet("Anonymous")]
     [AllowAnonymous]
     public IActionResult Test4()
     {

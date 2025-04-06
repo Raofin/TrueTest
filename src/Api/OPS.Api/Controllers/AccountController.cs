@@ -5,6 +5,7 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Accounts.Commands;
 using OPS.Application.Features.Accounts.Queries;
+using OPS.Domain.Enums;
 using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OPS.Infrastructure.Authentication.Permission.Permissions;
@@ -21,6 +22,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="pageIndex">Page number.</param>
     /// <param name="pageSize">Accounts per page.</param>
     /// <param name="searchTerm">Optional search filter.</param>
+    /// <param name="role">Optional account role</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Paginated account list.</returns>
     [HttpGet]
@@ -28,9 +30,9 @@ public class AccountController(IMediator mediator) : BaseApiController
     [EndpointDescription("Retrieves accounts with details.")]
     [ProducesResponseType<PaginatedAccountResponse>(Status200OK)]
     public async Task<IActionResult> GetAllAccountsAsync(int pageIndex = 1, int pageSize = 10,
-        string? searchTerm = null, CancellationToken cancellationToken = default)
+        string? searchTerm = null, RoleType? role = null, CancellationToken cancellationToken = default)
     {
-        var query = new GetAllAccountsQuery(pageIndex, pageSize, searchTerm);
+        var query = new GetAllAccountsQuery(pageIndex, pageSize, searchTerm, role);
         var response = await _mediator.Send(query, cancellationToken);
         return ToResult(response);
     }
@@ -56,7 +58,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="command">Account ID and updated details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated account object.</returns>
-    [HttpPut("Update")]
+    [HttpPatch("Update")]
     [HasPermission(ManageAccounts)]
     [EndpointDescription("Updates details of an account.")]
     [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
@@ -74,7 +76,7 @@ public class AccountController(IMediator mediator) : BaseApiController
     /// <param name="command">Account ID List.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>A success response if the accounts are upgraded.</returns>
-    [HttpPost("MakeAdmin")]
+    [HttpPatch("MakeAdmin")]
     [HasPermission(ManageAccounts)]
     [EndpointDescription("Upgrades a list of accounts to admin")]
     [ProducesResponseType(Status200OK)]

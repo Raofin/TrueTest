@@ -51,7 +51,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <param name="command">Problem-solving submission details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The saved or updated problem-solving submission.</returns>
-    [HttpPost("Submit/Problem/Save")]
+    [HttpPut("Submit/Problem/Save")]
     [HasPermission(SubmitAnswers)]
     [EndpointDescription("Creates or updates a problem-solving submission.")]
     [ProducesResponseType(Status200OK)]
@@ -68,7 +68,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <param name="command">Written submission details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The saved or updated written submission.</returns>
-    [HttpPost("Submit/Written/Save")]
+    [HttpPut("Submit/Written/Save")]
     [HasPermission(SubmitAnswers)]
     [EndpointDescription("Creates or updates a written submission.")]
     [ProducesResponseType(Status200OK)]
@@ -85,7 +85,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <param name="command">MCQ submission details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The saved or updated MCQ submission.</returns>
-    [HttpPost("Submit/Mcq/Save")]
+    [HttpPut("Submit/Mcq/Save")]
     [HasPermission(SubmitAnswers)]
     [EndpointDescription("Creates or updates an MCQ submission.")]
     [ProducesResponseType(Status200OK)]
