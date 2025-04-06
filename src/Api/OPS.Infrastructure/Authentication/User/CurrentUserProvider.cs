@@ -56,7 +56,7 @@ public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor) : IUs
 
     public Guid AccountId()
     {
-        var accountIdStr = _httpContextAccessor.HttpContext?.User.FindFirst("accountId")?.Value;
+        var accountIdStr = _httpContextAccessor.HttpContext?.User.FindFirst("AccountId")?.Value;
 
         return Guid.TryParse(accountIdStr, out var accountId)
             ? accountId

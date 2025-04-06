@@ -63,7 +63,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
     }
 
     public async Task<PaginatedList<Account>> GetAllWithDetails(int pageIndex, int pageSize,
-        string? searchTerm = null, CancellationToken cancellationToken = default)
+        string? searchTerm = null, RoleType? role = null, CancellationToken cancellationToken = default)
     {
         var query = GetWithDetailsQuery().AsNoTracking();
 
@@ -71,6 +71,11 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
         {
             var trimmedSearch = searchTerm.Trim();
             query = query.Where(a => a.Username.Contains(trimmedSearch) || a.Email.Contains(trimmedSearch));
+        }
+        
+        if (role.HasValue)
+        {
+            query = query.Where(a => a.AccountRoles.Any(ar => ar.RoleId == (int)role.Value));
         }
 
         query = query.OrderBy(a => a.CreatedAt);
@@ -95,6 +100,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
     private IQueryable<Account> GetWithDetailsQuery()
     {
         return _dbContext.Accounts
+            .AsSplitQuery()
             .Include(a => a.AccountRoles)
             .ThenInclude(ar => ar.Role)
             .Include(a => a.Profile)
