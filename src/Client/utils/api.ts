@@ -36,13 +36,13 @@ api.interceptors.response.use(
       try {
         if (typeof window !== 'undefined') {
           removeAuthToken()
-          window.location.href = '/login'
+          window.location.href = '/signin'
         }
         return Promise.reject(new Error('Unauthorized - Please log in again.'))
       } catch {
         if (typeof window !== 'undefined') {
           removeAuthToken()
-          window.location.href = '/login'
+          window.location.href = '/signin'
         }
         return Promise.reject(new Error('Error during token refresh. Please log in again.'))
       }

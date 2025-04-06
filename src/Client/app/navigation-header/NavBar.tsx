@@ -98,7 +98,7 @@ export default function Component() {
 
                   <DropdownItem key="logout">
                     <Link
-                      href="/login"
+                      href="/signin"
                       className={`flex items-center gap-2 `}
                       style={{ color: 'inherit', textDecoration: 'none' }}
                     >

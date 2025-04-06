@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
-import { Button, Pagination } from '@heroui/react'
+import { Button, Link, Pagination } from '@heroui/react'
 import CodeEditor from '@/components/submission/code-editor'
 import '@/app/globals.css'
 import getQuestionsForCurrentPage from '@/components/currpage-ques'
@@ -9,7 +9,7 @@ import formatTime from '@/components/ui/format-time'
 import StartExam from '@/components/start-exam'
 import WrittenSubmission from '@/components/submission/written-submit'
 import MCQSubmission from '@/components/submission/mcq-submit'
-import Link from 'next/link'
+
 import Logo from '@/components/ui/logo/page'
 
 interface Question {

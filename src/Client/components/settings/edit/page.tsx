@@ -7,7 +7,7 @@ import api from '@/utils/api'
 import { useRouter } from 'next/navigation'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import axios from 'axios'
-import SweetAlert from '@/components/ui/sweetalert'
+
 
 export default function Component() {
   const [newconfirmpassword, setNewconfirmpassword] = useState('')
@@ -36,7 +36,6 @@ export default function Component() {
     try {
       const response = await api.patch('/User/AccountSettings', formData)
       if (response.status === 200) {
-        ;<SweetAlert icon="success" text="Account updated successfully" showConfirmButton={false} timer={1500} />
         if (response.data.roles === 'Admin') router.push('/settings')
         else router.push('/mysettings')
       }

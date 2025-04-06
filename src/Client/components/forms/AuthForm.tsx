@@ -35,6 +35,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   const [uniqueemailerror, setUniqueEmailError] = useState('')
   const [uniqueusernameerror, setUniqueUsernameError] = useState('')
   const [otpVerified, setOtpVerified] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const {
     register,
     handleSubmit,
@@ -139,7 +140,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         if (response.status === 200) {
           toast.success('Signup successful!')
           router.push(ROUTES.PROFILE_SETUP)
-          setAuthToken(response.data.token)
+          setAuthToken(response.data.token,false)
         } else router.push(ROUTES.SIGN_UP)
       } else {
         toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.')
@@ -154,8 +155,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
       setError('Email and password are required.')
       return
     }
-
-    login(data.email, data.password, setError)
     if (getAuthToken()) {
       if (authenticatedUser?.roles.includes('Admin')) {
         router.push(ROUTES.OVERVIEW)
@@ -163,6 +162,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         router.push(ROUTES.HOME)
       }
     }
+    login(data.email, data.password, setError,rememberMe)
   }
   return (
     <div>
@@ -196,7 +196,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
               }
             />
             <div className="flex w-full items-center justify-between px-1 py-2">
-              <Checkbox name="remember" size="sm">
+              <Checkbox name="remember" size="sm" isSelected={rememberMe} onChange={(e)=>setRememberMe(e.target.checked)}>
                 <p>Remember me</p>
               </Checkbox>
               <Link className="text-default-500" href="/password-recover" size="sm">

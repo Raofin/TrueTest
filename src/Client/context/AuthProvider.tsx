@@ -4,7 +4,6 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 import { useRouter } from 'next/navigation'
 import api from '@/utils/api'
 import { getAuthToken, setAuthToken, removeAuthToken } from '@/utils/auth'
-import SweetAlert from '@/components/ui/sweetalert'
 
 interface User {
   username: string
@@ -14,7 +13,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string, setError: (error: string) => void) => void
+  login: (email: string, password: string, setError: (error: string) => void,rememberMe:boolean) => void
   logout: () => void
 }
 
@@ -49,16 +48,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [fetchUser])
 
   const login = useCallback(
-    async (email: string, password: string, setError: (error: string) => void) => {
+    async (email: string, password: string, setError: (error: string) => void,rememberMe:boolean) => {
       try {
         const response = await api.post('/Auth/Login', {
           usernameOrEmail: email,
           password: password,
         })
         if (response.status === 200) {
-          ;<SweetAlert icon="success" text="logged in successfully" showConfirmButton={false} timer={1500} />
           const { token } = response.data
-          setAuthToken(token)
+          setAuthToken(token,rememberMe)
           setUser(response.data)
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`
           await fetchUser()

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react'
 import PaginationButtons from '@/components/ui/pagination-button'
-import RootNavBar from '../root-navbar'
+import RootNavBar from '@/app/(root)/root-navbar'
 
 interface Exam {
   id: number

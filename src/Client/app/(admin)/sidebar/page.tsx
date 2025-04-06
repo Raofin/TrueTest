@@ -107,7 +107,7 @@ const Sidebar = () => {
               </div>
               {!isCollapsed && (
                 <div>
-                  <Link href="/login">
+                  <Link href="/signin">
                     <p className={`text-sm`}>Log Out</p>
                   </Link>
                 </div>

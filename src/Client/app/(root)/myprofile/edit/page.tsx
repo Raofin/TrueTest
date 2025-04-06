@@ -7,7 +7,6 @@ import RootNavBar from '@/app/(root)/root-navbar'
 import api from '@/utils/api'
 import { usePathname, useRouter } from 'next/navigation'
 import { FormData } from '@/components/types/profile'
-import SweetAlert from '@/components/ui/sweetalert'
 
 export default function MyProfileEdit() {
   const router = useRouter()
@@ -28,7 +27,6 @@ export default function MyProfileEdit() {
       const response = await api.post('/User/SaveProfile', formData)
 
       if (response.status === 200) {
-        ;<SweetAlert icon="success" text="Profile updated successfully" showConfirmButton={false} timer={1500} />
         const response = await api.get('/User/Info')
         const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
         router.push(isAdmin ? '/profile' : '/myprofile')
