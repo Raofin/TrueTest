@@ -7,7 +7,7 @@ import Link from 'next/link'
 import api from '@/utils/api'
 import OTPModal from '@/components/ui/Modal/otp-verification'
 import { useForm } from 'react-hook-form'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 

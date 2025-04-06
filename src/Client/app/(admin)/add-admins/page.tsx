@@ -13,7 +13,7 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from '@/components/ui/search_icon/search-icon'
+import SearchIcon from '@/components/ui/search-icon'
 import { AxiosError } from 'axios'
 import api from '@/utils/api'
 import FormattedDate from '@/components/format-date-time'

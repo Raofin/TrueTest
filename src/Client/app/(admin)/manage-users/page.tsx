@@ -14,7 +14,7 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from '@/components/ui/search_icon/search-icon'
+import SearchIcon from '@/components/ui/search-icon'
 import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/utils/api'
