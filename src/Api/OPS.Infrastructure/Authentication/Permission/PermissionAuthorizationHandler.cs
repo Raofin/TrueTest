@@ -14,7 +14,7 @@ public class PermissionAuthorizationHandler(IServiceScopeFactory serviceScopeFac
     {
         var accountId = context.User.Claims.FirstOrDefault(x => x.Type == "AccountId")?.Value;
 
-        if (!Guid.TryParse(accountId, out var parsed))
+        if (!Guid.TryParse(accountId, out Guid _))
         {
             return Task.CompletedTask;
         }

@@ -25,7 +25,7 @@ internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
         return GenerateJwtToken(claims);
     }
 
-    private List<Claim> GenerateBaseClaims(Account account)
+    private static List<Claim> GenerateBaseClaims(Account account)
     {
         return
         [
@@ -35,7 +35,7 @@ internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
         ];
     }
 
-    private void AddRoleClaims(Account account, List<Claim> claims)
+    private static void AddRoleClaims(Account account, List<Claim> claims)
     {
         var roleClaims = account.AccountRoles.Select(role =>
             new Claim(ClaimTypes.Role, ((RoleType)role.RoleId).ToString())
@@ -55,7 +55,7 @@ internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
         claims.AddRange(permissionClaims);
     }
 
-    private HashSet<string> GetPermissionsByRoles(Account account)
+    private static HashSet<string> GetPermissionsByRoles(Account account)
     {
         var allPermissions = new HashSet<string>();
 
