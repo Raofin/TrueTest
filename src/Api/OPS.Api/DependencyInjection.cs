@@ -29,8 +29,13 @@ internal static class DependencyInjection
     public static void UseApiDocumentation(this WebApplication app)
     {
         app.UseScalar();
+        
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.DefaultModelsExpandDepth(0);
+            c.DisplayRequestDuration();
+        });
         
         app.MapGet("/", context =>
         {

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
+using OPS.Infrastructure.AppConfiguration.Auth;
 using OPS.Infrastructure.Authentication.Permission;
 
 namespace OPS.Infrastructure.Authentication.Jwt;

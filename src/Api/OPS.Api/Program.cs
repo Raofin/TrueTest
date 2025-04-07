@@ -1,12 +1,13 @@
 using OPS.Api;
 using OPS.Application;
-using OPS.Infrastructure;
+using OPS.Infrastructure.AppConfiguration;
+using OPS.Infrastructure.AppConfiguration.Database;
 using OPS.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddInfrastructure(builder.Configuration, builder.Environment, builder.Host)
+    .AddInfrastructure(builder.Configuration, builder.Host)
     .AddPersistence()
     .AddApplication()
     .AddApi(builder.Configuration);
