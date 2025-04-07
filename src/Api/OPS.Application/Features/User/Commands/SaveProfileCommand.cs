@@ -10,7 +10,7 @@ using Throw;
 
 namespace OPS.Application.Features.User.Commands;
 
-public record CreateOrUpdateProfileCommand(
+public record SaveProfileCommand(
     string? FirstName,
     string? LastName,
     string? Bio,
@@ -19,13 +19,13 @@ public record CreateOrUpdateProfileCommand(
     Guid? ImageFileId,
     List<ProfileLinkRequest> ProfileLinks) : IRequest<ErrorOr<ProfileResponse>>;
 
-public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
-    : IRequestHandler<CreateOrUpdateProfileCommand, ErrorOr<ProfileResponse>>
+public class SaveProfileCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
+    : IRequestHandler<SaveProfileCommand, ErrorOr<ProfileResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    public async Task<ErrorOr<ProfileResponse>> Handle(CreateOrUpdateProfileCommand request,
+    public async Task<ErrorOr<ProfileResponse>> Handle(SaveProfileCommand request,
         CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
@@ -94,18 +94,16 @@ public class CreateOrUpdateProfileCommandHandler(IUnitOfWork unitOfWork, IUserIn
             }
         }
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
-
-        if (result <= 0) return Error.Unexpected();
+        await _unitOfWork.CommitAsync(cancellationToken);
         profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
         return profile.MapToDto()!;
     }
 }
 
-public class CreateProfileCommandValidator : AbstractValidator<CreateOrUpdateProfileCommand>
+public class SaveProfileCommandValidator : AbstractValidator<SaveProfileCommand>
 {
-    public CreateProfileCommandValidator()
+    public SaveProfileCommandValidator()
     {
         RuleFor(command => command.FirstName)
             .MaximumLength(20)

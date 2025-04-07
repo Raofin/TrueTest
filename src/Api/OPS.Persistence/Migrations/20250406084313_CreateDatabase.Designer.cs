@@ -12,7 +12,7 @@ using OPS.Persistence;
 namespace OPS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250404151047_CreateDatabase")]
+    [Migration("20250406084313_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -45,6 +45,9 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("DateTime");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -68,7 +71,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -322,6 +324,9 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("DateTime");
+
                     b.Property<Guid>("ExaminationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -362,7 +367,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("DateTime");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.Property<decimal>("WrittenScore")
@@ -399,6 +403,9 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("DateTime");
 
                     b.Property<string>("DescriptionMarkdown")
                         .IsRequired()
@@ -446,7 +453,6 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.Property<decimal>("WrittenPoints")
@@ -505,7 +511,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -527,6 +532,9 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("DateTime");
 
                     b.Property<int>("DifficultyId")
                         .HasColumnType("int");
@@ -562,7 +570,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -606,7 +613,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -648,7 +654,6 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -704,7 +709,6 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -746,7 +750,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -794,7 +797,6 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("((0))");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -817,6 +819,9 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("DateTime");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -843,7 +848,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.Property<string>("Username")
@@ -900,7 +904,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -941,7 +944,6 @@ namespace OPS.Persistence.Migrations
                         .HasDefaultValueSql("(DateAdd(minute, (5), GetUtcDate()))");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -966,6 +968,9 @@ namespace OPS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DateTime")
                         .HasDefaultValueSql("GetUtcDate()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("DateTime");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(255)
@@ -997,7 +1002,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");
@@ -1044,7 +1048,6 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("DateTime");
 
                     b.HasKey("Id");

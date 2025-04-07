@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.CrossCutting.Constants;
+using OPS.Application.Common.Constants;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -36,9 +36,9 @@ public class UpdateAccountCommandHandler(IUnitOfWork unitOfWork)
         account.Username = command.Username ?? account.Username;
         account.Email = command.Email ?? account.Email;
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0 ? account.MapToDtoWithDetails() : Error.Unexpected();
+        return account.MapToDtoWithDetails();
     }
 }
 

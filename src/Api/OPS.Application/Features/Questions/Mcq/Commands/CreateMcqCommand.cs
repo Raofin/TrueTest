@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -62,9 +63,7 @@ public class CreateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
             }
         ).ToList();
 
-        var newPoints = questions.Sum(q => q.Points);
-        exam.McqPoints += newPoints;
-        exam.TotalPoints += newPoints;
+        exam.McqPoints += questions.Sum(q => q.Points);
 
         _unitOfWork.Question.AddRange(questions);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
@@ -80,7 +79,7 @@ public class CreateMcqCommandValidator : AbstractValidator<CreateMcqCommand>
     public CreateMcqCommandValidator()
     {
         RuleFor(x => x.ExamId)
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.McqQuestions)
             .NotEmpty();

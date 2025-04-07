@@ -5,7 +5,8 @@ using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Users;
 
-internal class ProfileLinkRepository(AppDbContext dbContext) : Repository<ProfileLinks>(dbContext), IProfileLinkRepository
+internal class ProfileLinkRepository(AppDbContext dbContext)
+    : Repository<ProfileLinks>(dbContext), IProfileLinkRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 

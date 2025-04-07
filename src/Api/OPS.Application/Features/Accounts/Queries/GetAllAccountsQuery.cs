@@ -3,12 +3,13 @@ using MediatR;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
+using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Accounts.Queries;
 
 public record PaginatedAccountResponse(PageResponse Page, List<AccountWithDetailsResponse> Accounts);
 
-public record GetAllAccountsQuery(int PageIndex, int PageSize, string? SearchTerm)
+public record GetAllAccountsQuery(int PageIndex, int PageSize, string? SearchTerm, RoleType? Role)
     : IRequest<ErrorOr<PaginatedAccountResponse>>;
 
 public class GetAllAccountsQueryHandler(IUnitOfWork unitOfWork)
@@ -20,7 +21,7 @@ public class GetAllAccountsQueryHandler(IUnitOfWork unitOfWork)
         CancellationToken cancellationToken)
     {
         var paginatedAccounts = await _unitOfWork.Account.GetAllWithDetails(
-            request.PageIndex, request.PageSize, request.SearchTerm, cancellationToken);
+            request.PageIndex, request.PageSize, request.SearchTerm, request.Role, cancellationToken);
 
         return new PaginatedAccountResponse(
             paginatedAccounts.MapToPage(),

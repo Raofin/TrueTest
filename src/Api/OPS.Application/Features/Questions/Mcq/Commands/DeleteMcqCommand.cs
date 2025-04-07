@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Mcq.Commands;
@@ -21,7 +22,6 @@ public class DeleteMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
             return Error.Conflict(description: "Exam of this question is already published");
 
         question.Examination.McqPoints -= question.Points;
-        question.Examination.TotalPoints -= question.Points;
 
         if (question.McqOption is not null)
             _unitOfWork.McqOption.Remove(question.McqOption);
@@ -38,7 +38,6 @@ public class DeleteMcqCommandValidator : AbstractValidator<DeleteMcqCommand>
     public DeleteMcqCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }
