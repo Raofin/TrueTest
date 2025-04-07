@@ -7,18 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
-    <PackageReference Include="FluentEmail.Smtp" Version="3.0.2"/>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.4.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2"/>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2"/>
-    <PackageReference Include="Serilog" Version="4.2.0"/>
-    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
-    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.1.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="BCrypt.Net-Next" />
+    <PackageReference Include="FluentEmail.Smtp" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OPS.Application\OPS.Application.csproj"/>
+    <ProjectReference Include="..\OPS.Application\OPS.Application.csproj" />
   </ItemGroup>
 
 </Project>
