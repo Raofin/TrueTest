@@ -23,7 +23,7 @@ interface AuthFormProps<T extends FieldValues> {
 
 const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>) => {
   const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up'
-  const { login, user: authenticatedUser,fetchUser } = useAuth()
+  const { login, user: authenticatedUser, fetchUser } = useAuth()
   const router = useRouter()
   const [error, setError] = useState('')
   const [formData, setFormData] = useState<T | null>(null)
@@ -136,8 +136,8 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         if (response.status === 200) {
           toast.success('Signup successful!')
           router.push(ROUTES.PROFILE_SETUP)
-          setAuthToken(response.data.token,false)
-          fetchUser();
+          setAuthToken(response.data.token, false)
+          fetchUser()
         } else router.push(ROUTES.SIGN_UP)
       } else {
         toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.')
@@ -147,23 +147,15 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
     }
   }
 
-  const handleSignin = (data: T) => {
-   
+  const handleSignin = async (data: T) => {
     if (getAuthToken()) {
       if (authenticatedUser?.roles.includes('Admin')) {
         router.push(ROUTES.OVERVIEW)
       } else {
         router.push(ROUTES.HOME)
       }
-    }else{
-      login(data.usernameOrEmail, data.password, setError,rememberMe)
-      if (getAuthToken()) {
-      if (authenticatedUser?.roles.includes('Admin')) {
-        router.push(ROUTES.OVERVIEW)
-      } else if(authenticatedUser){
-        router.push(ROUTES.HOME)
-      }
-    }
+    } else {
+       login(data.usernameOrEmail, data.password, setError, rememberMe)
     }
   }
   return (
@@ -176,13 +168,13 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         {formType === 'SIGN_IN' ? (
           <>
             <Input
-  {...register('usernameOrEmail' as Path<T>)}
-  isRequired
-  label="Username or Email Address"
-  type="text"
-  className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-/>
-             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as Path<T>}</p>}
+              {...register('usernameOrEmail' as Path<T>)}
+              isRequired
+              label="Username or Email Address"
+              type="text"
+              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+            />
+            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as Path<T>}</p>}
             <Input
               {...register('password' as Path<T>)}
               className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
@@ -200,7 +192,12 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
             />
             {errors.password && <p className="text-sm text-red-500">{errors.password.message as Path<T>}</p>}
             <div className="flex w-full items-center justify-between px-1 py-2">
-              <Checkbox name="remember" size="sm" isSelected={rememberMe} onChange={(e)=>setRememberMe(e.target.checked)}>
+              <Checkbox
+                name="remember"
+                size="sm"
+                isSelected={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              >
                 <p>Remember me</p>
               </Checkbox>
               <Link className="text-default-500" href="/password-recover" size="sm">
@@ -284,37 +281,36 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         <Button className="w-full text-white" color="primary" type="submit" isDisabled={loading}>
           {!loading ? buttonText : 'Processing...'}
         </Button>
-        </form>
-        <div className="flex items-center gap-4 py-2">
-          <Divider className="flex-1" />
-          <p className="shrink-0 text-tiny text-default-500">OR</p>
-          <Divider className="flex-1" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Button className="w-full" startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
-            Continue with Google
-          </Button>
+      </form>
+      <div className="flex items-center gap-4 py-2">
+        <Divider className="flex-1" />
+        <p className="shrink-0 text-tiny text-default-500">OR</p>
+        <Divider className="flex-1" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Button className="w-full" startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
+          Continue with Google
+        </Button>
+        <Button
+          className="w-full"
+          startContent={<Icon className="text-default-500" icon="fe:github" width={24} />}
+          variant="bordered"
+        >
+          Continue with Github
+        </Button>
+      </div>
+      {formType === 'SIGN_IN' ? (
+        <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
+          Need to create an account?
+          <Link href={ROUTES.SIGN_UP}>Sign up</Link>
+        </p>
+      ) : (
+        <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
+          Already have an account?
+          <Link href={ROUTES.SIGN_IN}>Sign in</Link>
+        </p>
+      )}
 
-          <Button
-            className="w-full"
-            startContent={<Icon className="text-default-500" icon="fe:github" width={24} />}
-            variant="bordered"
-          >
-            Continue with Github
-          </Button>
-        </div>
-        {formType === 'SIGN_IN' ? (
-          <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
-            Need to create an account?
-            <Link href={ROUTES.SIGN_UP}>Sign up</Link>
-          </p>
-        ) : (
-          <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
-            Already have an account?
-            <Link href={ROUTES.SIGN_IN}>Sign in</Link>
-          </p>
-        )}
-     
       <OTPModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
