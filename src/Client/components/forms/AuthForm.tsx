@@ -23,7 +23,7 @@ interface AuthFormProps<T extends FieldValues> {
 
 const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>) => {
   const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up'
-  const { login, user: authenticatedUser } = useAuth()
+  const { login, user: authenticatedUser,fetchUser } = useAuth()
   const router = useRouter()
   const [error, setError] = useState('')
   const [formData, setFormData] = useState<T | null>(null)
@@ -137,6 +137,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
           toast.success('Signup successful!')
           router.push(ROUTES.PROFILE_SETUP)
           setAuthToken(response.data.token,false)
+          fetchUser();
         } else router.push(ROUTES.SIGN_UP)
       } else {
         toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.')
@@ -147,11 +148,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   }
 
   const handleSignin = (data: T) => {
-    if (!data.email || !data.password) {
-      setError('Email and password are required.')
-      return
-    }
-
+   
     if (getAuthToken()) {
       if (authenticatedUser?.roles.includes('Admin')) {
         router.push(ROUTES.OVERVIEW)
@@ -159,12 +156,14 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         router.push(ROUTES.HOME)
       }
     }else{
-      login(data.email, data.password, setError,rememberMe)
+      login(data.usernameOrEmail, data.password, setError,rememberMe)
+      if (getAuthToken()) {
       if (authenticatedUser?.roles.includes('Admin')) {
         router.push(ROUTES.OVERVIEW)
-      } else {
+      } else if(authenticatedUser){
         router.push(ROUTES.HOME)
       }
+    }
     }
   }
   return (
@@ -177,12 +176,12 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         {formType === 'SIGN_IN' ? (
           <>
             <Input
-              {...register('email' as Path<T>)}
-              isRequired
-              label="Username or Email Address"
-              type="text"
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-            />
+  {...register('usernameOrEmail' as Path<T>)}
+  isRequired
+  label="Username or Email Address"
+  type="text"
+  className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+/>
              {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as Path<T>}</p>}
             <Input
               {...register('password' as Path<T>)}
