@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Authentication.Commands;
 using OPS.Application.Features.Authentication.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;

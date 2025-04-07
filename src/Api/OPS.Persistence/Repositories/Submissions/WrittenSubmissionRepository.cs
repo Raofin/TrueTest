@@ -7,11 +7,13 @@ using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Submissions;
 
-internal class WrittenSubmissionRepository(AppDbContext dbContext) : Repository<WrittenSubmission>(dbContext), IWrittenSubmissionRepository
+internal class WrittenSubmissionRepository(AppDbContext dbContext)
+    : Repository<WrittenSubmission>(dbContext), IWrittenSubmissionRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<List<WrittenSubmission>> GetByQuestionIdAsync(Guid questionId, CancellationToken cancellationToken)
+    public async Task<List<WrittenSubmission>> GetByQuestionIdAsync(Guid questionId,
+        CancellationToken cancellationToken)
     {
         return await _dbContext.WrittenSubmissions
             .AsNoTracking()
@@ -19,18 +21,29 @@ internal class WrittenSubmissionRepository(AppDbContext dbContext) : Repository<
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<WrittenSubmission?> GetByAccountIdAsync(Guid questionId, Guid accountId, CancellationToken cancellationToken)
+    public async Task<WrittenSubmission?> GetByAccountIdAsync(Guid questionId, Guid accountId,
+        CancellationToken cancellationToken)
     {
         return await _dbContext.WrittenSubmissions
             .Where(s => s.QuestionId == questionId && s.AccountId == accountId)
             .SingleOrDefaultAsync(cancellationToken);
     }
-    
-    public async Task<List<Question>> GetQuesWithSubmission(Guid examId, Guid accountId, CancellationToken cancellationToken)
+
+    public async Task<List<Question>> GetQuesWithSubmission(Guid examId, Guid accountId,
+        CancellationToken cancellationToken)
     {
         return await _dbContext.Questions
             .Where(q => q.ExaminationId == examId && q.QuestionTypeId == (int)QuestionType.Written)
             .Include(q => q.WrittenSubmissions.Where(s => s.AccountId == accountId))
+            .OrderBy(q => q.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<WrittenSubmission>> GetAllAsync(
+        Guid examId, Guid accountId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.WrittenSubmissions
+            .Where(ws => ws.AccountId == accountId && ws.Question.ExaminationId == examId)
             .ToListAsync(cancellationToken);
     }
 }

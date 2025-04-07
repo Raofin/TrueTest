@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.Features.Examinations.Commands;
-using OPS.Application.Features.Examinations.Queries;
+using OPS.Application.Dtos;
+using OPS.Application.Features.Exams.Commands;
+using OPS.Application.Features.Exams.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
@@ -18,23 +18,22 @@ public class ExamController(IMediator mediator) : BaseApiController
 
     /// <summary>Retrieves all exams.</summary>
     /// <returns>List of all exams.</returns>
-    [HttpGet("All")]
+    [HttpGet]
     [EndpointDescription("Retrieves all exams.")]
     [ProducesResponseType<List<ExamResponse>>(Status200OK)]
     public async Task<IActionResult> GetAllExamsAsync()
     {
         var query = new GetAllExamsQuery();
         var response = await _mediator.Send(query);
-
         return ToResult(response);
     }
 
-    /// <summary>Retrieves a specific exam.</summary>
+    /// <summary>Retrieves a specific exam with all questions.</summary>
     /// <param name="examId">Exam Id.</param>
     /// <returns>Exam details.</returns>
     [HttpGet("{examId:guid}")]
-    [EndpointDescription("Retrieves a specific exam.")]
-    [ProducesResponseType<ExamResponse>(Status200OK)]
+    [EndpointDescription("Retrieves a specific exam with all questions.")]
+    [ProducesResponseType<ExamWithQuestionsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> GetExamByIdAsync(Guid examId)
@@ -65,7 +64,38 @@ public class ExamController(IMediator mediator) : BaseApiController
     [ProducesResponseType<ExamResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateAsync(UpdateExamCommand command)
+    {
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
+
+    /// <summary>Publishes an existing exam.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <returns>Void.</returns>
+    [HttpPost("Publish")]
+    [EndpointDescription("Publishes an existing exam.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
+    public async Task<IActionResult> PublishAsync(Guid examId)
+    {
+        var command = new PublishExamCommand(examId);
+        var response = await _mediator.Send(command);
+        return ToResult(response);
+    }
+
+    /// <summary>Invites candidates to an exam.</summary>
+    /// <param name="command">Exam Id and a list of emails.</param>
+    /// <returns>Success response.</returns>
+    [HttpPost("InviteCandidates")]
+    [EndpointDescription("Invites candidates to an exam.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    public async Task<IActionResult> InviteCandidates(InviteCandidatesCommand command)
     {
         var response = await _mediator.Send(command);
         return ToResult(response);
@@ -79,6 +109,7 @@ public class ExamController(IMediator mediator) : BaseApiController
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteAsync(Guid examId)
     {
         var command = new DeleteExamCommand(examId);

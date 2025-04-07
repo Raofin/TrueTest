@@ -12,6 +12,7 @@ namespace OPS.Persistence;
 internal class UnitOfWork(
     AppDbContext dbContext,
     IAccountRepository accountRepository,
+    IAccountRoleRepository accountRoleRepository,
     IOtpRepository otpRepository,
     IExamRepository examRepository,
     IExamCandidatesRepository examCandidatesRepository,
@@ -30,6 +31,7 @@ internal class UnitOfWork(
     private readonly AppDbContext _dbContext = dbContext;
 
     public IAccountRepository Account { get; } = accountRepository;
+    public IAccountRoleRepository AccountRole { get; } = accountRoleRepository;
     public IOtpRepository Otp { get; } = otpRepository;
     public IExamRepository Exam { get; } = examRepository;
     public IExamCandidatesRepository ExamCandidate { get; } = examCandidatesRepository;
@@ -62,8 +64,9 @@ internal class UnitOfWork(
             .Where(entry => entry.State == EntityState.Modified)
             .ToList();
 
-        foreach (var entityEntry in updatedEntities) entityEntry.Property(nameof(IBaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow;
-        
+        foreach (var entityEntry in updatedEntities)
+            entityEntry.Property(nameof(IBaseEntity.UpdatedAt)).CurrentValue = DateTime.UtcNow;
+
 
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }

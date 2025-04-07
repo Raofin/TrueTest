@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.Written.Command;
 using OPS.Application.Features.Questions.Written.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -20,7 +20,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     /// <returns>Newly created written question.</returns>
     [HttpPost("Create")]
     [EndpointDescription("Creates a written question.")]
-    [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
+    [ProducesResponseType<List<WrittenQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> CreateWrittenAsync(CreateWrittenCommand command)
@@ -66,6 +66,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateWrittenAsync(UpdateWrittenCommand command)
     {
         var response = await _mediator.Send(command);
@@ -80,6 +81,7 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteWrittenAsync(Guid questionId)
     {
         var query = new DeleteWrittenCommand(questionId);

@@ -5,5 +5,4 @@ namespace OPS.Domain.Contracts.Repository.Questions;
 
 public interface IMcqOptionRepository : IBaseRepository<McqOption>
 {
-    Task<List<McqOption>> GetMcqOptionsByQuestionIdAsync(Guid questionId, CancellationToken cancellationToken);
 }

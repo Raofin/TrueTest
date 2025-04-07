@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.ProblemSolving.Commands;
 using OPS.Application.Features.Questions.ProblemSolving.Queries;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -20,7 +20,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     /// <returns>Newly created problem-solving question.</returns>
     [HttpPost("Create")]
     [EndpointDescription("Creates a problem-solving question.")]
-    [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]
+    [ProducesResponseType<List<ProblemQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> CreateProblemSolvingAsync(CreateProblemSolvingCommand command)
@@ -66,6 +66,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [ProducesResponseType<ProblemQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateProblemSolvingAsync(UpdateProblemSolvingCommand command)
     {
         var response = await _mediator.Send(command);
@@ -80,6 +81,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteTestCaseAsync(Guid testCaseId)
     {
         var query = new DeleteTestCaseCommand(testCaseId);
@@ -95,6 +97,7 @@ public class QuestionProblemController(IMediator mediator) : BaseApiController
     [ProducesResponseType<EmptyResult>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> DeleteProblemSolvingAsync(Guid questionId)
     {
         var query = new DeleteProblemSolvingCommand(questionId);

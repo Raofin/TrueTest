@@ -1,48 +1,60 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Questions.Written.Command;
 
-public record CreateWrittenCommand(
+public record CreateWrittenQuestionRequest(
     string StatementMarkdown,
     decimal Points,
-    bool HasLongAnswer,
-    Guid ExaminationId,
-    DifficultyType DifficultyType) : IRequest<ErrorOr<WrittenQuestionResponse>>;
+    DifficultyType DifficultyType,
+    bool HasLongAnswer
+);
+
+public record CreateWrittenCommand(Guid ExamId, List<CreateWrittenQuestionRequest> WrittenQuestions)
+    : IRequest<ErrorOr<List<WrittenQuestionResponse>>>;
 
 public class CreateWrittenCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<CreateWrittenCommand, ErrorOr<WrittenQuestionResponse>>
+    : IRequestHandler<CreateWrittenCommand, ErrorOr<List<WrittenQuestionResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<WrittenQuestionResponse>> Handle(
+    public async Task<ErrorOr<List<WrittenQuestionResponse>>> Handle(
         CreateWrittenCommand request, CancellationToken cancellationToken)
     {
-        var examExists = await _unitOfWork.Exam.GetAsync(request.ExaminationId, cancellationToken);
-        if (examExists == null) return Error.NotFound();
+        var exam = await _unitOfWork.Exam.GetAsync(request.ExamId, cancellationToken);
+        if (exam == null) return Error.NotFound();
 
-        var question = new Question
-        {
-            StatementMarkdown = request.StatementMarkdown,
-            Points = request.Points,
-            ExaminationId = request.ExaminationId,
-            DifficultyId = (int)request.DifficultyType,
-            QuestionTypeId = (int)QuestionType.Written,
-            HasLongAnswer = request.HasLongAnswer
-        };
+        if (exam.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
 
-        _unitOfWork.Question.Add(question);
+        var questions = request.WrittenQuestions.Select(
+            written => new Question
+            {
+                StatementMarkdown = written.StatementMarkdown,
+                Points = written.Points,
+                ExaminationId = request.ExamId,
+                DifficultyId = (int)written.DifficultyType,
+                QuestionTypeId = (int)QuestionType.Written,
+                HasLongAnswer = written.HasLongAnswer
+            }
+        ).ToList();
+
+        var newPoints = questions.Sum(q => q.Points);
+        exam.WrittenPoints += newPoints;
+        exam.TotalPoints += newPoints;
+
+        _unitOfWork.Question.AddRange(questions);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0
-            ? question.ToWrittenQuestionDto()
-            : Error.Failure();
+            ? questions.Select(q => q.MapToWrittenQuestionDto()).ToList()
+            : Error.Unexpected();
     }
 }
 
@@ -50,21 +62,33 @@ public class CreateWrittenCommandValidator : AbstractValidator<CreateWrittenComm
 {
     public CreateWrittenCommandValidator()
     {
+        RuleFor(x => x.ExamId)
+            .NotEqual(Guid.Empty);
+
+        RuleFor(x => x.WrittenQuestions)
+            .NotEmpty();
+
+        RuleForEach(x => x.WrittenQuestions)
+            .SetValidator(new CreateWrittenQuestionRequestValidator());
+    }
+}
+
+public class CreateWrittenQuestionRequestValidator : AbstractValidator<CreateWrittenQuestionRequest>
+{
+    public CreateWrittenQuestionRequestValidator()
+    {
         RuleFor(x => x.StatementMarkdown)
             .NotEmpty()
             .MinimumLength(10);
 
         RuleFor(x => x.Points)
-            .NotEmpty()
             .GreaterThan(0)
             .LessThanOrEqualTo(100);
 
-        RuleFor(x => x.ExaminationId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
-
         RuleFor(x => x.DifficultyType)
-            .NotEmpty()
             .IsInEnum();
+
+        RuleFor(x => x.HasLongAnswer)
+            .NotNull();
     }
 }
