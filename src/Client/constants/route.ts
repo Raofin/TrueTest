@@ -8,7 +8,9 @@ const ROUTES = {
   SENDOTP:'/Auth/SendOtp',
   ISUSERUNIQUE:'/Auth/IsUserUnique',
   OVERVIEW:'/overview',
-
+  PROFILE_SAVE:'/User/Profile/Save',
+  USER_INFO:'/User/Info',
+  
 }
 
 export default ROUTES

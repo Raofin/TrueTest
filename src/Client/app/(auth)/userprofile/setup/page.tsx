@@ -6,6 +6,7 @@ import ProfileEdit from '@/components/profile/edit/ProfileEdit'
 import { useRouter } from 'next/navigation'
 import api from '@/utils/api'
 import { FormData } from '@/components/types/profile'
+import ROUTES from '@/constants/route'
 
 export default function ProfileSetUp() {
   const router = useRouter()
@@ -23,9 +24,9 @@ export default function ProfileSetUp() {
   const handleProfileEdit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await api.post('/User/SaveProfile', formData)
+      const response = await api.put(ROUTES.PROFILE_SAVE, formData)
       if (response.status === 200) {
-        const response = await api.get('/User/Info')
+        const response = await api.get(ROUTES.USER_INFO)
         if (response.status === 200) {
           const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
           router.push(isAdmin ? '/overview' : '/home')
@@ -38,7 +39,7 @@ export default function ProfileSetUp() {
 
   const handleSkipButton = async () => {
     try {
-      const response = await api.get('/User/Info')
+      const response = await api.get(ROUTES.USER_INFO)
       const isAdmin = response.data.roles.some((role: string) => role.toLowerCase() === 'admin')
       router.push(isAdmin ? '/overview' : '/home')
     } catch (error) {
