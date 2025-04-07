@@ -5,6 +5,5 @@ public interface IUserInfoProvider
     bool IsAuthenticated();
     CurrentUser GetCurrentUser();
     List<string> GetPermissions();
-    
     Guid AccountId();
 }

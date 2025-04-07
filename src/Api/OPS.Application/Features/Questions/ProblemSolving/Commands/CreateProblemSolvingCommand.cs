@@ -50,11 +50,13 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
 
             foreach (var tc in problem.TestCases)
             {
-                question.TestCases.Add(new TestCase
-                {
-                    Input = tc.Input,
-                    ExpectedOutput = tc.Output
-                });
+                question.TestCases.Add(
+                    new TestCase
+                    {
+                        Input = tc.Input,
+                        ExpectedOutput = tc.Output
+                    }
+                );
             }
 
             questions.Add(question);

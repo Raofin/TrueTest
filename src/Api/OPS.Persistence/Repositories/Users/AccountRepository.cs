@@ -35,14 +35,6 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<List<Account>> GetByEmailsAsync(List<string> emails, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Accounts
-            .AsNoTracking()
-            .Where(a => emails.Contains(a.Email))
-            .ToListAsync(cancellationToken);
-    }
-
     public async Task<List<Account>> GetByEmailsWithRoleAsync(List<string> emails, CancellationToken cancellationToken)
     {
         return await _dbContext.Accounts
@@ -50,16 +42,6 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .Where(a => emails.Contains(a.Email))
             .Include(a => a.AccountRoles)
             .ToListAsync(cancellationToken);
-    }
-
-    public async Task<bool> IsExistsAsync(string? username, string? email, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Accounts
-            .AsNoTracking()
-            .Where(a =>
-                (!string.IsNullOrEmpty(username) && a.Username == username) ||
-                (!string.IsNullOrEmpty(email) && a.Email == email))
-            .AnyAsync(cancellationToken);
     }
 
     public async Task<PaginatedList<Account>> GetAllWithDetails(int pageIndex, int pageSize,
@@ -72,7 +54,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             var trimmedSearch = searchTerm.Trim();
             query = query.Where(a => a.Username.Contains(trimmedSearch) || a.Email.Contains(trimmedSearch));
         }
-        
+
         if (role.HasValue)
         {
             query = query.Where(a => a.AccountRoles.Any(ar => ar.RoleId == (int)role.Value));

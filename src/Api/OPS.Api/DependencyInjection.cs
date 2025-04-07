@@ -15,24 +15,24 @@ internal static class DependencyInjection
         app.UseMiddleware<GlobalRoutePrefixMiddleware>("/api");
         app.UsePathBase(new PathString("/api"));
         app.UseHttpsRedirection();
-        
+
         app.UseHealthChecks("/health");
         app.UseCors("CorsPolicy");
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        
+
         app.UseStaticFiles();
 
         if (app.Environment.IsProduction())
             app.UseMiddleware<ExceptionHandleMiddleware>();
     }
-    
+
     public static void UseApiDocumentation(this WebApplication app)
     {
         app.UseScalar();
-        
+
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
@@ -42,14 +42,14 @@ internal static class DependencyInjection
             c.InjectStylesheet("/swagger/custom.css");
             c.InjectJavascript("/swagger/custom.js");
         });
-        
+
         app.MapGet("/", context =>
         {
             context.Response.Redirect("swagger");
             return Task.CompletedTask;
         });
     }
-    
+
     public static void AddApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
@@ -115,14 +115,16 @@ internal static class DependencyInjection
                 Version = "v1"
             });
 
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                In = ParameterLocation.Header,
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                BearerFormat = "JWT",
-                Scheme = "bearer"
-            });
+            options.AddSecurityDefinition("Bearer",
+                new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                }
+            );
 
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {

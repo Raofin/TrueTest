@@ -27,12 +27,14 @@ public class SendOtpCommandHandler(
         var otp = await _unitOfWork.Otp.GetOtpAsync(request.Email, cancellationToken);
         if (otp is not null) _unitOfWork.Otp.Remove(otp);
 
-        _unitOfWork.Otp.Add(new Otp
-        {
-            Email = request.Email,
-            Code = code,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(5)
-        });
+        _unitOfWork.Otp.Add(
+            new Otp
+            {
+                Email = request.Email,
+                Code = code,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(5)
+            }
+        );
 
         await _unitOfWork.CommitAsync(cancellationToken);
         _accountEmails.SendOtp(request.Email, code, cancellationToken);

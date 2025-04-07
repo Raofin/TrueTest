@@ -45,10 +45,7 @@ public class RegisterCommandHandler(
             Email = request.Email,
             PasswordHash = hashedPassword,
             Salt = salt,
-            AccountRoles = new List<AccountRole>
-            {
-                new() { RoleId = (int)RoleType.Candidate }
-            }
+            AccountRoles = new List<AccountRole> { new() { RoleId = (int)RoleType.Candidate } }
         };
 
         _unitOfWork.Account.Add(account);
@@ -68,11 +65,13 @@ public class RegisterCommandHandler(
         if (adminInvite != null)
         {
             _unitOfWork.AdminInvite.Remove(adminInvite);
-            _unitOfWork.AccountRole.Add(new AccountRole
-            {
-                AccountId = account.Id,
-                RoleId = (int)RoleType.Admin
-            });
+            _unitOfWork.AccountRole.Add(
+                new AccountRole
+                {
+                    AccountId = account.Id,
+                    RoleId = (int)RoleType.Admin
+                }
+            );
         }
     }
 

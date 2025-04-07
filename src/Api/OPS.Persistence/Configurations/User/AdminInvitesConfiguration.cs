@@ -11,7 +11,7 @@ public class AdminInvitesConfiguration : IEntityTypeConfiguration<AdminInvite>
     {
         entity.ToTable("AdminInvites", "User");
         entity.HasKey(e => e.Id);
-        
+
         new BaseEntityConfig<AdminInvite>().Configure(entity);
     }
 }

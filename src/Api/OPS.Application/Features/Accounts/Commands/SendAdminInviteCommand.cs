@@ -26,8 +26,12 @@ public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork, IAccountEmail
             .Where(ea => ea.AccountRoles.All(ar => ar.RoleId != (int)RoleType.Admin))
             .ToList();
 
-        var newAdminRoles = nonAdminEmails.Select(account => new AccountRole
-            { AccountId = account.Id, RoleId = (int)RoleType.Admin }
+        var newAdminRoles = nonAdminEmails.Select(account =>
+            new AccountRole
+            {
+                AccountId = account.Id,
+                RoleId = (int)RoleType.Admin
+            }
         );
 
         _unitOfWork.AccountRole.AddRange(newAdminRoles);

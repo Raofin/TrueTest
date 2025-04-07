@@ -8,7 +8,7 @@ namespace OPS.Persistence.Repositories.Cores;
 internal class CloudFIleRepository(AppDbContext dbContext) : Repository<CloudFile>(dbContext), ICloudFileRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
-    
+
     public async Task<bool> IsExistsAsync(Guid cloudFileId, CancellationToken cancellationToken)
     {
         return await _dbContext.CloudFiles

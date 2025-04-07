@@ -15,7 +15,7 @@ internal static class Authentication
         this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
-        
+
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IJwtGenerator, JwtGenerator>();
 
