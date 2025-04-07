@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Submit;
 using OPS.Persistence.Configurations.Common;
+using static OPS.Persistence.Configurations.Common.Constants;
 
 namespace OPS.Persistence.Configurations.Submit;
 
@@ -13,7 +14,7 @@ public class WrittenSubmissionConfiguration : IEntityTypeConfiguration<WrittenSu
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.Answer).IsRequired();
-        entity.Property(e => e.Score).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.Score).HasColumnType(DecimalType).HasDefaultValueSql("((0))");
         entity.Property(e => e.IsFlagged).HasDefaultValue(false);
 
         new BaseEntityConfig<WrittenSubmission>().Configure(entity);

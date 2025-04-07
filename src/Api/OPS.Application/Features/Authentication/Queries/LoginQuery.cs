@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.Interfaces;
+using OPS.Application.Dtos;
+using OPS.Application.Services.AuthService;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 
@@ -22,8 +22,7 @@ public class LoginQueryHandler(
 
     public async Task<ErrorOr<AuthenticationResponse>> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-        var account = await _unitOfWork.Account.GetWithProfile(request.UsernameOrEmail, cancellationToken);
-
+        var account = await _unitOfWork.Account.GetWithDetails(request.UsernameOrEmail, cancellationToken);
         if (account == null) return Error.NotFound();
 
         var isVerified = _passwordHasher.VerifyPassword(account.PasswordHash, account.Salt, request.Password);

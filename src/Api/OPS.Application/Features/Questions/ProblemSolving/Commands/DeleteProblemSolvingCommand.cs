@@ -17,13 +17,17 @@ public class DeleteProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         var question = await _unitOfWork.Question.GetWithTestCases(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
+        question.Examination.ProblemSolvingPoints -= question.Points;
+        question.Examination.TotalPoints -= question.Points;
+
         _unitOfWork.TestCase.RemoveRange(question.TestCases);
         _unitOfWork.Question.Remove(question);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Failure();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 

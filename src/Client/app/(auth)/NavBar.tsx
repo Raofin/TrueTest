@@ -18,41 +18,41 @@ export default function Component() {
                 item: 'hidden md:flex',
               }}
             >
-              <NavbarContent
-                className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]"
-                justify="end"
-              >
-                <NavbarItem>
-                  <Link className="text-[#3f3f46] dark:text-white light:text-black" href="/overview">
-                    Admin Panel
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link className="text-[#3f3f46] dark:text-white " href="/home">
-                    Candidate Home
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link className="text-[#3f3f46] dark:text-white " href="/">
-                    About Us
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link className="text-[#3f3f46] dark:text-white " href="/">
-                    Contact
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link className="text-[#3f3f46] dark:text-white " href="/">
-                    Support
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link className="text-[#3f3f46] dark:text-white " href="/">
-                    FAQs
-                  </Link>
-                </NavbarItem>
-              </NavbarContent>
+            <NavbarContent
+            className=" h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]  px-4 "
+            justify="end"
+          >
+            <NavbarItem>
+              <Link className="text-[#3f3f46] dark:text-white" href="/overview">
+                Admin Panel
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link className="text-[#3f3f46] dark:text-white" href="/home">
+                Candidate Home
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link className="text-[#3f3f46] dark:text-white" href="/">
+                About Us
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link className="text-[#3f3f46] dark:text-white" href="/">
+                Contact
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link className="text-[#3f3f46] dark:text-white" href="/">
+                Support
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link className="text-[#3f3f46] dark:text-white" href="/">
+                FAQs
+              </Link>
+            </NavbarItem>
+          </NavbarContent>
            
           
             <NavbarContent

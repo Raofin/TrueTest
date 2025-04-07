@@ -43,7 +43,7 @@ export default function Component() {
     { key: 'c', label: 'Learnathon 3.0' },
   ]
   const [filterValue, setFilterValue] = useState('')
-  const rowsPerPage = 7
+  const rowsPerPage = 10
   const [page, setPage] = useState(1)
   const [fileContent, setFileContent] = useState('')
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -150,33 +150,10 @@ export default function Component() {
     }
   }, [])
 
-  const bottomContent = useMemo(
-    () => (
-      <div className="p-2 m-2 flex justify-between items-end">
-        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
-        <div className="flex items-center  gap-2">
-          <span className="text-small ">
-            Page {page} out of {pages}
-          </span>
-          <PaginationButtons
-            currentIndex={page}
-            totalItems={pages}
-            onPrevious={() => setPage(page - 1)}
-            onNext={() => setPage(page + 1)}
-          />
-          <Button size="sm" color="primary">
-            Send Invitation
-          </Button>
-        </div>
-      </div>
-    ),
-    [page, pages]
-  )
-
   return (
-    <div className="flex h-screen flex-col justify-between">
+    <div className="flex  flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Invite Candidates</h2>
-      <div className={` flex flex-col rounded-xl pt-5 justify-between mx-12 bg-white dark:bg-[#18181b]`}>
+      <div className={`min-h-screen flex flex-col rounded-xl pt-5 justify-between mx-12 bg-white dark:bg-[#18181b]`}>
         <div>
           <div className="w-full flex items-center justify-center">
             <p>Exam</p>
@@ -209,23 +186,23 @@ export default function Component() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-5">
+
+        <div>
           <div className="mt-4 flex gap-8 w-full justify-between">
             <h2 className="ml-5">Candidates List</h2>
             <div className="flex items-end">
               <Input
                 isClearable
-                className="w-[400px] "
-                placeholder="Search by name..."
+                className="w-[400px] mr-3"
+                placeholder="Search"
                 startContent={<SearchIcon />}
                 value={filterValue}
                 onValueChange={onSearchChange}
               />
             </div>
           </div>
-          <Table
+          <Table suppressHydrationWarning
             aria-label="Example table with custom cells, pagination"
-            bottomContent={bottomContent}
             bottomContentPlacement="inside"
             className=""
             topContentPlacement="inside"
@@ -250,6 +227,23 @@ export default function Component() {
               ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="p-2 m-2 flex justify-between items-end">
+          <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
+          <div className="flex items-center  gap-2">
+            <span className="text-small ">
+              Page {page} out of {pages}
+            </span>
+            <PaginationButtons
+              currentIndex={page}
+              totalItems={pages}
+              onPrevious={() => setPage(page - 1)}
+              onNext={() => setPage(page + 1)}
+            />
+            <Button size="sm" color="primary">
+              Send Invitation
+            </Button>
+          </div>
         </div>
 
         <CommonModal

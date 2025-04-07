@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.Features.Examinations.Queries;
+using OPS.Application.Dtos;
 using OPS.Application.Features.User.Commands;
 using OPS.Application.Features.User.Queries;
 using OPS.Domain.Contracts.Core.Authentication;
@@ -41,7 +40,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     /// <returns>Updated account settings.</returns>
     [HttpPatch("AccountSettings")]
     [EndpointDescription("Updates account settings of the authenticated user.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command)
@@ -54,7 +53,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     /// <returns>User details.</returns>
     [HttpGet("Details")]
     [EndpointDescription("Retrieves account details of the authenticated user.")]
-    [ProducesResponseType<AccountResponse>(Status200OK)]
+    [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     public async Task<IActionResult> GetDetailsAsync()
     {
         var query = new GetUserDetailsQuery();
@@ -86,18 +85,6 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     public async Task<IActionResult> DeleteProfileLinkAsync(DeleteProfileLinkCommand command)
     {
         var response = await _mediator.Send(command);
-        return ToResult(response);
-    }
-
-    /// <summary>Retrieves exams of the authenticated user.</summary>
-    /// <returns>List of exams by user.</returns>
-    [HttpGet("Exams")]
-    [EndpointDescription("Retrieves exams of the authenticated user.")]
-    [ProducesResponseType<List<ExamResponse>>(Status200OK)]
-    public async Task<IActionResult> GetExamsAsync()
-    {
-        var query = new GetExamsByUserQuery();
-        var response = await _mediator.Send(query);
         return ToResult(response);
     }
 }

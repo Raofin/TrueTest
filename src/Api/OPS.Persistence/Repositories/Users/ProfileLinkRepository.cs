@@ -13,6 +13,7 @@ internal class ProfileLinkRepository(AppDbContext dbContext) : Repository<Profil
     {
         return await _dbContext.ProfileLinks
             .Where(q => q.ProfileId == profileId)
+            .OrderBy(a => a.CreatedAt)
             .ToListAsync(cancellationToken);
     }
 }

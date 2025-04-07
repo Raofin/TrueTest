@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Mcq.Queries;
@@ -14,11 +14,12 @@ public class GetMcqByExamQueryHandler(IUnitOfWork unitOfWork)
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ErrorOr<List<McqQuestionResponse>>> Handle(GetMcqByExamQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<McqQuestionResponse>>> Handle(GetMcqByExamQuery request,
+        CancellationToken cancellationToken)
     {
         var questions = await _unitOfWork.Question.GetMcqByExamIdAsync(request.ExamId, cancellationToken);
 
-        return questions.Select(q => q.ToMcqQuestionDto()).ToList();
+        return questions.Select(q => q.MapToMcqQuestionDto()).ToList();
     }
 }
 
