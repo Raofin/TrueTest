@@ -57,7 +57,7 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
             .OrderBy(q => q.CreatedAt)
             .SingleOrDefaultAsync(cancellationToken);
     }
-    
+
     public async Task<Question?> GetWithExamAsync(Guid questionId, CancellationToken cancellationToken)
     {
         return await _dbContext.Questions

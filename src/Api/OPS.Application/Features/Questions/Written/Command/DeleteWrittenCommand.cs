@@ -1,6 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.Written.Command;
@@ -21,7 +22,6 @@ public class DeleteWrittenCommandHandler(IUnitOfWork unitOfWork)
             return Error.Conflict(description: "Exam of this question is already published");
 
         question.Examination.WrittenPoints -= question.Points;
-        question.Examination.TotalPoints -= question.Points;
 
         _unitOfWork.Question.Remove(question);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
@@ -35,7 +35,6 @@ public class DeleteWrittenCommandValidator : AbstractValidator<DeleteWrittenComm
     public DeleteWrittenCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }

@@ -1,7 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.CrossCutting.Constants;
+using OPS.Application.Common.Constants;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -29,10 +29,11 @@ public class UpdateAccountSettingsCommandHandler(
     {
         var userAccountId = _userInfoProvider.AccountId();
 
-        var account = await _unitOfWork.Account.GetAsync(userAccountId, cancellationToken);
+        var account = await _unitOfWork.Account.GetWithDetails(userAccountId, cancellationToken);
         account.ThrowIfNull();
 
-        if (request.Username is not null)
+        if (!string.IsNullOrWhiteSpace(request.Username) &&
+            !request.Username.Equals(account.Username, StringComparison.OrdinalIgnoreCase))
         {
             var isUnique = await _unitOfWork.Account.IsUsernameOrEmailUniqueAsync(
                 request.Username, null, cancellationToken);
@@ -42,7 +43,7 @@ public class UpdateAccountSettingsCommandHandler(
             account.Username = request.Username;
         }
 
-        if (request.NewPassword is not null)
+        if (!string.IsNullOrEmpty(request.NewPassword))
         {
             var isVerified = _passwordHasher.VerifyPassword(
                 account.PasswordHash,
@@ -57,9 +58,9 @@ public class UpdateAccountSettingsCommandHandler(
             account.Salt = salt;
         }
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0 ? account.MapToDtoWithDetails() : Error.Unexpected();
+        return account.MapToDtoWithDetails();
     }
 }
 

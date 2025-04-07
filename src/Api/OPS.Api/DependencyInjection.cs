@@ -3,13 +3,54 @@ using Microsoft.OpenApi.Models;
 using OPS.Api.Middlewares;
 using Scalar.AspNetCore;
 using OPS.Api.Transformers;
+using OPS.Application.Common.Constants;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace OPS.Api;
 
 internal static class DependencyInjection
 {
-    public static IServiceCollection AddApi(this IServiceCollection services, IConfiguration configuration)
+    public static void UseControllers(this WebApplication app)
+    {
+        app.UseMiddleware<GlobalRoutePrefixMiddleware>("/api");
+        app.UsePathBase(new PathString("/api"));
+        app.UseHttpsRedirection();
+
+        app.UseHealthChecks("/health");
+        app.UseCors("CorsPolicy");
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapControllers();
+
+        app.UseStaticFiles();
+
+        if (app.Environment.IsProduction())
+            app.UseMiddleware<ExceptionHandleMiddleware>();
+    }
+
+    public static void UseApiDocumentation(this WebApplication app)
+    {
+        app.UseScalar();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.DocumentTitle = $"{ProjectConstants.ProjectName} - Swagger";
+            c.DefaultModelsExpandDepth(0);
+            c.DisplayRequestDuration();
+            c.InjectStylesheet("/swagger/custom.css");
+            c.InjectJavascript("/swagger/custom.js");
+        });
+
+        app.MapGet("/", context =>
+        {
+            context.Response.Redirect("swagger");
+            return Task.CompletedTask;
+        });
+    }
+
+    public static void AddApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
         services.AddHttpContextAccessor();
@@ -18,8 +59,6 @@ internal static class DependencyInjection
 
         services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
         services.AddSwagger();
-
-        return services;
     }
 
     private static void AddCorsWithOrigins(this IServiceCollection services, IConfiguration configuration)
@@ -53,19 +92,7 @@ internal static class DependencyInjection
         });
     }
 
-    public static void UseControllers(this WebApplication app)
-    {
-        app.MapControllers();
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.UseHealthChecks("/health");
-        app.UseCors("CorsPolicy");
-
-        if (app.Environment.IsProduction())
-            app.UseMiddleware<ExceptionHandleMiddleware>();
-    }
-
-    public static void UseScalar(this WebApplication app)
+    private static void UseScalar(this WebApplication app)
     {
         app.MapOpenApi();
         app.MapScalarApiReference(options =>
@@ -88,14 +115,16 @@ internal static class DependencyInjection
                 Version = "v1"
             });
 
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                In = ParameterLocation.Header,
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                BearerFormat = "JWT",
-                Scheme = "bearer"
-            });
+            options.AddSecurityDefinition("Bearer",
+                new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                }
+            );
 
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {

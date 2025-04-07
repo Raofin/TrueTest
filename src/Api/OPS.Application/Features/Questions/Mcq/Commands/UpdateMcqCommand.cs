@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -38,18 +39,15 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
 
         if (question.Examination.IsPublished)
             return Error.Conflict(description: "Exam of this question is already published");
-        
+
         question.McqOption.ThrowIfNull();
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
 
         if (request.Points is not null)
         {
             question.Examination.McqPoints -= question.Points;
-            question.Examination.TotalPoints -= question.Points;
-
+            question.Examination.McqPoints += request.Points.Value;
             question.Points = request.Points.Value;
-            question.Examination.McqPoints += question.Points;
-            question.Examination.TotalPoints += question.Points;
         }
 
         question.DifficultyId = request.DifficultyType.HasValue
@@ -77,7 +75,7 @@ public class UpdateMcqCommandValidator : AbstractValidator<UpdateMcqCommand>
     public UpdateMcqCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty();
+            .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10)

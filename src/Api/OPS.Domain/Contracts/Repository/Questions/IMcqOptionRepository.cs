@@ -3,6 +3,4 @@ using OPS.Domain.Entities.Exam;
 
 namespace OPS.Domain.Contracts.Repository.Questions;
 
-public interface IMcqOptionRepository : IBaseRepository<McqOption>
-{
-}
+public interface IMcqOptionRepository : IBaseRepository<McqOption>;

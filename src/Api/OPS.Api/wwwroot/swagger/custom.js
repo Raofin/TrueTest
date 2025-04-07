@@ -1,0 +1,1 @@
+﻿document.querySelector('link[rel="icon"]').href = '/img/favicon.ico'

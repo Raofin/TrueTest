@@ -1,6 +1,6 @@
-﻿namespace OPS.Infrastructure.EmailSender;
+﻿namespace OPS.Infrastructure.AppConfiguration.Email;
 
-public class EmailSettings
+internal class EmailSettings
 {
     private readonly string _password = null!;
 
