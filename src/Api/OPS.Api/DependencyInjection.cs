@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using OPS.Api.Middlewares;
 using Scalar.AspNetCore;
 using OPS.Api.Transformers;
+using OPS.Application.Common.Constants;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace OPS.Api;
@@ -21,6 +22,8 @@ internal static class DependencyInjection
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        
+        app.UseStaticFiles();
 
         if (app.Environment.IsProduction())
             app.UseMiddleware<ExceptionHandleMiddleware>();
@@ -33,8 +36,11 @@ internal static class DependencyInjection
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
+            c.DocumentTitle = $"{ProjectConstants.ProjectName} - Swagger";
             c.DefaultModelsExpandDepth(0);
             c.DisplayRequestDuration();
+            c.InjectStylesheet("/swagger/custom.css");
+            c.InjectJavascript("/swagger/custom.js");
         });
         
         app.MapGet("/", context =>
