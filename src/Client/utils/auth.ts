@@ -16,13 +16,24 @@ const decryptToken = (encryptedToken: string): string => {
   return decryptedData;
 };
 
-export function setAuthToken(token: string) {
+export function setAuthToken(token: string,rememberMe:boolean) {
   const encryptedToken = encryptToken(token);
+if(rememberMe){
+  console.log(rememberMe)
+  Cookies.set('token', encryptedToken, {
+    secure: true, 
+    sameSite: 'Strict', 
+    expires: 30,
+    path: '/',
+  })
+}
+else{
   Cookies.set('token', encryptedToken, {
     secure: true, 
     sameSite: 'Strict', 
     path: '/',
-  });
+  })
+}
 }
 export function getAuthToken(): string | undefined {
   const encryptedToken = Cookies.get('token');

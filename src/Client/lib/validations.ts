@@ -1,15 +1,26 @@
+import isValidEmail from '@/components/check-valid-email'
 import { z } from 'zod'
 
-export const SignInSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: 'Email is required' })
-    .email({ message: 'Please provide a valid email address.' }),
 
-  password: z
+const usernameRegex=/^[a-zA-Z0-9_]+$/
+
+export const SignInSchema = z.object({
+  usernameOrEmail: z
     .string()
-    .min(8, { message: 'Password must be at least 8 characters long. ' })
-    .max(100, { message: 'Password cannot exceed 100 characters.' }),
+    .min(1, { message: 'Email or Username is required' })
+    .refine(
+      (value) => isValidEmail(value) || usernameRegex.test(value),
+      { message: 'Enter a valid email address or username.' }
+    ),
+
+    password: z
+    .string()
+    .min(8, { message: 'Password must be at least 8 characters long.' })
+    .max(100, { message: 'Password cannot exceed 100 characters.' })
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/, {
+      message:
+        'Password must contain at least one uppercase letter,  lowercase letter, number, special character.',
+    }),
 })
 
 export const signUpSchema = z
@@ -30,15 +41,9 @@ export const signUpSchema = z
       .string()
       .min(8, { message: 'Password must be at least 8 characters long.' })
       .max(100, { message: 'Password cannot exceed 100 characters.' })
-      .regex(/[A-Z]/, {
-        message: 'Password must contain at least one uppercase letter.',
-      })
-      .regex(/[a-z]/, {
-        message: 'Password must contain at least one lowercase letter.',
-      })
-      .regex(/[0-9]/, { message: 'Password must contain at least one number.' })
-      .regex(/[^a-zA-Z0-9]/, {
-        message: 'Password must contain at least one special character.',
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/, {
+        message:
+          'Password must contain at least one uppercase , lowercase letter, number and special character.',
       }),
     confirmPassword: z.string(),
 

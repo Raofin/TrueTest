@@ -61,7 +61,7 @@ export default function Component() {
         </div>
         <div className="mt-5 flex w-full justify-center">
           <Button color="primary">
-            <Link className="text-white" href={`/${route}/edit`}>
+            <Link className="text-white" href={`/${route}/edit/?username=${userSetting?.username}`}>
               Change Settings
             </Link>
           </Button>

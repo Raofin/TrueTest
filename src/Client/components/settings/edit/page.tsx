@@ -4,10 +4,10 @@ import React, { useState } from 'react'
 import { Button, Input, Form, Card } from '@heroui/react'
 import '@/app/globals.css'
 import api from '@/utils/api'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Icon } from '@iconify/react/dist/iconify.js'
-import axios from 'axios'
-import SweetAlert from '@/components/ui/sweetalert'
+import isValidPassword from '@/components/check-valid-password'
+import ROUTES from '@/constants/route'
 
 export default function Component() {
   const [newconfirmpassword, setNewconfirmpassword] = useState('')
@@ -17,37 +17,53 @@ export default function Component() {
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [isConfirmVisible, setIsConfirmVisible] = useState<boolean>(false)
   const [isVisibleCurrent, setIsVisibleCurrent] = useState<boolean>(false)
+  const [passwordError, setPasswordError] = useState('')
+  const [currentPassword, setCurrentPassword] = useState<boolean>(false)
+  const [userError, setUserError] = useState('')
+  const searchParams = useSearchParams()
+  const username = searchParams.get('username') || ''
+
   const [formData, setFormData] = useState({
-    username: '',
+    username,
     currentPassword: '',
     newPassword: '',
   })
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
+    if (name === 'username' && value.length < 4) {
+      setUserError('Username must be at least 4 characters long.')
+      return
+    }
+
+    if(name==='currentPassword' && value.length>1){
+      setCurrentPassword(true)
+    }
+      setUserError('')
+    
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (formData.newPassword !== newconfirmpassword) {
-      setError('New password and confirm password do not match.')
+      setPasswordError('New password and confirm password do not match.')
       return
     }
+    if (formData.newPassword.length>1 && !isValidPassword(formData.newPassword)) {
+      setPasswordError(
+        'New Password must contain at least one uppercase letter,  lowercase letter, number, special character.'
+      )
+      return
+    }
+   setPasswordError('')
     try {
-      const response = await api.patch('/User/AccountSettings', formData)
+      const response = await api.patch(ROUTES.ACCOUNT_SETTING, formData)
       if (response.status === 200) {
-        ;<SweetAlert icon="success" text="Account updated successfully" showConfirmButton={false} timer={1500} />
-        if (response.data.roles === 'Admin') router.push('/settings')
-        else router.push('/mysettings')
+        if (response.data.roles.some((e:string)=>(e.toLowerCase().includes('admin')))) router.push(ROUTES.ADMIN_SETTING)
+        else router.push(ROUTES.CANDIDATE_SETTING)
       }
-    } catch (error) {
-      console.log('Error object:', error)
-      if (axios.isAxiosError(error)) {
-        console.log('Error response:', error.response)
-        setError(error.response?.data?.detail)
-      } else {
-        setError('username or current password is not correct.')
-      }
+    } catch {
+      setError('Username or Current Password is not correct')
     }
   }
 
@@ -70,10 +86,11 @@ export default function Component() {
             type="text"
             className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
             value={formData.username}
+            defaultValue={username}
             onChange={handleChange}
           />
+          {userError && <p className="text-red-500">{userError}</p>}
           <Input
-            isRequired
             label="Current Password"
             endContent={
               <button type="button" onClick={() => setIsVisibleCurrent(!isVisibleCurrent)}>
@@ -90,13 +107,13 @@ export default function Component() {
             onChange={handleChange}
           />
           <Input
-            isRequired
+          isRequired={currentPassword}
             endContent={
               <button type="button" onClick={() => setIsVisible(!isVisible)}>
                 <Icon
                   className="text-2xl text-default-400"
                   icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                />
+                  />
               </button>
             }
             label="New Password"
@@ -105,9 +122,10 @@ export default function Component() {
             className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
             value={formData.newPassword}
             onChange={handleChange}
-          />
+            />
+            {passwordError && <p className="text-red-500">{passwordError}</p>}
           <Input
-            isRequired
+            isRequired={currentPassword}
             endContent={
               <button type="button" onClick={() => setIsConfirmVisible(!isConfirmVisible)}>
                 <Icon

@@ -12,7 +12,7 @@ function withProtectedRoute<P extends object>(WrappedComponent: ComponentType<P>
       const checkAuth = async () => {
         const token = getAuthToken()
         if (!token) {
-          router.replace('/login')
+          router.replace('/signin')
           setIsAuthenticated(false)
         } else {
           setIsAuthenticated(true)

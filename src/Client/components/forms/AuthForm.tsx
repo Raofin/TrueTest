@@ -23,8 +23,7 @@ interface AuthFormProps<T extends FieldValues> {
 
 const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>) => {
   const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up'
-  const toggleVisibility = () => setIsVisible((prev) => !prev)
-  const { login, user: authenticatedUser } = useAuth()
+  const { login, user: authenticatedUser, fetchUser } = useAuth()
   const router = useRouter()
   const [error, setError] = useState('')
   const [formData, setFormData] = useState<T | null>(null)
@@ -35,6 +34,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   const [uniqueemailerror, setUniqueEmailError] = useState('')
   const [uniqueusernameerror, setUniqueUsernameError] = useState('')
   const [otpVerified, setOtpVerified] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const {
     register,
     handleSubmit,
@@ -98,7 +98,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
     try {
       const response = await api.post(ROUTES.SENDOTP, { email: data.email })
       if (response.status === 200) {
-        console.log('first time SendOtp')
         toast.success('OTP sent to your email. Please check your inbox.')
         setFormData(data)
         onOpen()
@@ -114,7 +113,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
 
   const onOtpSubmit = async (data: { otp: string }) => {
     if (otpVerified) return
-    setOtpVerified(true)
     try {
       if (!data.otp) {
         toast.error('OTP is required')
@@ -126,7 +124,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
       })
 
       if (verifyResponse.data.isValidOtp) {
-        console.log('first time isValidOtp')
         setOtpVerified(true)
         setFormData(null)
         toast.success('OTP verified successfully!')
@@ -139,7 +136,8 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         if (response.status === 200) {
           toast.success('Signup successful!')
           router.push(ROUTES.PROFILE_SETUP)
-          setAuthToken(response.data.token)
+          setAuthToken(response.data.token, false)
+          fetchUser()
         } else router.push(ROUTES.SIGN_UP)
       } else {
         toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.')
@@ -150,18 +148,14 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   }
 
   const handleSignin = async (data: T) => {
-    if (!data.email || !data.password) {
-      setError('Email and password are required.')
-      return
-    }
-
-    login(data.email, data.password, setError)
     if (getAuthToken()) {
       if (authenticatedUser?.roles.includes('Admin')) {
         router.push(ROUTES.OVERVIEW)
       } else {
         router.push(ROUTES.HOME)
       }
+    } else {
+       login(data.usernameOrEmail, data.password, setError, rememberMe)
     }
   }
   return (
@@ -174,29 +168,36 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         {formType === 'SIGN_IN' ? (
           <>
             <Input
-              {...register('email' as Path<T>)}
+              {...register('usernameOrEmail' as Path<T>)}
               isRequired
               label="Username or Email Address"
-              type="email"
+              type="text"
               className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             />
+            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as Path<T>}</p>}
             <Input
-              isRequired
-              label="Password"
-              type={isVisible ? 'text' : 'password'}
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
               {...register('password' as Path<T>)}
+              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+              isRequired
               endContent={
-                <button type="button" onClick={toggleVisibility}>
+                <button type="button" onClick={() => setIsVisible(!isVisible)}>
                   <Icon
-                    className="pointer-events-none text-2xl text-default-400"
+                    className="text-2xl text-default-400"
                     icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
                   />
                 </button>
               }
+              label="Password"
+              type={isVisible ? 'text' : 'password'}
             />
+            {errors.password && <p className="text-sm text-red-500">{errors.password.message as Path<T>}</p>}
             <div className="flex w-full items-center justify-between px-1 py-2">
-              <Checkbox name="remember" size="sm">
+              <Checkbox
+                name="remember"
+                size="sm"
+                isSelected={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              >
                 <p>Remember me</p>
               </Checkbox>
               <Link className="text-default-500" href="/password-recover" size="sm">
@@ -280,36 +281,36 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         <Button className="w-full text-white" color="primary" type="submit" isDisabled={loading}>
           {!loading ? buttonText : 'Processing...'}
         </Button>
-        <div className="flex items-center gap-4 py-2">
-          <Divider className="flex-1" />
-          <p className="shrink-0 text-tiny text-default-500">OR</p>
-          <Divider className="flex-1" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Button className="w-full" startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
-            Continue with Google
-          </Button>
-
-          <Button
-            className="w-full"
-            startContent={<Icon className="text-default-500" icon="fe:github" width={24} />}
-            variant="bordered"
-          >
-            Continue with Github
-          </Button>
-        </div>
-        {formType === 'SIGN_IN' ? (
-          <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
-            Need to create an account?
-            <Link href={ROUTES.SIGN_UP}>Sign up</Link>
-          </p>
-        ) : (
-          <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
-            Already have an account?
-            <Link href={ROUTES.SIGN_IN}>Sign in</Link>
-          </p>
-        )}
       </form>
+      <div className="flex items-center gap-4 py-2">
+        <Divider className="flex-1" />
+        <p className="shrink-0 text-tiny text-default-500">OR</p>
+        <Divider className="flex-1" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Button className="w-full" startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
+          Continue with Google
+        </Button>
+        <Button
+          className="w-full"
+          startContent={<Icon className="text-default-500" icon="fe:github" width={24} />}
+          variant="bordered"
+        >
+          Continue with Github
+        </Button>
+      </div>
+      {formType === 'SIGN_IN' ? (
+        <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
+          Need to create an account?
+          <Link href={ROUTES.SIGN_UP}>Sign up</Link>
+        </p>
+      ) : (
+        <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
+          Already have an account?
+          <Link href={ROUTES.SIGN_IN}>Sign in</Link>
+        </p>
+      )}
+
       <OTPModal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
