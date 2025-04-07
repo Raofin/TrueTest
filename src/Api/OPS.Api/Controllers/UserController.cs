@@ -13,6 +13,7 @@ namespace OPS.Api.Controllers;
 
 [Route("User")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+[ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
 public class UserController(IMediator mediator, IUserInfoProvider userInfoProvider) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

@@ -14,6 +14,8 @@ namespace OPS.Api.Controllers;
 
 [Route("Account")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+[ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
+[ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
 public class AccountController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

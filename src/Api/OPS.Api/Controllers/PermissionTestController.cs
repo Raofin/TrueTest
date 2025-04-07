@@ -1,11 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OPS.Api.Common.ErrorResponses;
 using OPS.Infrastructure.Authentication.Permission;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
 [Obsolete]
 [Route("PermissionTest")]
+[ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+[ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
+[ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
 public class PermissionTestController : ControllerBase
 {
     [HttpGet("Candidate")]

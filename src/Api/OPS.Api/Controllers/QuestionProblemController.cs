@@ -13,6 +13,8 @@ namespace OPS.Api.Controllers;
 
 [Route("Questions/Problem")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+[ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
+[ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
 public class QuestionProblemController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

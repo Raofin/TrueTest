@@ -13,6 +13,8 @@ namespace OPS.Api.Controllers;
 
 [Route("Review")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+[ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
+[ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
 public class ReviewController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

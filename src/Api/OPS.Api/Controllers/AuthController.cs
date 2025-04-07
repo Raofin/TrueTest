@@ -11,6 +11,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 namespace OPS.Api.Controllers;
 
 [Route("Auth")]
+[ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
 public class AuthController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;

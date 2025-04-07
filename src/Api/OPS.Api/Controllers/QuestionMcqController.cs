@@ -13,6 +13,8 @@ namespace OPS.Api.Controllers;
 
 [Route("Questions/Mcq")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+[ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
+[ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
 public class QuestionMcqController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
