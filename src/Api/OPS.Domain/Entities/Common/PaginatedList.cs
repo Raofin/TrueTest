@@ -20,7 +20,7 @@ namespace OPS.Domain.Entities.Common
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
-            
+
             return new PaginatedList<T>(items, totalCount, pageIndex, pageSize);
         }
     }

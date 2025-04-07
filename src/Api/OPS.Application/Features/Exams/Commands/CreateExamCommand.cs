@@ -12,7 +12,7 @@ public record CreateExamCommand(
     string Title,
     string Description,
     int DurationMinutes,
-    Decimal TotalPoints,
+    decimal TotalPoints,
     DateTime OpensAt,
     DateTime ClosesAt) : IRequest<ErrorOr<ExamResponse>>;
 

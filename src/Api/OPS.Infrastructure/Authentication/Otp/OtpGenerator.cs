@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using OPS.Domain.Contracts.Core.Authentication;
 
-namespace OPS.Infrastructure.Authentication;
+namespace OPS.Infrastructure.Authentication.Otp;
 
 public class OtpGenerator : IOtpGenerator
 {

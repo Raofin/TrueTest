@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Review.Commands;
@@ -47,8 +48,7 @@ public class ReviewProblemCommandValidator : AbstractValidator<ReviewProblemComm
     public ReviewProblemCommandValidator()
     {
         RuleFor(x => x.ProblemSubmissionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.Score)
             .InclusiveBetween(0, 100)

@@ -1,6 +1,4 @@
-﻿using OPS.Application.Features.Review.Queries;
-
-namespace OPS.Application.Dtos;
+﻿namespace OPS.Application.Dtos;
 
 public record ExamResponse(
     Guid ExamId,
