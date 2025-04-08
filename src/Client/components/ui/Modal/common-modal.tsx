@@ -1,32 +1,18 @@
-'use client';
+'use client'
 
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from '@heroui/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react'
 
 interface CommonModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  content: React.ReactNode;
-  confirmButtonText: string;
-  onConfirm: () => void;
+  isOpen: boolean
+  onClose: () => void
+  title: string
+  content: React.ReactNode
+  confirmButtonText: string
+  onConfirm: () => void
 }
-const CommonModal = ({
-  isOpen,
-  onClose,
-  title,
-  content,
-  confirmButtonText,
-  onConfirm,
-}: CommonModalProps) => {
+const CommonModal = ({ isOpen, onClose, title, content, confirmButtonText, onConfirm }: CommonModalProps) => {
   return (
-    <Modal isOpen={isOpen} >
+    <Modal isOpen={isOpen}>
       <ModalContent>
         {(close) => (
           <>
@@ -38,8 +24,8 @@ const CommonModal = ({
               <Button
                 color="default"
                 onPress={() => {
-                  onClose();
-                  close();
+                  onClose()
+                  close()
                 }}
               >
                 Close
@@ -47,9 +33,9 @@ const CommonModal = ({
               <Button
                 color="primary"
                 onPress={async () => {
-                  await onConfirm();
-                  onClose();
-                  close();
+                  await onConfirm()
+                  onClose()
+                  close()
                 }}
               >
                 {confirmButtonText}
@@ -59,7 +45,7 @@ const CommonModal = ({
         )}
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}
 
-export default CommonModal;
+export default CommonModal
