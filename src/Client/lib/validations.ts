@@ -2,7 +2,7 @@ import isValidEmail from '@/components/check-valid-email'
 import { z } from 'zod'
 
 
-const usernameRegex=/^[a-zA-Z0-9_]+$/
+const usernameRegex = /^[\w.-]+$/;
 
 export const SignInSchema = z.object({
   usernameOrEmail: z
