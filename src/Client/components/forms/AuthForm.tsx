@@ -65,36 +65,35 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
     setError(error?.response?.data?.message || defaultMessage); 
   }, []);
 
-  const checkUserUniqueness = useCallback(
-    async (field: 'username' | 'email', value: string) => {
-      if (!value) return;
-      try {
-        const response = await api.post(ROUTES.ISUSERUNIQUE, { [field]: value });
-        if (response.data.isUnique === false) {
-          if (field === 'username') setUniqueUsernameError('Username is already taken');
-          else setUniqueEmailError('Email is already taken');
-        } else {
-          if (field === 'username') setUniqueUsernameError('');
-          else setUniqueEmailError('');
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.data?.errors) {
-          Object.values(error.response.data.errors).forEach((errorMessages) => {
-            if (Array.isArray(errorMessages)) {
-              errorMessages.forEach((message) => {
-                if (message.includes(field === 'username' ? 'Username' : 'Email')) {
-                  setUniqueError(field as Path<T>, { type: 'manual', message });
-                }
-              });
-            }
-          });
-        }
-        return false;
+ const checkUserUniqueness = useCallback(
+  async (field: 'username' | 'email', value: string) => {
+    if (!value) return;
+    try {
+      const response = await api.post(ROUTES.ISUSERUNIQUE, { [field]: value });
+      if (response.data.isUnique === false) {
+        setUniqueUsernameError(field === 'username' ? 'Username is already taken' : '');
+        setUniqueEmailError(field === 'email' ? 'Email is already taken' : '');
+      } else {
+        setUniqueUsernameError(field === 'username' ? '' : uniqueusernameerror);
+        setUniqueEmailError(field === 'email' ? '' : uniqueemailerror);
       }
-    },
-    [setUniqueError]
-  );
-
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data?.errors) {
+        Object.values(error.response.data.errors).forEach((errorMessages) => {
+          if (Array.isArray(errorMessages)) {
+            errorMessages.forEach((message) => {
+              if (message.includes(field === 'username' ? 'Username' : 'Email')) {
+                setUniqueError(field as Path<T>, { type: 'manual', message });
+              }
+            });
+          }
+        });
+      }
+      return false;
+    }
+  },
+  [setUniqueError, uniqueemailerror, uniqueusernameerror]
+);
   const handleFieldBlur = useCallback(
     async (field: 'username' | 'email') => {
       const value = watch(field as Path<T>);

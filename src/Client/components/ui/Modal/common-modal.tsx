@@ -33,7 +33,7 @@ const CommonModal = ({ isOpen, onClose, title, content, confirmButtonText, onCon
               <Button
                 color="primary"
                 onPress={async () => {
-                  await onConfirm()
+                  onConfirm()
                   onClose()
                   close()
                 }}
