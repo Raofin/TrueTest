@@ -1,12 +1,12 @@
 'use client'
 
-import { getAuthToken } from '@/utils/auth'
+import { getAuthToken, setAuthToken } from '@/utils/auth'
 import ROUTES from '@/constants/route'
 import { useAuth } from '@/context/AuthProvider'
-import { Button, Checkbox, Divider, Input, Link, useDisclosure } from '@heroui/react'
+import { Button, Divider, Link, useDisclosure } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { FieldValues, Path, useForm } from 'react-hook-form'
 import { ZodType } from 'zod'
 import api from '@/utils/api'
@@ -14,7 +14,8 @@ import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import OTPModal from '@/components/ui/Modal/otp-verification'
-import { setAuthToken } from '@/utils/auth'
+import SignUpFormFields from './SignUpFormField'
+import SignInFormFields from './SignInFormField'
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>
@@ -35,6 +36,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   const [uniqueusernameerror, setUniqueUsernameError] = useState('')
   const [otpVerified, setOtpVerified] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -49,20 +51,31 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
 
   const {
     handleSubmit: handleOtpSubmit,
-    control,
+    control: otpControl, 
     formState: { errors: otpErrors },
   } = useForm<{ otp: string }>()
 
-  const checkUserUniqueness = async (field: 'username' | 'email', value: string) => {
-    if (!value) return
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleAuthError = useCallback((error:any, defaultMessage: string) => {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data?.message || defaultMessage)
+    } else {
+      toast.error(defaultMessage)
+    }
+    setError(error?.response?.data?.message || defaultMessage); 
+  }, []);
+
+ const checkUserUniqueness = useCallback(
+  async (field: 'username' | 'email', value: string) => {
+    if (!value) return;
     try {
-      const response = await api.post(ROUTES.ISUSERUNIQUE, { [field]: value })
+      const response = await api.post(ROUTES.ISUSERUNIQUE, { [field]: value });
       if (response.data.isUnique === false) {
-        if (field === 'username') setUniqueUsernameError('Username is already taken')
-        else setUniqueEmailError('Email is already taken')
+        setUniqueUsernameError(field === 'username' ? 'Username is already taken' : '');
+        setUniqueEmailError(field === 'email' ? 'Email is already taken' : '');
       } else {
-        if (field === 'username') setUniqueUsernameError('')
-        else setUniqueEmailError('')
+        setUniqueUsernameError(field === 'username' ? '' : uniqueusernameerror);
+        setUniqueEmailError(field === 'email' ? '' : uniqueemailerror);
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data?.errors) {
@@ -70,94 +83,129 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
           if (Array.isArray(errorMessages)) {
             errorMessages.forEach((message) => {
               if (message.includes(field === 'username' ? 'Username' : 'Email')) {
-                setUniqueError(field as Path<T>, { type: 'manual', message })
+                setUniqueError(field as Path<T>, { type: 'manual', message });
               }
-            })
+            });
           }
-        })
+        });
       }
-      return false
+      return false;
     }
-  }
+  },
+  [setUniqueError, uniqueemailerror, uniqueusernameerror]
+);
+  const handleFieldBlur = useCallback(
+    async (field: 'username' | 'email') => {
+      const value = watch(field as Path<T>);
+      if (field === 'username') setUniqueUsernameError('');
+      if (field === 'email') setUniqueEmailError('');
 
-  const handleFieldBlur = async (field: 'username' | 'email') => {
-    const value = watch(field as Path<T>)
-    if (field === 'username') setUniqueUsernameError('')
-    if (field === 'email') setUniqueEmailError('')
-
-    if (value) {
-      await trigger(field as Path<T>)
-      if (!errors[field]) {
-        await checkUserUniqueness(field, value)
+      if (value) {
+        await trigger(field as Path<T>);
+        if (!errors[field]) {
+          await checkUserUniqueness(field, value);
+        }
       }
-    }
-  }
+    },
+    [checkUserUniqueness, errors, trigger, watch]
+  );
 
-  const onSubmit = async (data: T) => {
-    setLoading(true)
-    try {
-      const response = await api.post(ROUTES.SENDOTP, { email: data.email })
-      if (response.status === 200) {
-        toast.success('OTP sent to your email. Please check your inbox.')
-        setFormData(data)
-        onOpen()
+  const handleOtpVerification = useCallback(
+    async (otpData: { otp: string }) => {
+      if (otpVerified) return;
+      if (!otpData.otp) {
+        toast.error('OTP is required');
+        return;
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || 'Failed to send OTP.')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  const onOtpSubmit = async (data: { otp: string }) => {
-    if (otpVerified) return
-    try {
-      if (!data.otp) {
-        toast.error('OTP is required')
-        return
-      }
-      const verifyResponse = await api.post(ROUTES.ISVALIDOTP, {
-        email: formData?.email,
-        otp: data.otp,
-      })
-
-      if (verifyResponse.data.isValidOtp) {
-        setOtpVerified(true)
-        setFormData(null)
-        toast.success('OTP verified successfully!')
-        const response = await api.post(ROUTES.REGISTER, {
-          username: formData?.username,
+      try {
+        const verifyResponse = await api.post(ROUTES.ISVALIDOTP, {
           email: formData?.email,
-          password: formData?.password,
-          otp: data.otp,
-        })
-        if (response.status === 200) {
-          toast.success('Signup successful!')
-          router.push(ROUTES.PROFILE_SETUP)
-          setAuthToken(response.data.token, false)
-          fetchUser()
-        } else router.push(ROUTES.SIGN_UP)
-      } else {
-        toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.')
-      }
-    } catch {
-      toast.error('Failed to Register.Please try again.')
-    }
-  }
+          otp: otpData.otp,
+        });
 
-  const handleSignin = async (data: T) => {
-    if (getAuthToken()) {
-      if (authenticatedUser?.roles.includes('Admin')) {
-        router.push(ROUTES.OVERVIEW)
-      } else {
-        router.push(ROUTES.HOME)
+        if (verifyResponse.data.isValidOtp) {
+          setOtpVerified(true);
+          setFormData(null);
+          toast.success('OTP verified successfully!');
+          return true; 
+        } else {
+          toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.');
+          return false; 
+        }
+      } catch (error) {
+        handleAuthError(error, 'Failed to verify OTP. Please try again.');
+        return false; 
       }
-    } else {
-       login(data.usernameOrEmail, data.password, setError, rememberMe)
-    }
-  }
+    },
+    [formData, handleAuthError, otpVerified]
+  );
+  const onSubmit = useCallback(
+    async (data: T) => {
+      setLoading(true);
+      try {
+        const response = await api.post(ROUTES.SENDOTP, { email: data.email });
+        if (response.status === 200) {
+          toast.success('OTP sent to your email. Please check your inbox.');
+          setFormData(data);
+          onOpen();
+        }
+      } catch (error) {
+        handleAuthError(error, 'Failed to send OTP.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleAuthError, onOpen]
+  );
+
+  const onOtpSubmit = useCallback(
+    async (data: { otp: string }) => {
+      const isOtpValid = await handleOtpVerification(data);
+      if (isOtpValid) {
+        try {
+          const response = await api.post(ROUTES.REGISTER, {
+            username: formData?.username,
+            email: formData?.email,
+            password: formData?.password,
+            otp: data.otp,
+          });
+
+          if (response.status === 200) {
+            toast.success('Signup successful!');
+            router.push(ROUTES.PROFILE_SETUP);
+            setAuthToken(response.data.token, false);
+            fetchUser();
+          } else {
+            router.push(ROUTES.SIGN_UP);
+          }
+        } catch (error) {
+          handleAuthError(error, 'Failed to Register. Please try again.');
+        } finally {
+          onOpenChange();
+        }
+      }
+    },
+    [formData, handleAuthError, handleOtpVerification, fetchUser, onOpenChange, router]
+  );
+
+  const handleSignin = useCallback(
+    async (data: T) => {
+      if (getAuthToken()) {
+        if (authenticatedUser?.roles.includes('Admin')) {
+          router.push(ROUTES.OVERVIEW);
+        } else {
+          router.push(ROUTES.HOME);
+        }
+      } else {
+        login(data.usernameOrEmail, data.password, setError, rememberMe);
+      }
+    },
+    [authenticatedUser, login, rememberMe, router, setError]
+  );
+
+
+
   return (
     <div>
       <form
@@ -166,127 +214,38 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
       >
         {error && <p className="text-red-500">{error}</p>}
         {formType === 'SIGN_IN' ? (
-          <>
-            <Input
-              {...register('usernameOrEmail' as Path<T>)}
-              isRequired
-              label="Username or Email Address"
-              type="text"
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-            />
-            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as Path<T>}</p>}
-            <Input
-              {...register('password' as Path<T>)}
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-              isRequired
-              endContent={
-                <button type="button" onClick={() => setIsVisible(!isVisible)}>
-                  <Icon
-                    className="text-2xl text-default-400"
-                    icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                  />
-                </button>
-              }
-              label="Password"
-              type={isVisible ? 'text' : 'password'}
-            />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message as Path<T>}</p>}
-            <div className="flex w-full items-center justify-between px-1 py-2">
-              <Checkbox
-                name="remember"
-                size="sm"
-                isSelected={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              >
-                <p>Remember me</p>
-              </Checkbox>
-              <Link className="text-default-500" href="/password-recover" size="sm">
-                Forgot password?
-              </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <Input
-              {...register('username' as Path<T>)}
-              onBlur={() => handleFieldBlur('username')}
-              isRequired
-              label="Username"
-              type="text"
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-            />
-            {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username.message as Path<T>}</p>}
-            {uniqueusernameerror && <p className="text-red-500">{uniqueusernameerror}</p>}
-            <Input
-              {...register('email' as Path<T>)}
-              onBlur={() => handleFieldBlur('email')}
-              isRequired
-              label="Email"
-              type="email"
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-            />
-            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as Path<T>}</p>}
-            {uniqueemailerror && <p className="text-red-500">{uniqueemailerror}</p>}
-
-            <Input
-              {...register('password' as Path<T>)}
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-              isRequired
-              endContent={
-                <button type="button" onClick={() => setIsVisible(!isVisible)}>
-                  <Icon
-                    className="text-2xl text-default-400"
-                    icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                  />
-                </button>
-              }
-              label="Password"
-              type={isVisible ? 'text' : 'password'}
-            />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message as Path<T>}</p>}
-
-            <Input
-              {...register('confirmPassword' as Path<T>)}
-              className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-              isRequired
-              endContent={
-                <button type="button" onClick={() => setIsConfirmVisible(!isConfirmVisible)}>
-                  <Icon
-                    className="text-2xl text-default-400"
-                    icon={isConfirmVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                  />
-                </button>
-              }
-              label="Confirm Password"
-              type={isConfirmVisible ? 'text' : 'password'}
-            />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500">{errors.confirmPassword.message as Path<T>}</p>
-            )}
-
-            <Checkbox {...register('agreeTerms' as Path<T>)} className="py-4" size="sm">
-              I agree with the &nbsp;
-              <Link href="#" size="sm">
-                Terms
-              </Link>
-              &nbsp; and &nbsp;
-              <Link href="#" size="sm">
-                Privacy Policy
-              </Link>
-            </Checkbox>
-            {errors.agreeTerms && <p className="text-sm text-red-500">{errors.agreeTerms.message as Path<T>}</p>}
-          </>
-        )}
-
+                    <SignInFormFields
+                        register={register}
+                        errors={errors}
+                        isVisible={isVisible}
+                        setIsVisible={setIsVisible}
+                        rememberMe={rememberMe}
+                        setRememberMe={setRememberMe}
+                    />
+                ) : (
+                    <SignUpFormFields
+                        register={register}
+                        errors={errors}
+                        uniqueusernameerror={uniqueusernameerror}
+                        uniqueemailerror={uniqueemailerror}
+                        isVisible={isVisible}
+                        setIsVisible={setIsVisible}
+                        isConfirmVisible={isConfirmVisible}
+                        setIsConfirmVisible={setIsConfirmVisible}
+                        handleFieldBlur={handleFieldBlur}
+                    />
+                )}
         <Button className="w-full text-white" color="primary" type="submit" isDisabled={loading}>
           {!loading ? buttonText : 'Processing...'}
         </Button>
       </form>
+
       <div className="flex items-center gap-4 py-2">
         <Divider className="flex-1" />
         <p className="shrink-0 text-tiny text-default-500">OR</p>
         <Divider className="flex-1" />
       </div>
+
       <div className="flex flex-col gap-2">
         <Button className="w-full" startContent={<Icon icon="flat-color-icons:google" />} variant="bordered">
           Continue with Google
@@ -299,6 +258,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
           Continue with Github
         </Button>
       </div>
+
       {formType === 'SIGN_IN' ? (
         <p className="w-full flex gap-2 text-center text-sm items-center justify-center">
           Need to create an account?
@@ -315,11 +275,11 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         handleFormSubmit={handleOtpSubmit(onOtpSubmit)}
-        control={control}
+        control={otpControl} 
         errors={otpErrors}
       />
     </div>
-  )
-}
+  );
+};
 
 export default AuthForm

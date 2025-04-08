@@ -13,7 +13,7 @@ const ROUTES = {
   ACCOUNT_SETTING:'/User/Account/Settings',
   CANDIDATE_SETTING:'/mysettings',
   ADMIN_SETTING:'/settings',
-   
+  FORGOT_PASSWORD:'/password-recover'
 }
 
 export default ROUTES

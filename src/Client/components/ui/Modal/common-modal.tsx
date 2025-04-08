@@ -1,24 +1,44 @@
 'use client'
 
-import { Modal, ModalContent, ModalBody, Button, ModalFooter } from '@heroui/react'
-import handleDelete from '@/components/ui/handleDelete'
-interface PageProps {
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react'
+
+interface CommonModalProps {
   isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
+  onClose: () => void
   title: string
+  content: React.ReactNode
+  confirmButtonText: string
+  onConfirm: () => void
 }
-const CommonModal = ({ isOpen, onOpenChange, title }: PageProps) => {
+const CommonModal = ({ isOpen, onClose, title, content, confirmButtonText, onConfirm }: CommonModalProps) => {
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} onSubmit={handleDelete}>
+    <Modal isOpen={isOpen}>
       <ModalContent>
-        {(onClose) => (
+        {(close) => (
           <>
+            <ModalHeader>{title}</ModalHeader>
             <ModalBody>
-              <p>{title}</p>
+              <p>{content}</p>
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" onPress={onClose}>
+              <Button
+                color="default"
+                onPress={() => {
+                  onClose()
+                  close()
+                }}
+              >
                 Close
+              </Button>
+              <Button
+                color="primary"
+                onPress={async () => {
+                  onConfirm()
+                  onClose()
+                  close()
+                }}
+              >
+                {confirmButtonText}
               </Button>
             </ModalFooter>
           </>

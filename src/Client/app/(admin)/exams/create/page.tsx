@@ -1,9 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, Card, DatePicker, Input, Textarea, TimeInput, useDisclosure } from '@heroui/react'
+import { Button, Card, DatePicker, Input, Textarea, TimeInput } from '@heroui/react'
 import { CalendarDate, Time } from '@internationalized/date'
-import CommonModal from '@/components/ui/Modal/common-modal'
 import ProblemSolve from '@/components/ques/problem-solving-ques'
 import WrittenQues from '@/components/ques/written-ques'
 import McqQues from '@/components/ques/mcq-ques'
@@ -26,7 +25,6 @@ function parseTime(time: string): Time | null {
 
 export default function App() {
   const [date] = React.useState<CalendarDate | null>(null)
-  const { isOpen, onOpenChange } = useDisclosure()
   const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([])
 
   const handleAddComponent = (componentType: string) => {
@@ -125,7 +123,6 @@ export default function App() {
           <Button onPress={() => handleAddComponent('mcq')}>Add MCQ Question</Button>
         )}
       </div>
-      <CommonModal isOpen={isOpen} onOpenChange={onOpenChange} title="Exam Created Successfully" />
     </div>
   )
 }
