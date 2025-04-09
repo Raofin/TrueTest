@@ -1,14 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react'
+import { Button, Card, CardBody, CardHeader, Modal, ModalContent, ModalBody, useDisclosure, Link } from '@heroui/react'
+import { Controller, useForm } from 'react-hook-form'
 import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
-import api from '@/utils/api'
-import toast from 'react-hot-toast'
-import CreateExam from '../exams/create/page'
 
 interface Exam {
+  id: number
   examId: string
   title: string
   description: string
@@ -16,10 +15,6 @@ interface Exam {
   opensAt: string
   createdAt: string
   closesAt: string
-  totalPoints: number
-  problemSolvingPoints: number
-  writtenPoints: number
-  mcqPoints: number
   status: 'Published' | 'Draft' | 'Ended'
   invitedCandidates: number | 'N/A'
   acceptedCandidates: number | 'N/A'
@@ -30,25 +25,67 @@ interface Exam {
 }
 
 const ITEMS_PER_PAGE = 2
-
+const Exams: Exam[] = [
+  {
+    id: 1,
+    title: 'Star Coder 2026',
+    description: 'Running',
+    durationMinutes: 60,
+    opensAt: '2026-11-21T21:00:00.000Z',
+    closesAt: '2026-11-21T22:20:00.000Z',
+    status: 'Published',
+    problemSolving: 10,
+    written: 10,
+    mcq: 30,
+    score: 100,
+    examId: '',
+    createdAt: '',
+    invitedCandidates: 0,
+    acceptedCandidates: 0,
+  },
+  {
+    id: 2,
+    title: 'Learnathon 4.0',
+    description: 'Upcoming',
+    durationMinutes: 90,
+    opensAt: '2026-12-10T21:00:00.000Z',
+    closesAt: '2026-12-10T23:00:00.000Z',
+    status: 'Draft',
+    problemSolving: 10,
+    written: 10,
+    mcq: 30,
+    score: 100,
+    examId: '',
+    createdAt: '',
+    invitedCandidates: 0,
+    acceptedCandidates: 0,
+  },
+  {
+    id: 3,
+    title: 'Star Coder 2005',
+    description: 'Ended',
+    durationMinutes: 60,
+    opensAt: '2025-11-21T21:00:00.000Z',
+    closesAt: '2025-11-21T22:00:00.000Z',
+    status: 'Ended',
+    problemSolving: 10,
+    written: 10,
+    mcq: 30,
+    score: 100,
+    examId: '',
+    createdAt: '',
+    invitedCandidates: 0,
+    acceptedCandidates: 0,
+  },
+]
 export default function ExamList() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { control, reset } = useForm<Exam>()
   const [currentPage, setCurrentPage] = useState(1)
-  const [allExam, setAllExam] = useState<Exam[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const totalPages = Math.max(1, Math.ceil(allExam.length / ITEMS_PER_PAGE))
-  useEffect(() => {
-    const handleViewExam = async () => {
-      try {
-        const response = await api.get('/Exam')
-        if (response.status === 200) {
-          setAllExam(response.data)
-        }
-      } catch {
-        toast.error('An error has occurered')
-      }
-    }
-    handleViewExam()
-  }, [])
+  const [selectedExam, setSelectedExam] = useState<Exam | null>(null)
+  const totalPages = Math.max(1, Math.ceil(Exams.length / ITEMS_PER_PAGE))
+
   useEffect(() => {
     setCurrentPage((prev) => Math.min(prev, totalPages))
     if (currentPage > totalPages) {
@@ -56,16 +93,19 @@ export default function ExamList() {
     }
   }, [currentPage, totalPages])
 
-  const paginatedExams = allExam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const paginatedExams = Exams.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
   const handleEdit = (exam: Exam) => {
-    ;<CreateExam exam={exam} />
+    setSelectedExam(exam)
+    reset(exam)
+    onOpen()
   }
+
   return (
     <>
       <div className={`h-screen flex flex-col justify-between w-full`}>
         <h1 className="w-full text-center text-3xl font-bold my-3">Exams</h1>
         {paginatedExams.map((exam) => (
-          <Card key={exam.examId} className="mx-8 p-4 shadow-none">
+          <Card key={exam.id} className="mx-8 p-4 shadow-none">
             <CardHeader className="flex justify-between items-center ">
               <div className="flex items-end gap-1">
                 <h1 className="text-2xl font-bold flex gap-1 items-end text-[#3f3f46] dark:text-white">{exam.title}</h1>
@@ -156,6 +196,67 @@ export default function ExamList() {
           />
         </div>
       </div>
+
+      <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
+        <ModalContent>
+          <ModalBody>
+            {selectedExam && (
+              <form id="#" className="flex flex-col gap-6 p-10">
+                <Controller
+                  name="title"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-2">
+                      <h3 className="font-semibold">Title :</h3> <input {...field} placeholder="Exam Title" />
+                    </div>
+                  )}
+                />
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-2">
+                      <h3 className="font-semibold">Description :</h3> <input {...field} placeholder="Description" />
+                    </div>
+                  )}
+                />
+                <Controller
+                  name="durationMinutes"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-2">
+                      <h3 className="font-semibold flex">Duration(min) :</h3>{' '}
+                      <input {...field} type="number" placeholder="Duration (minutes)" />
+                    </div>
+                  )}
+                />
+                <Controller
+                  name="opensAt"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-2">
+                      <h3 className="font-semibold">Start Time :</h3> <input {...field} placeholder="Start Time" />
+                    </div>
+                  )}
+                />
+                <Controller
+                  name="closesAt"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-2">
+                      <h3 className="font-semibold">Close Time :</h3>
+                      <input {...field} placeholder="Close Time" />
+                    </div>
+                  )}
+                />
+                <Button color="primary" type="submit">
+                  Update Exam
+                </Button>
+              </form>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <CommonModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

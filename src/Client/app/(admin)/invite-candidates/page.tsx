@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { MdDelete } from 'react-icons/md'
 import { FaEdit } from 'react-icons/fa'
 import Papa from 'papaparse'
@@ -23,8 +23,6 @@ import SearchIcon from '@/components/ui/search-icon'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import PaginationButtons from '@/components/ui/pagination-button'
-import api from '@/utils/api'
-import toast from 'react-hot-toast'
 
 const columns = [
   { label: 'Email', key: 'email' },
@@ -34,41 +32,26 @@ interface CsvRow {
   email?: string
   [key: string]: string | undefined
 }
-type Exams = {
-  examId: string
-  title: string
-}
+
 type User = {
   email: string
 }
-
 export default function Component() {
+  const exams: { key: string; label: string }[] = [
+    { key: 'a', label: 'Learnathon 1.0' },
+    { key: 'b', label: 'Learnathon 2.0' },
+    { key: 'c', label: 'Learnathon 3.0' },
+  ]
   const [filterValue, setFilterValue] = useState('')
   const rowsPerPage = 10
   const [page, setPage] = useState(1)
   const [fileContent, setFileContent] = useState('')
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const [exams, setExams] = useState<Exams[]>([])
   const [copiedEmail, setCopiedEmail] = React.useState('')
   const hasSearchFilter = Boolean(filterValue)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [userEmail, setUserEmail] = useState<User[]>([])
-  const [examId,setExamId]=useState("")
-
-  useEffect(() => {
-    const SelectExams = async () => {
-      try {
-        const response = await api.get(`/Exam`)
-        if (response.status === 200) {
-          setExams(response.data.accounts)
-        }
-      } catch {
-        toast.error('An error has occurered')
-      }
-    }
-    SelectExams()
-  }, [])
   const handleCopyEmail = useCallback(
     (email: string) => {
       navigator.clipboard.writeText(email).then(() => {
@@ -78,6 +61,7 @@ export default function Component() {
     },
     [setCopiedEmail]
   )
+
   const filteredItems = useMemo(() => {
     let filteredUsers = [...userEmail]
     if (hasSearchFilter) {
@@ -106,52 +90,21 @@ export default function Component() {
       reader.readAsText(file)
     }
   }
-  const handleSendToAPI = async (examId: string, emails: User[]) => {
-    try {
-      const response = await api.post('/Exam/Invite/Candidates',{examId,emails});
-
-      if (response.status!==200) {
-        throw new Error('Failed to invite candidates');
-      }
-    } catch (error) {
-      console.error('Error sending to API:', error);
-    }
-  };  
   const handlecsvtoarray = () => {
-    if (!fileContent.includes(',') && !fileContent.includes('\n') && !fileContent.includes('\t')) {
-      setUserEmail([{ email: fileContent.trim() }]);
-      return;
-    }
     Papa.parse(fileContent, {
       header: true,
       skipEmptyLines: true,
       complete: (result) => {
-        if (result.data.length > 0 && typeof result.data[0] === 'object') {
-          const emailList = (result.data as CsvRow[])
-            .map((row) => row.email ?? Object.values(row)[0])
-            .filter((email): email is string => typeof email === 'string');
-          setUserEmail(emailList.map((email) => ({ email })));
-        } else {
-          parsePlainTextEmails();
+        const emailList = (result.data as CsvRow[])
+          .map((row) => row.email ?? Object.values(row)[0])
+          .filter((email): email is string => typeof email === 'string')
 
-        }
+        const userList: User[] = emailList.map((email) => ({ email }))
+        setUserEmail(userList)
       },
-      error: () => {
-        parsePlainTextEmails();
-
-      },
-    });
-
-  };
-  
-  const parsePlainTextEmails = () => {
-    const emails = fileContent
-      .split(/[\n,]+/) 
-      .map(email => email.trim())
-      .filter(email => email.length > 0 && email.includes('@')); 
-  
-    setUserEmail(emails.map(email => ({ email })));
-  };
+      error: (error: unknown) => console.error('Parsing Error: ', error),
+    })
+  }
 
   const renderCell = useCallback(
     (user: User, columnKey: React.Key) => {
@@ -206,55 +159,39 @@ export default function Component() {
             <Select
               label=""
               className="max-w-md  ml-4 bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
-              placeholder="Select an exam"   
+              placeholder="Select an exam"
             >
-              {exams?.map((exam) => (
-                <SelectItem onChange={()=>{setExamId(exam.examId)}} key={exam.examId}>{exam.title}</SelectItem>
+              {exams.map((exam) => (
+                <SelectItem key={exam.key}>{exam.label}</SelectItem>
               ))}
             </Select>
           </div>
           <h1 className="ml-6 my-2">Candidate Email Import</h1>
           <div className="flex gap-2 px-5">
             <Textarea
+              type="file"
               value={fileContent}
-              onChange={(e) => setFileContent(e.target.value)}
-              placeholder="Insert candidate emails (separated by line breaks or commas) or upload a file."
-              rows={5}
-              onPaste={(e) => {
-                const items = e.clipboardData.items
-                for (let i = 0; i < items.length; i++) {
-                  if (items[i].kind === 'file') {
-                    const file = items[i].getAsFile()
-                    if (file) {
-                      const reader = new FileReader()
-                      reader.onload = (event) => {
-                        if (event.target?.result) {
-                          setFileContent(event.target.result as string)
-                        }
-                      }
-                      reader.readAsText(file)
-                    }
-                  }
-                }
-              }}
+              className="Insert candidate emails (separated by line breaks or commas)."
             />
             <div className="flex flex-col gap-2">
               <input
                 type="file"
-                accept=".csv,.txt,.xlsx"
+                accept=".csv,.txt"
                 ref={fileInputRef}
                 onChange={handleFileUpload}
                 style={{ display: 'none' }}
+                className="bg-[#eeeef0] dark:[#71717a] rounded-xl"
               />
               <Button onPress={() => fileInputRef.current?.click()}>Upload CSV</Button>
-              <Button color="primary" onPress={handlecsvtoarray} isDisabled={!fileContent}>
+              <Button color="primary" onPress={handlecsvtoarray}>
                 Add to list
               </Button>
             </div>
           </div>
         </div>
+
         <div>
-          <div className="my-4 flex w-full justify-between">
+          <div className="mt-4 flex gap-8 w-full justify-between">
             <h2 className="ml-5">Candidates List</h2>
             <div className="flex items-end">
               <Input
@@ -307,7 +244,7 @@ export default function Component() {
               onPrevious={() => setPage(page - 1)}
               onNext={() => setPage(page + 1)}
             />
-            <Button size="sm" color="primary" onPress={()=>handleSendToAPI(examId,userEmail)}>
+            <Button size="sm" color="primary">
               Send Invitation
             </Button>
           </div>

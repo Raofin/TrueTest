@@ -12,15 +12,11 @@ import {
   Input,
   Button,
   Pagination,
-  SelectItem,
-  Select,
 } from '@heroui/react'
 import SearchIcon from '@/components/ui/search-icon'
+import { AxiosError } from 'axios'
 import api from '@/utils/api'
 import FormattedDate from '@/components/format-date-time'
-import isValidEmail from '@/components/check-valid-email'
-import toast from 'react-hot-toast'
-
 type User = {
   isActive: boolean
   profile: [] | null
@@ -29,7 +25,7 @@ type User = {
   accountId: string
   username: string
   email: string
-  roles: string[]
+  roles: string
   action?: string
 }
 
@@ -42,48 +38,35 @@ const columns = [
 
 export default function Component() {
   const [filterValue, setFilterValue] = useState('')
-  const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [roleFilter, setRoleFilter] = useState('')
+  const rowsPerPage = 10
   const [page, setPage] = useState(1)
   const hasSearchFilter = Boolean(filterValue)
-  const hasRoleFilter = Boolean(roleFilter)
   const [allUsers, setAllUsers] = useState<User[]>([])
   const [error, setError] = useState('')
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set())
-  const [invitedEmails, setInvitedEmails] = useState('')
+  const [invitedEmail, setInvitedEmail] = useState('')
 
   useEffect(() => {
     const ManageUser = async () => {
       try {
-        const response = await api.get<{ page: number; accounts: User[] }>(
-          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${roleFilter ? `&role=${roleFilter}` : ''}`
-        )
+        const response = await api.get('Account/All')
         if (response.status === 200) {
-          setAllUsers(response.data.accounts)
+          setAllUsers(response.data)
         }
-      } catch {
-        setError('An error has occured.')
+      } catch (err) {
+        const error = err as AxiosError
+        setError(error.message)
       }
     }
     ManageUser()
-  }, [page, roleFilter, rowsPerPage])
-
+  }, [])
   const filteredItems = useMemo(() => {
     let filteredUsers = [...allUsers]
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.email?.toLowerCase().includes(filterValue.toLowerCase()) ||
-          user.username?.toLowerCase().includes(filterValue.toLowerCase())
-      )
-    }
-    if (hasRoleFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.roles?.some((role) => role.toLowerCase() === roleFilter.toLowerCase())
-      )
+      filteredUsers = filteredUsers.filter((user) => user.email.toLowerCase().includes(filterValue.toLowerCase()))
     }
     return filteredUsers
-  }, [filterValue, hasSearchFilter, allUsers, roleFilter, hasRoleFilter])
+  }, [filterValue, hasSearchFilter, allUsers])
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage)
 
@@ -126,152 +109,67 @@ export default function Component() {
 
   const onClear = useCallback(() => {
     setFilterValue('')
-    setRoleFilter('')
     setPage(1)
   }, [])
 
-  const onRoleChange = useCallback((value: string) => {
-    setRoleFilter(value)
-    setPage(1)
-  }, [])
   const handleMakeAdmin = useCallback(async () => {
     const selectedEmail = Array.from(selectedKeys)
-    if(selectedEmail.length==0){
-      alert("please select an account to make admin.")
-    }
     const selectedUsers = allUsers.filter((e) => selectedEmail.includes(e.email))
-
+    const adminUsers = selectedUsers.map((e) => ({ accountId: e.accountId }))
     try {
-      const response = await api.patch('/Account/MakeAdmin', {
-        accountIds: selectedUsers.map((e) => e.accountId),
-      })
-
-      if (response.status === 200) {
-        setAllUsers((prev) =>
-          prev.map((e) =>
-            selectedEmail.includes(e.email) ? { ...e, roles: Array.from(new Set([...e.roles, 'Admin'])) } : e
-          )
-        )
-        setSelectedKeys(new Set())
-        toast.success('Selected users have been made admins successfully!')
+      for (const user of adminUsers) {
+        await api.post('Account/MakeAdmin', user)
       }
-    } catch  {
-      toast.error('Failed to make admin. Please try again.')
+      setAllUsers((prev) =>
+        prev.map((e) => (selectedEmail.includes(e.email) ? { ...e, roles: `${e.roles},admin` } : e))
+      )
+    } catch (error) {
+      console.error('Error :', error)
     }
+    setSelectedKeys(new Set())
   }, [selectedKeys, allUsers])
-
   const handleInvitation = useCallback(async () => {
-    const emailsToSend = invitedEmails
-      .split(',')
-      .map((email) => email.trim())
-      .filter(Boolean)
-
-    const invalidEmails = emailsToSend.filter((email) => !isValidEmail(email))
-
-    if (invalidEmails.length > 0) {
-      alert(`Emails are invalid`)
-      return
-    }
-
-    if (emailsToSend.length === 0) {
-      alert('Please enter at least one valid email address')
-      return
-    }
-
     try {
-      const response = await api.post('/Account/SendAdminInvite', {
-        email: emailsToSend,
-      })
-      if (response.status === 200) {
-        toast.success('Invitations sent successfully!')
-        setInvitedEmails('')
-      }
-    } catch {
-      toast.error('Failed to send invitations. Please try again.')
+      await api.post('Account/SendAdminInvite', { email: invitedEmail })
+    } catch (error) {
+      console.error('Error :', error)
     }
-  }, [invitedEmails])
+    setInvitedEmail('')
+  }, [invitedEmail])
 
   const topContent = useMemo(
     () => (
-      <div className="flex gap-3 p-3 w-full flex-col items-center mt-5">
-        <div className="w-full flex justify-end gap-3">
-          <Select
-            label="Filter by Role"
-            className="w-[150px]"
-            items={[
-              { key: '', value: '', label: 'All Roles' },
-              { key: 'Admin', value: 'Admin', label: 'Admin' },
-              { key: 'Candidate', value: 'Candidate', label: 'Candidate' },
-            ]}
-            selectedKeys={[roleFilter]}
-            onSelectionChange={(keys) => {
-              for (const key of keys) {
-                onRoleChange(key as string)
-                break
-              }
-              if (!keys) {
-                onRoleChange('')
-              }
-            }}
-          >
-            {(item) => <SelectItem key={item.key}>{item.label}</SelectItem>}
-          </Select>
-          <Select
-            label="Rows per page"
-            className="w-[150px]"
-            selectedKeys={[String(rowsPerPage)]}
-            onSelectionChange={(keys) => {
-              for (const key of keys) {
-                const selectedValue = key as string
-                if (selectedValue) {
-                  setRowsPerPage(Number(selectedValue))
-                  break
-                }
-              }
-            }}
-            items={[
-              { key: '5', value: '5', label: '5' },
-              { key: '10', value: '10', label: '10' },
-              { key: '15', value: '15', label: '15' },
-              { key: '20', value: '20', label: '20' },
-              { key: '50', value: '50', label: '50' },
-            ]}
-          >
-            {(item) => <SelectItem key={item.key}>{item.label}</SelectItem>}
-          </Select>
-        </div>
-        <div className="flex w-full justify-between ">
-          <p>User List</p>
-          <Input
-            isClearable
-            className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-            placeholder="Search"
-            startContent={<SearchIcon />}
-            value={filterValue}
-            onClear={onClear}
-            onValueChange={onSearchChange}
-          />
-        </div>
+      <div className="flex w-full justify-between px-5 my-3">
+        <p>User List</p>
+        <Input
+          isClearable
+          className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+          placeholder="Search"
+          startContent={<SearchIcon />}
+          value={filterValue}
+          onClear={onClear}
+          onValueChange={onSearchChange}
+        />
       </div>
     ),
-    [filterValue, onClear, onRoleChange, onSearchChange, roleFilter, rowsPerPage]
+    [filterValue, onClear, onSearchChange]
   )
 
   return (
-    <div className=" flex flex-col justify-between">
+    <div className="h-screen flex flex-col justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
-      <div className="mx-12 flex  flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
+      <div className="mx-12 flex h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
         <div className="flex gap-3 w-full p-3 mt-5">
           <Input
             isClearable
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
-            placeholder="Email Addresses"
+            placeholder="Email Address"
             onClear={onClear}
-            value={invitedEmails}
-            onChange={(e) => setInvitedEmails(e.target.value)}
+            value={invitedEmail}
+            onChange={(e) => setInvitedEmail(e.target.value)}
           />
           <Button color="primary" onPress={handleInvitation}>
-            Send Invitations
+            Send Invitation
           </Button>
         </div>
         {error && <p className="text-red-500 text-xl">{error}</p>}
@@ -279,7 +177,6 @@ export default function Component() {
           aria-label="Example table with custom cells, pagination, and sorting"
           topContent={topContent}
           topContentPlacement="outside"
-
           classNames={{
             wrapper: ' overflow-y-auto',
           }}
