@@ -19,10 +19,10 @@ import {
   Tooltip,
   Select,
 } from '@heroui/react'
-import SearchIcon from '@/app/components/table/search_icon/page'
+import SearchIcon from '@/components/ui/search-icon'
 import { Icon } from '@iconify/react/dist/iconify.js'
-import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
-import PaginationButtons from '@/app/components/ui/pagination-button'
+import CommonModal from '@/components/ui/Modal/edit-delete-modal'
+import PaginationButtons from '@/components/ui/pagination-button'
 
 const columns = [
   { label: 'Email', key: 'email' },
@@ -96,7 +96,7 @@ export default function Component() {
       skipEmptyLines: true,
       complete: (result) => {
         const emailList = (result.data as CsvRow[])
-          .map((row) => row.email || Object.values(row)[0])
+          .map((row) => row.email ?? Object.values(row)[0])
           .filter((email): email is string => typeof email === 'string')
 
         const userList: User[] = emailList.map((email) => ({ email }))
@@ -109,33 +109,32 @@ export default function Component() {
   const renderCell = useCallback(
     (user: User, columnKey: React.Key) => {
       const cellValue = user[columnKey as keyof User]
-      switch (columnKey) {
-        case 'action':
-          return (
-            <div className="flex justify-center gap-4">
-              <button onClick={() => setIsEditModalOpen(true)}>
-                <FaEdit className="text-xl" />
-              </button>
-              <button onClick={() => setIsDeleteModalOpen(true)}>
-                <MdDelete className="text-xl" />
-              </button>
-            </div>
-          )
-        default:
-          return (
-            <div className="flex items-center gap-2">
-              <span>{cellValue}</span>
-              <Tooltip content={copiedEmail === cellValue ? 'Copied!' : 'Copy email'}>
-                <Button isIconOnly variant="light" size="sm" onPress={() => handleCopyEmail(cellValue)}>
-                  <Icon
-                    icon={copiedEmail === cellValue ? 'lucide:check' : 'lucide:copy'}
-                    className={copiedEmail === cellValue ? 'text-success' : ''}
-                    width={18}
-                  />
-                </Button>
-              </Tooltip>
-            </div>
-          )
+      if (columnKey === 'action') {
+        return (
+          <div className="flex justify-center gap-4">
+            <button onClick={() => setIsEditModalOpen(true)}>
+              <FaEdit className="text-xl" />
+            </button>
+            <button onClick={() => setIsDeleteModalOpen(true)}>
+              <MdDelete className="text-xl" />
+            </button>
+          </div>
+        )
+      } else {
+        return (
+          <div className="flex items-center gap-2">
+            <span>{cellValue}</span>
+            <Tooltip content={copiedEmail === cellValue ? 'Copied!' : 'Copy email'}>
+              <Button isIconOnly variant="light" size="sm" onPress={() => handleCopyEmail(cellValue)}>
+                <Icon
+                  icon={copiedEmail === cellValue ? 'lucide:check' : 'lucide:copy'}
+                  className={copiedEmail === cellValue ? 'text-success' : ''}
+                  width={18}
+                />
+              </Button>
+            </Tooltip>
+          </div>
+        )
       }
     },
     [copiedEmail, handleCopyEmail]
@@ -169,7 +168,11 @@ export default function Component() {
           </div>
           <h1 className="ml-6 my-2">Candidate Email Import</h1>
           <div className="flex gap-2 px-5">
-            <Textarea type="file" value={fileContent} className=" " />
+            <Textarea
+              type="file"
+              value={fileContent}
+              className="Insert candidate emails (separated by line breaks or commas)."
+            />
             <div className="flex flex-col gap-2">
               <input
                 type="file"
@@ -201,7 +204,8 @@ export default function Component() {
               />
             </div>
           </div>
-          <Table suppressHydrationWarning
+          <Table
+            suppressHydrationWarning
             aria-label="Example table with custom cells, pagination"
             bottomContentPlacement="inside"
             className=""

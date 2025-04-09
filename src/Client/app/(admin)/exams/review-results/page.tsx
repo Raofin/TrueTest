@@ -137,12 +137,14 @@ int main() {
     },
   ]
 
-  const [flaggedCandidate, setFlaggedCandidate] = useState<number|null>(null);
+  const [flaggedCandidates, setFlaggedCandidates] = useState<{
+    [candidateId: string]: { [questionId: number]: boolean }
+  }>({})
   const [selectedCandidate, setSelectedCandidate] = useState('Candidate-1')
   const currentExamData = examData[0]
   const currentCandidateSubmission = currentExamData.submissions.find((sub) => sub.candidateId === selectedCandidate)
   const currentQ = currentCandidateSubmission?.questions || currentExamData.submissions[0].questions
-  
+
   const handleCandidateChange = (value: string) => {
     setSelectedCandidate(value)
   }
@@ -160,7 +162,22 @@ int main() {
       setSelectedCandidate(currentExamData.submissions[currentIndex + 1].candidateId)
     }
   }
+  const handleFlagChange = (candidateId: string, questionId: number) => {
+    setFlaggedCandidates((prevFlags) => {
+      const newFlags = { ...prevFlags }
+      if (!newFlags[candidateId]) {
+        newFlags[candidateId] = {}
+      }
+      newFlags[candidateId][questionId] = !newFlags[candidateId][questionId]
+      return newFlags
+    })
+  }
 
+  const isQuestionFlagged = (candidateId: string, questionId: number) => {
+    return flaggedCandidates[candidateId] && flaggedCandidates[candidateId][questionId]
+      ? flaggedCandidates[candidateId][questionId]
+      : false
+  }
   return (
     <div className="min-h-screen flex flex-col  justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Review Results</h2>
@@ -237,8 +254,8 @@ int main() {
         <div className="bg-white dark:bg-[#18181b] p-5 rounded-xl">
           <h2 className="w-full text-center ">{selectedCandidate}</h2>
 
-          {currentQ.map((curr, idx) => (
-            <div key={idx} className="space-y-4">
+          {currentQ.map((curr) => (
+            <div key={curr.id} className="space-y-4">
               <h2 className="text-lg font-semibold">{curr.title}</h2>
               <p>{curr.description}</p>
               {curr.type === 'code' && (
@@ -282,8 +299,8 @@ int main() {
                       <div className="text-xs text-default-500 mb-1">Expected Output</div>
                       <div className="text-xs text-default-500 mb-1">Received Output</div>
                     </div>
-                    {curr.testCases.map((testCase, index) => (
-                      <div key={index} className="grid grid-cols-3 gap-4 p-3 ">
+                    {curr.testCases.map((testCase) => (
+                      <div key={testCase.input} className="grid grid-cols-3 gap-4 p-3 ">
                         <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#27272a]`}>
                           {testCase.input}
                         </div>
@@ -307,13 +324,20 @@ int main() {
                     <input name="points" type="number" className="w-16" defaultValue={curr.points} />/{curr.maxPoints}
                   </div>
                   <Button size="sm" variant="flat">
-                    <input name="flag" type="checkbox" checked={flaggedCandidate===idx} onChange={() => setFlaggedCandidate(flaggedCandidate===idx? null: idx)} />
+                    <input
+                      name="flag"
+                      type="checkbox"
+                      checked={isQuestionFlagged(selectedCandidate, curr.id)}
+                      onChange={() => handleFlagChange(selectedCandidate, curr.id)}
+                    />
                     Flag Solution
                   </Button>
                 </div>
               </div>
 
-              {flaggedCandidate === idx && <Textarea className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl" placeholder="Flag reason" />}
+              {isQuestionFlagged(selectedCandidate, curr.id) && (
+                <Textarea className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl" placeholder="Flag reason" />
+              )}
 
               <div className="w-full flex justify-center">
                 <Button className="my-3" color="primary">
