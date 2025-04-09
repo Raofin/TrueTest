@@ -26,7 +26,14 @@ C -->|Two| E[Result 2]
 \`\`\`
 `
 
-const randomid = () => parseInt(String(Math.random() * 1e15), 10).toString(36)
+const randomid = () => {
+  const array = new Uint32Array(10); 
+  window.crypto.getRandomValues(array);
+  return Array.from(array)
+    .map(n => n.toString(36))
+    .join('')
+    .substring(0, 15); 
+};
 
 interface CodeProps {
   children?: React.ReactNode;
