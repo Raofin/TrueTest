@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Selection } from '@heroui/react'
 import {
   Table,
@@ -13,34 +13,53 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from 'app/components/table/search_icon/page'
+import SearchIcon from '@/components/ui/search-icon'
+import { AxiosError } from 'axios'
+import api from '@/utils/api'
+import FormattedDate from '@/components/format-date-time'
+type User = {
+  isActive: boolean
+  profile: [] | null
+  updatedAt: string | null
+  createdAt: string
+  accountId: string
+  username: string
+  email: string
+  roles: string
+  action?: string
+}
 
 const columns = [
   { label: 'Username', key: 'username' },
   { label: 'Email', key: 'email' },
-  { label: 'Role', key: 'role' },
-  { label: 'Created At', key: 'create' },
+  { label: 'Role', key: 'roles' },
+  { label: 'Created At', key: 'createdAt' },
 ]
-
-const users = [
-  { key: '1', username: 'Eve', email: 'eve@example.com', role: 'User', create: '30 May 2025, 6:50 PM' },
-  { key: '2', username: 'Alice', email: 'alice@example.com', role: 'Admin', create: '15 Jan 2025, 10:15 AM' },
-  { key: '3', username: 'Bob', email: 'bob@example.com', role: 'Moderator', create: '22 Mar 2025, 4:45 PM' },
-  { key: '4', username: 'Charlie', email: 'charlie@example.com', role: 'Candidate', create: '10 Feb 2025, 9:30 AM' },
-  { key: '5', username: 'David', email: 'david@example.com', role: 'Editor', create: '05 Apr 2025, 1:20 PM' },
-  { key: '6', username: 'Eve', email: 'eve@example.com', role: 'User', create: '30 May 2025, 6:50 PM' },
-]
-
-type User = (typeof users)[0]
 
 export default function Component() {
   const [filterValue, setFilterValue] = useState('')
   const rowsPerPage = 10
   const [page, setPage] = useState(1)
   const hasSearchFilter = Boolean(filterValue)
-  const [allUsers, setAllUsers] = useState(users)
+  const [allUsers, setAllUsers] = useState<User[]>([])
+  const [error, setError] = useState('')
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set())
+  const [invitedEmail, setInvitedEmail] = useState('')
 
+  useEffect(() => {
+    const ManageUser = async () => {
+      try {
+        const response = await api.get('Account/All')
+        if (response.status === 200) {
+          setAllUsers(response.data)
+        }
+      } catch (err) {
+        const error = err as AxiosError
+        setError(error.message)
+      }
+    }
+    ManageUser()
+  }, [])
   const filteredItems = useMemo(() => {
     let filteredUsers = [...allUsers]
     if (hasSearchFilter) {
@@ -71,7 +90,12 @@ export default function Component() {
 
   const renderCell = useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User]
-    return cellValue
+    if (columnKey === 'createdAt') return <FormattedDate date={cellValue as string} />
+    else if (columnKey === 'roles') {
+      if (Array.isArray(cellValue)) {
+        return cellValue.map((curr) => <div key={curr}>{curr}</div>)
+      }
+    } else return cellValue as React.ReactNode
   }, [])
 
   const onSearchChange = useCallback((value?: string) => {
@@ -88,28 +112,45 @@ export default function Component() {
     setPage(1)
   }, [])
 
-  const makeAdmin = useCallback(() => {
-    setAllUsers((prevUsers) =>
-      prevUsers.map((user) => (Array.from(selectedKeys).includes(user.key) ? { ...user, role: 'Admin' } : user))
-    )
+  const handleMakeAdmin = useCallback(async () => {
+    const selectedEmail = Array.from(selectedKeys)
+    const selectedUsers = allUsers.filter((e) => selectedEmail.includes(e.email))
+    const adminUsers = selectedUsers.map((e) => ({ accountId: e.accountId }))
+    try {
+      for (const user of adminUsers) {
+        await api.post('Account/MakeAdmin', user)
+      }
+      setAllUsers((prev) =>
+        prev.map((e) => (selectedEmail.includes(e.email) ? { ...e, roles: `${e.roles},admin` } : e))
+      )
+    } catch (error) {
+      console.error('Error :', error)
+    }
     setSelectedKeys(new Set())
-  }, [selectedKeys])
+  }, [selectedKeys, allUsers])
+  const handleInvitation = useCallback(async () => {
+    try {
+      await api.post('Account/SendAdminInvite', { email: invitedEmail })
+    } catch (error) {
+      console.error('Error :', error)
+    }
+    setInvitedEmail('')
+  }, [invitedEmail])
 
   const topContent = useMemo(
     () => (
-     
-       <div className="flex w-full justify-between px-5 my-3">
-       <p>User List</p>
-       <Input
-         isClearable
-         className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-         placeholder="Search"
-         startContent={<SearchIcon />}
-         value={filterValue}
-         onClear={onClear}
-         onValueChange={onSearchChange}
-       />
-     </div>
+      <div className="flex w-full justify-between px-5 my-3">
+        <p>User List</p>
+        <Input
+          isClearable
+          className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+          placeholder="Search"
+          startContent={<SearchIcon />}
+          value={filterValue}
+          onClear={onClear}
+          onValueChange={onSearchChange}
+        />
+      </div>
     ),
     [filterValue, onClear, onSearchChange]
   )
@@ -124,54 +165,59 @@ export default function Component() {
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
             placeholder="Email Address"
             onClear={onClear}
+            value={invitedEmail}
+            onChange={(e) => setInvitedEmail(e.target.value)}
           />
-          <Button color="primary">Send Invitation</Button>
-        </div>
-          <Table suppressHydrationWarning
-            aria-label="Example table with custom cells, pagination, and sorting"
-            topContent={topContent}
-            topContentPlacement="outside"
-            classNames={{
-              wrapper: ' overflow-y-auto',
-            }}
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            onSelectionChange={setSelectedKeys}
-          >
-            <TableHeader>
-              {columns.map((column) => (
-                <TableColumn key={column.key} align={'center'} className={'font-semibold'}>
-                  {column.label}
-                </TableColumn>
-              ))}
-            </TableHeader>
-            <TableBody emptyContent="No admin found" className={items.length === 0 ? 'min-h-[70vh]' : 'min-h-[auto]'}>
-              {items.map((item) => (
-                <TableRow key={item.key}>
-                  {columns.map((column) => (
-                    <TableCell key={column.key}>{renderCell(item, column.key)}</TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
-          Page {page} out of {pages}
-        </span>
-        <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
-            Previous
-          </Button>
-          <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
-            Next
-          </Button>
-          <Button color="primary" size="sm" onPress={makeAdmin}>
-            Make Admin
+          <Button color="primary" onPress={handleInvitation}>
+            Send Invitation
           </Button>
         </div>
-      </div>
+        {error && <p className="text-red-500 text-xl">{error}</p>}
+        <Table
+          aria-label="Example table with custom cells, pagination, and sorting"
+          topContent={topContent}
+          topContentPlacement="outside"
+          classNames={{
+            wrapper: ' overflow-y-auto',
+          }}
+          selectedKeys={selectedKeys}
+          selectionMode="multiple"
+          onSelectionChange={setSelectedKeys}
+        >
+          <TableHeader>
+            {columns.map((column) => (
+              <TableColumn key={column.key} align={'center'} className={'font-semibold'}>
+                {column.label}
+              </TableColumn>
+            ))}
+          </TableHeader>
+          <TableBody emptyContent="No admin found" className={items.length === 0 ? 'min-h-[70vh]' : 'min-h-[auto]'}>
+            {items.map((item) => (
+              <TableRow key={item.email}>
+                {columns.map((column) => (
+                  <TableCell key={column.key}>{renderCell(item, column.key)}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <div className="py-2 px-2 flex justify-between items-center">
+          <span className="w-[30%] text-small text-default-400">
+            Page {page} out of {pages}
+          </span>
+          <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
+          <div className="hidden sm:flex w-[30%] justify-end gap-2">
+            <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+              Previous
+            </Button>
+            <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+              Next
+            </Button>
+            <Button color="primary" size="sm" onPress={handleMakeAdmin}>
+              Make Admin
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )

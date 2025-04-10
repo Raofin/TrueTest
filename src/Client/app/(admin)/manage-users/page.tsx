@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdDelete } from 'react-icons/md'
 import { FaEdit } from 'react-icons/fa'
 import {
@@ -14,55 +14,25 @@ import {
   Button,
   Pagination,
 } from '@heroui/react'
-import SearchIcon from '@/app/components/table/search_icon/page'
-import PaginationButtons from '@/app/components/ui/pagination-button'
-import CommonModal from '@/app/components/ui/Modal/edit-delete-modal'
+import SearchIcon from '@/components/ui/search-icon'
+import PaginationButtons from '@/components/ui/pagination-button'
+import CommonModal from '@/components/ui/Modal/edit-delete-modal'
+import api from '@/utils/api'
+import { AxiosError } from 'axios'
+import FormattedDate from '@/components/format-date-time'
 
 const columns = [
   { label: 'Username', key: 'username' },
   { label: 'Email', key: 'email' },
-  { label: 'Role', key: 'role' },
+  { label: 'Role', key: 'roles' },
   { label: 'Created At', key: 'createdAt' },
   { label: 'Action', key: 'action' },
-]
-
-const usersData = [
-  { key: '1', username: 'Eve', email: 'eve@example.com', role: 'User', createdAt: new Date('2025-05-30T18:50:00') },
-  {
-    key: '2',
-    username: 'Alice',
-    email: 'alice@example.com',
-    role: 'Admin',
-    createdAt: new Date('2025-01-15T10:15:00'),
-  },
-  {
-    key: '3',
-    username: 'Bob',
-    email: 'bob@example.com',
-    role: 'Moderator',
-    createdAt: new Date('2025-03-22T16:45:00'),
-  },
-  {
-    key: '4',
-    username: 'Charlie',
-    email: 'charlie@example.com',
-    role: 'Candidate',
-    createdAt: new Date('2025-02-10T09:30:00'),
-  },
-  {
-    key: '5',
-    username: 'David',
-    email: 'david@example.com',
-    role: 'Editor',
-    createdAt: new Date('2025-04-05T13:20:00'),
-  },
-  { key: '6', username: 'Eve', email: 'eve12@example.com', role: 'User', createdAt: new Date('2025-05-30T18:50:00') },
 ]
 
 type User = {
   username: string
   email: string
-  role: string
+  roles: string
   createdAt: Date
   action?: string
 }
@@ -72,63 +42,58 @@ export default function Component() {
   const rowsPerPage = 10
   const [page, setPage] = useState(1)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [usersData, setUserData] = useState<User[]>([])
+  const [error, setError] = useState('')
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const hasSearchFilter = Boolean(filterValue)
 
+  useEffect(() => {
+    const ManageUser = async () => {
+      try {
+        const response = await api.get('Account/All')
+        if (response.status === 200) {
+          setUserData(response.data)
+        }
+      } catch (err) {
+        const error = err as AxiosError
+        setError(error.message)
+      }
+    }
+    ManageUser()
+  }, [])
   const filteredItems = useMemo(() => {
     let filteredUsers = [...usersData]
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.email.toLowerCase().includes(filterValue.toLowerCase()) ||
-          user.username.toLowerCase().includes(filterValue.toLowerCase())
-      )
+      filteredUsers = filteredUsers.filter((user) =>
+        (user.email?.toLowerCase().includes(filterValue.toLowerCase()) ?? false)||
+        (user.username?.toLowerCase().includes(filterValue.toLowerCase()) ?? false)
+      );
     }
     return filteredUsers
-  }, [filterValue, hasSearchFilter])
-
+  }, [filterValue, hasSearchFilter, usersData])
   const pages = Math.ceil(filteredItems.length / rowsPerPage)
-
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage
     const end = start + rowsPerPage
     return filteredItems.slice(start, end)
   }, [page, filteredItems, rowsPerPage])
 
-  const formatDate = useCallback((date: Date) => {
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    })
+  const renderCell = useCallback((user: User, columnKey: React.Key) => {
+    const cellValue = user[columnKey as keyof User]
+    if (columnKey === 'action') {
+      return (
+        <div className="flex gap-4 ml-16">
+          <button aria-label="Edit User" onClick={() => setIsEditModalOpen(true)}>
+            <FaEdit className={'text-xl'} />
+          </button>
+          <button aria-label="Delete User" onClick={() => setIsDeleteModalOpen(true)}>
+            <MdDelete className={'text-xl'} />
+          </button>
+        </div>
+      )
+    } else if (columnKey === 'createdAt') return <FormattedDate date={cellValue as string} />
+    else return cellValue as React.ReactNode
   }, [])
-
-  const renderCell = useCallback(
-    (user: User, columnKey: React.Key) => {
-      const cellValue = user[columnKey as keyof User]
-      switch (columnKey) {
-        case 'action':
-          return (
-            <div className="flex gap-4 ml-16">
-              <button aria-label="Edit User" onClick={() => setIsEditModalOpen(true)}>
-                <FaEdit className={'text-xl'} />
-              </button>
-              <button aria-label="Delete User" onClick={() => setIsDeleteModalOpen(true)}>
-                <MdDelete className={'text-xl'} />
-              </button>
-            </div>
-          )
-        case 'createdAt':
-          return formatDate(cellValue as Date)
-        default:
-          return cellValue as React.ReactNode
-      }
-    },
-    [formatDate]
-  )
-
   const onSearchChange = useCallback((value?: string) => {
     if (value) {
       setFilterValue(value)
@@ -137,12 +102,10 @@ export default function Component() {
       setFilterValue('')
     }
   }, [])
-
   const onClear = useCallback(() => {
     setFilterValue('')
     setPage(1)
   }, [])
-
   const topContent = useMemo(
     () => (
       <div className="flex gap-8 p-3  w-full justify-between items-center mt-5">
@@ -167,6 +130,7 @@ export default function Component() {
     <div className="flex  flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Manage Users</h2>
       <div className="mx-12 flex min-h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
+        {error && <p className="text-red-500 text-xl">{error}</p>}
         <Table
           aria-label="Example table with custom cells, pagination"
           topContent={topContent}

@@ -1,12 +1,20 @@
 'use client'
 
-import { Providers } from './providers'
+import { Providers } from '@/app/providers'
+import { Inter } from 'next/font/google'
+import { Toaster } from 'react-hot-toast'
+const inter = Inter({ subsets: ['latin'] })
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+interface PageProps {
+  readonly children: React.ReactNode
+}
+
+export default function RootLayout({ children }: PageProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className='bg-[#eeeef0] dark:bg-[#000000]'>
+    <html className={inter.className} lang="en" suppressHydrationWarning>
+      <body className="bg-[#eeeef0] dark:bg-[#000000]">
         <Providers>{children}</Providers>
+        <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>
   )
