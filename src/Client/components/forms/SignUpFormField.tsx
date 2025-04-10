@@ -33,7 +33,7 @@ const SignUpFormFields = <T extends FieldValues>({
         <Input
           {...register('username' as Path<T>)}
           onBlur={() => handleFieldBlur('username')}
-          isRequired
+        //  isRequired
           label="Username"
           type="text"
           className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
@@ -44,7 +44,7 @@ const SignUpFormFields = <T extends FieldValues>({
         <Input
           {...register('email' as Path<T>)}
           onBlur={() => handleFieldBlur('email')}
-          isRequired
+         // isRequired
           label="Email"
           type="email"
           className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
@@ -55,7 +55,7 @@ const SignUpFormFields = <T extends FieldValues>({
         <Input
           {...register('password' as Path<T>)}
           className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-          isRequired
+        //  isRequired
           endContent={
             <button type="button" onClick={() => setIsVisible(!isVisible)}>
               <Icon
@@ -72,7 +72,7 @@ const SignUpFormFields = <T extends FieldValues>({
         <Input
           {...register('confirmPassword' as Path<T>)}
           className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-          isRequired
+        //  isRequired
           endContent={
             <button type="button" onClick={() => setIsConfirmVisible(!isConfirmVisible)}>
               <Icon
