@@ -19,7 +19,7 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
-    return Promise.reject(new Error(error.message || 'Request failed'))
+    return Promise.reject(new Error(error.message ?? 'Request failed'))
   }
 )
 
@@ -45,7 +45,7 @@ api.interceptors.response.use(
         return Promise.reject(new Error('Authentication failed. Please log in again.'))
       }
     }
-    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred'
+    const errorMessage = error.response?.data?.message ?? error.message ?? 'An unexpected error occurred'
     return Promise.reject(new Error(errorMessage))
   }
 )
