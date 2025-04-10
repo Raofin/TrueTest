@@ -16,6 +16,7 @@ import {
   Badge,
   Navbar,
   Divider,
+  Button,
 } from '@heroui/react'
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
@@ -97,14 +98,8 @@ export default function Component() {
                   </DropdownItem>
 
                   <DropdownItem key="logout">
-                    <Link
-                      href="/signin"
-                      className={`flex items-center gap-2 `}
-                      style={{ color: 'inherit', textDecoration: 'none' }}
-                    >
-                      <Icon icon="lucide:log-out" className="w-5 h-5" />
-                      <p onClick={logout}>Logout</p>
-                    </Link>
+                    <Icon icon="lucide:log-out" className="w-5 h-5" />
+                    <Button onPress={logout}>Logout</Button>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

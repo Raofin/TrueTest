@@ -37,7 +37,7 @@ const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-small text-foreground">
-            <strong className="font-medium">{name}</strong> {description || children}
+            <strong className="font-medium">{name}</strong> {description ?? children}
           </p>
           <time className="text-tiny text-default-400">{time}</time>
         </div>

@@ -165,18 +165,14 @@ int main() {
   const handleFlagChange = (candidateId: string, questionId: number) => {
     setFlaggedCandidates((prevFlags) => {
       const newFlags = { ...prevFlags }
-      if (!newFlags[candidateId]) {
-        newFlags[candidateId] = {}
-      }
+      newFlags[candidateId] ??= {}
       newFlags[candidateId][questionId] = !newFlags[candidateId][questionId]
       return newFlags
     })
   }
 
   const isQuestionFlagged = (candidateId: string, questionId: number) => {
-    return flaggedCandidates[candidateId] && flaggedCandidates[candidateId][questionId]
-      ? flaggedCandidates[candidateId][questionId]
-      : false
+    return flaggedCandidates[candidateId]?.[questionId] ?? false
   }
   return (
     <div className="min-h-screen flex flex-col  justify-between">
@@ -327,14 +323,12 @@ int main() {
                     <input
                       name="flag"
                       type="checkbox"
-                      checked={isQuestionFlagged(selectedCandidate, curr.id)}
-                      onChange={() => handleFlagChange(selectedCandidate, curr.id)}
-                    />
+                      checked={isQuestionFlagged(selectedCandidate,curr.id)}
+                      onChange={() => handleFlagChange(selectedCandidate,curr.id)}/>
                     Flag Solution
                   </Button>
                 </div>
               </div>
-
               {isQuestionFlagged(selectedCandidate, curr.id) && (
                 <Textarea className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl" placeholder="Flag reason" />
               )}

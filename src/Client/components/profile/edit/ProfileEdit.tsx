@@ -7,8 +7,8 @@ import api from '@/utils/api'
 import { FormData } from '@/components/types/profile'
 
 interface ProfileDetailsProps {
-  formData?: FormData
-  setFormData?: React.Dispatch<React.SetStateAction<FormData>>
+ readonly formData?: FormData
+ readonly setFormData?: React.Dispatch<React.SetStateAction<FormData>>
 }
 
 export default function ProfileEdit({ formData, setFormData }: ProfileDetailsProps) {
@@ -72,13 +72,13 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
         const response = await api.get('/User/Details')
         if (response.data.profile !== null) {
           updateFormData(() => ({
-            firstName: response.data.profile?.firstName || '',
-            lastName: response.data.profile?.lastName || '',
-            bio: response.data.profile?.bioMarkdown || '',
-            instituteName: response.data.profile?.instituteName || '',
-            phoneNumber: response.data.profile?.phoneNumber || '',
-            imageFileId: response.data.profile?.imageFileId || null,
-            profileLinks: response.data.profile?.profileLinks || [{ name: '', link: '' }],
+            firstName: response.data.profile?.firstName ?? '',
+            lastName: response.data.profile?.lastName ?? '',
+            bio: response.data.profile?.bioMarkdown ?? '',
+            instituteName: response.data.profile?.instituteName ?? '',
+            phoneNumber: response.data.profile?.phoneNumber ?? '',
+            imageFileId: response.data.profile?.imageFileId ?? null,
+            profileLinks: response.data.profile?.profileLinks ?? [{ name: '', link: '' }],
           }))
         }
       } catch (error) {
@@ -89,7 +89,7 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
     checkProfileStatus()
   }, [updateFormData])
 
-  const currentFormData = isControlled ? formData! : localFormData
+  const currentFormData = isControlled ? formData : localFormData
 
   return (
     <div className="w-full flex justify-center">
@@ -141,7 +141,7 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
           </div>
           <div className="space-y-2">
             {currentFormData.profileLinks.map((link, index) => (
-              <div key={index} className="flex gap-2 items-center">
+              <div key={link.link} className="flex gap-2 items-center">
                 <Input
                   placeholder="Name"
                   value={link.name}

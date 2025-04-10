@@ -30,9 +30,9 @@ export default function ProfilePage() {
                   ...response.data.profile,
                   profileList:
                     response.data.profile.profileList?.map((link: ProfileLink) => ({
-                      name: link.name || 'Unknown',
-                      link: link.link || '#',
-                    })) || [],
+                      name: link.name ?? 'Unknown',
+                      link: link.link ?? '#',
+                    })) ?? [],
                 }
               : null,
           }
@@ -69,36 +69,36 @@ export default function ProfilePage() {
       <Card className="relative rounded-2xl p-8 w-[600px] overflow-visible shadow-none bg-white dark:bg-[#18181b]">
         <div className="flex items-center mb-8">
           <Avatar
-            src={userInfo?.profile?.imageFileId || ''}
+            src={userInfo?.profile?.imageFileId ?? ''}
             alt="Profile"
             radius="md"
             className="absolute w-36 h-36 -mt-20 ml-24"
           />
           <div className="ml-64">
             <h2 className="text-3xl font-semibold">
-              {userInfo?.profile?.firstName || ''} {userInfo?.profile?.lastName || ''}
+              {userInfo?.profile?.firstName ?? ''} {userInfo?.profile?.lastName ?? ''}
             </h2>
-            <p className="text-gray-400">@{userInfo?.username || 'not provided'}</p>
+            <p className="text-gray-400">@{userInfo?.username ?? 'not provided'}</p>
           </div>
         </div>
-        <p className="text-md mb-4">{userInfo?.profile?.bioMarkdown || 'No bio provided'}</p>
+        <p className="text-md mb-4">{userInfo?.profile?.bioMarkdown ?? 'No bio provided'}</p>
         <hr />
         <div className="space-y-2 mb-4 mt-4">
           <p className="text-md flex gap-3">
             <strong>Email:</strong>
             <Link href={`mailto:${userInfo?.email}`} className="text-[#71717a] dark:text-white">
-              {userInfo?.email || 'not provided'}
+              {userInfo?.email ?? 'not provided'}
             </Link>
           </p>
 
           <p className="text-md flex gap-3">
             <strong>Institute:</strong>
-            <span className="text-[#71717a] dark:text-white">{userInfo?.profile?.instituteName || 'not provided'}</span>
+            <span className="text-[#71717a] dark:text-white">{userInfo?.profile?.instituteName ?? 'not provided'}</span>
           </p>
 
           <p className="text-md flex gap-3">
             <strong>Phone:</strong>
-            <span className="text-[#71717a] dark:text-white">{userInfo?.profile?.phoneNumber || 'not provided'}</span>
+            <span className="text-[#71717a] dark:text-white">{userInfo?.profile?.phoneNumber ?? 'not provided'}</span>
           </p>
 
           <p className="text-md flex gap-3 items-center">
@@ -125,7 +125,7 @@ export default function ProfilePage() {
           <div className="text-md flex gap-3">
             <strong>Joined:</strong>
             <span className="text-[#71717a] dark:text-white">
-              <FormattedDate date={userInfo?.createdAt || 'not provided'} />
+              <FormattedDate date={userInfo?.createdAt ?? 'not provided'} />
             </span>
           </div>
         </div>

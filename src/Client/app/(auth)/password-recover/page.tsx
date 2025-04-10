@@ -60,7 +60,7 @@ const PasswordRecoverPage = () => {
         toast.success('OTP verified successfully!')
         router.push(`/password-recover/reset-password?email=${formData.email}&otp=${data.otp}`)
       } else {
-        toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.')
+        toast.error('Invalid OTP. Please try again.')
       }
     } catch {
       toast.error('failed to verify OTP')

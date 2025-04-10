@@ -64,9 +64,9 @@ function ResetPasswordForm() {
             name="email"
             type="email"
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-            defaultValue={email || ''}
+            defaultValue={email ?? ''}
           />
-          <Input
+          <Input 
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             isRequired
             endContent={
