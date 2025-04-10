@@ -323,8 +323,8 @@ int main() {
                     <input
                       name="flag"
                       type="checkbox"
-                      checked={isQuestionFlagged(selectedCandidate, curr.id)}
-                      onChange={() => handleFlagChange(selectedCandidate, curr.id)}/>
+                      checked={isQuestionFlagged(selectedCandidate,curr.id)}
+                      onChange={() => handleFlagChange(selectedCandidate,curr.id)}/>
                     Flag Solution
                   </Button>
                 </div>

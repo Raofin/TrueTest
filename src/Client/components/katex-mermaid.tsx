@@ -98,8 +98,7 @@ const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
   return <code className={className}>{children}</code>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const MarkdownCode = (props: any) => <Code {...props} />
+const MarkdownCode: React.FC<CodeProps> = (props) => <Code {...props} />
 export default function MdEditor() {
   const [value, setValue] = useState(mdMixed)
   return (
