@@ -141,7 +141,7 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
           </div>
           <div className="space-y-2">
             {currentFormData.profileLinks.map((link, index) => (
-              <div key={link.name} className="flex gap-2 items-center">
+              <div key={link.link} className="flex gap-2 items-center">
                 <Input
                   placeholder="Name"
                   value={link.name}

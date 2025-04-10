@@ -65,7 +65,7 @@ export default function Component() {
     let filteredUsers = [...usersData]
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        (user.email?.toLowerCase().includes(filterValue.toLowerCase()) ?? false) ??
+        (user.email?.toLowerCase().includes(filterValue.toLowerCase()) ?? false)||
         (user.username?.toLowerCase().includes(filterValue.toLowerCase()) ?? false)
       );
     }
