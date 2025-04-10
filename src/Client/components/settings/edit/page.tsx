@@ -21,7 +21,7 @@ export default function Component() {
   const [currentPassword, setCurrentPassword] = useState<boolean>(false)
   const [userError, setUserError] = useState('')
   const searchParams = useSearchParams()
-  const username = searchParams.get('username') || ''
+  const username = searchParams.get('username') ?? ''
 
   const [formData, setFormData] = useState({
     username,
