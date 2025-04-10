@@ -18,7 +18,7 @@ interface PageProps {
 export default function MCQSubmission({ question,answers,setAnswers,options}: PageProps) {
   const handleCheckboxChange = (questionId: number, option: string, isChecked: boolean) => {
       setAnswers((prevAnswers) => {
-        const currentAnswers = prevAnswers[questionId] || []
+        const currentAnswers = prevAnswers[questionId] ?? []
         if (isChecked) {
           return { ...prevAnswers, [questionId]: [...(currentAnswers as string[]), option] }
         } else {

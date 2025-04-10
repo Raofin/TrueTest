@@ -19,18 +19,16 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
-    return Promise.reject(error)
+    return Promise.reject(new Error(error.message || 'Request failed'))
   }
 )
 
 api.interceptors.response.use(
-  (response) => {
-    return response
-  },
+  (response) => response,
   async (error) => {
     const originalRequest = error.config
 
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
       try {
@@ -38,16 +36,17 @@ api.interceptors.response.use(
           removeAuthToken()
           window.location.href = '/signin'
         }
-        return Promise.reject(new Error('Unauthorized - Please log in again.'))
+        return Promise.reject(new Error('Session expired. Please log in again.'))
       } catch {
         if (typeof window !== 'undefined') {
           removeAuthToken()
           window.location.href = '/signin'
         }
-        return Promise.reject(new Error('Error during token refresh. Please log in again.'))
+        return Promise.reject(new Error('Authentication failed. Please log in again.'))
       }
     }
-    return Promise.reject(new Error(error.message))
+    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred'
+    return Promise.reject(new Error(errorMessage))
   }
 )
 

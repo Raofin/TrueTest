@@ -32,8 +32,8 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   const [isConfirmVisible, setIsConfirmVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [uniqueemailerror, setUniqueEmailError] = useState('')
-  const [uniqueusernameerror, setUniqueUsernameError] = useState('')
+  const [uniqueEmailError, setUniqueEmailError] = useState('')
+  const [uniqueUsernameError, setUniqueUsernameError] = useState('')
   const [otpVerified, setOtpVerified] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
 
@@ -58,11 +58,11 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAuthError = useCallback((error:any, defaultMessage: string) => {
     if (axios.isAxiosError(error)) {
-      toast.error(error.response?.data?.message || defaultMessage)
+      toast.error(error.response?.data?.message ?? defaultMessage)
     } else {
       toast.error(defaultMessage)
     }
-    setError(error?.response?.data?.message || defaultMessage); 
+    setError(error?.response?.data?.message ?? defaultMessage); 
   }, []);
 
  const checkUserUniqueness = useCallback(
@@ -74,8 +74,8 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         setUniqueUsernameError(field === 'username' ? 'Username is already taken' : '');
         setUniqueEmailError(field === 'email' ? 'Email is already taken' : '');
       } else {
-        setUniqueUsernameError(field === 'username' ? '' : uniqueusernameerror);
-        setUniqueEmailError(field === 'email' ? '' : uniqueemailerror);
+        setUniqueUsernameError(field === 'username' ? '' : uniqueUsernameError);
+        setUniqueEmailError(field === 'email' ? '' : uniqueEmailError);
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data?.errors) {
@@ -92,7 +92,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
       return false;
     }
   },
-  [setUniqueError, uniqueemailerror, uniqueusernameerror]
+  [setUniqueError, uniqueEmailError, uniqueUsernameError]
 );
   const handleFieldBlur = useCallback(async (field: 'username' | 'email') => {
       const value = watch(field as Path<T>);
@@ -135,7 +135,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
           toast.success('OTP verified successfully!');
           return true; 
         } else {
-          toast.error(verifyResponse.data?.message || 'Invalid OTP. Please try again.');
+          toast.error(verifyResponse.data?.message ?? 'Invalid OTP. Please try again.');
           return false; 
         }
       } catch (error) {
@@ -231,8 +231,8 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
                     <SignUpFormFields
                         register={register}
                         errors={errors}
-                        uniqueusernameerror={uniqueusernameerror}
-                        uniqueemailerror={uniqueemailerror}
+                        uniqueusernameerror={uniqueUsernameError}
+                        uniqueemailerror={uniqueEmailError}
                         isVisible={isVisible}
                         setIsVisible={setIsVisible}
                         isConfirmVisible={isConfirmVisible}

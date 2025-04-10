@@ -1,7 +1,7 @@
 'use client';
 
 
-export default function FormattedDate({ date }: { date: string }) {
+export default function FormattedDate({ date }: {readonly date: string }) {
 
 
   const getdate = new Date(date);

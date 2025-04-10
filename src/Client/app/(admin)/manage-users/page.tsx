@@ -64,11 +64,10 @@ export default function Component() {
   const filteredItems = useMemo(() => {
     let filteredUsers = [...usersData]
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.email?.toLowerCase().includes(filterValue.toLowerCase()) ||
-          user.username?.toLowerCase().includes(filterValue.toLowerCase())
-      )
+      filteredUsers = filteredUsers.filter((user) =>
+        (user.email?.toLowerCase().includes(filterValue.toLowerCase()) ?? false) ||
+        (user.username?.toLowerCase().includes(filterValue.toLowerCase()) ?? false)
+      );
     }
     return filteredUsers
   }, [filterValue, hasSearchFilter, usersData])
