@@ -94,9 +94,12 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   },
   [setUniqueError, uniqueemailerror, uniqueusernameerror]
 );
-  const handleFieldBlur = useCallback(
-    async (field: 'username' | 'email') => {
+  const handleFieldBlur = useCallback(async (field: 'username' | 'email') => {
       const value = watch(field as Path<T>);
+      if (!value) {
+        setUniqueError(field as Path<T>, { type: 'manual', message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`});
+        return;
+      }
       if (field === 'username') setUniqueUsernameError('');
       if (field === 'email') setUniqueEmailError('');
 
@@ -105,9 +108,11 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         if (!errors[field]) {
           await checkUserUniqueness(field, value);
         }
+      }else{
+        setError(`${field} is required`)
       }
     },
-    [checkUserUniqueness, errors, trigger, watch]
+    [checkUserUniqueness, errors, setUniqueError, trigger, watch]
   );
 
   const handleOtpVerification = useCallback(

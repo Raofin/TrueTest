@@ -7,7 +7,7 @@ const usernameRegex = /^[\w.-]+$/;
 export const SignInSchema = z.object({
   usernameOrEmail: z
     .string()
-    .min(1, { message: 'Email or Username is required' })
+    .min(4, { message: 'Email or Username is required' })
     .refine(
       (value) => isValidEmail(value) || usernameRegex.test(value),
       { message: 'Enter a valid email address or username.' }
