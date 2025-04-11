@@ -44,16 +44,14 @@ export default function App() {
       <h1 className="w-full text-center text-3xl font-bold my-3">Create (and Edit) Exam</h1>
       <Card className={`flex shadow-none flex-col justify-between p-8 items-center `}>
         <form id="#" className="flex gap-4 flex-wrap flex-col w-full ">
-          <Input
-            className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+          <Input className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
             isRequired
             label="Title"
             name="title"
             type="text"
             value={formData.title}
           />
-          <Textarea
-            className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+          <Textarea className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
             isRequired
             label="Description"
             name="description"
@@ -68,8 +66,7 @@ export default function App() {
               name="date"
               value={date}
             />
-            <Input
-              className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+            <Input className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
               isRequired
               label="Total Points"
               name="totalpoints"

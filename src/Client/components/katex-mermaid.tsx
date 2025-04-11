@@ -7,25 +7,6 @@ import katex from 'katex'
 import 'katex/dist/katex.css'
 import rehypeSanitize from 'rehype-sanitize'
 
-const mdMixed = `
-This is to display the KaTeX in one line:
-\`\$\$\c = \\pm\\sqrt{a^2 + b^2}\$\$\`
-
-\`\`\`KaTeX
-c = \\pm\\sqrt{a^2 + b^2}
-\`\`\`
-
-And here's a Mermaid diagram:
-
-\`\`\`mermaid
-graph TD
-A[Hard] -->|Text| B(Round)
-B --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-\`\`\`
-`
-
 const randomid = () => {
   const array = new Uint32Array(10)
   window.crypto.getRandomValues(array)
@@ -100,7 +81,7 @@ const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
 
 const MarkdownCode: React.FC<CodeProps> = (props) => <Code {...props} />
 export default function MdEditor() {
-  const [value, setValue] = useState(mdMixed)
+  const [value, setValue] = useState('')
   return (
     <MDEditor
       className="w-full"
