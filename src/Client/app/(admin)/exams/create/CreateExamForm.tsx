@@ -34,7 +34,7 @@ interface Exam {
   closesAt: string
 }
 interface CreateExamProps {
-  exam: Exam
+ readonly exam?: Exam
 }
 function parseTime(time: string): Time | null {
   if (!time) return null
@@ -42,7 +42,7 @@ function parseTime(time: string): Time | null {
   return new Time(hour, minute)
 }
 
-export default function CreateExam({ exam }: CreateExamProps) {
+export default function CreateExamPage({ exam }: CreateExamProps) {
   const [date, setDate] = React.useState<CalendarDate | null>(null)
   const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([])
   const [createExamResp, setCreateExamResp] = useState<number>()

@@ -7,10 +7,9 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/utils/api'
 import toast from 'react-hot-toast'
-import CreateExam from '../exams/create/page'
+import CreateExam from '../exams/create/CreateExamForm'
 
 interface Exam {
-
   examId: string
   title: string
   description: string
@@ -34,9 +33,9 @@ interface Exam {
 const ITEMS_PER_PAGE = 2
 
 export default function ExamList() {
-
   const [currentPage, setCurrentPage] = useState(1)
   const [allExam, setAllExam] = useState<Exam[]>([])
+  const [editingExam, setEditingExam] = useState<Exam | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const totalPages = Math.max(1, Math.ceil(allExam.length / ITEMS_PER_PAGE))
   useEffect(() => {
@@ -60,8 +59,8 @@ export default function ExamList() {
   }, [currentPage, totalPages])
 
   const paginatedExams = allExam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
-  const handleEdit = (exam: Exam) => {
-    <CreateExam exam={exam} />
+  const handleEdit = (exam?: Exam) => {
+    setEditingExam(exam || null)
   }
 
   return (
@@ -160,6 +159,7 @@ export default function ExamList() {
           />
         </div>
       </div>
+      {editingExam && <CreateExam exam={editingExam} />}
       <CommonModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
