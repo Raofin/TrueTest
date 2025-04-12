@@ -218,7 +218,7 @@ export default function Component() {
   return (
     <div className=" flex flex-col justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
-      <div className="mx-12 flex  flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
+      <div className="h-screen mx-12 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
         <div className="flex gap-3 w-full p-3 mt-5">
           <Input
             isClearable
