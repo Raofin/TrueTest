@@ -89,7 +89,7 @@ export default function MdEditor() {
       textareaProps={{
         placeholder: 'Please enter Markdown text',
       }}
-      height={500}
+      height={300}
       value={value}
       previewOptions={{
         rehypePlugins: [[rehypeSanitize]],

@@ -7,9 +7,9 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/utils/api'
 import toast from 'react-hot-toast'
-import CreateExam from '../exams/create/page'
-import {FormattedDate, FormattedTime} from '@/components/format-date-time'
-import FormatTime from '@/components/format-time'
+import {FormattedDateWeekday, FormattedTime} from '@/components/format-date-time'
+import { useRouter } from 'next/navigation'
+import FormatTimeHourMinutes from '@/components/format-time'
 
 interface Exam {
   examId: string
@@ -37,7 +37,7 @@ const ITEMS_PER_PAGE = 2
 export default function ExamList({invitedCandidates}:{invitedCandidates:number}) {
   const [currentPage, setCurrentPage] = useState(1)
   const [allExam, setAllExam] = useState<Exam[]>([])
-  const [editingExam, setEditingExam] = useState<Exam | null>(null)
+  const router=useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const totalPages = Math.max(1, Math.ceil(allExam.length / ITEMS_PER_PAGE))
   useEffect(() => {
@@ -61,8 +61,8 @@ export default function ExamList({invitedCandidates}:{invitedCandidates:number})
   }, [currentPage, totalPages])
 
   const paginatedExams = allExam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
-  const handleEdit = (exam?: Exam) => {
-    setEditingExam(exam || null)
+  const handleEdit = (exam: Exam) => {
+    router.push(`/exams/create?id=${exam.examId}`)
   }
 
   return (
@@ -111,10 +111,10 @@ export default function ExamList({invitedCandidates}:{invitedCandidates:number})
               <div className="flex">
                 <div className="flex flex-col flex-1">
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Date: </span><FormattedDate date={exam.opensAt}/>
+                    <span className="text-[#71717a] dark:text-white">Date: </span><FormattedDateWeekday date={exam.opensAt}/>
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Duration: </span><FormatTime minute={exam.durationMinutes}/> hr
+                    <span className="text-[#71717a] dark:text-white">Duration: </span><FormatTimeHourMinutes minute={exam.durationMinutes}/> hr
                   </p>
                   <p>
                     <span className="text-[#71717a] dark:text-white">Starts at: </span><FormattedTime date={exam.opensAt}/>
@@ -161,7 +161,6 @@ export default function ExamList({invitedCandidates}:{invitedCandidates:number})
           />
         </div>
       </div>
-      {editingExam && <CreateExam exam={editingExam} />}
       <CommonModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

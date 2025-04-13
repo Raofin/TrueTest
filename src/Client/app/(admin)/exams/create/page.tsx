@@ -11,6 +11,7 @@ import '@/app/globals.css'
 import { v4 as uuidv4 } from 'uuid'
 import api from '@/utils/api'
 import toast from 'react-hot-toast'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface FormData {
   title: string
@@ -20,66 +21,33 @@ interface FormData {
   opensAt: string
   closesAt: string
 }
-interface Exam {
-  examId: string
-  title: string
-  description: string
-  totalPoints: number
-  problemSolvingPoints: number
-  writtenPoints: number
-  mcqPoints: number
-  durationMinutes: number
-  status: string
-  opensAt: string
-  closesAt: string
-}
-interface CreateExamProps {
- readonly exam?: Exam
-}
+// interface Exam {
+//   examId: string
+//   title: string
+//   description: string
+//   totalPoints: number
+//   problemSolvingPoints: number
+//   writtenPoints: number
+//   mcqPoints: number
+//   durationMinutes: number
+//   status: string
+//   opensAt: string
+//   closesAt: string
+// }
+
 function parseTime(time: string): Time | null {
   if (!time) return null
   const [hour, minute] = time.split(':').map(Number)
   return new Time(hour, minute)
 }
 
-export default function CreateExamPage({ exam }: CreateExamProps) {
-  const [date, setDate] = React.useState<CalendarDate | null>(null)
+export default function CreateExamPage() {
+
+  const [date, setDate] = useState<CalendarDate | null>(null)
   const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([])
-  const [createExamResp, setCreateExamResp] = useState<number>()
-  const handleAddComponent = (componentType: string) => {
-    setActiveComponents([...activeComponents, { id: uuidv4(), type: componentType }])
-  }
-  const handlePublishExam = async () => {
-    if (!createExamResp) {
-      toast.error('Please save the exam first')
-      return
-    }
-    try {
-      const response = await api.post('/Exam/Publish', { examId: createExamResp })
-
-      if (response.status === 200) {
-        toast.success('Exam published successfully.')
-      }
-    } catch {
-      toast.error('Failed to publish exam')
-    }
-  }
-  const handleDeleteExam = async () => {
-    if (!createExamResp) {
-      toast.error('No exam to delete')
-      return
-    }
-    try {
-      const response = await api.delete(`/Exam/Delete/${createExamResp}`)
-
-      if (response.status === 200) {
-        toast.success('Exam deleted successfully.')
-      }
-    } catch {
-      toast.error('Failed to delete exam')
-    }
-  }
-  
+  const searchParams = useSearchParams();
+  const route=useRouter();
+  const [examId,setExamId] =useState(searchParams.get('id')||"");
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -88,23 +56,9 @@ export default function CreateExamPage({ exam }: CreateExamProps) {
     opensAt: '',
     closesAt: '',
   })
-  useEffect(() => {
-    if (exam) {
-      setFormData({
-        title: exam.title,
-        description: exam.description,
-        durationMinutes: exam.durationMinutes,
-        totalPoints: exam.totalPoints,
-        opensAt: exam.opensAt,
-        closesAt: exam.closesAt,
-      })
-    }
-  }, [exam])
-  const handleOpenCloseTime = (time: Time | null): string => {
-    if (!time) return ''
-    return `${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}`
+  const handleAddComponent = (componentType: string) => {
+    setActiveComponents([...activeComponents, { id: uuidv4(), type: componentType }])
   }
-
   const handleSaveExam = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -129,16 +83,81 @@ export default function CreateExamPage({ exam }: CreateExamProps) {
       const response = await api.post('/Exam/Create', examData)
 
       if (response.status === 200) {
-        setCreateExamResp(response.data.examId)
         toast.success('Exam created successfully.')
+        setExamId(response.data.examId)
+      }
+    } catch {}
+  }
+  useEffect(() => {
+    const FetchExamId=async()=>{
+      try{
+        const response=await api.get(`/Exam/${examId}`)
+        if(response.status===200){
+          const exam=response.data.exam
+            setFormData({
+              title: exam.title,
+              description: exam.description,
+              durationMinutes: exam.durationMinutes,
+              totalPoints: exam.totalPoints,
+              opensAt: exam.opensAt,
+              closesAt: exam.closesAt,
+            })
+            if (exam.opensAt) {
+              const opensAtDate = new Date(exam.opensAt);
+              setDate(new CalendarDate(
+                opensAtDate.getFullYear(),
+                opensAtDate.getMonth() + 1,
+                opensAtDate.getDate()
+              ));
+            }
+        }
+      }catch{  }
+  }
+  FetchExamId();
+  }, [examId])
+  
+  const handlePublishExam = async () => {
+  if(examId){
+    try {
+      const response = await api.post(`/Exam/Publish?examId=${examId}`)
+
+      if (response.status === 200) {
+        toast.success('Exam published successfully.')
       }
     } catch {
-      toast.error('Failed to create exam')
+      toast.error('Failed to publish exam')
     }
+  }
+  }
+  const handleDeleteExam = async () => {
+   if(examId){
+    try {
+      const response = await api.delete(`/Exam/Delete/${examId}`)
+
+      if (response.status === 200) {
+        toast.success('Exam deleted successfully.')
+        setFormData({title: '',
+          description: '',
+          durationMinutes: 0,
+          totalPoints: 0,
+          opensAt: '',
+          closesAt: '',})
+          setExamId('')
+          setDate(null)
+        route.push('/exams/create')
+      }
+    } catch {
+      toast.error('Failed to delete exam')
+    }
+   }
+  }
+  const handleOpenCloseTime = (time: Time | null): string => {
+    if (!time) return ''
+    return `${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}`
   }
   return (
     <div className="m-12 flex flex-col gap-8">
-      <h1 className="w-full text-center text-3xl font-bold my-3">{`${exam ? 'Edit' : 'Create'} Exam`}</h1>
+      <h1 className="w-full text-center text-3xl font-bold my-3">{`${examId ? 'Edit' : 'Create'} Exam`}</h1>
       <Card className={`flex shadow-none flex-col justify-between p-8 items-center `}>
         <form id="#" className="flex gap-4 flex-wrap flex-col w-full " onSubmit={handleSaveExam}>
           <Input
@@ -173,9 +192,15 @@ export default function CreateExamPage({ exam }: CreateExamProps) {
               isRequired
               label="Duration"
               name="duration"
-              type="text"
-              value={formData.durationMinutes.toString()}
-              onChange={(e) => setFormData({ ...formData, durationMinutes: Number(e.target.value) })}
+              type="number"
+              min="0"
+              value={formData.durationMinutes?.toString() ?? "0"}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                if (!isNaN(value) && value >= 1) {
+                  setFormData({ ...formData, durationMinutes: value });
+                }
+              }}
             />
           </div>
           <div className="flex gap-5">
@@ -207,9 +232,15 @@ export default function CreateExamPage({ exam }: CreateExamProps) {
               isRequired
               label="Total Points"
               name="totalpoints"
-              type="text"
-              value={formData.totalPoints.toString()}
-              onChange={(e) => setFormData({ ...formData, totalPoints: Number(e.target.value) })}
+              type="number"
+               min="0"
+               value={formData.totalPoints?.toString() ?? "0"}
+               onChange={(e) => {
+                const value = Number(e.target.value);
+                if (!isNaN(value) && value >= 1) {
+                  setFormData({ ...formData, totalPoints: value });
+                }
+              }}
             />
           </div>
           <div className="flex justify-end mt-2">
