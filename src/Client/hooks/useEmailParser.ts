@@ -88,7 +88,7 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
 
     for (let i = startIndex; i < rows.length; i++) {
       const row = rows[i];
-      const emailValue = row.email ?? Object.values(row)[0];
+      const emailValue = row.email ;
       const email = (emailValue || '').toString().trim();
       if (!email) continue;
 
@@ -145,8 +145,8 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
     if (invalidEmails.length > 0) {
       const invalidCount = invalidEmails.length;
       const displayInvalid =
-        invalidCount > 5
-          ? `${invalidEmails.slice(0, 5).join(', ')} and ${invalidCount - 5} more...`
+        invalidCount > 4
+          ? `${invalidEmails.slice(0, 4).join(', ')} and ${invalidCount - 4} more...`
           : invalidEmails.join(', ');
 
       toast.error(`Found ${invalidCount} invalid email(s): ${displayInvalid}`, {
@@ -168,7 +168,7 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
 
     if (validEmails.length > 0) {
       setUserEmails((prev) => [...prev, ...validEmails]);
-      toast.success(`Successfully added ${validEmails.length} valid email(s)`);
+      // toast.success(`Successfully added ${validEmails.length} valid email(s)`);
     } else if (invalidEmails.length === 0 && duplicateEmails.length === 0) {
       toast.error('No valid emails found in the input');
     }

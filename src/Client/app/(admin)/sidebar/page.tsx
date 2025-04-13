@@ -23,7 +23,6 @@ const menuItems = [
   { key: 'users', icon: <BiSolidUserRectangle size={30} />, label: ' Manage Users', path: '/manage-users' },
   { key: 'admins', icon: <RiAdminFill size={30} />, label: 'Add Admins', path: '/add-admins' },
 ]
-
 const Sidebar = () => {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -92,7 +91,7 @@ const Sidebar = () => {
               {!isCollapsed && (
                 <div className="flex">
                   <Link href="/settings">
-                    <p className={``}>Settings</p>
+                    <p className={`text-sm`}>Settings</p>
                   </Link>
                 </div>
               )}

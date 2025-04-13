@@ -1,17 +1,24 @@
-'use client';
 
+export function FormattedDate({ date }: {readonly date: string }) {
+  const openDate = new Date(date);
 
-export default function FormattedDate({ date }: {readonly date: string }) {
-
-
-  const getdate = new Date(date);
-  const formattedDate =  new Intl.DateTimeFormat('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
+  const formattedDate = openDate.toLocaleDateString(undefined, {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
   });
-  return <>{formattedDate.format(getdate)}</>;
+  return formattedDate
+}
+
+export function FormattedTime({ date }: {readonly date: string }) { 
+
+  const openDate = new Date(date);
+  const formattedTime = openDate.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+  
+  return formattedTime;
 }

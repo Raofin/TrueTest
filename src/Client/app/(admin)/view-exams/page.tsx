@@ -7,7 +7,9 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/utils/api'
 import toast from 'react-hot-toast'
-import CreateExam from '../exams/create/CreateExamForm'
+import CreateExam from '../exams/create/page'
+import {FormattedDate, FormattedTime} from '@/components/format-date-time'
+import FormatTime from '@/components/format-time'
 
 interface Exam {
   examId: string
@@ -32,7 +34,7 @@ interface Exam {
 
 const ITEMS_PER_PAGE = 2
 
-export default function ExamList() {
+export default function ExamList({invitedCandidates}:{invitedCandidates:number}) {
   const [currentPage, setCurrentPage] = useState(1)
   const [allExam, setAllExam] = useState<Exam[]>([])
   const [editingExam, setEditingExam] = useState<Exam | null>(null)
@@ -109,38 +111,38 @@ export default function ExamList() {
               <div className="flex">
                 <div className="flex flex-col flex-1">
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Date:</span> Friday, 21 Nov 2026
+                    <span className="text-[#71717a] dark:text-white">Date: </span><FormattedDate date={exam.opensAt}/>
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Duration:</span> 2 hr
+                    <span className="text-[#71717a] dark:text-white">Duration: </span><FormatTime minute={exam.durationMinutes}/> hr
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Starts at:</span> 9:00 PM
+                    <span className="text-[#71717a] dark:text-white">Starts at: </span><FormattedTime date={exam.opensAt}/>
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Closes at:</span> 10:20 PM
-                  </p>
-                </div>
-                <div className="flex flex-col flex-1">
-                  <p>
-                    <span className="text-[#71717a] dark:text-white">Problem Solving:</span> 10
-                  </p>
-                  <p>
-                    <span className="text-[#71717a] dark:text-white">Written:</span> 10
-                  </p>
-                  <p>
-                    <span className="text-[#71717a] dark:text-white">MCQ:</span> 10
-                  </p>
-                  <p>
-                    <span className="text-[#71717a] dark:text-white">Score:</span> 100
+                    <span className="text-[#71717a] dark:text-white">Closes at: </span><FormattedTime date={exam.closesAt}/>
                   </p>
                 </div>
                 <div className="flex flex-col flex-1">
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Invited Candidates:</span> 120
+                    <span className="text-[#71717a] dark:text-white">Problem Solving: </span>{exam.problemSolvingPoints}
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Accepted:</span> 90
+                    <span className="text-[#71717a] dark:text-white">Written: </span>{exam.writtenPoints}
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">MCQ: </span>{exam.mcqPoints}
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Score: </span> {exam.score}
+                  </p>
+                </div>
+                <div className="flex flex-col flex-1">
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Invited Candidates: </span> {invitedCandidates}
+                  </p>
+                  <p>
+                    <span className="text-[#71717a] dark:text-white">Accepted: </span> {exam.acceptedCandidates}
                   </p>
                 </div>
               </div>

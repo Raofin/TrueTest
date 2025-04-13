@@ -79,6 +79,7 @@ export default function CreateExamPage({ exam }: CreateExamProps) {
       toast.error('Failed to delete exam')
     }
   }
+  
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
