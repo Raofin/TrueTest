@@ -48,7 +48,7 @@ export default function Component() {
             </Popover>
           </NavbarItem>
           <NavbarItem>
-            <button className="">
+            <button type="button">
               <Dropdown placement="bottom-end">
                 <DropdownTrigger>
                   <div className="mt-1 h-8 w-8 outline-none transition-transform">

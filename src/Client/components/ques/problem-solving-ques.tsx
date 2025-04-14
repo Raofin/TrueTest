@@ -1,16 +1,20 @@
 'use client';
 
+
 import React, { useState, useMemo } from 'react';
 import { Form, Button, Textarea, Card, Input } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import toast from 'react-hot-toast';
 import PaginationButtons from '@/components/ui/pagination-button';
 import MdEditor from '../katex-mermaid';
+import api from '@/utils/api';
+
 
 interface TestCase {
   input: string;
   output: string;
 }
+
 
 interface Problem {
   question: string;
@@ -19,22 +23,26 @@ interface Problem {
   difficultyType:string
 }
 
+
 interface ProblemItemProps {
   problem: Problem;
   problemIndex: number;
   onDeleteTestCase: (testCaseIndex: number) => void;
   onRefreshTestCase: (testCaseIndex: number) => void;
   onTestCaseChange: (testCaseIndex: number, field: 'input' | 'output', value: string) => void;
+  onQuestionChange: (value: string) => void;
   onPointsChange: (value: number) => void;
   onAddTestCase: () => void;
   onDifficultyChange: (value: string) => void;
 }
+
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
   problem,
   onDeleteTestCase,
   onRefreshTestCase,
   onTestCaseChange,
+  onQuestionChange,
   onPointsChange,
   onDifficultyChange,
   onAddTestCase,
@@ -44,7 +52,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
      <select
         className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
         value={problem.difficultyType}
-        onChange={(e) => onDifficultyChange(e.target.value)} 
+        onChange={(e) => onDifficultyChange(e.target.value)}
       >
         <option value="">Select Difficulty</option>
         <option value="easy">Easy</option>
@@ -52,7 +60,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
         <option value="hard">Hard</option>
       </select>
      </div>
-    <MdEditor />
+    <MdEditor value={problem.question} onChange={onQuestionChange} />
     {problem.testCases.map((testCase, index) => (
        <TestCaseItem
          key={index}
@@ -87,6 +95,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
   </div>
 );
 
+
 interface TestCaseItemProps {
   testCaseIndex: number;
   testCase: TestCase;
@@ -94,6 +103,7 @@ interface TestCaseItemProps {
   onRefresh: (testCaseIndex: number) => void;
   onInputChange: (field: 'input' | 'output', value: string) => void;
 }
+
 
 const TestCaseItem: React.FC<TestCaseItemProps> = ({
   testCaseIndex,
@@ -132,12 +142,14 @@ const TestCaseItem: React.FC<TestCaseItemProps> = ({
   </div>
 );
 
+
 interface FormFooterProps {
   totalPages: number;
   currentPage: number;
   onPrevious: () => void;
   onNext: () => void;
 }
+
 
 const FormFooter: React.FC<FormFooterProps> = ({
   totalPages,
@@ -146,7 +158,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   onNext,
 }) => (
   <div className="flex w-full justify-between items-center mt-4">
-    <div className="w-32" /> 
+    <div className="w-32" />
     <div className="flex gap-2 items-center">
       <span>Page {currentPage + 1} of {totalPages}</span>
       <PaginationButtons
@@ -161,12 +173,45 @@ const FormFooter: React.FC<FormFooterProps> = ({
 );
 
 
-export default function ProblemSolvingForm() {
+interface ProblemSolvingFormProps {
+  examId: string;
+}
+
+
+export default function ProblemSolvingForm({ examId }: ProblemSolvingFormProps) {
   const [problems, setProblems] = useState<Problem[]>([
     { question: '', testCases: [{ input: '', output: '' }], points: 0 ,difficultyType:""},
   ]);
   const [currentPage, setCurrentPage] = useState(0);
   const problemsPerPage = 1;
+
+
+  const handleSaveProblem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/Questions/Problem/Create', {
+        examId,
+        problemQuestions: problems.map((problem) => ({
+          statementMarkdown: problem.question,
+          points: problem.points,
+          difficultyType: problem.difficultyType,
+          testCases: problem.testCases,
+        })),
+      });
+
+
+      if (response.status === 200) {
+        toast.success('Problems saved successfully!');
+      } else {
+        toast.error('Failed to save problems');
+        console.error('API Error:', response);
+      }
+    } catch (error) {
+      toast.error('Failed to save problems');
+      console.error('Fetch Error:', error);
+    }
+  };
+
 
   const updateProblem = (index: number, updatedProblem: Problem) => {
     setProblems((prev) => [
@@ -174,13 +219,24 @@ export default function ProblemSolvingForm() {
       updatedProblem,
       ...prev.slice(index + 1),
     ]);
-  }
+  };
+
+
+  const handleQuestionChange = (index: number, newQuestion: string) => {
+    updateProblem(index, {
+      ...problems[index],
+      question: newQuestion,
+    });
+  };
+
+
   const handlePointsChange = (index: number, newPoints: number) => {
     updateProblem(index, {
       ...problems[index],
       points: newPoints,
     });
   };
+
 
   const addTestCase = (problemIndex: number) => {
     const updatedProblem = {
@@ -190,19 +246,23 @@ export default function ProblemSolvingForm() {
     updateProblem(problemIndex, updatedProblem);
   };
 
+
   const handleDeleteTestCase = (problemIndex: number, testCaseIndex: number) => {
     const updatedProblem = {
       ...problems[problemIndex],
       testCases: problems[problemIndex].testCases.filter((_, i) => i !== testCaseIndex),
     };
 
+
     if (updatedProblem.testCases.length === 0) {
       updatedProblem.testCases = [{ input: '', output: '' }];
     }
 
+
     updateProblem(problemIndex, updatedProblem);
     toast.success('Test case deleted');
   };
+
 
   const handleRefreshTestCase = (problemIndex: number, testCaseIndex: number) => {
     const updatedProblem = {
@@ -214,6 +274,7 @@ export default function ProblemSolvingForm() {
     updateProblem(problemIndex, updatedProblem);
     toast.success('Test case refreshed');
   };
+
 
   const handleTestCaseChange = (
     problemIndex: number,
@@ -230,6 +291,7 @@ export default function ProblemSolvingForm() {
     updateProblem(problemIndex, updatedProblem);
   };
 
+
   const handleAddProblem = () => {
     setProblems((prev) => [
       ...prev,
@@ -237,6 +299,7 @@ export default function ProblemSolvingForm() {
     ]);
     setCurrentPage(Math.ceil((problems.length + 1) / problemsPerPage) - 1);
   };
+
 
   const handleDifficultyChange = (index: number, newDifficulty: string) => {
     updateProblem(index, {
@@ -253,12 +316,12 @@ export default function ProblemSolvingForm() {
   return (
     <div>
       <Card className="border-none shadow-none bg-white dark:bg-[#18181b]">
-      
+     
        <h2 className="w-full flex justify-center text-2xl my-3">
           Problem Solving Question : {currentProblemIndex + 1}
         </h2>
         <div className="flex justify-center p-4">
-          <Form className="w-full flex flex-col gap-4 p-5 border-none">
+          <Form className="w-full flex flex-col gap-4 p-5 border-none" onSubmit={handleSaveProblem}>
             {currentProblems.map((problem, index) => (
               <ProblemItem
                 key={index}
@@ -273,15 +336,19 @@ export default function ProblemSolvingForm() {
                 onTestCaseChange={(testCaseIndex, field, value) =>
                   handleTestCaseChange(currentProblemIndex + index, testCaseIndex, field, value)
                 }
+                onQuestionChange={(value) =>
+                  handleQuestionChange(currentProblemIndex + index, value)
+                }
                 onPointsChange={(value) =>
                   handlePointsChange(currentProblemIndex + index, value)
                 }
-                onDifficultyChange={(value) => 
+                onDifficultyChange={(value) =>
                   handleDifficultyChange(currentProblemIndex + index, value)
                 }
                 onAddTestCase={() => addTestCase(currentProblemIndex + index)}
               />
             ))}
+
 
             <div className="flex w-full justify-end mt-5 ">
              
@@ -298,6 +365,7 @@ export default function ProblemSolvingForm() {
           </Form>
         </div>
       </Card>
+
 
       <div className="flex w-full justify-center mt-5">
         <Button onPress={handleAddProblem}>Add Problem Solving Question</Button>

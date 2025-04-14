@@ -71,10 +71,10 @@ export default function Component() {
     const ManageUser = async () => {
       try {
         const response = await api.get<ApiResponse>(
-          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${roleFilter ? '&role=' + roleFilter : ''}${
-            searchTerm ? '&searchTerm=' + searchTerm : ''
+          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${roleFilter ? `&role=${roleFilter}` : ''}${
+            searchTerm ? `&searchTerm=${searchTerm}` : ''
           }`
-        );
+        )
         if (response.status === 200) {
           setUserData(response.data.accounts)
           setTotalPages(response.data.page.totalPages ?? 1)
@@ -118,16 +118,16 @@ export default function Component() {
     if (columnKey === 'action') {
       return (
         <div className="flex w-[100px] gap-5 justify-between ml-6">
-          <button
+          <button type="button"
             aria-label="Change Status"
             onClick={() => {
               setSelectedUser(user.accountId)
               setIsActiveModalOpen(true)
             }}
           >
-            {user.isActive ? 'Deactive'  : 'Active'}
+            {user.isActive ? 'Deactivate'  : 'Activate'}
           </button>
-          <button
+          <button type="button"
             aria-label="Delete User"
             onClick={() => {
               setSelectedUser(user.accountId)
@@ -254,8 +254,8 @@ export default function Component() {
           setSelectedUser('')
         }}
         title="Status Confirmation"
-        content={`Do you want to ${status ? 'Deactive' : 'Active'} this record`}
-        confirmButtonText={`${status ? 'Deactive' : 'Active'}`}
+        content={`Do you want to ${status ? 'deactivate' : 'activate'} this record`}
+        confirmButtonText={`${status ? 'Deactivate' : 'Activate'}`}
         onConfirm={async () => {
          const resp= await handleStatus(selectedUser, setStatus)
            if(resp){
