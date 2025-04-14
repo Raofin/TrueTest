@@ -4,7 +4,7 @@ import { Avatar, Card, Link, Button } from '@heroui/react'
 import { FaLink } from 'react-icons/fa6'
 import { usePathname } from 'next/navigation'
 import api from '@/utils/api'
-import FormattedDate from '../format-date-time'
+import { FormatDatewithTime } from '../format-date-time'
 import { ProfileLink, User } from '../types/profile'
 
 export default function ProfilePage() {
@@ -125,7 +125,7 @@ export default function ProfilePage() {
           <div className="text-md flex gap-3">
             <strong>Joined:</strong>
             <span className="text-[#71717a] dark:text-white">
-              <FormattedDate date={userInfo?.createdAt ?? 'not provided'} />
+              {userInfo?.createdAt ? FormatDatewithTime(userInfo?.createdAt) :  'not provided'}
             </span>
           </div>
         </div>

@@ -41,7 +41,16 @@ export function  FormatTimeHourMinutes({minute}:FormatTimeProps) {
   const minutes =Math.floor(minute % 60).toString().padStart(2, '0');
   return `${hours}:${minutes}`
 }
-
+export function FormatTimeHourMinutesSeconds({ seconds }:{seconds:number}) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60)
+    .toString()
+    .padStart(2, '0');
+  const remainingSeconds = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+  return `${hours}:${minutes}:${remainingSeconds}`; 
+}
 export  function FormatDatewithTime (dateTime:string) {
   const date = new Date(dateTime);
   return new Intl.DateTimeFormat('en-US', {

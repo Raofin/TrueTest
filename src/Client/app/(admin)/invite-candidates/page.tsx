@@ -377,7 +377,7 @@ export default function InviteCandidates() {
           confirmButtonText="Remove"
           onConfirm={handleDeleteEmail}
         />
-        {invitedCandidates>0 && <ViewExam invitedCandidates={invitedCandidates} />}
+        {invitedCandidates>0 && <ViewExam />}
       </div>
     </div>
   )

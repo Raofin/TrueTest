@@ -15,7 +15,7 @@ import {
 } from '@heroui/react'
 import SearchIcon from '@/components/ui/search-icon'
 import api from '@/utils/api'
-import FormattedDate from '@/components/format-date-time'
+import { FormatDatewithTime} from '@/components/format-date-time'
 import isValidEmail from '@/components/check-valid-email'
 import toast from 'react-hot-toast'
 import Paginate from '@/components/pagination'
@@ -123,7 +123,7 @@ export default function Component() {
   }, [])
   const renderCell = useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User]
-    if (columnKey === 'createdAt') return <FormattedDate date={cellValue as string} />
+    if (columnKey === 'createdAt') return FormatDatewithTime(cellValue as string);
     else if (columnKey === 'roles') {
       if (Array.isArray(cellValue)) {
         return cellValue.map((curr) => <div key={curr}>{curr}</div>)
