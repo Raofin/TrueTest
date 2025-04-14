@@ -9,6 +9,7 @@ public record ExamResponse(
     decimal WrittenPoints,
     decimal McqPoints,
     int DurationMinutes,
+    bool IsPublished,
     string Status,
     DateTime OpensAt,
     DateTime ClosesAt
