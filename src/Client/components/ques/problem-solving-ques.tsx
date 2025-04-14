@@ -25,7 +25,6 @@ interface ProblemItemProps {
   onDeleteTestCase: (testCaseIndex: number) => void;
   onRefreshTestCase: (testCaseIndex: number) => void;
   onTestCaseChange: (testCaseIndex: number, field: 'input' | 'output', value: string) => void;
-  onQuestionChange: (value: string) => void;
   onPointsChange: (value: number) => void;
   onAddTestCase: () => void;
   onDifficultyChange: (value: string) => void;
@@ -175,15 +174,7 @@ export default function ProblemSolvingForm() {
       updatedProblem,
       ...prev.slice(index + 1),
     ]);
-  };
-
-  const handleQuestionChange = (index: number, newQuestion: string) => {
-    updateProblem(index, {
-      ...problems[index],
-      question: newQuestion,
-    });
-  };
-
+  }
   const handlePointsChange = (index: number, newPoints: number) => {
     updateProblem(index, {
       ...problems[index],
@@ -281,9 +272,6 @@ export default function ProblemSolvingForm() {
                 }
                 onTestCaseChange={(testCaseIndex, field, value) =>
                   handleTestCaseChange(currentProblemIndex + index, testCaseIndex, field, value)
-                }
-                onQuestionChange={(value) =>
-                  handleQuestionChange(currentProblemIndex + index, value)
                 }
                 onPointsChange={(value) =>
                   handlePointsChange(currentProblemIndex + index, value)
