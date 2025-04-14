@@ -9,7 +9,7 @@ import WrittenQues from '@/components/ques/written-ques'
 import McqQues from '@/components/ques/mcq-ques'
 import '@/app/globals.css'
 import { v4 as uuidv4 } from 'uuid'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 

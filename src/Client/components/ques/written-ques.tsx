@@ -5,7 +5,7 @@ import { Button, Textarea, Checkbox, Card, Input } from '@heroui/react'
 import PaginationButtons from '@/components/ui/pagination-button'
 import { v4 as uuidv4 } from 'uuid'
 import toast from 'react-hot-toast'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { AxiosError } from 'axios'
 
 interface WrittenQuestion {

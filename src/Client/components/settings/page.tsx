@@ -1,10 +1,10 @@
 'use client'
 
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { Button, Card, Link } from '@heroui/react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import {FormatDatewithTime} from '../format-date-time'
+import { FormatDatewithTime } from '../format-date-time'
 
 interface User {
   username: string
@@ -56,7 +56,7 @@ export default function Component() {
           </div>
           <div className="flex items-center">
             <p className=" font-semibold">Joined : </p>
-            <p className="text-sm ml-3">{userSetting ? FormatDatewithTime (userSetting?.createdAt) : ''}</p>
+            <p className="text-sm ml-3">{userSetting ? FormatDatewithTime(userSetting?.createdAt) : ''}</p>
           </div>
         </div>
         <div className="mt-5 flex w-full justify-center">

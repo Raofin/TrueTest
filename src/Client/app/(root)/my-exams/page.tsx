@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react'
 import PaginationButtons from '@/components/ui/pagination-button'
 import RootNavBar from '@/app/(root)/root-navbar'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
@@ -24,24 +24,22 @@ interface Exam {
 
 const ITEMS_PER_PAGE = 3
 export default function ExamList() {
-  const route=useRouter();
-  useEffect(()=>{
-    const FetchExamData=async()=>{
-        try{
-          const res=await api.get('/Candidate/Exams')
-          if(res.status===200)
-             setExams(res.data)
-          else if(res.status===401){
-             toast.error("Unauthorized")
-             route.push('/signin')
-          }
-          else if(res.status===500) toast.error("Internal Server Error")
-        }catch{}
+  const route = useRouter()
+  useEffect(() => {
+    const FetchExamData = async () => {
+      try {
+        const res = await api.get('/Candidate/Exams')
+        if (res.status === 200) setExams(res.data)
+        else if (res.status === 401) {
+          toast.error('Unauthorized')
+          route.push('/signin')
+        } else if (res.status === 500) toast.error('Internal Server Error')
+      } catch {}
     }
     FetchExamData()
-  },[route])
+  }, [route])
   const [currentPage, setCurrentPage] = useState(1)
-  const [exams,setExams]=useState<Exam[]>([])
+  const [exams, setExams] = useState<Exam[]>([])
   const totalPages = Math.ceil(exams.length / ITEMS_PER_PAGE)
   const paginatedExams = exams.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
   const getStatusColor = (status: string) => {
@@ -85,10 +83,10 @@ export default function ExamList() {
                       })}
                     </p>
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Score :</span> 
+                      <span className="text-[#71717a] dark:text-white">Score :</span>
                     </p>
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Participants :</span> 
+                      <span className="text-[#71717a] dark:text-white">Participants :</span>
                     </p>
                   </div>
                   <div>
@@ -126,7 +124,8 @@ export default function ExamList() {
                   </div>
                   <div className="flex flex-col flex-1">
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Problem Solving:</span> {exam.problemSolvingPoints}
+                      <span className="text-[#71717a] dark:text-white">Problem Solving:</span>{' '}
+                      {exam.problemSolvingPoints}
                     </p>
                     <p>
                       <span className="text-[#71717a] dark:text-white">Written :</span> {exam.writtenPoints}
@@ -135,7 +134,7 @@ export default function ExamList() {
                       <span className="text-[#71717a] dark:text-white">MCQ :</span> {exam.mcqPoints}
                     </p>
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Score :</span> 
+                      <span className="text-[#71717a] dark:text-white">Score :</span>
                     </p>
                   </div>
                 </div>

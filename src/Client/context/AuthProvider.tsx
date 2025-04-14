@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/utils/api'
-import { getAuthToken, setAuthToken, removeAuthToken } from '@/utils/auth'
+import api from '@/lib/api'
+import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth'
 import ROUTES from '@/constants/route'
 
 interface User {
@@ -89,9 +89,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       user,
       login,
-      logout,fetchUser
+      logout,
+      fetchUser,
     }),
-    [user, login, logout,fetchUser]
+    [user, login, logout, fetchUser]
   )
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

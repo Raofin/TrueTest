@@ -7,7 +7,7 @@ import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react'
 
 import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import {FormattedDateWeekday, FormattedTime} from '@/components/format-date-time'
 import { useRouter } from 'next/navigation'
@@ -27,8 +27,7 @@ interface Exam {
   writtenPoints: number
   mcqPoints: number
   status: 'Published' | 'Draft' | 'Ended'
-  invitedCandidates: number | 'N/A'
-  acceptedCandidates: number | 'N/A'
+  acceptedCandidates: number 
   problemSolving: number
   written: number
   mcq: number
@@ -36,9 +35,11 @@ interface Exam {
 
 
 const ITEMS_PER_PAGE = 2
+interface PageProps{
+  invitedCandidates?:number
+}
 
-
-export default function ExamList({invitedCandidates}:{invitedCandidates:number}) {
+export default function ViewExam({invitedCandidates}:PageProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [allExam, setAllExam] = useState<Exam[]>([])
   const router=useRouter();

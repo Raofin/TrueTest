@@ -1,6 +1,6 @@
 'use client'
 
-import { getAuthToken, setAuthToken } from '@/utils/auth'
+import { getAuthToken, setAuthToken } from '@/lib/auth'
 import ROUTES from '@/constants/route'
 import { useAuth } from '@/context/AuthProvider'
 import { Button, Divider, Link, useDisclosure } from '@heroui/react'
@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState, useCallback } from 'react'
 import { FieldValues, Path, useForm } from 'react-hook-form'
 import { ZodType } from 'zod'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
 import axios from 'axios'
@@ -51,122 +51,126 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
 
   const {
     handleSubmit: handleOtpSubmit,
-    control: otpControl, 
+    control: otpControl,
     formState: { errors: otpErrors },
   } = useForm<{ otp: string }>()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleAuthError = useCallback((error:any, defaultMessage: string) => {
+  const handleAuthError = useCallback((error: any, defaultMessage: string) => {
     if (axios.isAxiosError(error)) {
       toast.error(error.response?.data?.message ?? defaultMessage)
     } else {
       toast.error(defaultMessage)
     }
-    setError(error?.response?.data?.message ?? defaultMessage); 
-  }, []);
+    setError(error?.response?.data?.message ?? defaultMessage)
+  }, [])
 
- const checkUserUniqueness = useCallback(
-  async (field: 'username' | 'email', value: string) => {
-    if (!value) return;
-    try {
-      const response = await api.post(ROUTES.ISUSERUNIQUE, { [field]: value });
-      if (response.data.isUnique === false) {
-        setUniqueUsernameError(field === 'username' ? 'Username is already taken' : '');
-        setUniqueEmailError(field === 'email' ? 'Email is already taken' : '');
-      } else {
-        setUniqueUsernameError(field === 'username' ? '' : uniqueUsernameError);
-        setUniqueEmailError(field === 'email' ? '' : uniqueEmailError);
+  const checkUserUniqueness = useCallback(
+    async (field: 'username' | 'email', value: string) => {
+      if (!value) return
+      try {
+        const response = await api.post(ROUTES.ISUSERUNIQUE, { [field]: value })
+        if (response.data.isUnique === false) {
+          setUniqueUsernameError(field === 'username' ? 'Username is already taken' : '')
+          setUniqueEmailError(field === 'email' ? 'Email is already taken' : '')
+        } else {
+          setUniqueUsernameError(field === 'username' ? '' : uniqueUsernameError)
+          setUniqueEmailError(field === 'email' ? '' : uniqueEmailError)
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.data?.errors) {
+          Object.values(error.response.data.errors).forEach((errorMessages) => {
+            if (Array.isArray(errorMessages)) {
+              errorMessages.forEach((message) => {
+                if (message.includes(field === 'username' ? 'Username' : 'Email')) {
+                  setUniqueError(field as Path<T>, { type: 'manual', message })
+                }
+              })
+            }
+          })
+        }
+        return false
       }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data?.errors) {
-        Object.values(error.response.data.errors).forEach((errorMessages) => {
-          if (Array.isArray(errorMessages)) {
-            errorMessages.forEach((message) => {
-              if (message.includes(field === 'username' ? 'Username' : 'Email')) {
-                setUniqueError(field as Path<T>, { type: 'manual', message });
-              }
-            });
-          }
-        });
-      }
-      return false;
-    }
-  },
-  [setUniqueError, uniqueEmailError, uniqueUsernameError]
-);
-  const handleFieldBlur = useCallback(async (field: 'username' | 'email') => {
-      const value = watch(field as Path<T>);
+    },
+    [setUniqueError, uniqueEmailError, uniqueUsernameError]
+  )
+  const handleFieldBlur = useCallback(
+    async (field: 'username' | 'email') => {
+      const value = watch(field as Path<T>)
       if (!value) {
-        setUniqueError(field as Path<T>, { type: 'manual', message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`});
-        return;
+        setUniqueError(field as Path<T>, {
+          type: 'manual',
+          message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
+        })
+        return
       }
-      if (field === 'username') setUniqueUsernameError('');
-      if (field === 'email') setUniqueEmailError('');
+      if (field === 'username') setUniqueUsernameError('')
+      if (field === 'email') setUniqueEmailError('')
 
       if (value) {
-        await trigger(field as Path<T>);
+        await trigger(field as Path<T>)
         if (!errors[field]) {
-          await checkUserUniqueness(field, value);
+          await checkUserUniqueness(field, value)
         }
-      }else{
+      } else {
         setError(`${field} is required`)
       }
     },
     [checkUserUniqueness, errors, setUniqueError, trigger, watch]
-  );
+  )
 
   const handleOtpVerification = useCallback(
     async (otpData: { otp: string }) => {
-      if (otpVerified) return;
+      if (otpVerified) return
       if (!otpData.otp) {
-        toast.error('OTP is required');
-        return;
+        toast.error('OTP is required')
+        return
       }
 
       try {
         const verifyResponse = await api.post(ROUTES.ISVALIDOTP, {
           email: formData?.email,
           otp: otpData.otp,
-        });
+        })
 
         if (verifyResponse.data.isValidOtp) {
-          setOtpVerified(true);
-          setFormData(null);
-          toast.success('OTP verified successfully!');
-          return true; 
+          setOtpVerified(true)
+          setFormData(null)
+          toast.success('OTP verified successfully!')
+          return true
         } else {
-          toast.error(verifyResponse.data?.message ?? 'Invalid OTP. Please try again.');
-          return false; 
+          toast.error(verifyResponse.data?.message ?? 'Invalid OTP. Please try again.')
+          return false
         }
       } catch (error) {
-        handleAuthError(error, 'Failed to verify OTP. Please try again.');
-        return false; 
+        handleAuthError(error, 'Failed to verify OTP. Please try again.')
+        return false
       }
     },
     [formData, handleAuthError, otpVerified]
-  );
+  )
   const onSubmit = useCallback(
     async (data: T) => {
-      setLoading(true);
+      setLoading(true)
       try {
-        const response = await api.post(ROUTES.SENDOTP, { email: data.email });
+        const response = await api.post(ROUTES.SENDOTP, { email: data.email })
         if (response.status === 200) {
-          toast.success('OTP sent to your email. Please check your inbox.');
-          setFormData(data);
-          onOpen();
+          toast.success('OTP sent to your email. Please check your inbox.')
+          setFormData(data)
+          onOpen()
         }
       } catch (error) {
-        handleAuthError(error, 'Failed to send OTP.');
+        handleAuthError(error, 'Failed to send OTP.')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     },
     [handleAuthError, onOpen]
-  );
+  )
 
   const onOtpSubmit = useCallback(
     async (data: { otp: string }) => {
-      const isOtpValid = await handleOtpVerification(data);
+      const isOtpValid = await handleOtpVerification(data)
       if (isOtpValid) {
         try {
           const response = await api.post(ROUTES.REGISTER, {
@@ -174,42 +178,40 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
             email: formData?.email,
             password: formData?.password,
             otp: data.otp,
-          });
+          })
 
           if (response.status === 200) {
-            toast.success('Signup successful!');
-            router.push(ROUTES.PROFILE_SETUP);
-            setAuthToken(response.data.token, false);
-            fetchUser();
+            toast.success('Signup successful!')
+            router.push(ROUTES.PROFILE_SETUP)
+            setAuthToken(response.data.token, false)
+            fetchUser()
           } else {
-            router.push(ROUTES.SIGN_UP);
+            router.push(ROUTES.SIGN_UP)
           }
         } catch (error) {
-          handleAuthError(error, 'Failed to Register. Please try again.');
+          handleAuthError(error, 'Failed to Register. Please try again.')
         } finally {
-          onOpenChange();
+          onOpenChange()
         }
       }
     },
     [formData, handleAuthError, handleOtpVerification, fetchUser, onOpenChange, router]
-  );
+  )
 
   const handleSignin = useCallback(
     async (data: T) => {
       if (getAuthToken()) {
         if (authenticatedUser?.roles.includes('Admin')) {
-          router.push(ROUTES.OVERVIEW);
+          router.push(ROUTES.OVERVIEW)
         } else {
-          router.push(ROUTES.HOME);
+          router.push(ROUTES.HOME)
         }
       } else {
-        login(data.usernameOrEmail, data.password, setError, rememberMe);
+        login(data.usernameOrEmail, data.password, setError, rememberMe)
       }
     },
     [authenticatedUser, login, rememberMe, router, setError]
-  );
-
-
+  )
 
   return (
     <div>
@@ -219,27 +221,27 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
       >
         {error && <p className="text-red-500">{error}</p>}
         {formType === 'SIGN_IN' ? (
-                    <SignInFormFields
-                        register={register}
-                        errors={errors}
-                        isVisible={isVisible}
-                        setIsVisible={setIsVisible}
-                        rememberMe={rememberMe}
-                        setRememberMe={setRememberMe}
-                    />
-                ) : (
-                    <SignUpFormFields
-                        register={register}
-                        errors={errors}
-                        uniqueusernameerror={uniqueUsernameError}
-                        uniqueemailerror={uniqueEmailError}
-                        isVisible={isVisible}
-                        setIsVisible={setIsVisible}
-                        isConfirmVisible={isConfirmVisible}
-                        setIsConfirmVisible={setIsConfirmVisible}
-                        handleFieldBlur={handleFieldBlur}
-                    />
-                )}
+          <SignInFormFields
+            register={register}
+            errors={errors}
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            rememberMe={rememberMe}
+            setRememberMe={setRememberMe}
+          />
+        ) : (
+          <SignUpFormFields
+            register={register}
+            errors={errors}
+            uniqueusernameerror={uniqueUsernameError}
+            uniqueemailerror={uniqueEmailError}
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            isConfirmVisible={isConfirmVisible}
+            setIsConfirmVisible={setIsConfirmVisible}
+            handleFieldBlur={handleFieldBlur}
+          />
+        )}
         <Button className="w-full text-white" color="primary" type="submit" isDisabled={loading}>
           {!loading ? buttonText : 'Processing...'}
         </Button>
@@ -280,11 +282,11 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         handleFormSubmit={handleOtpSubmit(onOtpSubmit)}
-        control={otpControl} 
+        control={otpControl}
         errors={otpErrors}
       />
     </div>
-  );
-};
+  )
+}
 
 export default AuthForm

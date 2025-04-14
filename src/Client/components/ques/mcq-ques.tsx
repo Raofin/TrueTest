@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Form, Button, Textarea, Card, CardBody, CardHeader, Checkbox, Input } from '@heroui/react'
 import PaginationButtons from '@/components/ui/pagination-button'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { AxiosError } from 'axios'
 
@@ -49,7 +49,7 @@ export default function App({ examId }: { examId: string }) {
       ],
       correctOptions: [],
       points: 0,
-      difficultyType: ""
+      difficultyType: '',
     },
   ])
 
@@ -78,7 +78,7 @@ export default function App({ examId }: { examId: string }) {
     } else {
       currentCorrectOptions.splice(optionIndex, 1)
     }
-    
+
     setQuestions(newQuestions)
   }
 
@@ -95,7 +95,7 @@ export default function App({ examId }: { examId: string }) {
         ],
         correctOptions: [],
         points: 0,
-        difficultyType: ""
+        difficultyType: '',
       },
     ])
     setCurrentPage(questions.length)
@@ -127,11 +127,11 @@ export default function App({ examId }: { examId: string }) {
           option3: q.options[2].text,
           option4: q.options[3].text,
           isMultiSelect: q.correctOptions.length > 1,
-          answerOptions: q.correctOptions.join(',')
-        }
-      }))
+          answerOptions: q.correctOptions.join(','),
+        },
+      })),
     }
-    
+
     try {
       const resp = await api.post('/Questions/Mcq/Create', payload)
       if (resp.status === 200) {
@@ -139,11 +139,10 @@ export default function App({ examId }: { examId: string }) {
       } else {
         toast.error('Failed to save MCQ questions')
       }
-    } 
-    catch (error) {
-          const err=error as AxiosError
-          toast.error(err.message ??'Failed to save problems');
-        }
+    } catch (error) {
+      const err = error as AxiosError
+      toast.error(err.message ?? 'Failed to save problems')
+    }
   }
 
   return (
@@ -177,7 +176,7 @@ export default function App({ examId }: { examId: string }) {
               <div className="grid grid-cols-2 gap-4">
                 {questions[currentPage].options.map((option) => (
                   <div key={option.id} className="flex items-center gap-2">
-                    <Checkbox 
+                    <Checkbox
                       isSelected={questions[currentPage].correctOptions.includes(option.id)}
                       onChange={() => handleCorrectOptionChange(currentPage, option.id)}
                       name={`option-${option.id}`}
@@ -197,10 +196,10 @@ export default function App({ examId }: { examId: string }) {
               </div>
             </CardBody>
             <div className="w-full flex justify-between px-8 py-5">
-              <Input 
-                className="w-32" 
-                type="number" 
-                placeholder="Points" 
+              <Input
+                className="w-32"
+                type="number"
+                placeholder="Points"
                 value={questions[currentPage].points.toString()}
                 onChange={(e) => handlePoints(currentPage, e.target.value)}
                 min="0"

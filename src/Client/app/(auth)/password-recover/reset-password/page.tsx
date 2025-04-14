@@ -1,7 +1,7 @@
 'use client'
 
 import isValidPassword from '@/components/check-valid-password'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { Button, Input, Link } from '@heroui/react'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { AxiosError } from 'axios'
@@ -66,7 +66,7 @@ function ResetPasswordForm() {
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             defaultValue={email ?? ''}
           />
-          <Input 
+          <Input
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
             isRequired
             endContent={

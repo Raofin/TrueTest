@@ -1,4 +1,4 @@
-import api from '@/utils/api'
+import api from '@/lib/api'
 
 export default async function handleDelete(accountId: string): Promise<boolean> {
   if (!accountId) return false
