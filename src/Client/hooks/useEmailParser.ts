@@ -89,7 +89,7 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
     for (let i = startIndex; i < rows.length; i++) {
       const row = rows[i];
       const emailValue = row.email ;
-      const email = (emailValue || '').toString().trim();
+      const email = (emailValue ?? '').toString().trim();
       if (!email) continue;
 
       const emailLower = email.toLowerCase();
@@ -168,7 +168,6 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
 
     if (validEmails.length > 0) {
       setUserEmails((prev) => [...prev, ...validEmails]);
-      // toast.success(`Successfully added ${validEmails.length} valid email(s)`);
     } else if (invalidEmails.length === 0 && duplicateEmails.length === 0) {
       toast.error('No valid emails found in the input');
     }

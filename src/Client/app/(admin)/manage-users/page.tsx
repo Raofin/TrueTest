@@ -71,13 +71,13 @@ export default function Component() {
     const ManageUser = async () => {
       try {
         const response = await api.get<ApiResponse>(
-          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${roleFilter ? `&role=${roleFilter}` : ''}${
-            searchTerm ? `&searchTerm=${searchTerm}` : ''
+          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${roleFilter ? '&role=' + roleFilter : ''}${
+            searchTerm ? '&searchTerm=' + searchTerm : ''
           }`
-        )
+        );
         if (response.status === 200) {
           setUserData(response.data.accounts)
-          setTotalPages(response.data.page.totalPages || 1)
+          setTotalPages(response.data.page.totalPages ?? 1)
         }
       } catch (err) {
         const axiosError = err as AxiosError
@@ -146,7 +146,7 @@ export default function Component() {
   }, [])
 
   const onSearchChange = useCallback((value?: string) => {
-    setSearchTerm(value || '')
+    setSearchTerm(value ?? '')
     setPage(1)
   }, [])
 

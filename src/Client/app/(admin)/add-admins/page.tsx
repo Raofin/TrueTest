@@ -118,7 +118,7 @@ export default function Component() {
     }
   }, [page])
   const onSearchChange = useCallback((value?: string) => {
-    setSearchTerm(value || '')
+    setSearchTerm(value ?? '')
     setPage(1)
   }, [])
   const renderCell = useCallback((user: User, columnKey: React.Key) => {
