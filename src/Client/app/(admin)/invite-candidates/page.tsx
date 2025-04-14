@@ -65,7 +65,7 @@ export default function InviteCandidates() {
         setIsLoading(true)
         const response = await api.get('/Exam')
         if (response.status === 200) {
-          setExams(response.data.accounts || [])
+          setExams(response.data.accounts ?? [])
         }
       } catch {
         toast.error('Failed to load exams')
@@ -95,7 +95,7 @@ export default function InviteCandidates() {
     return userEmails.filter((user) => user.email.toLowerCase().includes(filterValue.toLowerCase()))
   }, [filterValue, userEmails])
 
-  const totalPages = Math.ceil(filteredItems.length / ROWS_PER_PAGE) || 1
+  const totalPages = Math.ceil(filteredItems.length / ROWS_PER_PAGE) ?? 1
   const paginatedItems = useMemo(() => {
     const start = (page - 1) * ROWS_PER_PAGE
     const end = start + ROWS_PER_PAGE
