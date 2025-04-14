@@ -1,8 +1,8 @@
 'use client'
 
 import { Link, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
-import { FaCircleUser } from 'react-icons/fa6'
-import { BiSolidLogIn } from 'react-icons/bi'
+// import { FaCircleUser } from 'react-icons/fa6'
+// import { BiSolidLogIn } from 'react-icons/bi'
 import Logo from '@/components/ui/logo/page'
 import ThemeSwitch from '../ThemeSwitch'
 
@@ -45,7 +45,7 @@ export default function Component() {
             <NavbarItem className="text-[#3f3f46] dark:text-white ">
               <ThemeSwitch />
             </NavbarItem>
-            <NavbarItem>
+            {/* <NavbarItem>
               <Link href="#">
                 <FaCircleUser className="text-[#3f3f46] dark:text-white " size={24} />
               </Link>
@@ -54,7 +54,7 @@ export default function Component() {
               <Link href="/login">
                 <BiSolidLogIn className="text-[#3f3f46] dark:text-white " size={24} />
               </Link>
-            </NavbarItem>
+            </NavbarItem> */}
           </NavbarContent>
         </Navbar>
       </div>
