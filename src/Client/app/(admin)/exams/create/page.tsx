@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Button, Card, DatePicker, Input, Textarea, TimeInput } from '@heroui/react'
 import { CalendarDate, Time } from '@internationalized/date'
+import { Toaster } from 'react-hot-toast'
 import ProblemSolve from '@/components/ques/problem-solving-ques'
 import WrittenQues from '@/components/ques/written-ques'
 import McqQues from '@/components/ques/mcq-ques'
@@ -41,19 +42,11 @@ export default function App() {
 
   return (
     <div className="m-12 flex flex-col gap-8">
-      <h1 className="w-full text-center text-3xl font-bold my-3">Create (and Edit) Exam</h1>
+         <h1 className='w-full text-center text-3xl font-bold my-3'>Create (and Edit) Exam</h1>
       <Card className={`flex shadow-none flex-col justify-between p-8 items-center `}>
         <form id="#" className="flex gap-4 flex-wrap flex-col w-full ">
-          <Input
-            className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-            isRequired
-            label="Title"
-            name="title"
-            type="text"
-            value={formData.title}
-          />
-          <Textarea
-            className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+          <Input className="bg-[#eeeef0] dark:[#71717a] rounded-2xl" isRequired label="Title" name="title" type="text" value={formData.title} />
+          <Textarea className='bg-[#eeeef0] dark:[#71717a] rounded-2xl'
             isRequired
             label="Description"
             name="description"
@@ -61,36 +54,19 @@ export default function App() {
             value={formData.description}
           />
           <div className="flex gap-5">
-            <DatePicker
-              className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-              isRequired
-              label="Date"
-              name="date"
-              value={date}
-            />
+            <DatePicker   className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl" isRequired label="Date" name="date" value={date} />
             <Input
               className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
               isRequired
               label="Total Points"
               name="totalpoints"
               type="text"
+              
             />
           </div>
           <div className="flex gap-5">
-            <TimeInput
-              label="Start Time"
-              className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-              name="opensAt"
-              value={parseTime(formData.opensAt)}
-              isRequired
-            />
-            <TimeInput
-              label="End Time"
-              className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-              name="closesAt"
-              value={parseTime(formData.closesAt)}
-              isRequired
-            />
+            <TimeInput label="Start Time"   className="bg-[#eeeef0] dark:[#71717a] rounded-2xl" name="opensAt" value={parseTime(formData.opensAt)} isRequired />
+            <TimeInput label="End Time"   className="bg-[#eeeef0] dark:[#71717a] rounded-2xl" name="closesAt" value={parseTime(formData.closesAt)} isRequired />
           </div>
           <div className="flex justify-end mt-2">
             <Button color="success">Publish</Button>
@@ -113,16 +89,17 @@ export default function App() {
       ))}
 
       <div className="flex gap-3 justify-center my-4">
-        {!activeComponents.some((comp) => comp.type === 'problemSolve') && (
+      {!activeComponents.some((comp) => comp.type === 'problemSolve')&& (
           <Button onPress={() => handleAddComponent('problemSolve')}>Add Problem Solving Question</Button>
         )}
-        {!activeComponents.some((comp) => comp.type === 'writtenQues') && (
+        {!activeComponents.some(comp=>comp.type==='writtenQues') && (
           <Button onPress={() => handleAddComponent('writtenQues')}>Add Written Question</Button>
         )}
-        {!activeComponents.some((comp) => comp.type === 'mcq') && (
+        {!activeComponents.some(comp=>comp.type==='mcq') && (
           <Button onPress={() => handleAddComponent('mcq')}>Add MCQ Question</Button>
         )}
       </div>
+      <Toaster />
     </div>
   )
 }

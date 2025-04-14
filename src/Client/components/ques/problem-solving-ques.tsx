@@ -1,173 +1,117 @@
-'use client'
+'use client';
 
-import React, { useState, useMemo } from 'react'
-import { Form, Button, Textarea, Card, Input } from '@heroui/react'
-import { Icon } from '@iconify/react'
-import toast from 'react-hot-toast'
-import PaginationButtons from '@/components/ui/pagination-button'
-import he from 'he'
-import { v4 as uuidv4 } from 'uuid'
-import MdEditor from '../katex-mermaid'
+import React, { useState, useMemo } from 'react';
+import { Form, Button, Textarea, Card, Input } from '@heroui/react';
+import { Icon } from '@iconify/react';
+import toast from 'react-hot-toast';
+import PaginationButtons from '@/components/ui/pagination-button';
+import MdEditor from '../katex-mermaid';
 
 interface TestCase {
-  id: string
-  input: string
-  output: string
+  input: string;
+  output: string;
 }
 
 interface Problem {
-  id: string
-  question: string
-  testCases: TestCase[]
+  question: string;
+  testCases: TestCase[];
+  points: number;
+  difficultyType:string
 }
 
-export default function ProblemSolvingForm() {
-  const [problems, setProblems] = useState<Problem[]>([
-    { id: uuidv4(), question: '', testCases: [{ id: uuidv4(), input: '', output: '' }] },
-  ])
-  const [currentPage, setCurrentPage] = useState(0)
-  const problemsPerPage = 1
-  const [value, setValue] = React.useState('"Hello, World!"')
-  const escaped: string = he.escape(value)
-  const unescaped: string = he.unescape(escaped)
-  console.log(unescaped)
-
-  const updateProblem = (problemId: string, updateFn: (problem: Problem) => Problem) => {
-    setProblems(prevProblems => 
-      prevProblems.map(problem => 
-        problem.id === problemId ? updateFn(problem) : problem
-      )
-    )
-  }
-
-  const updateTestCase = (problemId: string, testCaseId: string, updateFn: (testCase: TestCase) => TestCase) => {
-    updateProblem(problemId, problem => ({
-      ...problem,
-      testCases: problem.testCases.map(testCase => 
-        testCase.id === testCaseId ? updateFn(testCase) : testCase
-      )
-    }))
-  }
-
-  const addTestCase = (problemId: string) => {
-    updateProblem(problemId, problem => ({
-      ...problem,
-      testCases: [...problem.testCases, { id: uuidv4(), input: '', output: '' }]
-    }))
-    setValue('')
-  }
-
-  const handleDelete = (problemId: string, testCaseId: string) => {
-    updateProblem(problemId, problem => ({
-      ...problem,
-      testCases: problem.testCases.filter(testCase => testCase.id !== testCaseId)
-    }))
-    toast.success('Test case deleted successfully')
-  }
-
-  const handleRefresh = (problemId: string, testCaseId: string) => {
-    updateTestCase(problemId, testCaseId, () => ({ id: testCaseId, input: '', output: '' }))
-    toast.success('Test case refreshed successfully')
-  }
-
-  const handleAddProblem = () => {
-    const newProblem = { id: uuidv4(), question: '', testCases: [{ id: uuidv4(), input: '', output: '' }] }
-    setProblems(prevProblems => {
-      const newProblems = [...prevProblems, newProblem]
-      setCurrentPage(Math.ceil(newProblems.length / problemsPerPage) - 1)
-      return newProblems
-    })
-  }
-
-  const handleTestCaseInputChange = (problemId: string, testCaseId: string, newInput: string) => {
-    updateTestCase(problemId, testCaseId, testCase => ({ ...testCase, input: newInput }))
-  }
-
-  const handleTestCaseOutputChange = (problemId: string, testCaseId: string, newOutput: string) => {
-    updateTestCase(problemId, testCaseId, testCase => ({ ...testCase, output: newOutput }))
-  }
-
-  const totalPages = useMemo(() => Math.ceil(problems.length / problemsPerPage), [problems, problemsPerPage])
-  const currentProblems = useMemo(
-    () => problems.slice(currentPage * problemsPerPage, (currentPage + 1) * problemsPerPage),
-    [problems, currentPage, problemsPerPage]
-  )
-
-  return (
-    <div>
-      <Card className="border-none shadow-none bg-white dark:bg-[#18181b]">
-        <h2 className="flex justify-center text-2xl my-3">Problem Solving Question : {currentPage + 1}</h2>
-        <div className={`flex justify-center p-4`}>
-          <Form id="#" className="w-full flex flex-col gap-4 p-5 border-none">
-            {currentProblems.map(problem => (
-              <ProblemItem
-                key={problem.id}
-                problem={problem}
-                onDelete={handleDelete}
-                onRefresh={handleRefresh}
-                onInputChange={handleTestCaseInputChange}
-                onOutputChange={handleTestCaseOutputChange}
-              />
-            ))}
-            <FormFooter 
-              totalPages={totalPages}
-              currentPage={currentPage}
-              onPrevious={() => setCurrentPage(currentPage - 1)}
-              onNext={() => setCurrentPage(currentPage + 1)}
-              onAddTestCase={() => addTestCase(currentProblems[0].id)}
-            />
-          </Form>
-        </div>
-      </Card>
-      <div className="flex w-full justify-center mt-5">
-        <Button onPress={handleAddProblem}>Add Problem Solving Question</Button>
-      </div>
-    </div>
-  )
+interface ProblemItemProps {
+  problem: Problem;
+  problemIndex: number;
+  onDeleteTestCase: (testCaseIndex: number) => void;
+  onRefreshTestCase: (testCaseIndex: number) => void;
+  onTestCaseChange: (testCaseIndex: number, field: 'input' | 'output', value: string) => void;
+  onPointsChange: (value: number) => void;
+  onAddTestCase: () => void;
+  onDifficultyChange: (value: string) => void;
 }
 
-const ProblemItem = ({ problem, onDelete, onRefresh, onInputChange, onOutputChange }: {
-  problem: Problem
-  onDelete: (problemId: string, testCaseId: string) => void
-  onRefresh: (problemId: string, testCaseId: string) => void
-  onInputChange: (problemId: string, testCaseId: string, value: string) => void
-  onOutputChange: (problemId: string, testCaseId: string, value: string) => void
+const ProblemItem: React.FC<ProblemItemProps> = ({
+  problem,
+  onDeleteTestCase,
+  onRefreshTestCase,
+  onTestCaseChange,
+  onPointsChange,
+  onDifficultyChange,
+  onAddTestCase,
 }) => (
-  <div className="rounded-lg w-full flex flex-col justify-center items-center">
+  <div className="rounded-lg w-full flex flex-col justify-center items-center gap-4">
+     <div className='w-full flex justify-end'>
+     <select
+        className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
+        value={problem.difficultyType}
+        onChange={(e) => onDifficultyChange(e.target.value)} 
+      >
+        <option value="">Select Difficulty</option>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+     </div>
     <MdEditor />
-    {problem.testCases.map(testCase => (
-      <TestCaseItem
-        key={testCase.id}
-        problem={problem}
-        testCase={testCase}
-        onDelete={onDelete}
-        onRefresh={onRefresh}
-        onInputChange={onInputChange}
-        onOutputChange={onOutputChange}
-      />
-    ))}
+    {problem.testCases.map((testCase, index) => (
+       <TestCaseItem
+         key={index}
+         testCaseIndex={index}
+         testCase={testCase}
+         onDelete={onDeleteTestCase}
+         onRefresh={onRefreshTestCase}
+         onInputChange={(field, value) => onTestCaseChange(index, field, value)}
+       />
+     ))}
+  <div className='w-full flex justify-between'>
+  <div>
+   <Input
+      className="w-32"
+      type="number"
+      label="Points"
+      value={problem.points.toString()}
+      onChange={(e) => onPointsChange(parseInt(e.target.value))}
+    />
+   </div>
+   <div>
+    <Button
+      variant="flat"
+      startContent={<Icon icon="lucide:plus" />}
+      onPress={onAddTestCase}
+      className="w-full"
+    >
+      Add Test Case
+    </Button>
+   </div>
   </div>
-)
+  </div>
+);
 
-const TestCaseItem = ({ problem, testCase, onDelete, onRefresh, onInputChange, onOutputChange }: {
-  problem: Problem
-  testCase: TestCase
-  onDelete: (problemId: string, testCaseId: string) => void
-  onRefresh: (problemId: string, testCaseId: string) => void
-  onInputChange: (problemId: string, testCaseId: string, value: string) => void
-  onOutputChange: (problemId: string, testCaseId: string, value: string) => void
+interface TestCaseItemProps {
+  testCaseIndex: number;
+  testCase: TestCase;
+  onDelete: (testCaseIndex: number) => void;
+  onRefresh: (testCaseIndex: number) => void;
+  onInputChange: (field: 'input' | 'output', value: string) => void;
+}
+
+const TestCaseItem: React.FC<TestCaseItemProps> = ({
+  testCaseIndex,
+  testCase,
+  onDelete,
+  onRefresh,
+  onInputChange,
 }) => (
-  <div className="w-full flex gap-2 mt-2">
+  <div className="w-full flex gap-2">
     <div className="flex flex-col gap-2">
       <Button
         isIconOnly
         variant="flat"
-        isDisabled={problem.testCases.length === 1}
-        onPress={() => onDelete(problem.id, testCase.id)}
+        onPress={() => onDelete(testCaseIndex)}
       >
         <Icon icon="lucide:trash-2" width={20} />
       </Button>
-      <Button isIconOnly variant="flat" onPress={() => onRefresh(problem.id, testCase.id)}>
+      <Button isIconOnly variant="flat" onPress={() => onRefresh(testCaseIndex)}>
         <Icon icon="lucide:refresh-cw" width={20} />
       </Button>
     </div>
@@ -175,34 +119,34 @@ const TestCaseItem = ({ problem, testCase, onDelete, onRefresh, onInputChange, o
       <Textarea
         label="Input"
         value={testCase.input}
-        className="flex-1 bg-[#f4f4f5] dark:bg-[#27272a] rounded-2xl"
-        onChange={(e) => onInputChange(problem.id, testCase.id, e.target.value)}
+        className="flex-1 rounded-2xl"
+        onChange={(e) => onInputChange('input', e.target.value)}
       />
       <Textarea
         label="Expected Output"
         value={testCase.output}
-        className="flex-1 bg-[#f4f4f5] dark:bg-[#27272a] rounded-2xl"
-        onChange={(e) => onOutputChange(problem.id, testCase.id, e.target.value)}
+        className="flex-1 rounded-2xl"
+        onChange={(e) => onInputChange('output', e.target.value)}
       />
     </div>
   </div>
-)
+);
 
-const FormFooter = ({ 
-  totalPages, 
-  currentPage, 
-  onPrevious, 
-  onNext, 
-  onAddTestCase 
-}: {
-  totalPages: number
-  currentPage: number
-  onPrevious: () => void
-  onNext: () => void
-  onAddTestCase: () => void
+interface FormFooterProps {
+  totalPages: number;
+  currentPage: number;
+  onPrevious: () => void;
+  onNext: () => void;
+}
+
+const FormFooter: React.FC<FormFooterProps> = ({
+  totalPages,
+  currentPage,
+  onPrevious,
+  onNext,
 }) => (
   <div className="flex w-full justify-between items-center mt-4">
-    <Input className="w-32" type="number" placeholder="Points" />
+    <div className="w-32" /> 
     <div className="flex gap-2 items-center">
       <span>Page {currentPage + 1} of {totalPages}</span>
       <PaginationButtons
@@ -212,15 +156,152 @@ const FormFooter = ({
         onNext={onNext}
       />
     </div>
-    <div className="flex gap-2 items-center">
-      <Button
-        variant="flat"
-        startContent={<Icon icon="lucide:plus" />}
-        onPress={onAddTestCase}
-      >
-        Add Test Case
-      </Button>
-      <Button color="primary">Save</Button>
-    </div>
+    <div />
   </div>
-)
+);
+
+
+export default function ProblemSolvingForm() {
+  const [problems, setProblems] = useState<Problem[]>([
+    { question: '', testCases: [{ input: '', output: '' }], points: 0 ,difficultyType:""},
+  ]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const problemsPerPage = 1;
+
+  const updateProblem = (index: number, updatedProblem: Problem) => {
+    setProblems((prev) => [
+      ...prev.slice(0, index),
+      updatedProblem,
+      ...prev.slice(index + 1),
+    ]);
+  }
+  const handlePointsChange = (index: number, newPoints: number) => {
+    updateProblem(index, {
+      ...problems[index],
+      points: newPoints,
+    });
+  };
+
+  const addTestCase = (problemIndex: number) => {
+    const updatedProblem = {
+      ...problems[problemIndex],
+      testCases: [...problems[problemIndex].testCases, { input: '', output: '' }],
+    };
+    updateProblem(problemIndex, updatedProblem);
+  };
+
+  const handleDeleteTestCase = (problemIndex: number, testCaseIndex: number) => {
+    const updatedProblem = {
+      ...problems[problemIndex],
+      testCases: problems[problemIndex].testCases.filter((_, i) => i !== testCaseIndex),
+    };
+
+    if (updatedProblem.testCases.length === 0) {
+      updatedProblem.testCases = [{ input: '', output: '' }];
+    }
+
+    updateProblem(problemIndex, updatedProblem);
+    toast.success('Test case deleted');
+  };
+
+  const handleRefreshTestCase = (problemIndex: number, testCaseIndex: number) => {
+    const updatedProblem = {
+      ...problems[problemIndex],
+      testCases: problems[problemIndex].testCases.map((tc, i) =>
+        i === testCaseIndex ? { input: '', output: '' } : tc
+      ),
+    };
+    updateProblem(problemIndex, updatedProblem);
+    toast.success('Test case refreshed');
+  };
+
+  const handleTestCaseChange = (
+    problemIndex: number,
+    testCaseIndex: number,
+    field: 'input' | 'output',
+    value: string
+  ) => {
+    const updatedProblem = {
+      ...problems[problemIndex],
+      testCases: problems[problemIndex].testCases.map((tc, i) =>
+        i === testCaseIndex ? { ...tc, [field]: value } : tc
+      ),
+    };
+    updateProblem(problemIndex, updatedProblem);
+  };
+
+  const handleAddProblem = () => {
+    setProblems((prev) => [
+      ...prev,
+      { question: '', testCases: [{ input: '', output: '' }], points: 0,difficultyType:"" },
+    ]);
+    setCurrentPage(Math.ceil((problems.length + 1) / problemsPerPage) - 1);
+  };
+
+  const handleDifficultyChange = (index: number, newDifficulty: string) => {
+    updateProblem(index, {
+      ...problems[index],
+      difficultyType: newDifficulty,
+    });
+  };
+  const totalPages = useMemo(() => Math.ceil(problems.length / problemsPerPage), [problems, problemsPerPage]);
+  const currentProblems = useMemo(
+    () => problems.slice(currentPage * problemsPerPage, (currentPage + 1) * problemsPerPage),
+    [problems, currentPage, problemsPerPage]
+  );
+  const currentProblemIndex = currentPage * problemsPerPage;
+  return (
+    <div>
+      <Card className="border-none shadow-none bg-white dark:bg-[#18181b]">
+      
+       <h2 className="w-full flex justify-center text-2xl my-3">
+          Problem Solving Question : {currentProblemIndex + 1}
+        </h2>
+        <div className="flex justify-center p-4">
+          <Form className="w-full flex flex-col gap-4 p-5 border-none">
+            {currentProblems.map((problem, index) => (
+              <ProblemItem
+                key={index}
+                problem={{ ...problem, points: problem.points }}
+                problemIndex={currentProblemIndex + index}
+                onDeleteTestCase={(testCaseIndex) =>
+                  handleDeleteTestCase(currentProblemIndex + index, testCaseIndex)
+                }
+                onRefreshTestCase={(testCaseIndex) =>
+                  handleRefreshTestCase(currentProblemIndex + index, testCaseIndex)
+                }
+                onTestCaseChange={(testCaseIndex, field, value) =>
+                  handleTestCaseChange(currentProblemIndex + index, testCaseIndex, field, value)
+                }
+                onPointsChange={(value) =>
+                  handlePointsChange(currentProblemIndex + index, value)
+                }
+                onDifficultyChange={(value) => 
+                  handleDifficultyChange(currentProblemIndex + index, value)
+                }
+                onAddTestCase={() => addTestCase(currentProblemIndex + index)}
+              />
+            ))}
+
+            <div className="flex w-full justify-end mt-5 ">
+             
+            <FormFooter
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPrevious={() => setCurrentPage(Math.max(0, currentPage - 1))}
+              onNext={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+            />
+              <Button type="submit" color="primary">
+                Save
+              </Button>
+ </div>
+          </Form>
+        </div>
+      </Card>
+
+      <div className="flex w-full justify-center mt-5">
+        <Button onPress={handleAddProblem}>Add Problem Solving Question</Button>
+      </div>
+    </div>
+  );
+}

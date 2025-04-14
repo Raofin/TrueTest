@@ -1,6 +1,6 @@
 'use client'
 
-import { IoMoon,IoSunnySharp  } from "react-icons/io5";
+import { IoMoon, IoSunnySharp } from "react-icons/io5";
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import Image from "next/image"
@@ -9,7 +9,7 @@ export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false)
   const { setTheme, resolvedTheme } = useTheme()
 
-  useEffect(() =>  setMounted(true), [])
+  useEffect(() => setMounted(true), [])
 
   if (!mounted) return (
     <Image
@@ -17,19 +17,28 @@ export default function ThemeSwitch() {
       width={44}
       height={44}
       sizes="44x44"
-      
       alt="Loading Light/Dark Toggle"
       priority={false}
+      style={{ cursor: 'pointer' }}
       title="Loading Light/Dark Toggle"
     />
   )
 
   if (resolvedTheme === 'dark') {
-    return <IoSunnySharp onClick={() => setTheme('light')} />
+    return (
+      <IoSunnySharp 
+        onClick={() => setTheme('light')} 
+        style={{ cursor: 'pointer' }} 
+      />
+    )
   }
 
   if (resolvedTheme === 'light') {
-    return <IoMoon  onClick={() => setTheme('dark')} />
+    return (
+      <IoMoon 
+        onClick={() => setTheme('dark')} 
+        style={{ cursor: 'pointer' }} 
+      />
+    )
   }
-
 }

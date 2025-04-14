@@ -5,7 +5,7 @@ import { Button, Link, Pagination } from '@heroui/react'
 import CodeEditor from '@/components/submission/code-editor'
 import '@/app/globals.css'
 import getQuestionsForCurrentPage from '@/components/currpage-ques'
-import formatTime from '@/components/ui/format-time'
+import { FormatTimeHourMinutesSeconds } from '@/components/format-date-time'
 import StartExam from '@/components/start-exam'
 import WrittenSubmission from '@/components/submission/written-submit'
 import MCQSubmission from '@/components/submission/mcq-submit'
@@ -178,7 +178,7 @@ export default function Component() {
               <div className="flex items-center gap-1 before:content-[''] before:w-2 before:h-2 before:bg-red-500 before:rounded-full">
                 <p>Time Left : </p>
                 <p className={`font-mono ml-1 ${timeLeft < 300 ? 'text-danger' : 'text-success'}`}>
-                  {formatTime(timeLeft)}s
+                {FormatTimeHourMinutesSeconds({ seconds: timeLeft })}s
                 </p>
               </div>
             </div>
