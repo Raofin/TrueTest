@@ -18,7 +18,7 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/utils/api'
 import { AxiosError } from 'axios'
-import FormattedDate from '@/components/format-date-time'
+import {FormatDatewithTime} from '@/components/format-date-time'
 import handleDelete from '@/components/handleDelete'
 import handleStatus from '@/components/handleStatus'
 import RoleFilter from '@/components/role-filter'
@@ -125,7 +125,7 @@ export default function Component() {
               setIsActiveModalOpen(true)
             }}
           >
-            {user.isActive ? 'Active' : 'Deactive'}
+            {user.isActive ? 'Deactive'  : 'Active'}
           </button>
           <button
             aria-label="Delete User"
@@ -139,7 +139,7 @@ export default function Component() {
         </div>
       )
     } else if (columnKey === 'createdAt') {
-      return <FormattedDate date={cellValue as string} />
+      return FormatDatewithTime(cellValue as string)
     } else {
       return cellValue as React.ReactNode
     }
@@ -257,10 +257,18 @@ export default function Component() {
         content={`Do you want to ${status ? 'Deactive' : 'Active'} this record`}
         confirmButtonText={`${status ? 'Deactive' : 'Active'}`}
         onConfirm={async () => {
-          await handleStatus(selectedUser, setStatus)
-
+         const resp= await handleStatus(selectedUser, setStatus)
+           if(resp){
+            setUserData(prevUsers => 
+              prevUsers.map(user => 
+                user.accountId === selectedUser 
+                  ? { ...user, isActive: !status } 
+                  : user
+              )
+            );
           setIsActiveModalOpen(false)
           setSelectedUser('')
+           }
         }}
       />
       <CommonModal

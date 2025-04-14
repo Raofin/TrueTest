@@ -1,4 +1,8 @@
 
+type FormatTimeProps = {
+  minute: number;
+};
+
 export function FormattedDateWeekday({ date }: {readonly date: string }) {
   const openDate = new Date(date);
 
@@ -30,3 +34,22 @@ export function FormattedTime({ date }: {readonly date: string }) {
   
   return formattedTime;
 }
+
+
+export function  FormatTimeHourMinutes({minute}:FormatTimeProps) {
+  const hours = Math.floor(minute / 60)
+  const minutes =Math.floor(minute % 60).toString().padStart(2, '0');
+  return `${hours}:${minutes}`
+}
+
+export  function FormatDatewithTime (dateTime:string) {
+  const date = new Date(dateTime);
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date);
+};
