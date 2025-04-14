@@ -14,9 +14,13 @@ import {
   Pagination,
 } from '@heroui/react'
 import SearchIcon from '@/components/ui/search-icon'
-import { AxiosError } from 'axios'
 import api from '@/utils/api'
-import FormattedDate from '@/components/format-date-time'
+import { FormatDatewithTime} from '@/components/format-date-time'
+import isValidEmail from '@/components/check-valid-email'
+import toast from 'react-hot-toast'
+import Paginate from '@/components/pagination'
+import { AxiosError } from 'axios'
+
 type User = {
   isActive: boolean
   profile: [] | null
@@ -25,10 +29,20 @@ type User = {
   accountId: string
   username: string
   email: string
-  roles: string
+  roles: string[]
   action?: string
 }
-
+type ApiResponse = {
+  page: {
+    index: number
+    size: number
+    totalCount: number
+    totalPages: number
+    hasNext: boolean
+    hasPrevious: boolean
+  }
+  accounts: User[]
+}
 const columns = [
   { label: 'Username', key: 'username' },
   { label: 'Email', key: 'email' },
@@ -37,36 +51,52 @@ const columns = [
 ]
 
 export default function Component() {
-  const [filterValue, setFilterValue] = useState('')
-  const rowsPerPage = 10
+
+  const [rowsPerPage, setRowsPerPage] = useState(10)
   const [page, setPage] = useState(1)
-  const hasSearchFilter = Boolean(filterValue)
+    const [searchTerm, setSearchTerm] = useState('')
+  const hasSearchFilter = Boolean(searchTerm)
   const [allUsers, setAllUsers] = useState<User[]>([])
   const [error, setError] = useState('')
+   const [totalPages, setTotalPages] = useState(1)
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set())
-  const [invitedEmail, setInvitedEmail] = useState('')
+  const [invitedEmails, setInvitedEmails] = useState('')
 
   useEffect(() => {
     const ManageUser = async () => {
       try {
-        const response = await api.get('Account/All')
+        const response = await api.get<ApiResponse>(
+          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${
+            searchTerm ? `&searchTerm=${searchTerm}` : ''
+          }`
+        );
         if (response.status === 200) {
-          setAllUsers(response.data)
+          const pureCandidates = response.data.accounts.filter(
+            user => user.roles.length === 1 && user.roles[0] === 'Candidate'
+          );
+          
+          setAllUsers(pureCandidates);
+          setTotalPages(Math.ceil(pureCandidates.length / rowsPerPage));
         }
       } catch (err) {
-        const error = err as AxiosError
-        setError(error.message)
+        const axiosError = err as AxiosError
+        setError(axiosError.message)
       }
     }
     ManageUser()
-  }, [])
+  }, [page, rowsPerPage, searchTerm])
+
   const filteredItems = useMemo(() => {
     let filteredUsers = [...allUsers]
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) => user.email.toLowerCase().includes(filterValue.toLowerCase()))
+      filteredUsers = filteredUsers.filter(
+        (user) =>
+          user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.username?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     }
     return filteredUsers
-  }, [filterValue, hasSearchFilter, allUsers])
+  }, [allUsers, hasSearchFilter, searchTerm])
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage)
 
@@ -87,89 +117,119 @@ export default function Component() {
       setPage(page - 1)
     }
   }, [page])
-
+  const onSearchChange = useCallback((value?: string) => {
+    setSearchTerm(value || '')
+    setPage(1)
+  }, [])
   const renderCell = useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User]
-    if (columnKey === 'createdAt') return <FormattedDate date={cellValue as string} />
+    if (columnKey === 'createdAt') return FormatDatewithTime(cellValue as string);
     else if (columnKey === 'roles') {
       if (Array.isArray(cellValue)) {
         return cellValue.map((curr) => <div key={curr}>{curr}</div>)
       }
     } else return cellValue as React.ReactNode
   }, [])
-
-  const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value)
-      setPage(1)
-    } else {
-      setFilterValue('')
-    }
-  }, [])
-
   const onClear = useCallback(() => {
-    setFilterValue('')
+    setSearchTerm('')
     setPage(1)
   }, [])
 
   const handleMakeAdmin = useCallback(async () => {
     const selectedEmail = Array.from(selectedKeys)
+    if (selectedEmail.length == 0) {
+      alert('please select an account to make admin.')
+    }
     const selectedUsers = allUsers.filter((e) => selectedEmail.includes(e.email))
-    const adminUsers = selectedUsers.map((e) => ({ accountId: e.accountId }))
+
     try {
-      for (const user of adminUsers) {
-        await api.post('Account/MakeAdmin', user)
+      const response = await api.patch('/Account/MakeAdmin', {
+        accountIds: selectedUsers.map((e) => e.accountId),
+      })
+
+      if (response.status === 200) {
+        setAllUsers((prev) =>
+          prev.map((e) =>
+            selectedEmail.includes(e.email) ? { ...e, roles: Array.from(new Set([...e.roles, 'Admin'])) } : e
+          )
+        )
+        setSelectedKeys(new Set())
+        toast.success('Selected users have been made admins successfully!')
       }
-      setAllUsers((prev) =>
-        prev.map((e) => (selectedEmail.includes(e.email) ? { ...e, roles: `${e.roles},admin` } : e))
-      )
-    } catch (error) {
-      console.error('Error :', error)
+    } catch {
+      toast.error('Failed to make admin. Please try again.')
     }
-    setSelectedKeys(new Set())
   }, [selectedKeys, allUsers])
+
   const handleInvitation = useCallback(async () => {
-    try {
-      await api.post('Account/SendAdminInvite', { email: invitedEmail })
-    } catch (error) {
-      console.error('Error :', error)
+    const emailsToSend = invitedEmails
+      .split(',')
+      .map((email) => email.trim())
+      .filter(Boolean)
+
+    const invalidEmails = emailsToSend.filter((email) => !isValidEmail(email))
+
+    if (invalidEmails.length > 0) {
+      alert(`Emails are invalid`)
+      return
     }
-    setInvitedEmail('')
-  }, [invitedEmail])
+
+    if (emailsToSend.length === 0) {
+      alert('Please enter at least one valid email address')
+      return
+    }
+
+    try {
+      const response = await api.post('/Account/SendAdminInvite', {
+        email: emailsToSend,
+      })
+      if (response.status === 200) {
+        toast.success('Invitations sent successfully!')
+        setInvitedEmails('')
+      }
+    } catch {
+      toast.error('Failed to send invitations. Please try again.')
+    }
+  }, [invitedEmails])
 
   const topContent = useMemo(
     () => (
-      <div className="flex w-full justify-between px-5 my-3">
-        <p>User List</p>
-        <Input
-          isClearable
-          className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-          placeholder="Search"
-          startContent={<SearchIcon />}
-          value={filterValue}
-          onClear={onClear}
-          onValueChange={onSearchChange}
-        />
+      <div className="flex gap-3 p-3 w-full flex-col items-center mt-5">
+          <div className="w-full flex justify-end">
+        <Paginate rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage}/>
+        </div>
+        <div className="flex w-full justify-between ">
+          <p>User List</p>
+          <Input
+            isClearable
+            className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+            placeholder="Search"
+            startContent={<SearchIcon />}
+            value={searchTerm}
+            onClear={onClear}
+            onValueChange={onSearchChange}
+          />
+        </div>
       </div>
     ),
-    [filterValue, onClear, onSearchChange]
+    [onClear, onSearchChange, rowsPerPage, searchTerm]
   )
 
   return (
-    <div className="h-screen flex flex-col justify-between">
+    <div className=" flex flex-col justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
-      <div className="mx-12 flex h-screen flex-col justify-between  rounded-xl bg-white dark:bg-[#18181b]">
+      <div className="h-screen mx-12 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
         <div className="flex gap-3 w-full p-3 mt-5">
           <Input
             isClearable
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
-            placeholder="Email Address"
+            placeholder="Email Addresses"
             onClear={onClear}
-            value={invitedEmail}
-            onChange={(e) => setInvitedEmail(e.target.value)}
+            value={invitedEmails}
+            onChange={(e) => setInvitedEmails(e.target.value)}
           />
           <Button color="primary" onPress={handleInvitation}>
-            Send Invitation
+            Send Invitations
           </Button>
         </div>
         {error && <p className="text-red-500 text-xl">{error}</p>}
@@ -203,7 +263,7 @@ export default function Component() {
         </Table>
         <div className="py-2 px-2 flex justify-between items-center">
           <span className="w-[30%] text-small text-default-400">
-            Page {page} out of {pages}
+            Page {page} out of {totalPages}
           </span>
           <Pagination isCompact showControls showShadow color="primary" page={page} total={pages} onChange={setPage} />
           <div className="hidden sm:flex w-[30%] justify-end gap-2">

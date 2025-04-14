@@ -1,9 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react'
 import PaginationButtons from '@/components/ui/pagination-button'
 import RootNavBar from '@/app/(root)/root-navbar'
+import api from '@/utils/api'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 interface Exam {
   id: number
@@ -12,61 +15,35 @@ interface Exam {
   durationMinutes: number
   opensAt: string
   closesAt: string
-  status: 'Running' | 'Upcoming' | 'Ended'
-  problemSolving: number
-  written: number
-  mcq: number
+  status: string
+  problemSolvingPoints: number
+  writtenPoints: number
+  mcqPoints: number
   score: number
 }
 
-const Exams: Exam[] = [
-  {
-    id: 1,
-    title: 'Star Coder 2026',
-    description: 'Running',
-    durationMinutes: 60,
-    opensAt: '2026-11-21T21:00:00.000Z',
-    closesAt: '2026-11-21T22:20:00.000Z',
-    status: 'Running',
-    problemSolving: 10,
-    written: 10,
-    mcq: 30,
-    score: 100,
-  },
-  {
-    id: 2,
-    title: 'Learnathon 4.0',
-    description: 'Upcoming',
-    durationMinutes: 90,
-    opensAt: '2026-12-10T21:00:00.000Z',
-    closesAt: '2026-12-10T23:00:00.000Z',
-    status: 'Upcoming',
-    problemSolving: 10,
-    written: 10,
-    mcq: 30,
-    score: 100,
-  },
-  {
-    id: 3,
-    title: 'Star Coder 2005',
-    description: 'Ended',
-    durationMinutes: 60,
-    opensAt: '2025-11-21T21:00:00.000Z',
-    closesAt: '2025-11-21T22:00:00.000Z',
-    status: 'Ended',
-    problemSolving: 10,
-    written: 10,
-    mcq: 30,
-    score: 100,
-  },
-]
-
 const ITEMS_PER_PAGE = 3
-
 export default function ExamList() {
+  const route=useRouter();
+  useEffect(()=>{
+    const FetchExamData=async()=>{
+        try{
+          const res=await api.get('/Candidate/Exams')
+          if(res.status===200)
+             setExams(res.data)
+          else if(res.status===401){
+             toast.error("Unauthorized")
+             route.push('/signin')
+          }
+          else if(res.status===500) toast.error("Internal Server Error")
+        }catch{}
+    }
+    FetchExamData()
+  },[route])
   const [currentPage, setCurrentPage] = useState(1)
-  const totalPages = Math.ceil(Exams.length / ITEMS_PER_PAGE)
-  const paginatedExams = Exams.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const [exams,setExams]=useState<Exam[]>([])
+  const totalPages = Math.ceil(exams.length / ITEMS_PER_PAGE)
+  const paginatedExams = exams.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
   const getStatusColor = (status: string) => {
     if (status === 'Upcoming') return 'text-green-500'
     if (status === 'Ended') return 'text-gray-500'
@@ -108,12 +85,10 @@ export default function ExamList() {
                       })}
                     </p>
                     <p>
-                      {' '}
-                      <span className="text-[#71717a] dark:text-white">Score :</span> 100/100
+                      <span className="text-[#71717a] dark:text-white">Score :</span> 
                     </p>
                     <p>
-                      {' '}
-                      <span className="text-[#71717a] dark:text-white">Participants :</span> 3068
+                      <span className="text-[#71717a] dark:text-white">Participants :</span> 
                     </p>
                   </div>
                   <div>
@@ -151,16 +126,16 @@ export default function ExamList() {
                   </div>
                   <div className="flex flex-col flex-1">
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Problem Solving:</span> {exam.problemSolving}
+                      <span className="text-[#71717a] dark:text-white">Problem Solving:</span> {exam.problemSolvingPoints}
                     </p>
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Written :</span> {exam.written}
+                      <span className="text-[#71717a] dark:text-white">Written :</span> {exam.writtenPoints}
                     </p>
                     <p>
-                      <span className="text-[#71717a] dark:text-white">MCQ :</span> {exam.mcq}
+                      <span className="text-[#71717a] dark:text-white">MCQ :</span> {exam.mcqPoints}
                     </p>
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Score :</span> {exam.score}
+                      <span className="text-[#71717a] dark:text-white">Score :</span> 
                     </p>
                   </div>
                 </div>
