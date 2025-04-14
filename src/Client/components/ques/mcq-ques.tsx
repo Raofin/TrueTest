@@ -5,6 +5,7 @@ import { Form, Button, Textarea, Card, CardBody, CardHeader, Checkbox, Input } f
 import PaginationButtons from '@/components/ui/pagination-button'
 import api from '@/utils/api'
 import toast from 'react-hot-toast'
+import { AxiosError } from 'axios'
 
 interface MCQOption {
   id: number
@@ -138,9 +139,11 @@ export default function App({ examId }: { examId: string }) {
       } else {
         toast.error('Failed to save MCQ questions')
       }
-    } catch {
-      toast.error('Failed to save MCQ questions')
-    }
+    } 
+    catch (error) {
+          const err=error as AxiosError
+          toast.error(err.message ??'Failed to save problems');
+        }
   }
 
   return (

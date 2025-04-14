@@ -1,6 +1,5 @@
 'use client'
 
-
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Input, Textarea, TimeInput } from '@heroui/react'
 import { CalendarDate, Time } from '@internationalized/date'
@@ -14,7 +13,6 @@ import api from '@/utils/api'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-
 interface FormData {
   title: string
   description: string
@@ -24,22 +22,18 @@ interface FormData {
   closesAt: string
 }
 
-
 function parseTime(time: string): Time | null {
   if (!time) return null
   const [hour, minute] = time.split(':').map(Number)
   return new Time(hour, minute)
 }
 
-
 export default function CreateExamPage() {
-
-
   const [date, setDate] = useState<CalendarDate | null>(null)
   const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([])
-  const searchParams = useSearchParams();
-  const route=useRouter();
-  const [examId,setExamId] =useState(searchParams.get('id')||"");
+  const searchParams = useSearchParams()
+  const route = useRouter()
+  const [examId, setExamId] = useState(searchParams.get('id') || '')
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -54,7 +48,6 @@ export default function CreateExamPage() {
   const handleSaveExam = async (e: React.FormEvent) => {
     e.preventDefault()
 
-
     if (!date) {
       toast.error('Please select a date')
       return
@@ -66,7 +59,6 @@ export default function CreateExamPage() {
         return new Date(date.year, date.month - 1, date.day, parseInt(hours), parseInt(minutes)).toISOString()
       }
 
-
       const examData = {
         ...formData,
         opensAt: formatDateTime(formData.opensAt),
@@ -74,9 +66,7 @@ export default function CreateExamPage() {
         date: new Date(date.year, date.month - 1, date.day).toISOString(),
       }
 
-
       const response = await api.post('/Exam/Create', examData)
-
 
       if (response.status === 200) {
         toast.success('Exam created successfully.')
@@ -85,69 +75,58 @@ export default function CreateExamPage() {
     } catch {}
   }
   useEffect(() => {
-    const FetchExamId=async()=>{
-      try{
-        const response=await api.get(`/Exam/${examId}`)
-        if(response.status===200){
-          const exam=response.data.exam
-            setFormData({
-              title: exam.title,
-              description: exam.description,
-              durationMinutes: exam.durationMinutes,
-              totalPoints: exam.totalPoints,
-              opensAt: exam.opensAt,
-              closesAt: exam.closesAt,
-            })
-            if (exam.opensAt) {
-              const opensAtDate = new Date(exam.opensAt);
-              setDate(new CalendarDate(
-                opensAtDate.getFullYear(),
-                opensAtDate.getMonth() + 1,
-                opensAtDate.getDate()
-              ));
-            }
+    const FetchExamId = async () => {
+      try {
+        const response = await api.get(`/Exam/${examId}`)
+        if (response.status === 200) {
+          const exam = response.data.exam
+          setFormData({
+            title: exam.title,
+            description: exam.description,
+            durationMinutes: exam.durationMinutes,
+            totalPoints: exam.totalPoints,
+            opensAt: exam.opensAt,
+            closesAt: exam.closesAt,
+          })
+          if (exam.opensAt) {
+            const opensAtDate = new Date(exam.opensAt)
+            setDate(new CalendarDate(opensAtDate.getFullYear(), opensAtDate.getMonth() + 1, opensAtDate.getDate()))
+          }
         }
-      }catch{  }
-  }
-  FetchExamId();
-  }, [examId])
- 
-  const handlePublishExam = async () => {
-  if(examId){
-    try {
-      const response = await api.post(`/Exam/Publish?examId=${examId}`)
-
-
-      if (response.status === 200) {
-        toast.success('Exam published successfully.')
-      }
-    } catch {
-      toast.error('Failed to publish exam')
+      } catch {}
     }
-  }
+    FetchExamId()
+  }, [examId])
+
+  const handlePublishExam = async () => {
+    if (examId) {
+      try {
+        const response = await api.post(`/Exam/Publish?examId=${examId}`)
+
+        if (response.status === 200) {
+          toast.success('Exam published successfully.')
+        }
+      } catch {
+        toast.error('Failed to publish exam')
+      }
+    }
   }
   const handleDeleteExam = async () => {
-   if(examId){
-    try {
-      const response = await api.delete(`/Exam/Delete/${examId}`)
+    if (examId) {
+      try {
+        const response = await api.delete(`/Exam/Delete/${examId}`)
 
-
-      if (response.status === 200) {
-        toast.success('Exam deleted successfully.')
-        setFormData({title: '',
-          description: '',
-          durationMinutes: 0,
-          totalPoints: 0,
-          opensAt: '',
-          closesAt: '',})
+        if (response.status === 200) {
+          toast.success('Exam deleted successfully.')
+          setFormData({ title: '', description: '', durationMinutes: 0, totalPoints: 0, opensAt: '', closesAt: '' })
           setExamId('')
           setDate(null)
-        route.push('/exams/create')
+          route.push('/exams/create')
+        }
+      } catch {
+        toast.error('Failed to delete exam')
       }
-    } catch {
-      toast.error('Failed to delete exam')
     }
-   }
   }
   const handleOpenCloseTime = (time: Time | null): string => {
     if (!time) return ''
@@ -192,11 +171,11 @@ export default function CreateExamPage() {
               name="duration"
               type="number"
               min="0"
-              value={formData.durationMinutes?.toString() ?? "0"}
+              value={formData.durationMinutes?.toString() ?? '0'}
               onChange={(e) => {
-                const value = Number(e.target.value);
+                const value = Number(e.target.value)
                 if (!isNaN(value) && value >= 1) {
-                  setFormData({ ...formData, durationMinutes: value });
+                  setFormData({ ...formData, durationMinutes: value })
                 }
               }}
             />
@@ -231,12 +210,12 @@ export default function CreateExamPage() {
               label="Total Points"
               name="totalpoints"
               type="number"
-               min="0"
-               value={formData.totalPoints?.toString() ?? "0"}
-               onChange={(e) => {
-                const value = Number(e.target.value);
+              min="0"
+              value={formData.totalPoints?.toString() ?? '0'}
+              onChange={(e) => {
+                const value = Number(e.target.value)
                 if (!isNaN(value) && value >= 1) {
-                  setFormData({ ...formData, totalPoints: value });
+                  setFormData({ ...formData, totalPoints: value })
                 }
               }}
             />
@@ -255,15 +234,13 @@ export default function CreateExamPage() {
         </form>
       </Card>
 
-
       {activeComponents.map((component) => (
         <div key={component.type} className="w-full">
-          {component.type === 'problemSolve' && <ProblemSolve examId={examId}/>}
-          {component.type === 'writtenQues' && <WrittenQues examId={examId}/>}
-          {component.type === 'mcq' && <McqQues examId={examId}/>}
+          {component.type === 'problemSolve' && <ProblemSolve examId={examId} />}
+          {component.type === 'writtenQues' && <WrittenQues examId={examId} />}
+          {component.type === 'mcq' && <McqQues examId={examId} />}
         </div>
       ))}
-
 
       <div className="flex gap-3 justify-center my-4">
         {!activeComponents.some((comp) => comp.type === 'problemSolve') && (

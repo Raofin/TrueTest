@@ -89,7 +89,7 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
     for (let i = startIndex; i < rows.length; i++) {
       const row = rows[i];
       const emailValue = row.email ;
-      const email = (emailValue  '').toString().trim();
+      const email = (emailValue ?? '').toString().trim();
       if (!email) continue;
 
       const emailLower = email.toLowerCase();

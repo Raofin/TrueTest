@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import PaginationButtons from '@/components/ui/pagination-button';
 import MdEditor from '../katex-mermaid';
 import api from '@/utils/api';
+import { AxiosError } from 'axios'
 
 
 interface TestCase {
@@ -199,7 +200,6 @@ export default function ProblemSolvingForm({ examId }: ProblemSolvingFormProps) 
         })),
       });
 
-
       if (response.status === 200) {
         toast.success('Problems saved successfully!');
       } else {
@@ -207,8 +207,8 @@ export default function ProblemSolvingForm({ examId }: ProblemSolvingFormProps) 
         console.error('API Error:', response);
       }
     } catch (error) {
-      toast.error('Failed to save problems');
-      console.error('Fetch Error:', error);
+      const err=error as AxiosError
+      toast.error(err.message ??'Failed to save problems');
     }
   };
 

@@ -6,6 +6,7 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import { v4 as uuidv4 } from 'uuid'
 import toast from 'react-hot-toast'
 import api from '@/utils/api'
+import { AxiosError } from 'axios'
 
 interface WrittenQuestion {
   id: string
@@ -98,8 +99,9 @@ export default function App({ examId }: { examId: string }) {
       } else {
         toast.error('Failed to save written questions')
       }
-    } catch {
-      toast.error('Failed to save written questions')
+    } catch (error) {
+      const err = error as AxiosError
+      toast.error(err.message ?? 'Failed to save written questions')
     }
   }
   const totalPages = useMemo(
@@ -118,9 +120,9 @@ export default function App({ examId }: { examId: string }) {
 
         {currentQuestions.map((question) => (
           <div key={question.id} className="w-full">
-            <div className="w-full flex justify-end mr-5">
+            <div className="w-full flex justify-end">
               <select
-                className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
+                className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300 mx-2"
                 value={question.difficultyType}
                 onChange={(e) => handleDifficultyChange(question.id, e.target.value)}
               >

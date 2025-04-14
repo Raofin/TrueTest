@@ -32,7 +32,6 @@ interface Exam {
   problemSolving: number
   written: number
   mcq: number
-  score: number
 }
 
 
@@ -141,7 +140,7 @@ export default function ExamList({invitedCandidates}:{invitedCandidates:number})
                     <span className="text-[#71717a] dark:text-white">MCQ: </span>{exam.mcqPoints}
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Score: </span> {exam.score}
+                    <span className="text-[#71717a] dark:text-white">Score: </span> {exam.totalPoints}
                   </p>
                 </div>
                 <div className="flex flex-col flex-1">
