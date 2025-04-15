@@ -1,6 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
@@ -32,7 +33,6 @@ public class DeleteTestCaseCommandValidator : AbstractValidator<DeleteTestCaseCo
     public DeleteTestCaseCommandValidator()
     {
         RuleFor(x => x.TestCaseId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }

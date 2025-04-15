@@ -12,6 +12,7 @@ public record UpdateExamCommand(
     string? Title,
     string? Description,
     int? DurationMinutes,
+    decimal? TotalPoints,
     DateTime? OpensAt,
     DateTime? ClosesAt) : IRequest<ErrorOr<ExamResponse>>;
 
@@ -29,6 +30,7 @@ public class UpdateExamCommandHandler(IUnitOfWork unitOfWork)
         exam.Title = request.Title ?? exam.Title;
         exam.DescriptionMarkdown = request.Description ?? exam.DescriptionMarkdown;
         exam.DurationMinutes = request.DurationMinutes ?? exam.DurationMinutes;
+        exam.TotalPoints = request.TotalPoints ?? exam.TotalPoints;
         exam.OpensAt = request.OpensAt ?? exam.OpensAt;
         exam.ClosesAt = request.ClosesAt ?? exam.ClosesAt;
 

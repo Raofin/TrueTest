@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -49,19 +50,19 @@ public class CreateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
 
             foreach (var tc in problem.TestCases)
             {
-                question.TestCases.Add(new TestCase
-                {
-                    Input = tc.Input,
-                    ExpectedOutput = tc.Output
-                });
+                question.TestCases.Add(
+                    new TestCase
+                    {
+                        Input = tc.Input,
+                        ExpectedOutput = tc.Output
+                    }
+                );
             }
 
             questions.Add(question);
         }
 
-        var newPoints = questions.Sum(q => q.Points);
-        exam.ProblemSolvingPoints += newPoints;
-        exam.TotalPoints += newPoints;
+        exam.ProblemSolvingPoints += questions.Sum(q => q.Points);
 
         _unitOfWork.Question.AddRange(questions);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
@@ -77,7 +78,7 @@ public class CreateProblemSolvingCommandValidator : AbstractValidator<CreateProb
     public CreateProblemSolvingCommandValidator()
     {
         RuleFor(x => x.ExamId)
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.ProblemQuestions)
             .NotEmpty();

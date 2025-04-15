@@ -12,9 +12,9 @@ internal class TestCaseRepository(AppDbContext dbContext) : Repository<TestCase>
     public async Task<List<TestCase>> GetByQuestionIdAsync(Guid questionId, CancellationToken cancellationToken)
     {
         return await _dbContext.TestCases
-           .AsNoTracking()
-           .Where(q => q.QuestionId == questionId)
-           .OrderBy(q => q.CreatedAt)
-           .ToListAsync(cancellationToken);
+            .AsNoTracking()
+            .Where(q => q.QuestionId == questionId)
+            .OrderBy(q => q.CreatedAt)
+            .ToListAsync(cancellationToken);
     }
 }

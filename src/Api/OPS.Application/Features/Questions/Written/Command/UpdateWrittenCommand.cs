@@ -1,11 +1,11 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Enums;
-using Throw;
 
 namespace OPS.Application.Features.Questions.Written.Command;
 
@@ -36,11 +36,8 @@ public class UpdateWrittenCommandHandler(IUnitOfWork unitOfWork)
         if (request.Points is not null)
         {
             question.Examination.WrittenPoints -= question.Points;
-            question.Examination.TotalPoints -= question.Points;
-
+            question.Examination.WrittenPoints += request.Points.Value;
             question.Points = request.Points.Value;
-            question.Examination.WrittenPoints += question.Points;
-            question.Examination.TotalPoints += question.Points;
         }
 
         question.DifficultyId = request.DifficultyType.HasValue
@@ -58,8 +55,7 @@ public class UpdateWrittenCommandValidator : AbstractValidator<UpdateWrittenComm
     public UpdateWrittenCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10)

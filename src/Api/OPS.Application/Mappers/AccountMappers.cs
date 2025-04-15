@@ -17,7 +17,7 @@ public static class AccountExtensions
             account.IsActive
         );
     }
-    
+
     public static AccountBasicInfoResponse MapToBasicInfoDto(this Account account)
     {
         return new AccountBasicInfoResponse(

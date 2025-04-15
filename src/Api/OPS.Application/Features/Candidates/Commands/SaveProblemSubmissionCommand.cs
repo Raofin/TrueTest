@@ -29,7 +29,7 @@ public class SaveProblemSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserI
 
         var isValidCandidate = await _unitOfWork.ExamCandidate
             .IsValidCandidate(userAccountId, request.ExamId, cancellationToken);
-        
+
         if (!isValidCandidate) return Error.Unauthorized();
 
         foreach (var req in request.Submissions)

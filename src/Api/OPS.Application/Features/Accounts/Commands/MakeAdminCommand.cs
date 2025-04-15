@@ -28,11 +28,7 @@ public class MakeAdminCommandHandler(IUnitOfWork unitOfWork, IAccountEmails acco
 
         foreach (var account in accounts)
         {
-            _unitOfWork.AccountRole.Add(new AccountRole
-            {
-                AccountId = account.Id,
-                RoleId = (int)RoleType.Admin
-            });
+            _unitOfWork.AccountRole.Add(new AccountRole { AccountId = account.Id, RoleId = (int)RoleType.Admin });
         }
 
         var emails = accounts.Select(a => a.Email).ToList();

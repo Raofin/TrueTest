@@ -20,7 +20,6 @@ public class BaseEntityConfig<T> : IEntityTypeConfiguration<T> where T : BaseEnt
 
         builder.Property(e => e.UpdatedAt)
             .HasDefaultValueSql(null)
-            .HasColumnType("DateTime")
-            .ValueGeneratedOnAddOrUpdate();
+            .HasColumnType("DateTime");
     }
 }

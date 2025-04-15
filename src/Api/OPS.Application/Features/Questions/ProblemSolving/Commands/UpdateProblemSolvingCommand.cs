@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -38,11 +39,8 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
         if (request.Points is not null)
         {
             question.Examination.ProblemSolvingPoints -= question.Points;
-            question.Examination.TotalPoints -= question.Points;
-
+            question.Examination.ProblemSolvingPoints += request.Points.Value;
             question.Points = request.Points.Value;
-            question.Examination.ProblemSolvingPoints += question.Points;
-            question.Examination.TotalPoints += question.Points;
         }
 
         question.DifficultyId = request.DifficultyType.HasValue
@@ -82,8 +80,7 @@ public class UpdateProblemSolvingCommandValidator : AbstractValidator<UpdateProb
     public UpdateProblemSolvingCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10)
