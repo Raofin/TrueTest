@@ -9,7 +9,7 @@ public class ProblemSubmission : BaseEntity
 {
     public string Code { get; set; } = null!;
     public int Attempts { get; set; }
-    public decimal? Score { get; set; }
+    public decimal Score { get; set; }
     public bool IsFlagged { get; set; }
     public string? FlagReason { get; set; }
 

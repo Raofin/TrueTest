@@ -9,6 +9,7 @@ namespace OPS.Domain;
 public interface IUnitOfWork : IDisposable
 {
     IAccountRepository Account { get; }
+    IAccountRoleRepository AccountRole { get; }
     IOtpRepository Otp { get; }
     IExamRepository Exam { get; }
     IExamCandidatesRepository ExamCandidate { get; }

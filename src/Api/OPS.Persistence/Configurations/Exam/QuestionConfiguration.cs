@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Exam;
 using OPS.Persistence.Configurations.Common;
+using static OPS.Persistence.Configurations.Common.Constants;
 
 namespace OPS.Persistence.Configurations.Exam;
 
@@ -13,7 +14,7 @@ public class QuestionConfiguration : IEntityTypeConfiguration<Question>
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.StatementMarkdown).IsRequired();
-        entity.Property(e => e.Points).HasColumnType("decimal(10, 2)");
+        entity.Property(e => e.Points).HasColumnType(DecimalType).HasDefaultValueSql("((0))");
         entity.Property(e => e.HasLongAnswer).HasDefaultValue(false);
 
         new BaseEntityConfig<Question>().Configure(entity);
