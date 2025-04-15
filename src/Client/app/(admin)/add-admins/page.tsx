@@ -14,8 +14,8 @@ import {
   Pagination,
 } from '@heroui/react'
 import SearchIcon from '@/components/ui/search-icon'
-import api from '@/utils/api'
-import { FormatDatewithTime} from '@/components/format-date-time'
+import api from '@/lib/api'
+import { FormatDatewithTime } from '@/components/format-date-time'
 import isValidEmail from '@/components/check-valid-email'
 import toast from 'react-hot-toast'
 import Paginate from '@/components/pagination'
@@ -51,14 +51,13 @@ const columns = [
 ]
 
 export default function Component() {
-
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [page, setPage] = useState(1)
-    const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const hasSearchFilter = Boolean(searchTerm)
   const [allUsers, setAllUsers] = useState<User[]>([])
   const [error, setError] = useState('')
-   const [totalPages, setTotalPages] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set())
   const [invitedEmails, setInvitedEmails] = useState('')
 
@@ -66,17 +65,15 @@ export default function Component() {
     const ManageUser = async () => {
       try {
         const response = await api.get<ApiResponse>(
-          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${
-            searchTerm ? `&searchTerm=${searchTerm}` : ''
-          }`
-        );
+          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${searchTerm ? `&searchTerm=${searchTerm}` : ''}`
+        )
         if (response.status === 200) {
           const pureCandidates = response.data.accounts.filter(
-            user => user.roles.length === 1 && user.roles[0] === 'Candidate'
-          );
-          
-          setAllUsers(pureCandidates);
-          setTotalPages(Math.ceil(pureCandidates.length / rowsPerPage));
+            (user) => user.roles.length === 1 && user.roles[0] === 'Candidate'
+          )
+
+          setAllUsers(pureCandidates)
+          setTotalPages(Math.ceil(pureCandidates.length / rowsPerPage))
         }
       } catch (err) {
         const axiosError = err as AxiosError
@@ -123,7 +120,7 @@ export default function Component() {
   }, [])
   const renderCell = useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User]
-    if (columnKey === 'createdAt') return FormatDatewithTime(cellValue as string);
+    if (columnKey === 'createdAt') return FormatDatewithTime(cellValue as string)
     else if (columnKey === 'roles') {
       if (Array.isArray(cellValue)) {
         return cellValue.map((curr) => <div key={curr}>{curr}</div>)
@@ -195,8 +192,8 @@ export default function Component() {
   const topContent = useMemo(
     () => (
       <div className="flex gap-3 p-3 w-full flex-col items-center mt-5">
-          <div className="w-full flex justify-end">
-        <Paginate rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage}/>
+        <div className="w-full flex justify-end">
+          <Paginate rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
         </div>
         <div className="flex w-full justify-between ">
           <p>User List</p>

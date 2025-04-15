@@ -23,11 +23,11 @@ import SearchIcon from '@/components/ui/search-icon'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import PaginationButtons from '@/components/ui/pagination-button'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useEmailParser } from '@/hooks/useEmailParser'
 import isValidEmail from '@/components/check-valid-email'
-import ViewExam from '@/app/(admin)/view-exams/page'
+
 
 interface Exam {
   examId: string
@@ -43,7 +43,7 @@ const columns = [
   { label: 'Action', key: 'action' },
 ]
 const ROWS_PER_PAGE = 10
-export default function InviteCandidates() {
+export default function Component() {
   const [filterValue, setFilterValue] = useState('')
   const [page, setPage] = useState(1)
   const [fileContent, setFileContent] = useState('')
@@ -52,12 +52,11 @@ export default function InviteCandidates() {
   const [copiedEmail, setCopiedEmail] = useState('')
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedEmail, setSelectedEmail] = useState<User | null>(null)
-  const [invitedCandidates, setInvitedCandidates] = useState<number>(0)
   const [editedEmail, setEditedEmail] = useState('')
   const [editingEmail, setEditingEmail] = useState<string | null>(null)
   const [examId, setExamId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { userEmails, parseEmailContent, setUserEmails } = useEmailParser();
+  const { userEmails, parseEmailContent, setUserEmails } = useEmailParser()
 
   useEffect(() => {
     const fetchExams = async () => {
@@ -65,7 +64,8 @@ export default function InviteCandidates() {
         setIsLoading(true)
         const response = await api.get('/Exam')
         if (response.status === 200) {
-          setExams(response.data.accounts ?? [])
+          setExams(response.data)
+          console.log(exams)
         }
       } catch {
         toast.error('Failed to load exams')
@@ -74,7 +74,7 @@ export default function InviteCandidates() {
       }
     }
     fetchExams()
-  }, [])
+  }, [exams])
   const handleCopyEmail = useCallback((email: string) => {
     navigator.clipboard.writeText(email).then(() => {
       setCopiedEmail(email)
@@ -134,7 +134,6 @@ export default function InviteCandidates() {
       if (response.status === 200) {
         toast.success('Invitations sent successfully!')
         setUserEmails([])
-        setInvitedCandidates(userEmails.length)
         setFileContent('')
       }
     } catch {
@@ -150,18 +149,16 @@ export default function InviteCandidates() {
       toast.error('Please enter a valid email address')
       return
     }
-    if (userEmails.some(user => user.email === editedEmail && user.email !== selectedEmail.email)) {
+    if (userEmails.some((user) => user.email === editedEmail && user.email !== selectedEmail.email)) {
       toast.error('This email already exists in the list')
       return
     }
-    setUserEmails(prev =>
-      prev.map(user =>
-        user.email === selectedEmail.email ? { ...user, email: editedEmail } : user
-      )
+    setUserEmails((prev) =>
+      prev.map((user) => (user.email === selectedEmail.email ? { ...user, email: editedEmail } : user))
     )
     toast.success('Email updated successfully')
-  },[editedEmail, selectedEmail, setUserEmails, userEmails])
-  
+  }, [editedEmail, selectedEmail, setUserEmails, userEmails])
+
   const renderCell = useCallback(
     (user: User, columnKey: string) => {
       if (columnKey === 'email') {
@@ -188,7 +185,7 @@ export default function InviteCandidates() {
         }
         return user.email
       }
-  
+
       if (columnKey === 'action') {
         return (
           <div className="flex justify-center gap-4">
@@ -212,26 +209,25 @@ export default function InviteCandidates() {
           </div>
         )
       }
-  
+
       return (
         <div className="flex items-center gap-2">
-  <span>{user.email}</span>
-  <Tooltip content={copiedEmail === user.email ? 'Copied!' : 'Copy email'}>
-    <Button isIconOnly variant="light" size="sm" onPress={() => handleCopyEmail(user.email)}>
-      <Icon
-        icon={copiedEmail === user.email ? 'lucide:check' : 'lucide:copy'}
-        className={copiedEmail === user.email ? 'text-success' : ''}
-        width={18}
-      />
-    </Button>
-  </Tooltip>
-</div>
+          <span>{user.email}</span>
+          <Tooltip content={copiedEmail === user.email ? 'Copied!' : 'Copy email'}>
+            <Button isIconOnly variant="light" size="sm" onPress={() => handleCopyEmail(user.email)}>
+              <Icon
+                icon={copiedEmail === user.email ? 'lucide:check' : 'lucide:copy'}
+                className={copiedEmail === user.email ? 'text-success' : ''}
+                width={18}
+              />
+            </Button>
+          </Tooltip>
+        </div>
       )
     },
     [copiedEmail, editingEmail, editedEmail, handleEditEmail, handleCopyEmail]
   )
-  
-  
+
   const handleDeleteEmail = () => {
     if (!selectedEmail) return
     setUserEmails((prev) => prev.filter((u) => u.email !== selectedEmail.email))
@@ -368,7 +364,7 @@ export default function InviteCandidates() {
             </Button>
           </div>
         </div>
-       
+
         <CommonModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
@@ -377,7 +373,6 @@ export default function InviteCandidates() {
           confirmButtonText="Remove"
           onConfirm={handleDeleteEmail}
         />
-        {invitedCandidates>0 && <ViewExam />}
       </div>
     </div>
   )

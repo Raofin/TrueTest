@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/utils/api'
-import { getAuthToken, setAuthToken, removeAuthToken } from '@/utils/auth'
+import api from '@/lib/api'
+import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth'
 import ROUTES from '@/constants/route'
 
 interface User {
@@ -28,12 +28,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = useCallback(() => {
     removeAuthToken()
     setUser(null)
-    router.push('/signin')
+    router.push(ROUTES.SIGN_IN)
   }, [router])
 
   const fetchUser = useCallback(async (): Promise<User | null> => {
     try {
-      const response = await api.get('/User/Info')
+      const response = await api.get(ROUTES.USER_INFO)
       if (response.status === 200) {
         const userData: User = response.data
         setUser(userData)
@@ -44,6 +44,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     return null
   }, [])
+  useEffect(() => {
+    const token = getAuthToken();
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      fetchUser().then((fetchedUser) => {
+        if (fetchedUser) {
+          if (fetchedUser.roles.includes('Admin')) {
+            router.push(ROUTES.OVERVIEW);
+            return
+          } else {
+            router.push(ROUTES.HOME);
+            return
+          }
+        }
+      });
+    } else {
+      setUser(null);
+        router.push(ROUTES.SIGN_IN);
+    }
+  }, []);
 
   useEffect(() => {
     const token = getAuthToken()
@@ -89,9 +109,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       user,
       login,
-      logout,fetchUser
+      logout,
+      fetchUser,
     }),
-    [user, login, logout,fetchUser]
+    [user, login, logout, fetchUser]
   )
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
