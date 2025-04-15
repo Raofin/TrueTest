@@ -44,7 +44,7 @@ internal class JwtGenerator(IOptions<JwtSettings> jwtSettings) : IJwtGenerator
         claims.AddRange(roleClaims);
     }
 
-    private void AddPermissionClaims(Account account, List<Claim> claims)
+    private static void AddPermissionClaims(Account account, List<Claim> claims)
     {
         var allPermissions = GetPermissionsByRoles(account);
 

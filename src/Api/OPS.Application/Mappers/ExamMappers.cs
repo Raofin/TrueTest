@@ -17,6 +17,7 @@ public static class ExamExtensions
             exam.WrittenPoints,
             exam.McqPoints,
             exam.DurationMinutes,
+            exam.IsPublished,
             exam.Status(),
             exam.OpensAt,
             exam.ClosesAt
