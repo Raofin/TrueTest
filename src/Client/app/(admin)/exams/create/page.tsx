@@ -34,7 +34,7 @@ export default function CreateExamPage() {
   const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([])
   const searchParams = useSearchParams()
   const route = useRouter()
-  const [examId, setExamId] = useState(searchParams.get('id') || '')
+  const [examId, setExamId] = useState(searchParams.get('id') ?? '')
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',

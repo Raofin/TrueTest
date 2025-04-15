@@ -23,7 +23,6 @@ interface Problem {
 
 interface ProblemItemProps {
   problem: Problem
-  problemIndex: number
   onDeleteTestCase: (testCaseIndex: number) => void
   onRefreshTestCase: (testCaseIndex: number) => void
   onTestCaseChange: (testCaseIndex: number, field: 'input' | 'output', value: string) => void
@@ -147,7 +146,7 @@ const FormFooter: React.FC<FormFooterProps> = ({ totalPages, currentPage, onPrev
 )
 
 interface ProblemSolvingFormProps {
-  examId: string
+ readonly examId: string
 }
 
 export default function ProblemSolvingForm({ examId }: ProblemSolvingFormProps) {
@@ -280,7 +279,6 @@ export default function ProblemSolvingForm({ examId }: ProblemSolvingFormProps) 
               <ProblemItem
                 key={index}
                 problem={{ ...problem, points: problem.points }}
-                problemIndex={currentProblemIndex + index}
                 onDeleteTestCase={(testCaseIndex) => handleDeleteTestCase(currentProblemIndex + index, testCaseIndex)}
                 onRefreshTestCase={(testCaseIndex) => handleRefreshTestCase(currentProblemIndex + index, testCaseIndex)}
                 onTestCaseChange={(testCaseIndex, field, value) =>

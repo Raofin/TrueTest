@@ -27,7 +27,7 @@ interface FetchWrittenData {
     hasLongAnswer: boolean
   }[]
 }
-export default function App({ examId }: { examId: string }) {
+export default function App({ examId }: {readonly examId: string }) {
   const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestion[]>([
     { id: uuidv4(), question: '', isShortAnswer: false, isLongAnswer: false, points: 0, difficultyType: '' },
   ])

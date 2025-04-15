@@ -1,47 +1,47 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Textarea, Select, SelectItem } from '@heroui/react';
+import React, { useState, useEffect } from 'react'
+import { Card, Button, Textarea, Select, SelectItem } from '@heroui/react'
 import api from '@/lib/api'
 import { useSearchParams } from 'next/navigation'
 
 interface TestCase {
-  input: string;
-  expectedOutput: string;
-  receivedOutput: string;
+  input: string
+  expectedOutput: string
+  receivedOutput: string
 }
 
 interface Question {
-  questionId: string; 
-  questionTitle: string; 
-  questionDescription: string; 
-  inputFormat?: string;
-  outputFormat?: string;
-  constraints?: string;
-  userAnswer?: string;
-  testCases: TestCase[];
-  pointsAwarded: number; 
-  maxPoints: number;
-  questionType: 'code' | 'written'|'mcq';
+  questionId: string
+  questionTitle: string
+  questionDescription: string
+  inputFormat?: string
+  outputFormat?: string
+  constraints?: string
+  userAnswer?: string
+  testCases: TestCase[]
+  pointsAwarded: number
+  maxPoints: number
+  questionType: 'code' | 'written' | 'mcq'
 }
 
 interface Submission {
-  accountId: string; 
-  username: string;
-  email: string;
+  accountId: string
+  username: string
+  email: string
   result: {
-    totalScore: number;
-    problemSolvingScore: number;
-    submittedAt: string;
-    hasReviewed: boolean;
-    isReviewed: boolean;
-  };
-  questions: Question[];  
+    totalScore: number
+    problemSolvingScore: number
+    submittedAt: string
+    hasReviewed: boolean
+    isReviewed: boolean
+  }
+  questions: Question[]
 }
 
 interface ExamData {
-  title: string;
-  submissions: Submission[]; 
+  title: string
+  submissions: Submission[]
 }
 
 const initialExamData: ExamData = {
@@ -60,7 +60,7 @@ const initialExamData: ExamData = {
       },
       questions: [
         {
-          questionId: '1', 
+          questionId: '1',
           questionTitle: 'Question #1',
           questionDescription: 'Write a program that takes two integers as input and prints their sum.',
           inputFormat: 'Two space-separated integers, a and b.',
@@ -105,65 +105,62 @@ return 0;
       ],
     },
   ],
-};
+}
 
 export default function Component() {
-  const [examData] = useState<ExamData>(initialExamData);
-  const searchParams=useSearchParams();
-  const examId=searchParams.get('examId');
-  const examTitle=searchParams.get('examTitle');
+  const [examData] = useState<ExamData>(initialExamData)
+  const searchParams = useSearchParams()
+  const examId = searchParams.get('examId')
+  const examTitle = searchParams.get('examTitle')
   const [flaggedQuestions, setFlaggedQuestions] = useState<{
-    [accountId: string]: { [questionId: string]: boolean };
-  }>({});
+    [accountId: string]: { [questionId: string]: boolean }
+  }>({})
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get(`/Review/Candidates/${examId}`);
-        if(response.status===200){
-           
+        const response = await api.get(`/Review/Candidates/${examId}`)
+        if (response.status === 200) {
+          console.log('Review candidate submission')
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error)
       }
-    };
-  
-    fetchData();
-  }, [examId]);
-  
-  const [selectedCandidateId, setSelectedCandidateId] = useState(examData.submissions[0]?.accountId || '');
-  const currentSubmission = examData.submissions.find((sub) => sub.accountId === selectedCandidateId);
-  const currentQuestions = currentSubmission?.questions || [];
-
-  const handleCandidateChange = (value: string) => {
-    setSelectedCandidateId(value);
-  };
-
-  const handlePrevCandidate = () => {
-    const currentIndex = examData.submissions.findIndex((sub) => sub.accountId === selectedCandidateId);
-    if (currentIndex > 0) {
-      setSelectedCandidateId(examData.submissions[currentIndex - 1].accountId);
     }
-  };
+    fetchData()
+  }, [examId])
+
+  const [selectedCandidateId, setSelectedCandidateId] = useState(examData.submissions[0]?.accountId ?? '')
+  const currentSubmission = examData.submissions.find((sub) => sub.accountId === selectedCandidateId)
+  const currentQuestions = currentSubmission?.questions ?? []
+  const handleCandidateChange = (value: string) => {
+    setSelectedCandidateId(value)
+  }
+  const handlePrevCandidate = () => {
+    const currentIndex = examData.submissions.findIndex((sub) => sub.accountId === selectedCandidateId)
+    if (currentIndex > 0) {
+      setSelectedCandidateId(examData.submissions[currentIndex - 1].accountId)
+    }
+  }
 
   const handleNextCandidate = () => {
-    const currentIndex = examData.submissions.findIndex((sub) => sub.accountId === selectedCandidateId);
+    const currentIndex = examData.submissions.findIndex((sub) => sub.accountId === selectedCandidateId)
     if (currentIndex < examData.submissions.length - 1) {
-      setSelectedCandidateId(examData.submissions[currentIndex + 1].accountId);
+      setSelectedCandidateId(examData.submissions[currentIndex + 1].accountId)
     }
-  };
+  }
 
   const handleFlagChange = (accountId: string, questionId: string) => {
     setFlaggedQuestions((prevFlags) => {
-      const newFlags = { ...prevFlags };
-      newFlags[accountId] ??= {};
-      newFlags[accountId][questionId] = !newFlags[accountId][questionId];
-      return newFlags;
-    });
-  };
+      const newFlags = { ...prevFlags }
+      newFlags[accountId] ??= {}
+      newFlags[accountId][questionId] = !newFlags[accountId][questionId]
+      return newFlags
+    })
+  }
 
   const isQuestionFlagged = (accountId: string, questionId: string) => {
-    return flaggedQuestions[accountId]?.[questionId] ?? false;
-  };
+    return flaggedQuestions[accountId]?.[questionId] ?? false
+  }
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
@@ -183,16 +180,16 @@ export default function Component() {
                   onChange={(e: { target: { value: string } }) => handleCandidateChange(e.target.value)}
                 >
                   {examData.submissions.map((sub) => (
-                    <SelectItem key={sub.accountId}>{sub.accountId} ({sub.username || sub.email})</SelectItem>
+                    <SelectItem key={sub.accountId}>
+                      {sub.accountId} ({sub.username ?? sub.email})
+                    </SelectItem>
                   ))}
                 </Select>
               </div>
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  isDisabled={
-                    examData.submissions.findIndex((sub) => sub.accountId === selectedCandidateId) <= 0
-                  }
+                  isDisabled={examData.submissions.findIndex((sub) => sub.accountId === selectedCandidateId) <= 0}
                   onPress={handlePrevCandidate}
                 >
                   Previous
@@ -214,7 +211,11 @@ export default function Component() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-default-500">Score: </span>
-                  {currentSubmission.result.totalScore}/{examData.submissions.reduce((sum, sub) => sum + sub.questions.reduce((qSum, q) => qSum + q.maxPoints, 0), 0)}
+                  {currentSubmission.result.totalScore}/
+                  {examData.submissions.reduce(
+                    (sum, sub) => sum + sub.questions.reduce((qSum, q) => qSum + q.maxPoints, 0),
+                    0
+                  )}
                 </div>
                 <div>
                   <span className="text-default-500">Submitted At: </span>
@@ -224,10 +225,10 @@ export default function Component() {
             )}
           </div>
         </Card>
-
         <div className="bg-white dark:bg-[#18181b] p-5 rounded-xl">
-          <h2 className="w-full text-center ">{currentSubmission?.username || currentSubmission?.email || 'No Candidate Selected'}</h2>
-
+          <h2 className="w-full text-center ">
+            {currentSubmission?.username ?? currentSubmission?.email ?? 'No Candidate Selected'}
+          </h2>
           {currentQuestions.map((curr) => (
             <div key={curr.questionId} className="space-y-4">
               <h2 className="text-lg font-semibold">{curr.questionTitle}</h2>
@@ -254,9 +255,10 @@ export default function Component() {
                   )}
                 </>
               )}
-
               <div>
-                <h3 className="font-semibold mb-2">{curr.questionType === 'code' ? 'User Submission' : 'User Answer'}</h3>
+                <h3 className="font-semibold mb-2">
+                  {curr.questionType === 'code' ? 'User Submission' : 'User Answer'}
+                </h3>
                 <Card className={`p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a]`}>
                   <div className={`font-mono text-sm whitespace-pre-wrap p-2`}>{curr.userAnswer}</div>
                 </Card>
@@ -265,7 +267,8 @@ export default function Component() {
               {curr.questionType === 'code' && curr.testCases.length > 0 && (
                 <div>
                   <h3 className="font-semibold mb-2">
-                    Test Cases (Passed {curr.testCases.filter(tc => tc.expectedOutput === tc.receivedOutput).length}/{curr.testCases.length})
+                    Test Cases (Passed {curr.testCases.filter((tc) => tc.expectedOutput === tc.receivedOutput).length}/
+                    {curr.testCases.length})
                   </h3>
                   <div className="space-y-2">
                     <div className="grid grid-cols-3 gap-4 p-3 rounded-lg">
@@ -281,7 +284,13 @@ export default function Component() {
                         <div className={`p-3 font-mono text-sm h-20 rounded-lg bg-[#eeeef0] dark:bg-[#27272a]`}>
                           {testCase.expectedOutput}
                         </div>
-                        <div className={`p-3 font-mono text-sm h-20 rounded-lg ${testCase.expectedOutput === testCase.receivedOutput ? 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300'} font-mono text-sm h-20 rounded-lg`}>
+                        <div
+                          className={`p-3 font-mono text-sm h-20 rounded-lg ${
+                            testCase.expectedOutput === testCase.receivedOutput
+                              ? 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300'
+                              : 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300'
+                          } font-mono text-sm h-20 rounded-lg`}
+                        >
                           {testCase.receivedOutput}
                         </div>
                       </div>
@@ -295,12 +304,8 @@ export default function Component() {
                 <div className="flex items-center gap-5">
                   <div className="flex items-center gap-3">
                     <span>Points</span>
-                    <input
-                      name="points"
-                      type="number"
-                      className="w-16"
-                      defaultValue={curr.pointsAwarded}
-                    />/{curr.maxPoints}
+                    <input name="points" type="number" className="w-16" defaultValue={curr.pointsAwarded} />/
+                    {curr.maxPoints}
                   </div>
                   <Button size="sm" variant="flat">
                     <input
@@ -327,5 +332,5 @@ export default function Component() {
         </div>
       </div>
     </div>
-  );
+  )
 }

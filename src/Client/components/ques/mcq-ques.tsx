@@ -37,7 +37,7 @@ interface FetchMcqData {
   }[]
 }
 
-export default function App({ examId }: { examId: string }) {
+export default function App({examId }: {readonly examId: string }) {
   const [questions, setQuestions] = useState<MCQQuestion[]>([
     {
       question: '',

@@ -24,8 +24,8 @@ interface CodeProps {
   className?: string
 }
 interface MdEditorProps {
-  value: string;
-  onChange: (value: string) => void;
+  readonly value: string;
+  readonly onChange: (newValue: string) => void;
 }
 const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
   const demoid = useRef(`dome${randomid()}`)

@@ -6,9 +6,8 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
-import {FormattedDateWeekday, FormattedTime} from '@/components/format-date-time'
-import { useRouter } from 'next/navigation'
-import {FormatTimeHourMinutes} from '@/components/format-date-time'
+import {FormattedDateWeekday, FormattedTime,FormatTimeHourMinutes} from '@/components/format-date-time'
+import {useRouter } from 'next/navigation'
 
 interface Exam {
   examId: string
