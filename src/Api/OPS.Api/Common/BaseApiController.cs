@@ -1,15 +1,16 @@
-﻿using System.Net.Mime;
-using ErrorOr;
+﻿using ErrorOr;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using static System.Net.Mime.MediaTypeNames.Application;
 
 namespace OPS.Api.Common;
 
-// [Authorize]
+[Authorize]
 [ApiController]
-[Produces(MediaTypeNames.Application.Json)]
-[Consumes(MediaTypeNames.Application.Json)]
+[Produces(Json)]
+[Consumes(Json)]
 public class BaseApiController : ControllerBase
 {
     protected IActionResult ToResult<T>(ErrorOr<T> result)
@@ -38,7 +39,8 @@ public class BaseApiController : ControllerBase
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Validation => StatusCodes.Status400BadRequest,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Unauthorized => StatusCodes.Status403Forbidden,
+            ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError
         };
 

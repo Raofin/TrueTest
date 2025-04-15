@@ -1,8 +1,9 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Common.Extensions;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
@@ -10,8 +11,10 @@ using Throw;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
 
+public record TestCaseUpdateRequest(Guid? TestCaseId, string? Input, string? Output);
+
 public record UpdateProblemSolvingCommand(
-    Guid Id,
+    Guid QuestionId,
     string? StatementMarkdown,
     decimal? Points,
     DifficultyType? DifficultyType,
@@ -25,18 +28,30 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
     public async Task<ErrorOr<ProblemQuestionResponse>> Handle(
         UpdateProblemSolvingCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetWithTestCases(request.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithTestCases(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
 
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
-        question.Points = request.Points ?? question.Points;
-        question.DifficultyId = request.DifficultyType.HasValue ? (int)request.DifficultyType.Value : question.DifficultyId;
+
+        if (request.Points is not null)
+        {
+            question.Examination.ProblemSolvingPoints -= question.Points;
+            question.Examination.ProblemSolvingPoints += request.Points.Value;
+            question.Points = request.Points.Value;
+        }
+
+        question.DifficultyId = request.DifficultyType.HasValue
+            ? (int)request.DifficultyType.Value
+            : question.DifficultyId;
 
         foreach (var tc in request.TestCases)
         {
-            if (tc.Id.HasValue && tc.Id != Guid.Empty)
+            if (tc.TestCaseId.HasValue && tc.TestCaseId != Guid.Empty)
             {
-                var testCase = await _unitOfWork.TestCase.GetAsync(tc.Id.Value, cancellationToken);
+                var testCase = await _unitOfWork.TestCase.GetAsync(tc.TestCaseId.Value, cancellationToken);
                 testCase.ThrowIfNull();
 
                 testCase.Input = tc.Input ?? testCase.Input;
@@ -54,11 +69,9 @@ public class UpdateProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
             }
         }
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? question.ToProblemQuestionDto()
-            : Error.Failure();
+        return question.MapToProblemQuestionDto();
     }
 }
 
@@ -66,9 +79,8 @@ public class UpdateProblemSolvingCommandValidator : AbstractValidator<UpdateProb
 {
     public UpdateProblemSolvingCommandValidator()
     {
-        RuleFor(x => x.Id)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+        RuleFor(x => x.QuestionId)
+            .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10)
@@ -78,7 +90,7 @@ public class UpdateProblemSolvingCommandValidator : AbstractValidator<UpdateProb
             .GreaterThan(0)
             .LessThanOrEqualTo(100)
             .When(x => x.Points.HasValue);
-        
+
         RuleFor(x => x.DifficultyType)
             .IsInEnum()
             .When(x => x.DifficultyType.HasValue);
@@ -94,13 +106,13 @@ public class TestCaseUpdateRequestValidator : AbstractValidator<TestCaseUpdateRe
     {
         RuleFor(x => x.Input)
             .NotEmpty()
-            .When(x => x.Id == null);
+            .When(x => x.TestCaseId == null);
 
         RuleFor(x => x.Output)
             .NotEmpty()
-            .When(x => x.Id == null);
+            .When(x => x.TestCaseId == null);
 
-        RuleFor(x => x.Id)
+        RuleFor(x => x.TestCaseId)
             .Must(id => id == null || id != Guid.Empty);
     }
 }

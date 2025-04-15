@@ -1,9 +1,9 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.Dtos;
-using OPS.Application.CrossCutting.Constants;
-using OPS.Application.Interfaces;
+using OPS.Application.Common.Constants;
+using OPS.Application.Dtos;
+using OPS.Application.Services.AuthService;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 
@@ -23,27 +23,22 @@ public class ResetPasswordCommandHandler(
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IAuthService _authService = authService;
 
-    public async Task<ErrorOr<AuthenticationResponse>> Handle(PasswordRecoveryCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<AuthenticationResponse>> Handle(
+        PasswordRecoveryCommand request, CancellationToken cancellationToken)
     {
         var account = await _unitOfWork.Account.GetByEmailAsync(request.Email, cancellationToken);
-
         if (account == null) return Error.NotFound();
 
         var isValidOtp = await _unitOfWork.Otp.IsValidOtpAsync(request.Email, request.Otp, cancellationToken);
-
-        if (!isValidOtp)
-            return Error.Unauthorized(description: "Invalid OTP.");
+        if (!isValidOtp) return Error.Unauthorized(description: "Invalid OTP.");
 
         var (hashedPassword, salt) = _passwordHasher.HashPassword(request.NewPassword);
-
         account.PasswordHash = hashedPassword;
         account.Salt = salt;
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? _authService.AuthenticateUser(account)
-            : Error.Failure();
+        return result > 0 ? _authService.AuthenticateUser(account) : Error.Unexpected();
     }
 }
 
@@ -58,7 +53,8 @@ public class ResetPasswordCommandValidator : AbstractValidator<PasswordRecoveryC
         RuleFor(x => x.NewPassword)
             .NotEmpty()
             .Matches(ValidationConstants.PasswordRegex)
-            .WithMessage("Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).");
+            .WithMessage(
+                "Password must be at least 8 chars long, contain at least 1x (lowercase, uppercase, digit, special char).");
 
         RuleFor(x => x.Otp)
             .NotEmpty()

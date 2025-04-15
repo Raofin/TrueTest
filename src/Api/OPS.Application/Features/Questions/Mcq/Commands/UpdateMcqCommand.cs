@@ -1,16 +1,26 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Contracts.DtoExtensions;
-using OPS.Application.Contracts.Dtos;
+using OPS.Application.Common.Extensions;
+using OPS.Application.Dtos;
+using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Enums;
 using Throw;
 
 namespace OPS.Application.Features.Questions.Mcq.Commands;
 
+public record UpdateMcqOptionRequest(
+    string? Option1,
+    string? Option2,
+    string? Option3,
+    string? Option4,
+    bool? IsMultiSelect,
+    string? AnswerOptions
+);
+
 public record UpdateMcqCommand(
-    Guid Id,
+    Guid QuestionId,
     string? StatementMarkdown,
     decimal? Points,
     DifficultyType? DifficultyType,
@@ -22,31 +32,41 @@ public class UpdateMcqQuestionCommandHandler(IUnitOfWork unitOfWork)
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ErrorOr<McqQuestionResponse>> Handle(
-        UpdateMcqCommand command, CancellationToken cancellationToken)
+        UpdateMcqCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.Question.GetWithMcqOption(command.Id, cancellationToken);
+        var question = await _unitOfWork.Question.GetWithMcqOption(request.QuestionId, cancellationToken);
         if (question is null) return Error.NotFound();
+
+        if (question.Examination.IsPublished)
+            return Error.Conflict(description: "Exam of this question is already published");
+
         question.McqOption.ThrowIfNull();
+        question.StatementMarkdown = request.StatementMarkdown ?? question.StatementMarkdown;
 
-        question.StatementMarkdown = command.StatementMarkdown ?? question.StatementMarkdown;
-        question.Points = command.Points ?? question.Points;
-        question.DifficultyId = command.DifficultyType.HasValue ? (int)command.DifficultyType.Value : question.DifficultyId;
-
-        if(command.McqOption is not null)
+        if (request.Points is not null)
         {
-            question.McqOption.Option1 = command.McqOption.Option1 ?? question.McqOption.Option1;
-            question.McqOption.Option2 = command.McqOption.Option2 ?? question.McqOption.Option2;
-            question.McqOption.Option3 = command.McqOption.Option3 ?? question.McqOption.Option3;
-            question.McqOption.Option4 = command.McqOption.Option4 ?? question.McqOption.Option4;
-            question.McqOption.IsMultiSelect = command.McqOption.IsMultiSelect ?? question.McqOption.IsMultiSelect;
-            question.McqOption.AnswerOptions = command.McqOption.AnswerOptions ?? question.McqOption.AnswerOptions;
+            question.Examination.McqPoints -= question.Points;
+            question.Examination.McqPoints += request.Points.Value;
+            question.Points = request.Points.Value;
         }
 
-        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        question.DifficultyId = request.DifficultyType.HasValue
+            ? (int)request.DifficultyType.Value
+            : question.DifficultyId;
 
-        return result > 0
-            ? question.ToMcqQuestionDto()
-            : Error.Failure();
+        if (request.McqOption is not null)
+        {
+            question.McqOption.Option1 = request.McqOption.Option1 ?? question.McqOption.Option1;
+            question.McqOption.Option2 = request.McqOption.Option2 ?? question.McqOption.Option2;
+            question.McqOption.Option3 = request.McqOption.Option3 ?? question.McqOption.Option3;
+            question.McqOption.Option4 = request.McqOption.Option4 ?? question.McqOption.Option4;
+            question.McqOption.IsMultiSelect = request.McqOption.IsMultiSelect ?? question.McqOption.IsMultiSelect;
+            question.McqOption.AnswerOptions = request.McqOption.AnswerOptions ?? question.McqOption.AnswerOptions;
+        }
+
+        await _unitOfWork.CommitAsync(cancellationToken);
+
+        return question.MapToMcqQuestionDto();
     }
 }
 
@@ -54,8 +74,8 @@ public class UpdateMcqCommandValidator : AbstractValidator<UpdateMcqCommand>
 {
     public UpdateMcqCommandValidator()
     {
-        RuleFor(x => x.Id)
-            .NotEmpty();
+        RuleFor(x => x.QuestionId)
+            .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
             .MinimumLength(10)
@@ -101,9 +121,5 @@ public class UpdateMcqOptionRequestValidator : AbstractValidator<UpdateMcqOption
             .Matches("^([1-4](,[1-4]){0,3})?$")
             .WithMessage("AnswerOptions must contain numbers 1-4, separated by commas.")
             .When(x => !string.IsNullOrEmpty(x.AnswerOptions));
-
-        RuleFor(x => x.IsMultiSelect)
-            .NotNull()
-            .When(x => x.IsMultiSelect.HasValue);
     }
 }

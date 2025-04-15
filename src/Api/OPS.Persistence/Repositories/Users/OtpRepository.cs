@@ -29,7 +29,7 @@ internal class OtpRepository(AppDbContext dbContext) : Repository<Otp>(dbContext
     {
         return await _dbContext.Otps
             .AsNoTracking()
-            .Where(o => o.Email == email && o.Code == otp && o.ExpiresAt > DateTime.UtcNow)
+            .Where(o => o.Email == email && o.Code == otp && o.Attempts < 5 && o.ExpiresAt > DateTime.UtcNow)
             .SingleOrDefaultAsync(cancellationToken);
     }
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OPS.Domain.Contracts.Repository.Users;
+using OPS.Domain.Entities.Common;
 using OPS.Domain.Entities.User;
+using OPS.Domain.Enums;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Users;
@@ -33,44 +35,64 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<bool> IsExistsAsync(string? username, string? email, CancellationToken cancellationToken)
+    public async Task<List<Account>> GetByEmailsWithRoleAsync(List<string> emails, CancellationToken cancellationToken)
     {
         return await _dbContext.Accounts
             .AsNoTracking()
-            .Where(a =>
-                (!string.IsNullOrEmpty(username) && a.Username == username) ||
-                (!string.IsNullOrEmpty(email) && a.Email == email))
-            .AnyAsync(cancellationToken);
-    }
-
-    public async Task<List<Account>> GetAllWithDetails(CancellationToken cancellationToken)
-    {
-        return await _dbContext.Accounts
-            .AsNoTracking()
+            .Where(a => emails.Contains(a.Email))
             .Include(a => a.AccountRoles)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Account?> GetWithProfile(string usernameOrEmail, CancellationToken cancellationToken)
+    public async Task<PaginatedList<Account>> GetAllWithDetails(int pageIndex, int pageSize,
+        string? searchTerm = null, RoleType? role = null, CancellationToken cancellationToken = default)
     {
-        return await GetWithProfileQuery()
+        var query = GetWithDetailsQuery().AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var trimmedSearch = searchTerm.Trim();
+            query = query.Where(a => a.Username.Contains(trimmedSearch) || a.Email.Contains(trimmedSearch));
+        }
+
+        if (role.HasValue)
+        {
+            query = query.Where(a => a.AccountRoles.Any(ar => ar.RoleId == (int)role.Value));
+        }
+
+        query = query.OrderBy(a => a.CreatedAt);
+
+        return await PaginatedList<Account>.CreateAsync(query, pageIndex, pageSize, cancellationToken);
+    }
+
+    public async Task<Account?> GetWithDetails(string usernameOrEmail, CancellationToken cancellationToken)
+    {
+        return await GetWithDetailsQuery()
             .Where(a => a.Username == usernameOrEmail || a.Email == usernameOrEmail)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<Account?> GetWithProfile(Guid accountId, CancellationToken cancellationToken)
+    public async Task<Account?> GetWithDetails(Guid accountId, CancellationToken cancellationToken)
     {
-        return await GetWithProfileQuery()
+        return await GetWithDetailsQuery()
             .Where(a => a.Id == accountId)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    private IQueryable<Account> GetWithProfileQuery()
+    private IQueryable<Account> GetWithDetailsQuery()
     {
         return _dbContext.Accounts
+            .AsSplitQuery()
             .Include(a => a.AccountRoles)
             .ThenInclude(ar => ar.Role)
             .Include(a => a.Profile)
             .ThenInclude(p => p!.ProfileLinks);
+    }
+
+    public async Task<List<Account>> GetNonAdminAccounts(List<Guid> accountIds, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Accounts
+            .Where(a => accountIds.Contains(a.Id) && a.AccountRoles.All(ar => ar.RoleId != (int)RoleType.Admin))
+            .ToListAsync(cancellationToken);
     }
 }

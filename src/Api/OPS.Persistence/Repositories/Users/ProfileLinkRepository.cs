@@ -5,7 +5,8 @@ using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Users;
 
-internal class ProfileLinkRepository(AppDbContext dbContext) : Repository<ProfileLinks>(dbContext), IProfileLinkRepository
+internal class ProfileLinkRepository(AppDbContext dbContext)
+    : Repository<ProfileLinks>(dbContext), IProfileLinkRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 
@@ -13,6 +14,7 @@ internal class ProfileLinkRepository(AppDbContext dbContext) : Repository<Profil
     {
         return await _dbContext.ProfileLinks
             .Where(q => q.ProfileId == profileId)
+            .OrderBy(a => a.CreatedAt)
             .ToListAsync(cancellationToken);
     }
 }

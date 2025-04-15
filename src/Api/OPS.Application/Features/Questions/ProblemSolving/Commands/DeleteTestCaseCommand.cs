@@ -1,6 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
@@ -17,12 +18,13 @@ public class DeleteTestCaseCommandHandler(IUnitOfWork unitOfWork)
         var testCase = await _unitOfWork.TestCase.GetAsync(request.TestCaseId, cancellationToken);
         if (testCase is null) return Error.NotFound();
 
+        var isExamPublished = await _unitOfWork.Exam.IsPublished(questionId: testCase.QuestionId, cancellationToken);
+        if (isExamPublished) return Error.Conflict(description: "Exam of this question is already published");
+
         _unitOfWork.TestCase.Remove(testCase);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
-        return result > 0
-            ? Result.Success
-            : Error.Failure();
+        return result > 0 ? Result.Success : Error.Unexpected();
     }
 }
 
@@ -31,7 +33,6 @@ public class DeleteTestCaseCommandValidator : AbstractValidator<DeleteTestCaseCo
     public DeleteTestCaseCommandValidator()
     {
         RuleFor(x => x.TestCaseId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }
