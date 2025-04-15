@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Avatar, Badge } from '@heroui/react'
-import { cn } from '@heroui/react'
+import { Avatar, Badge,cn } from '@heroui/react'
 
 export type NotificationType = 'default' | 'request'
 
@@ -38,7 +37,7 @@ const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-small text-foreground">
-            <strong className="font-medium">{name}</strong> {description || children}
+            <strong className="font-medium">{name}</strong> {description ?? children}
           </p>
           <time className="text-tiny text-default-400">{time}</time>
         </div>

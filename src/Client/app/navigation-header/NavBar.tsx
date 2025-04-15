@@ -20,8 +20,10 @@ import {
 import { Icon } from '@iconify/react'
 import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
+import { useAuth } from '@/context/AuthProvider'
 
 export default function Component() {
+  const { user, logout } = useAuth()
   return (
     <div>
       <Navbar
@@ -30,9 +32,7 @@ export default function Component() {
           item: 'hidden md:flex',
         }}
       >
-        <NavbarContent
-          className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end"
-        >
+        <NavbarContent className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end">
           <NavbarItem>
             <ThemeSwitch />
           </NavbarItem>
@@ -47,7 +47,7 @@ export default function Component() {
             </Popover>
           </NavbarItem>
           <NavbarItem>
-            <button className="">
+            <button type="button">
               <Dropdown placement="bottom-end">
                 <DropdownTrigger>
                   <div className="mt-1 h-8 w-8 outline-none transition-transform">
@@ -68,11 +68,11 @@ export default function Component() {
                     <div className="flex gap-2 my-4">
                       <Avatar size="md" src="" alt="User Avatar" />
                       <div>
-                        <p>username</p>
-                        <p>useremail@gmail.com</p>
+                        <p>{user?.username}</p>
+                        <p>{user?.email}</p>
                       </div>
                     </div>
-                    <Divider className='mb-5'/>
+                    <Divider className="mb-5" />
                   </DropdownItem>
                   <DropdownItem key="profile">
                     <Link
@@ -96,15 +96,9 @@ export default function Component() {
                     </Link>
                   </DropdownItem>
 
-                  <DropdownItem key="logout">
-                    <Link
-                      href="/login"
-                      className={`flex items-center gap-2 `}
-                      style={{ color: 'inherit', textDecoration: 'none' }}
-                    >
-                      <Icon icon="lucide:log-out" className="w-5 h-5" />
-                      <p>Logout</p>
-                    </Link>
+                  <DropdownItem key="logout" onPress={logout}>
+                    <div className="flex gap-2"><Icon icon="lucide:log-out" className="w-5 h-5" />
+                    <p>Logout</p></div>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

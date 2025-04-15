@@ -6,21 +6,21 @@ import { useState } from 'react'
 import RootNavBar from '../root-navbar'
 
 const stats = [
-  { icon: 'fa-solid:camera', title: 'Camera' },
-  { icon: 'fa-solid:microphone-alt', title: 'Microphone' },
-  { icon: 'fa-solid:desktop', title: 'Screen Recording' }, 
-  { icon: 'fa-solid:clipboard-list', title: 'Clipboard' },
+  {id:1, icon: 'fa-solid:camera', title: 'Camera' },
+  {id:2, icon: 'fa-solid:microphone-alt', title: 'Microphone' },
+  {id:3, icon: 'fa-solid:desktop', title: 'Screen Recording' }, 
+  {id:4, icon: 'fa-solid:clipboard-list', title: 'Clipboard' },
 ];
 
 export default function Component() {
-  const [isPermit, setPermit] = useState(false)
+  const [permit, setPermit] = useState(false)
   return (
     <>
     <RootNavBar/>
     <div className="flex flex-col gap-6 items-center justify-center text-center h-screen w-full ">
       <div className="gap-5 flex">
-        {stats.map((stat, index) => (
-          <Card key={index} className="py-4 w-[200px] text-center flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]">
+        {stats.map((stat) => (
+          <Card key={stat.id} className="py-4 w-[200px] text-center flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]">
             <CardHeader className="pb-0 pt-2 px-4 flex flex-col items-center">
               <Icon icon={stat.icon} width={50} height={50} />
             </CardHeader>
@@ -40,10 +40,10 @@ export default function Component() {
         <Button
           color="primary"
           className="my-10 w-[200px] ml-10"
-          onPress={() => setPermit(!isPermit)}
-          isDisabled={isPermit}
+          onPress={() => setPermit(!permit)}
+          isDisabled={permit}
         >
-          {isPermit ? 'Permission Granted' : 'Grant Permission'}
+          {permit ? 'Permission Granted' : 'Grant Permission'}
         </Button>
       </div>
     </div>

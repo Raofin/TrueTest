@@ -1,7 +1,7 @@
 'use client'
 
-import Settings from '@/app/components/settings/page'
+import Settings from '@/components/settings/page'
 
-export default function Component(){
-   return <Settings />
+export default function Component() {
+  return <Settings />
 }

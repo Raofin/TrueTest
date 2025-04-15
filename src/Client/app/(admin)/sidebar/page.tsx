@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import Link from 'next/link'
 import { useState } from 'react'
-import Logo from '@/app/components/ui/logo/page'
+import Logo from '@/components/ui/logo/page'
 import ThemeSwitch from '@/app/ThemeSwitch'
 import { Avatar } from '@heroui/react'
 import { PiNotepadFill } from 'react-icons/pi'
@@ -13,6 +13,7 @@ import { MdEmail } from 'react-icons/md'
 import { RiAdminFill, RiDashboardFill } from 'react-icons/ri'
 import { FaUser } from 'react-icons/fa6'
 import { IoLogOut, IoSettingsSharp } from 'react-icons/io5'
+import { useAuth } from '@/context/AuthProvider'
 
 const menuItems = [
   { key: 'dashboard', icon: <RiDashboardFill size={30} />, label: 'Dashboard', path: '/overview' },
@@ -22,11 +23,10 @@ const menuItems = [
   { key: 'users', icon: <BiSolidUserRectangle size={30} />, label: ' Manage Users', path: '/manage-users' },
   { key: 'admins', icon: <RiAdminFill size={30} />, label: 'Add Admins', path: '/add-admins' },
 ]
-
 const Sidebar = () => {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
-
+  const { user } = useAuth()
   return (
     <div className={`min-h-screen flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b]  rounded-lg p-3`}>
       <div className={`min-h-full flex flex-col justify-between ${isCollapsed ? 'w-20' : 'w-56'}`}>
@@ -44,11 +44,9 @@ const Sidebar = () => {
               <Avatar size="sm" src="" alt="User Avatar" />
             </div>
             {!isCollapsed && (
-              <Link href={`/profile`}>
-                <div>
-                  <p>admin</p>
-                  <p className={`text-sm opacity-50`}>administrator</p>
-                </div>
+              <Link href={`/profile`} className="flex flex-col gap-1 w-full">
+                <p className="text-sm font-medium flex-wrap">{user?.username}</p>
+                <p className={`text-xs text-gray-500 flex-wrap`}>{user?.email}</p>
               </Link>
             )}
           </div>
@@ -93,7 +91,7 @@ const Sidebar = () => {
               {!isCollapsed && (
                 <div className="flex">
                   <Link href="/settings">
-                    <p className={``}>Settings</p>
+                    <p className={`text-sm`}>Settings</p>
                   </Link>
                 </div>
               )}
@@ -108,7 +106,7 @@ const Sidebar = () => {
               </div>
               {!isCollapsed && (
                 <div>
-                  <Link href="/login">
+                  <Link href="/signin">
                     <p className={`text-sm`}>Log Out</p>
                   </Link>
                 </div>
