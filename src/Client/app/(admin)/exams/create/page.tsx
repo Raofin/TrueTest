@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { AxiosError } from 'axios'
 
 interface FormData {
   title: string
@@ -53,26 +54,37 @@ export default function CreateExamPage() {
       return
     }
     try {
-      const formatDateTime = (timeString: string) => {
-        if (!timeString || !date) return ''
-        const [hours, minutes] = timeString.split(':')
-        return new Date(date.year, date.month - 1, date.day, parseInt(hours), parseInt(minutes)).toISOString()
+      const formatDateTimeToUTC = (timeString: string | undefined, selectedDate: CalendarDate | null): string => {
+        if (!timeString || !selectedDate) return ''
+
+        const [hoursStr, minutesStr] = timeString.split(':')
+        const hours = parseInt(hoursStr, 10)
+        const minutes = parseInt(minutesStr, 10)
+        const localDate = new Date(
+          selectedDate.year,
+          selectedDate.month - 1, 
+          selectedDate.day,
+          hours,
+          minutes
+        )
+        return localDate.toISOString()
       }
 
       const examData = {
         ...formData,
-        opensAt: formatDateTime(formData.opensAt),
-        closesAt: formatDateTime(formData.closesAt),
+        opensAt: formatDateTimeToUTC(formData.opensAt, date),
+        closesAt: formatDateTimeToUTC(formData.closesAt, date),
         date: new Date(date.year, date.month - 1, date.day).toISOString(),
       }
-
       const response = await api.post('/Exam/Create', examData)
-
       if (response.status === 200) {
         toast.success('Exam created successfully.')
         setExamId(response.data.examId)
       }
-    } catch {}
+    } catch(err) {
+      const error=err as AxiosError
+      toast.error(error?.message)
+    }
   }
   useEffect(() => {
     const FetchExamId = async () => {

@@ -1,10 +1,7 @@
 'use client'
 
-
 import React, { useEffect, useState } from 'react'
-import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react'
-
-
+import { Button, Card, CardBody, CardHeader } from '@heroui/react'
 import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/lib/api'
@@ -12,7 +9,6 @@ import toast from 'react-hot-toast'
 import {FormattedDateWeekday, FormattedTime} from '@/components/format-date-time'
 import { useRouter } from 'next/navigation'
 import {FormatTimeHourMinutes} from '@/components/format-date-time'
-
 
 interface Exam {
   examId: string
@@ -26,7 +22,7 @@ interface Exam {
   problemSolvingPoints: number
   writtenPoints: number
   mcqPoints: number
-  status: 'Published' | 'Draft' | 'Ended'
+  status: 'Running' | 'Scheduled' | 'Ended'
   acceptedCandidates: number 
   problemSolving: number
   written: number
@@ -35,11 +31,8 @@ interface Exam {
 
 
 const ITEMS_PER_PAGE = 2
-interface PageProps{
-  invitedCandidates?:number
-}
 
-export default function ViewExam({invitedCandidates}:PageProps) {
+export default function ViewExam() {
   const [currentPage, setCurrentPage] = useState(1)
   const [allExam, setAllExam] = useState<Exam[]>([])
   const router=useRouter();
@@ -70,7 +63,9 @@ export default function ViewExam({invitedCandidates}:PageProps) {
   const handleEdit = (exam: Exam) => {
     router.push(`/exams/create?id=${exam.examId}`)
   }
-
+const handleReview=(exam:Exam)=>{
+   router.push(`/exams/review-results?examId=${exam.examId}?examTitle=${exam.title}`)
+}
 
   return (
     <>
@@ -82,12 +77,12 @@ export default function ViewExam({invitedCandidates}:PageProps) {
               <div className="flex items-end gap-1">
                 <h1 className="text-2xl font-bold flex gap-1 items-end text-[#3f3f46] dark:text-white">{exam.title}</h1>
                 {(() => {
-                  if (exam.status === 'Published') {
-                    return <p className="text-green-500">{exam.status}</p>
-                  } else if (exam.status === 'Draft') {
-                    return <p className="text-yellow-500">{exam.status}</p>
+                  if (exam.status === 'Scheduled') {
+                    return <p className="text-blue-500">{exam.status}</p>
+                  } else if (exam.status === 'Running') {
+                    return <p className="text-red-500">{exam.status}</p>
                   } else {
-                    return <p className="text-blue-600">{exam.status}</p>
+                    return <p className='text-gray-500'>{exam.status}</p>
                   }
                 })()}
               </div>
@@ -95,13 +90,9 @@ export default function ViewExam({invitedCandidates}:PageProps) {
                 {(() => {
                   if (exam.status === 'Ended') {
                     return (
-                      <Button color="primary">
-                        <Link href="/exams/review-results" className={'text-white'}>
-                          Review Results
-                        </Link>
-                      </Button>
+                      <Button color="primary" onPress={()=>handleReview(exam)}>Review</Button>
                     )
-                  } else if (exam.status === 'Draft') {
+                  } else if (exam.status === 'Scheduled') {
                     return (
                       <>
                         <Button onPress={() => handleEdit(exam)}>Edit</Button>
@@ -146,7 +137,7 @@ export default function ViewExam({invitedCandidates}:PageProps) {
                 </div>
                 <div className="flex flex-col flex-1">
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Invited Candidates: </span> {invitedCandidates}
+                    <span className="text-[#71717a] dark:text-white">Invited Candidates: </span> 0
                   </p>
                   <p>
                     <span className="text-[#71717a] dark:text-white">Accepted: </span> {exam.acceptedCandidates}

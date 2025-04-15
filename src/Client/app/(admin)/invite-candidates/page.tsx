@@ -27,7 +27,7 @@ import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useEmailParser } from '@/hooks/useEmailParser'
 import isValidEmail from '@/components/check-valid-email'
-import ViewExam from '@/app/(admin)/view-exams/ViewExam'
+
 
 interface Exam {
   examId: string
@@ -52,7 +52,6 @@ export default function Component() {
   const [copiedEmail, setCopiedEmail] = useState('')
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedEmail, setSelectedEmail] = useState<User | null>(null)
-  const [invitedCandidates, setInvitedCandidates] = useState<number>(0)
   const [editedEmail, setEditedEmail] = useState('')
   const [editingEmail, setEditingEmail] = useState<string | null>(null)
   const [examId, setExamId] = useState('')
@@ -65,7 +64,8 @@ export default function Component() {
         setIsLoading(true)
         const response = await api.get('/Exam')
         if (response.status === 200) {
-          setExams(response.data.accounts ?? [])
+          setExams(response.data)
+          console.log(exams)
         }
       } catch {
         toast.error('Failed to load exams')
@@ -74,7 +74,7 @@ export default function Component() {
       }
     }
     fetchExams()
-  }, [])
+  }, [exams])
   const handleCopyEmail = useCallback((email: string) => {
     navigator.clipboard.writeText(email).then(() => {
       setCopiedEmail(email)
@@ -134,7 +134,6 @@ export default function Component() {
       if (response.status === 200) {
         toast.success('Invitations sent successfully!')
         setUserEmails([])
-        setInvitedCandidates(userEmails.length)
         setFileContent('')
       }
     } catch {
@@ -374,7 +373,6 @@ export default function Component() {
           confirmButtonText="Remove"
           onConfirm={handleDeleteEmail}
         />
-        {invitedCandidates > 0 && <ViewExam invitedCandidates={invitedCandidates} />}
       </div>
     </div>
   )

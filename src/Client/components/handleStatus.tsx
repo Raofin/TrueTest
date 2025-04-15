@@ -6,7 +6,7 @@ export default async function handleStatus(accountId: string, setStatus: (status
   if (!accountId) return false
   try {
     console.log(accountId)
-    const response = await api.patch(`/Account/ChangeActiveStatus`, { accountId })
+    const response = await api.patch(`/Account/ChangeActiveStatus/${accountId}`, { accountId })
     if (response.status === 200) {
       setStatus(response.data.isActive)
       return true

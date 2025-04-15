@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
 import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth'
 import ROUTES from '@/constants/route'
@@ -44,17 +44,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     return null
   }, [])
-  const pathname=usePathname();
   useEffect(() => {
     const token = getAuthToken();
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       fetchUser().then((fetchedUser) => {
-        if (fetchedUser && !pathname.startsWith(ROUTES.SIGN_IN)) {
+        if (fetchedUser) {
           if (fetchedUser.roles.includes('Admin')) {
             router.push(ROUTES.OVERVIEW);
+            return
           } else {
             router.push(ROUTES.HOME);
+            return
           }
         }
       });
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
         router.push(ROUTES.SIGN_IN);
     }
-  }, [fetchUser, pathname, router]);
+  }, []);
 
   useEffect(() => {
     const token = getAuthToken()
