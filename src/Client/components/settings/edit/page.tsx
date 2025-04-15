@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Button, Input, Form, Card } from '@heroui/react'
 import '@/app/globals.css'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import isValidPassword from '@/components/check-valid-password'
@@ -35,11 +35,11 @@ export default function Component() {
       return
     }
 
-    if(name==='currentPassword' && value.length>1){
+    if (name === 'currentPassword' && value.length > 1) {
       setCurrentPassword(true)
     }
-      setUserError('')
-    
+    setUserError('')
+
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
@@ -49,17 +49,18 @@ export default function Component() {
       setPasswordError('New password and confirm password do not match.')
       return
     }
-    if (formData.newPassword.length>1 && !isValidPassword(formData.newPassword)) {
+    if (formData.newPassword.length > 1 && !isValidPassword(formData.newPassword)) {
       setPasswordError(
         'New Password must contain at least one uppercase letter,  lowercase letter, number, special character.'
       )
       return
     }
-   setPasswordError('')
+    setPasswordError('')
     try {
       const response = await api.patch(ROUTES.ACCOUNT_SETTING, formData)
       if (response.status === 200) {
-        if (response.data.roles.some((e:string)=>(e.toLowerCase().includes('admin')))) router.push(ROUTES.ADMIN_SETTING)
+        if (response.data.roles.some((e: string) => e.toLowerCase().includes('admin')))
+          router.push(ROUTES.ADMIN_SETTING)
         else router.push(ROUTES.CANDIDATE_SETTING)
       }
     } catch {
@@ -107,13 +108,13 @@ export default function Component() {
             onChange={handleChange}
           />
           <Input
-          isRequired={currentPassword}
+            isRequired={currentPassword}
             endContent={
               <button type="button" onClick={() => setIsVisible(!isVisible)}>
                 <Icon
                   className="text-2xl text-default-400"
                   icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-                  />
+                />
               </button>
             }
             label="New Password"
@@ -122,8 +123,8 @@ export default function Component() {
             className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
             value={formData.newPassword}
             onChange={handleChange}
-            />
-            {passwordError && <p className="text-red-500">{passwordError}</p>}
+          />
+          {passwordError && <p className="text-red-500">{passwordError}</p>}
           <Input
             isRequired={currentPassword}
             endContent={

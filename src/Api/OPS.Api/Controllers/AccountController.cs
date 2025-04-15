@@ -40,18 +40,19 @@ public class AccountController(IMediator mediator) : BaseApiController
     }
 
     /// <summary>Changes active status of an account.</summary>
-    /// <param name="command">Account ID to change active status.</param>
+    /// <param name="accountId">Account ID to change active status.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>The updated account object.</returns>
-    [HttpPatch("ChangeActiveStatus")]
+    [HttpPatch("ChangeActiveStatus/{accountId:guid}")]
     [HasPermission(ManageAccounts)]
     [EndpointDescription("Changes active status of an account.")]
     [ProducesResponseType<AccountResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> ChangeActiveStatusAsync(ChangeActiveStatusCommand command,
+    public async Task<IActionResult> ChangeActiveStatusAsync(Guid accountId,
         CancellationToken cancellationToken = default)
     {
+        var command = new ChangeActiveStatusCommand(accountId);
         var response = await _mediator.Send(command, cancellationToken);
         return ToResult(response);
     }

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Button, Form } from '@heroui/react'
 import ProfileEdit from '@/components/profile/edit/ProfileEdit'
 import { useRouter } from 'next/navigation'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { FormData } from '@/components/types/profile'
 import ROUTES from '@/constants/route'
 

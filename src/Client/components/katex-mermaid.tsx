@@ -1,11 +1,13 @@
 'use client'
 
+
 import React, { useState, useRef, useEffect, Fragment, useCallback } from 'react'
 import MDEditor from '@uiw/react-md-editor'
 import mermaid from 'mermaid'
 import katex from 'katex'
 import 'katex/dist/katex.css'
 import rehypeSanitize from 'rehype-sanitize'
+
 
 const randomid = () => {
   const array = new Uint32Array(10)
@@ -16,11 +18,15 @@ const randomid = () => {
     .substring(0, 15)
 }
 
+
 interface CodeProps {
   children?: React.ReactNode
   className?: string
 }
-
+interface MdEditorProps {
+  readonly value: string;
+  readonly onChange: (newValue: string) => void;
+}
 const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
   const demoid = useRef(`dome${randomid()}`)
   const [container, setContainer] = useState<HTMLElement | null>(null)
@@ -30,6 +36,7 @@ const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
   } else if (typeof children === 'string') {
     code = children
   }
+
 
   useEffect(() => {
     if (container && code) {
@@ -52,11 +59,13 @@ const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
     }
   }, [container, className, code])
 
+
   const refElement = useCallback((node: HTMLElement | null) => {
     if (node !== null) {
       setContainer(node)
     }
   }, [])
+
 
   if (className?.toLowerCase().startsWith('language-mermaid')) {
     return (
@@ -67,25 +76,29 @@ const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
     )
   }
 
+
   if ( className?.toLowerCase().startsWith('language-katex')) {
     return <code className={className} ref={refElement} />
   }
+
 
   if (typeof children === 'string' && /^\$\$(.*)\$\$/.test(children)) {
     const html = katex.renderToString(children.replace(/^\$\$(.*)\$\$/, '$1'), { throwOnError: false })
     return <code dangerouslySetInnerHTML={{ __html: html }} style={{ background: 'transparent' }} />
   }
 
+
   return <code className={className}>{children}</code>
 }
 
+
 const MarkdownCode: React.FC<CodeProps> = (props) => <Code {...props} />
-export default function MdEditor() {
-  const [value, setValue] = useState('')
+export default function MdEditor({ value, onChange }: MdEditorProps) {
+ 
   return (
     <MDEditor
       className="w-full"
-      onChange={(newValue = '') => setValue(newValue)}
+      onChange={(newValue = '') => onChange(newValue)}
       textareaProps={{
         placeholder: 'Please enter Markdown text',
       }}
@@ -100,3 +113,5 @@ export default function MdEditor() {
     />
   )
 }
+
+

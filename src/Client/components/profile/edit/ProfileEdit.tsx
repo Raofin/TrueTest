@@ -3,12 +3,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Avatar, Input, Textarea } from '@heroui/react'
 import { Icon } from '@iconify/react'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { FormData } from '@/components/types/profile'
 
 interface ProfileDetailsProps {
- readonly formData?: FormData
- readonly setFormData?: React.Dispatch<React.SetStateAction<FormData>>
+  readonly formData?: FormData
+  readonly setFormData?: React.Dispatch<React.SetStateAction<FormData>>
 }
 
 export default function ProfileEdit({ formData, setFormData }: ProfileDetailsProps) {

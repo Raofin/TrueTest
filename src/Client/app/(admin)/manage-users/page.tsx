@@ -16,9 +16,9 @@ import {
 import SearchIcon from '@/components/ui/search-icon'
 import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { AxiosError } from 'axios'
-import {FormatDatewithTime} from '@/components/format-date-time'
+import { FormatDatewithTime } from '@/components/format-date-time'
 import handleDelete from '@/components/handleDelete'
 import handleStatus from '@/components/handleStatus'
 import RoleFilter from '@/components/role-filter'
@@ -71,10 +71,10 @@ export default function Component() {
     const ManageUser = async () => {
       try {
         const response = await api.get<ApiResponse>(
-          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${roleFilter ? '&role=' + roleFilter : ''}${
-            searchTerm ? '&searchTerm=' + searchTerm : ''
+          `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${roleFilter ? `&role=${roleFilter}` : ''}${
+            searchTerm ? `&searchTerm=${searchTerm}` : ''
           }`
-        );
+        )
         if (response.status === 200) {
           setUserData(response.data.accounts)
           setTotalPages(response.data.page.totalPages ?? 1)
@@ -119,15 +119,17 @@ export default function Component() {
       return (
         <div className="flex w-[100px] gap-5 justify-between ml-6">
           <button
+            type="button"
             aria-label="Change Status"
             onClick={() => {
               setSelectedUser(user.accountId)
               setIsActiveModalOpen(true)
             }}
           >
-            {user.isActive ? 'Deactive'  : 'Active'}
+            {user.isActive ? 'Deactivate' : 'Activate'}
           </button>
           <button
+            type="button"
             aria-label="Delete User"
             onClick={() => {
               setSelectedUser(user.accountId)
@@ -254,21 +256,17 @@ export default function Component() {
           setSelectedUser('')
         }}
         title="Status Confirmation"
-        content={`Do you want to ${status ? 'Deactive' : 'Active'} this record`}
-        confirmButtonText={`${status ? 'Deactive' : 'Active'}`}
+        content={`Do you want to ${status ? 'deactivate' : 'activate'} this record`}
+        confirmButtonText={`${status ? 'Deactivate' : 'Activate'}`}
         onConfirm={async () => {
-         const resp= await handleStatus(selectedUser, setStatus)
-           if(resp){
-            setUserData(prevUsers => 
-              prevUsers.map(user => 
-                user.accountId === selectedUser 
-                  ? { ...user, isActive: !status } 
-                  : user
-              )
-            );
-          setIsActiveModalOpen(false)
-          setSelectedUser('')
-           }
+          const resp = await handleStatus(selectedUser, setStatus)
+          if (resp) {
+            setUserData((prevUsers) =>
+              prevUsers.map((user) => (user.accountId === selectedUser ? { ...user, isActive: !status } : user))
+            )
+            setIsActiveModalOpen(false)
+            setSelectedUser('')
+          }
         }}
       />
       <CommonModal
