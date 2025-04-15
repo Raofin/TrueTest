@@ -11,7 +11,6 @@ import { PiNotepadFill } from 'react-icons/pi'
 import { BiSolidPlusSquare, BiSolidUserRectangle } from 'react-icons/bi'
 import { MdEmail } from 'react-icons/md'
 import { RiAdminFill, RiDashboardFill } from 'react-icons/ri'
-import { FaUser } from 'react-icons/fa6'
 import { IoLogOut, IoSettingsSharp } from 'react-icons/io5'
 import { useAuth } from '@/context/AuthProvider'
 
@@ -26,10 +25,11 @@ const menuItems = [
 const Sidebar = () => {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  
   const { user } = useAuth()
   return (
     <div className={`min-h-screen flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b]  rounded-lg p-3`}>
-      <div className={`min-h-full flex flex-col justify-between ${isCollapsed ? 'w-20' : 'w-56'}`}>
+      <div className={` flex flex-col justify-between ${isCollapsed ? 'w-16' : 'w-56'}`}>
         <div>
           <div className="flex flex-col pt-3 pl-2">
             <div className="flex w-full justify-between ">
@@ -69,21 +69,9 @@ const Sidebar = () => {
           </ul>
         </div>
 
-        <div className="bottom-0 ">
+        <div className="bottom-0 mt-5">
           <div className="flex flex-col gap-2 ">
             {!isCollapsed && <p className=" opacity-50">Account</p>}
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                <FaUser size={20} />
-              </div>
-              {!isCollapsed && (
-                <Link href={`/profile`}>
-                  <div>
-                    <p className={`text-sm `}>My Profile</p>
-                  </div>
-                </Link>
-              )}
-            </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full flex items-center justify-center">
                 <IoSettingsSharp size={24} />
@@ -96,9 +84,8 @@ const Sidebar = () => {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2 ml-2">
-              <ThemeSwitch />
-              {!isCollapsed && <button>Theme</button>}
+            <div className="flex items-center gap-2 ml-1">
+              <ThemeSwitch withText={true}/>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full flex items-center justify-center">

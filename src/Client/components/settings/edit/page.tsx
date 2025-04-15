@@ -85,7 +85,7 @@ export default function Component() {
             label="Username"
             name="username"
             type="text"
-            className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
+            className=" rounded-xl"
             value={formData.username}
             defaultValue={username}
             onChange={handleChange}
@@ -103,7 +103,7 @@ export default function Component() {
             }
             name="currentPassword"
             type={isVisibleCurrent ? 'text' : 'password'}
-            className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
+            className=" rounded-xl"
             value={formData.currentPassword}
             onChange={handleChange}
           />
@@ -120,7 +120,7 @@ export default function Component() {
             label="New Password"
             name="newPassword"
             type={isVisible ? 'text' : 'password'}
-            className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
+            className=" rounded-xl"
             value={formData.newPassword}
             onChange={handleChange}
           />
@@ -138,7 +138,7 @@ export default function Component() {
             label="Confirm Password"
             name="newconfirmpassword"
             type={isConfirmVisible ? 'text' : 'password'}
-            className="bg-[#f4f4f5] dark:bg-[#27272a] rounded-xl"
+            className=" rounded-xl"
             value={newconfirmpassword}
             onChange={(e) => setNewconfirmpassword(e.target.value)}
           />

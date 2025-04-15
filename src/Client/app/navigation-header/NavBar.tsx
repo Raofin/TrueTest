@@ -7,9 +7,6 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Avatar,
   NavbarContent,
   NavbarItem,
@@ -18,7 +15,6 @@ import {
   Divider,
 } from '@heroui/react'
 import { Icon } from '@iconify/react'
-import NotificationsCard from '@/app/navigation-header/notifications-card'
 import ThemeSwitch from '../ThemeSwitch'
 import { useAuth } from '@/context/AuthProvider'
 
@@ -35,16 +31,6 @@ export default function Component() {
         <NavbarContent className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end">
           <NavbarItem>
             <ThemeSwitch />
-          </NavbarItem>
-          <NavbarItem>
-            <Popover offset={12} placement="bottom-end">
-              <PopoverTrigger className="rounded-full p-2 hover:bg-gray-200 transition-colors duration-300 cursor-pointer">
-                <Icon className="text-gray-600" icon="solar:bell-linear" width={40} />
-              </PopoverTrigger>
-              <PopoverContent className="max-w-[90vw] p-0 sm:max-w-[380px]">
-                <NotificationsCard className="w-full shadow-none" />
-              </PopoverContent>
-            </Popover>
           </NavbarItem>
           <NavbarItem>
             <button type="button">

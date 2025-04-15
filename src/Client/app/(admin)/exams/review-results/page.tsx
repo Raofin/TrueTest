@@ -115,12 +115,18 @@ export default function Component() {
   const [flaggedQuestions, setFlaggedQuestions] = useState<{
     [accountId: string]: { [questionId: string]: boolean }
   }>({})
+
+  const [selectedCandidateId, setSelectedCandidateId] = useState('')
+  const [selectedUsername, setSelectedUsername] = useState('')
+  const currentSubmission = examData.submissions.find((sub) => sub.accountId === selectedCandidateId)
+  const currentQuestions = currentSubmission?.questions ?? []
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await api.get(`/Review/Candidates/${examId}`)
         if (response.status === 200) {
-          console.log('Review candidate submission')
+          setSelectedCandidateId(response.data.account.accountId)
+          setSelectedUsername(response.data.account.username)
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -128,10 +134,20 @@ export default function Component() {
     }
     fetchData()
   }, [examId])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`)
+        if (response.status === 200) {
+          setSelectedCandidateId(response.data.account.username)
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    }
+    fetchData()
+  }, [examId, selectedCandidateId])
 
-  const [selectedCandidateId, setSelectedCandidateId] = useState(examData.submissions[0]?.accountId ?? '')
-  const currentSubmission = examData.submissions.find((sub) => sub.accountId === selectedCandidateId)
-  const currentQuestions = currentSubmission?.questions ?? []
   const handleCandidateChange = (value: string) => {
     setSelectedCandidateId(value)
   }
@@ -176,7 +192,7 @@ export default function Component() {
                 <Select
                   aria-label="Select a candidate"
                   className="w-80"
-                  value={selectedCandidateId}
+                  value={selectedUsername}
                   onChange={(e: { target: { value: string } }) => handleCandidateChange(e.target.value)}
                 >
                   {examData.submissions.map((sub) => (

@@ -13,6 +13,7 @@ import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AxiosError } from 'axios'
+import { convertUtcToLocalTime } from '@/components/format-date-time'
 
 interface FormData {
   title: string
@@ -80,6 +81,7 @@ export default function CreateExamPage() {
       if (response.status === 200) {
         toast.success('Exam created successfully.')
         setExamId(response.data.examId)
+
       }
     } catch(err) {
       const error=err as AxiosError
@@ -97,8 +99,8 @@ export default function CreateExamPage() {
             description: exam.description,
             durationMinutes: exam.durationMinutes,
             totalPoints: exam.totalPoints,
-            opensAt: exam.opensAt,
-            closesAt: exam.closesAt,
+            opensAt: convertUtcToLocalTime(exam.opensAt),
+            closesAt: convertUtcToLocalTime(exam.closesAt),
           })
           if (exam.opensAt) {
             const opensAtDate = new Date(exam.opensAt)
@@ -150,7 +152,7 @@ export default function CreateExamPage() {
       <Card className={`flex shadow-none flex-col justify-between p-8 items-center `}>
         <form id="#" className="flex gap-4 flex-wrap flex-col w-full " onSubmit={handleSaveExam}>
           <Input
-            className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+            className="rounded-2xl"
             isRequired
             label="Title"
             name="title"
@@ -159,7 +161,7 @@ export default function CreateExamPage() {
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           />
           <Textarea
-            className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+            className="rounded-2xl"
             isRequired
             label="Description"
             name="description"
@@ -169,7 +171,7 @@ export default function CreateExamPage() {
           />
           <div className="flex gap-5">
             <DatePicker
-              className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+              className="flex-1 rounded-2xl"
               isRequired
               label="Exam Date"
               name="date"
@@ -177,7 +179,7 @@ export default function CreateExamPage() {
               onChange={setDate}
             />
             <Input
-              className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+              className="flex-1 rounded-2xl"
               isRequired
               label="Duration"
               name="duration"
@@ -195,7 +197,7 @@ export default function CreateExamPage() {
           <div className="flex gap-5">
             <TimeInput
               label="Start Time"
-              className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+              className="rounded-2xl"
               name="opensAt"
               value={parseTime(formData.opensAt)}
               isRequired
@@ -208,7 +210,7 @@ export default function CreateExamPage() {
             />
             <TimeInput
               label="End Time"
-              className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+              className=" rounded-2xl"
               name="closesAt"
               value={parseTime(formData.closesAt)}
               isRequired
@@ -217,7 +219,7 @@ export default function CreateExamPage() {
           </div>
           <div>
             <Input
-              className="flex-1 bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+              className="flex-1  rounded-2xl"
               isRequired
               label="Total Points"
               name="totalpoints"
@@ -254,6 +256,7 @@ export default function CreateExamPage() {
         </div>
       ))}
 
+     {examId &&
       <div className="flex gap-3 justify-center my-4">
         {!activeComponents.some((comp) => comp.type === 'problemSolve') && (
           <Button onPress={() => handleAddComponent('problemSolve')}>Add Problem Solving Question</Button>
@@ -264,7 +267,7 @@ export default function CreateExamPage() {
         {!activeComponents.some((comp) => comp.type === 'mcq') && (
           <Button onPress={() => handleAddComponent('mcq')}>Add MCQ Question</Button>
         )}
-      </div>
+      </div>}
     </div>
   )
 }

@@ -12,6 +12,7 @@ import {
   Input,
   Button,
   Pagination,
+  Textarea,
 } from '@heroui/react'
 import SearchIcon from '@/components/ui/search-icon'
 import api from '@/lib/api'
@@ -192,9 +193,7 @@ export default function Component() {
   const topContent = useMemo(
     () => (
       <div className="flex gap-3 p-3 w-full flex-col items-center mt-5">
-        <div className="w-full flex justify-end">
-          <Paginate rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
-        </div>
+       
         <div className="flex w-full justify-between ">
           <p>User List</p>
           <Input
@@ -207,6 +206,9 @@ export default function Component() {
             onValueChange={onSearchChange}
           />
         </div>
+        <div className="w-full flex justify-end">
+          <Paginate rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
+        </div>
       </div>
     ),
     [onClear, onSearchChange, rowsPerPage, searchTerm]
@@ -215,9 +217,10 @@ export default function Component() {
   return (
     <div className=" flex flex-col justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
-      <div className="h-screen mx-12 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
-        <div className="flex gap-3 w-full p-3 mt-5">
-          <Input
+      <div className="h-screen mx-12 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b] px-12">
+      <div>
+        <div className="flex gap-3 w-full p-3 mt-12 items-center">
+          <Textarea
             isClearable
             className="bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
             placeholder="Email Addresses"
@@ -225,7 +228,7 @@ export default function Component() {
             value={invitedEmails}
             onChange={(e) => setInvitedEmails(e.target.value)}
           />
-          <Button color="primary" onPress={handleInvitation}>
+          <Button color="primary" size='lg' onPress={handleInvitation}>
             Send Invitations
           </Button>
         </div>
@@ -234,9 +237,7 @@ export default function Component() {
           aria-label="Example table with custom cells, pagination, and sorting"
           topContent={topContent}
           topContentPlacement="outside"
-          classNames={{
-            wrapper: ' overflow-y-auto',
-          }}
+          removeWrapper
           selectedKeys={selectedKeys}
           selectionMode="multiple"
           onSelectionChange={setSelectedKeys}
@@ -258,6 +259,7 @@ export default function Component() {
             ))}
           </TableBody>
         </Table>
+        </div>
         <div className="py-2 px-2 flex justify-between items-center">
           <span className="w-[30%] text-small text-default-400">
             Page {page} out of {totalPages}
