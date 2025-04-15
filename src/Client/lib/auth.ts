@@ -19,7 +19,6 @@ const decryptToken = (encryptedToken: string): string => {
 export function setAuthToken(token: string,rememberMe:boolean) {
   const encryptedToken = encryptToken(token);
 if(rememberMe){
-  console.log(rememberMe)
   Cookies.set('token', encryptedToken, {
     secure: true, 
     sameSite: 'Strict', 

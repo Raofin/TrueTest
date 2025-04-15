@@ -5,8 +5,27 @@ import { Link } from '@heroui/react'
 import Login from '@/app/(auth)/signin/page'
 import Logo from '@/components/ui/logo/page'
 import NavBar from '@/app/(auth)/NavBar'
+import { useEffect } from 'react'
+import { getAuthToken } from '@/lib/auth'
+import { useAuth } from '@/context/AuthProvider'
+import { useRouter } from 'next/navigation'
+import ROUTES from '@/constants/route'
 
 export default function Component() {
+  const router=useRouter()
+   const { user:authenticatedUser } = useAuth()
+  useEffect(()=>{
+    if (getAuthToken()) {
+      console.log(authenticatedUser?.roles)
+      if (authenticatedUser?.roles.includes('Admin')) {
+        router.push(ROUTES.OVERVIEW)
+      } else {
+        router.push(ROUTES.HOME)
+      }
+    } else{
+      router.push(ROUTES.SIGN_IN)
+    }
+  },[authenticatedUser?.roles, router])
   return (
     <div className="h-full flex flex-col justify-between">
       <div className=" w-full flex justify-between items-center h-16">

@@ -1,6 +1,6 @@
 'use client'
 
-import { getAuthToken, setAuthToken } from '@/lib/auth'
+import { setAuthToken } from '@/lib/auth'
 import ROUTES from '@/constants/route'
 import { useAuth } from '@/context/AuthProvider'
 import { Button, Divider, Link, useDisclosure } from '@heroui/react'
@@ -24,7 +24,7 @@ interface AuthFormProps<T extends FieldValues> {
 
 const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>) => {
   const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up'
-  const { login, user: authenticatedUser, fetchUser } = useAuth()
+  const { login, fetchUser } = useAuth()
   const router = useRouter()
   const [error, setError] = useState('')
   const [formData, setFormData] = useState<T | null>(null)
@@ -198,19 +198,9 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
     [formData, handleAuthError, handleOtpVerification, fetchUser, onOpenChange, router]
   )
 
-  const handleSignin = useCallback(
-    async (data: T) => {
-      if (getAuthToken()) {
-        if (authenticatedUser?.roles.includes('Admin')) {
-          router.push(ROUTES.OVERVIEW)
-        } else {
-          router.push(ROUTES.HOME)
-        }
-      } else {
-        login(data.usernameOrEmail, data.password, setError, rememberMe)
-      }
-    },
-    [authenticatedUser, login, rememberMe, router, setError]
+  const handleSignin = useCallback(async (data: T) => {
+      login(data.usernameOrEmail, data.password, setError, rememberMe)
+    },[login, rememberMe, setError]
   )
 
   return (
