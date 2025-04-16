@@ -1,0 +1,18 @@
+﻿.response[data-code="401"] .response-controls,
+.response[data-code="401"] .model-example,
+.response[data-code="400"] .response-controls,
+.response[data-code="400"] .model-example,
+.response[data-code="403"] .response-controls,
+.response[data-code="403"] .model-example,
+.response[data-code="404"] .response-controls,
+.response[data-code="404"] .model-example,
+.response[data-code="409"] .response-controls,
+.response[data-code="409"] .model-example,
+.response[data-code="500"] .response-controls,
+.response[data-code="500"] .model-example {
+    display: none;
+}
+
+.swagger-ui .highlight-code > .microlight {
+    max-height: 1000px !important;
+}

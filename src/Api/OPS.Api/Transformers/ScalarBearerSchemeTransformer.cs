@@ -36,13 +36,14 @@ internal sealed class BearerSecuritySchemeTransformer(
                 operation.Value.Security.Add(new OpenApiSecurityRequirement
                 {
                     [new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
                         {
-                            Id = "Bearer",
-                            Type = ReferenceType.SecurityScheme
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
                         }
-                    }] = Array.Empty<string>()
+                    ] = Array.Empty<string>()
                 });
         }
     }

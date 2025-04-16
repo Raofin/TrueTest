@@ -1,5 +1,7 @@
 using ErrorOr;
+using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.User.Commands;
@@ -21,5 +23,14 @@ public class DeleteProfileLinkCommandHandler(IUnitOfWork unitOfWork)
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
         return result > 0 ? Result.Success : Error.Unexpected();
+    }
+}
+
+public class DeleteProfileLinkCommandValidator : AbstractValidator<DeleteProfileLinkCommand>
+{
+    public DeleteProfileLinkCommandValidator()
+    {
+        RuleFor(x => x.ProfileLinkId)
+            .IsValidGuid();
     }
 }

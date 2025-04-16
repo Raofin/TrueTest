@@ -1,6 +1,6 @@
-﻿namespace OPS.Infrastructure.Authentication;
+﻿namespace OPS.Infrastructure.AppConfiguration.Auth;
 
-public class JwtSettings
+internal class JwtSettings
 {
     public string Secret { get; init; } = null!;
     public string Issuer { get; init; } = null!;

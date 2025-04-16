@@ -1,6 +1,4 @@
-﻿using OPS.Application.Features.Review.Queries;
-
-namespace OPS.Application.Dtos;
+﻿namespace OPS.Application.Dtos;
 
 public record ExamResponse(
     Guid ExamId,
@@ -11,6 +9,7 @@ public record ExamResponse(
     decimal WrittenPoints,
     decimal McqPoints,
     int DurationMinutes,
+    bool IsPublished,
     string Status,
     DateTime OpensAt,
     DateTime ClosesAt

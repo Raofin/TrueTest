@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OPS.Domain.Entities.Submit;
 using OPS.Persistence.Configurations.Common;
+using static OPS.Persistence.Configurations.Common.Constants;
 
 namespace OPS.Persistence.Configurations.Submit;
-using static OPS.Persistence.Configurations.Common.Constants;
 
 public class McqSubmissionConfiguration : IEntityTypeConfiguration<McqSubmission>
 {

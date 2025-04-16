@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Questions.ProblemSolving.Commands;
@@ -21,7 +22,6 @@ public class DeleteProblemSolvingCommandHandler(IUnitOfWork unitOfWork)
             return Error.Conflict(description: "Exam of this question is already published");
 
         question.Examination.ProblemSolvingPoints -= question.Points;
-        question.Examination.TotalPoints -= question.Points;
 
         _unitOfWork.TestCase.RemoveRange(question.TestCases);
         _unitOfWork.Question.Remove(question);
@@ -36,7 +36,6 @@ public class DeleteProblemSolvingCommandValidator : AbstractValidator<DeleteProb
     public DeleteProblemSolvingCommandValidator()
     {
         RuleFor(x => x.QuestionId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
     }
 }
