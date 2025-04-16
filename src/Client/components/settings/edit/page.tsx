@@ -69,7 +69,7 @@ export default function Component() {
   }
 
   return (
-    <div className="flex mt-24 w-full items-center justify-center">
+    <div className="h-full flex mt-24 w-full items-center justify-center">
       <Card className="flex w-full max-w-sm flex-col gap-4 rounded-large shadow-none bg-white dark:bg-[#18181b] bg-content1 px-8 pb-10 pt-6">
         <div className="flex flex-col gap-3">
           <h1 className="text-2xl font-semibold text-center mb-4">Account Settings</h1>

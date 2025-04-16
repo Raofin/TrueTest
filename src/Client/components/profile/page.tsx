@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Avatar, Card, Link, Button } from '@heroui/react'
 import { FaLink } from 'react-icons/fa6'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import api from '@/lib/api'
 import { FormatDatewithTime } from '../format-date-time'
 import { ProfileLink, User } from '../types/profile'
@@ -10,6 +10,7 @@ import { ProfileLink, User } from '../types/profile'
 export default function ProfilePage() {
   const path = usePathname()
   const [route, setRoute] = useState('')
+  const router=useRouter()
   const [userInfo, setUserInfo] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -55,7 +56,9 @@ export default function ProfilePage() {
     }
     fetchProfileInfo()
   }, [])
-
+const handleProfileEdit=()=>{
+   router.push(`/${route}/edit`)
+}
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center mt-5">
@@ -131,7 +134,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="flex justify-center">
-          <Button color="primary" className="font-semibold py-2 px-4 rounded-lg" as={Link} href={`/${route}/edit`}>
+          <Button color="primary" className="font-semibold py-2 px-4 rounded-lg" onPress={handleProfileEdit}>
             Update Profile
           </Button>
         </div>
