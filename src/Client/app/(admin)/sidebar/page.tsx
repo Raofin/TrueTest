@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import Logo from '@/components/ui/logo/page'
 import ThemeSwitch from '@/app/ThemeSwitch'
-import { Avatar } from '@heroui/react'
+import { Avatar, Button } from '@heroui/react'
 import { PiNotepadFill } from 'react-icons/pi'
 import { BiSolidPlusSquare, BiSolidUserRectangle } from 'react-icons/bi'
 import { MdEmail } from 'react-icons/md'
@@ -26,7 +26,7 @@ const Sidebar = () => {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
   
-  const { user } = useAuth()
+  const { user,logout } = useAuth()
   return (
     <div className={`min-h-screen flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b]  rounded-lg p-3`}>
       <div className={` flex flex-col justify-between ${isCollapsed ? 'w-16' : 'w-56'}`}>
@@ -94,7 +94,7 @@ const Sidebar = () => {
               {!isCollapsed && (
                 <div>
                   <Link href="/signin">
-                    <p className={`text-sm`}>Log Out</p>
+                    <Button className={`text-sm`} onPress={logout}>Log Out</Button>
                   </Link>
                 </div>
               )}
