@@ -2,7 +2,6 @@
 
 import React from 'react'
 import {
-  Link,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -17,9 +16,11 @@ import {
 import { Icon } from '@iconify/react'
 import ThemeSwitch from '../ThemeSwitch'
 import { useAuth } from '@/context/AuthProvider'
+import { useRouter } from 'next/navigation'
 
 export default function Component() {
   const { user, logout } = useAuth()
+  const router=useRouter()
   return (
     <div>
       <Navbar
@@ -61,25 +62,23 @@ export default function Component() {
                     <Divider className="mb-5" />
                   </DropdownItem>
                   <DropdownItem key="profile">
-                    <Link
-                      href="/myprofile"
+                    <button onClick={()=>router.push('/myprofile')}
                       className="flex items-center gap-2"
                       style={{ color: 'inherit', textDecoration: 'none' }}
                     >
                       <Icon icon="lucide:user" className="w-5 h-5" />
                       My Profile
-                    </Link>
+                    </button>
                   </DropdownItem>
 
                   <DropdownItem key="settings">
-                    <Link
-                      href="/mysettings"
+                      <button onClick={()=>router.push("/mysettings")}
                       className={`flex items-center gap-2`}
                       style={{ color: 'inherit', textDecoration: 'none' }}
                     >
                       <Icon icon="lucide:settings" className="w-5 h-5" />
                       Account Settings
-                    </Link>
+                    </button>
                   </DropdownItem>
 
                   <DropdownItem key="logout" onPress={logout}>

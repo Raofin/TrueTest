@@ -259,7 +259,7 @@ export default function Component() {
                 <h3 className="font-semibold mb-2">
                   {curr.questionType === 'code' ? 'User Submission' : 'User Answer'}
                 </h3>
-                <Card className={`p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a]`}>
+                <Card className={`p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none`}>
                   <div className={`font-mono text-sm whitespace-pre-wrap p-2`}>{curr.userAnswer}</div>
                 </Card>
               </div>

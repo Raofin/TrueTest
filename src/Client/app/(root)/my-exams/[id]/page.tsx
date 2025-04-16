@@ -11,6 +11,9 @@ import WrittenSubmission from '@/components/submission/written-submit'
 import MCQSubmission from '@/components/submission/mcq-submit'
 
 import Logo from '@/components/ui/logo/page'
+import { useParams } from 'next/navigation'
+import api from '@/lib/api'
+import toast from 'react-hot-toast'
 
 interface Question {
   id: number
@@ -31,17 +34,17 @@ export default function Component() {
   const [codingQues, setCodingQues] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [questionsLeft, setQuestionsLeft] = useState(0)
-
-  const examData = {
-    id: 1,
-    title: 'Star Coder 2025',
-    totalQuestions: 30,
-    duration: '1:00:00',
-    problemSolving: 10,
-    written: 10,
-    mcq: 30,
-    totalScore: 100,
-  }
+   const [examData,setExamData]=useState({})
+  // const examData = {
+  //   id: 1,
+  //   title: 'Star Coder 2025',
+  //   totalQuestions: 30,
+  //   duration: '1:00:00',
+  //   problemSolving: 10,
+  //   written: 10,
+  //   mcq: 30,
+  //   totalScore: 100,
+  // }
 
   const questions: Question[] = useMemo(
     () => [
@@ -74,7 +77,7 @@ export default function Component() {
     ],
     []
   )
-
+  
   useEffect(() => {
     const regularQuestionsCount = questions.filter((q) => q.questionTypeId !== 3).length
     const codingQuestionsCount = questions.filter((q) => q.questionTypeId === 3).length
@@ -149,7 +152,20 @@ export default function Component() {
       })
     }
   }
-
+  const { id } = useParams();
+  useEffect(()=>{
+     const FetchData=async()=>{
+       try{
+           const resp=await api.get(`/Exam/${id}`)
+           if(resp.status===200){
+              setExamData(resp.data)
+           }
+       }catch{
+         toast.error("An unexpected error has occured")
+       }
+     }
+     FetchData();
+   },[])
   if (!examStarted) {
     return <StartExam examData={examData} setExamStarted={setExamStarted} startExam={startExam} />
   }

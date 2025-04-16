@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import Logo from '@/components/ui/logo/page'
 import ThemeSwitch from '@/app/ThemeSwitch'
-import { Avatar, Button } from '@heroui/react'
+import { Avatar } from '@heroui/react'
 import { PiNotepadFill } from 'react-icons/pi'
 import { BiSolidPlusSquare, BiSolidUserRectangle } from 'react-icons/bi'
 import { MdEmail } from 'react-icons/md'
@@ -28,7 +28,7 @@ const Sidebar = () => {
   
   const { user,logout } = useAuth()
   return (
-    <div className={`min-h-screen flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b]  rounded-lg p-3`}>
+    <div className={`min-h-screen flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b]  rounded-lg `}>
       <div className={` flex flex-col justify-between ${isCollapsed ? 'w-16' : 'w-56'}`}>
         <div>
           <div className="flex flex-col pt-3 pl-2">
@@ -69,7 +69,7 @@ const Sidebar = () => {
           </ul>
         </div>
 
-        <div className="bottom-0 mt-5">
+        <div className="bottom-0 mt-5 ml-2">
           <div className="flex flex-col gap-2 ">
             {!isCollapsed && <p className=" opacity-50">Account</p>}
             <div className="flex items-center gap-2">
@@ -85,18 +85,18 @@ const Sidebar = () => {
               )}
             </div>
             <div className="flex items-center gap-2 ml-1">
-              <ThemeSwitch withText={true}/>
+             {isCollapsed && <ThemeSwitch withText={false}/>}
+              {!isCollapsed &&  <ThemeSwitch withText={true}/>}
             </div>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full flex items-center justify-center">
                 <IoLogOut size={24} />
               </div>
               {!isCollapsed && (
-                <div>
-                  <Link href="/signin">
-                    <Button className={`text-sm`} onPress={logout}>Log Out</Button>
+                <button onClick={logout} >
+                  <Link href="/signin" className={`text-sm`} >Log Out
                   </Link>
-                </div>
+                  </button>
               )}
             </div>
           </div>
