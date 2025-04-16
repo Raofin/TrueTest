@@ -34,17 +34,17 @@ export default function Component() {
   const [codingQues, setCodingQues] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [questionsLeft, setQuestionsLeft] = useState(0)
-   const [examData,setExamData]=useState({})
-  // const examData = {
-  //   id: 1,
-  //   title: 'Star Coder 2025',
-  //   totalQuestions: 30,
-  //   duration: '1:00:00',
-  //   problemSolving: 10,
-  //   written: 10,
-  //   mcq: 30,
-  //   totalScore: 100,
-  // }
+  //  const [examData,setExamData]=useState({})
+  const examData = {
+    id: 1,
+    title: 'Star Coder 2025',
+    totalQuestions: 30,
+    duration: '1:00:00',
+    problemSolving: 10,
+    written: 10,
+    mcq: 30,
+    totalScore: 100,
+  }
 
   const questions: Question[] = useMemo(
     () => [
@@ -158,7 +158,8 @@ export default function Component() {
        try{
            const resp=await api.get(`/Exam/${id}`)
            if(resp.status===200){
-              setExamData(resp.data)
+              // setExamData(resp.data)
+              console.log("successfully get exams")
            }
        }catch{
          toast.error("An unexpected error has occured")
