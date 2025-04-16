@@ -27,7 +27,8 @@ interface AuthContextType {
         usernameOrEmail: string,
         password: string,
         setError: (error: string) => void,
-        rememberMe: boolean
+        rememberMe: boolean,
+        setLoading: (loading: boolean) => void
     ) => Promise<void>;
     logout: () => void;
     refreshAuth: () => Promise<void>;
@@ -86,10 +87,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             usernameOrEmail: string,
             password: string,
             setError: (error: string) => void,
-            rememberMe: boolean
+            rememberMe: boolean,
+            setLoading:(loading:boolean)=>void
         ) => {
             try {
-                setIsLoading(true);
+                setLoading(true);
                 const response = await api.post("/Auth/Login", {
                     usernameOrEmail,
                     password,
@@ -121,7 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     "Invalid username/email or password. Please try again."
                 );
             } finally {
-                setIsLoading(false);
+                setLoading(false);
             }
         },
         [fetchUser, router]

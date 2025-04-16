@@ -198,7 +198,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   )
 
   const handleSignin = useCallback(async (data: T) => {
-      login(data.usernameOrEmail, data.password, setError, rememberMe)
+      login(data.usernameOrEmail, data.password, setError, rememberMe,setLoading)
     },[login, rememberMe, setError]
   )
 
