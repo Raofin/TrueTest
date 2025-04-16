@@ -13,7 +13,6 @@ import MCQSubmission from '@/components/submission/mcq-submit'
 import Logo from '@/components/ui/logo/page'
 import { useParams } from 'next/navigation'
 import api from '@/lib/api'
-import toast from 'react-hot-toast'
 
 interface Question {
   id: number
@@ -165,7 +164,7 @@ export default function Component() {
        }
      }
      FetchData();
-   },[id])
+   },[])
   if (!examStarted) {
     return <StartExam examData={examData} setExamStarted={setExamStarted} startExam={startExam} />
   }
