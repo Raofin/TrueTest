@@ -166,7 +166,7 @@ export default function Component() {
        }
      }
      FetchData();
-   },[])
+   },[id])
   if (!examStarted) {
     return <StartExam examData={examData} setExamStarted={setExamStarted} startExam={startExam} />
   }
