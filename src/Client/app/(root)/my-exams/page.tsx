@@ -50,10 +50,11 @@ export default function ExamList() {
     return 'text-red-500'
   }
   return (
-    <>
+    <div suppressHydrationWarning>
       <RootNavBar />
       <div className="min-h-screen mx-44 flex flex-col items-center justify-between mt-3 ">
-        <h1 className="text-center my-4 font-bold text-3xl">My Exams</h1>
+       <div className='w-full'>
+       <h1 className="text-center my-4 font-bold text-3xl">My Exams</h1>
         {paginatedExams.map((exam) => (
           <Card key={exam.examId} className="relative w-full mb-3 p-2 shadow-none bg-white dark:bg-[#18181b]">
             <CardHeader>
@@ -139,7 +140,7 @@ export default function ExamList() {
                       <span className="text-[#71717a] dark:text-white">MCQ :</span> {exam.mcqPoints}
                     </p>
                     <p>
-                      <span className="text-[#71717a] dark:text-white">Score :</span>
+                      <span className="text-[#71717a] dark:text-white">Score : {exam.totalPoints}</span>
                     </p>
                   </div>
                 </div>
@@ -147,6 +148,7 @@ export default function ExamList() {
             </CardBody>
           </Card>
         ))}
+       </div>
         <div className="flex justify-between w-full items-center my-4">
           <span className="mx-4">
             Page {currentPage} of {totalPages}
@@ -159,6 +161,6 @@ export default function ExamList() {
           />
         </div>
       </div>
-    </>
+    </div>
   )
 }

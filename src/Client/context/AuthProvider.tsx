@@ -55,13 +55,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const initializeAuth = useCallback(async () => {
         setIsLoading(true);
         const token = getAuthToken();
-
         if (!token) {
             setUser(null);
             setIsLoading(false);
             return;
         }
-
         try {
             api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             const userData = await fetchUser();
@@ -73,8 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setUser(null);
                 router.push(ROUTES.SIGN_IN);
             }
-        } catch (error) {
-            console.error("Auth initialization error:", error);
+        } catch {
             removeAuthToken();
             setUser(null);
             router.push(ROUTES.SIGN_IN);
@@ -117,8 +114,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                         "Invalid username/email or password. Please try again."
                     );
                 }
-            } catch (error) {
-                console.error("Login error:", error);
+            } catch {
                 setError(
                     "Invalid username/email or password. Please try again."
                 );
