@@ -19,17 +19,15 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     private readonly IMediator _mediator = mediator;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    /// <summary>Gets authenticated user info.</summary>
+    /// <summary>Gets decoded token values.</summary>
     /// <returns>Authenticated user details.</returns>
-    [HttpGet("Info")]
     [Authorize]
-    [EndpointDescription("Gets authenticated user info")]
+    [HttpGet("DecodeToken")]
+    [EndpointDescription("Gets decoded token values.")]
     [ProducesResponseType(Status200OK)]
-    public IActionResult GetInfo()
+    public IActionResult DecodeToken()
     {
-        return !_userInfoProvider.IsAuthenticated()
-            ? Unauthorized("User is not authenticated.")
-            : Ok(_userInfoProvider.GetCurrentUser());
+        return Ok(_userInfoProvider.DecodeToken());
     }
 
     /// <summary>Retrieves account details of the authenticated user.</summary>

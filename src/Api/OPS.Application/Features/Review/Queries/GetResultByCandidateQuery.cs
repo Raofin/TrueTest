@@ -56,15 +56,19 @@ public class GetResultsByExamQueryHandler(IUnitOfWork unitOfWork)
 
         var submission = question.ProblemSubmissions.First();
 
+        var language = Enum.TryParse(submission.LanguageId, out LanguageId languageId)
+            ? languageId
+            : LanguageId.text;
+
         return new ProblemSubmissionResponse(
             submission.QuestionId,
             submission.Id,
             submission.Code,
+            language,
             submission.Attempts,
             submission.Score,
             submission.IsFlagged,
             submission.FlagReason,
-            (ProgLanguageType)submission.ProgLanguageId,
             submission.TestCaseOutputs.Select(
                 to => new TestCaseOutputResponse(to.TestCaseId, to.IsAccepted, to.ReceivedOutput)
             ).ToList()
