@@ -33,9 +33,9 @@ public class LoginQueryHandler(
     }
 }
 
-public class LoginCommandValidator : AbstractValidator<LoginQuery>
+public class LoginQueryValidator : AbstractValidator<LoginQuery>
 {
-    public LoginCommandValidator()
+    public LoginQueryValidator()
     {
         RuleFor(x => x.UsernameOrEmail)
             .NotEmpty()

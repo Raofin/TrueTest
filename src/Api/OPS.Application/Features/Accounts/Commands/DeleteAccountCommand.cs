@@ -18,6 +18,11 @@ public class DeleteAccountCommandHandler(IUnitOfWork unitOfWork)
         var account = await _unitOfWork.Account.GetAsync(request.AccountId, cancellationToken);
         if (account is null) return Error.NotFound();
 
+        if (account.Username is "rawfin" or "akhi" or "admin")
+        {
+            return Error.Conflict("This account cannot be deleted.");
+        }
+
         _unitOfWork.Account.Remove(account);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
