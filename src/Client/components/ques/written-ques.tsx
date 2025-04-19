@@ -44,7 +44,7 @@ export default function Component({
             ? existingQuestions.map((q) => ({
                   id: uuidv4(),
                   question: q.statementMarkdown,
-                  points: q.points,
+                  points: Number(q.points) || 0,
                   difficultyType: q.difficultyType,
                   isShortAnswer: !q.hasLongAnswer,
                   isLongAnswer: q.hasLongAnswer,
@@ -62,7 +62,7 @@ export default function Component({
     );
 
     const [currentPage, setCurrentPage] = useState(0);
-    const [saveButton,setSaveButton]=useState(false)
+    const [saveButton, setSaveButton] = useState(false);
     const questionsPerPage = 1;
 
     const handleAddWrittenQuestion = () => {
@@ -112,15 +112,15 @@ export default function Component({
             );
         });
     };
-    const handlePoints = (questionId: string, points: number) => {
-        setWrittenQuestions((prevQuestions) => {
-            return prevQuestions.map((question) =>
-                question.id === questionId
-                    ? { ...question, points: parseInt(points.toString()) }
-                    : question
-            );
-        });
+    const handlePoints = (questionId: string, value: string) => {
+        const pointsValue = value === "" ? 0 : Math.max(0, parseInt(value) || 0);
+        setWrittenQuestions(prev => 
+            prev.map(q => 
+                q.id === questionId ? { ...q, points: pointsValue } : q
+            )
+        );
     };
+
     const handleDifficultyChange = (
         questionId: string,
         difficultyType: string
@@ -134,20 +134,21 @@ export default function Component({
         });
     };
     const handleSaveWrittenQuestions = async () => {
-           const hasMissingDifficulty = writtenQuestions.some(
-                    (problem) =>
-                        !problem.difficultyType || problem.difficultyType.trim() === ""
-                );
-                const hasMissingPoints = writtenQuestions.some(
-                    (problem) => !problem.points );
-                if (hasMissingDifficulty) {
-                    toast.error("Please select a difficulty level");
-                    return;
-                }
-                if (hasMissingPoints) {
-                    toast.error("Please input points of the written question");
-                    return;
-                }
+        const hasMissingDifficulty = writtenQuestions.some(
+            (problem) =>
+                !problem.difficultyType || problem.difficultyType.trim() === ""
+        );
+        const hasMissingPoints = writtenQuestions.some(
+            (problem) => !problem.points
+        );
+        if (hasMissingDifficulty) {
+            toast.error("Please select a difficulty level");
+            return;
+        }
+        if (hasMissingPoints) {
+            toast.error("Please input points of the written question");
+            return;
+        }
         try {
             const payload: FetchWrittenData = {
                 examId: examId,
@@ -175,8 +176,8 @@ export default function Component({
                         difficultyType: "",
                     },
                 ]);
-                setCurrentPage(0)
-                setSaveButton(!saveButton)
+                setCurrentPage(0);
+                setSaveButton(!saveButton);
             } else {
                 toast.error("Failed to save written questions");
             }
@@ -197,7 +198,7 @@ export default function Component({
             ),
         [writtenQuestions, currentPage, questionsPerPage]
     );
-    
+
     return (
         <div>
             <Card
@@ -245,11 +246,11 @@ export default function Component({
                                     className="w-32"
                                     type="number"
                                     label="Points"
-                                    value={question.points.toString()}
+                                    value={question.points?.toString() ?? "0"}
                                     onChange={(e) =>
                                         handlePoints(
                                             question.id,
-                                            parseInt(e.target.value)
+                                            (e.target.value)
                                         )
                                     }
                                 />

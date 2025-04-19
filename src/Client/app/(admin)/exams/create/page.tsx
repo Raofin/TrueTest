@@ -133,7 +133,7 @@ export default function CreateExamPage() {
                 const mcqQuesResponse = await api.get(
                     `/Questions/Mcq/ByExam/${examId}`
                 );
-    
+                 console.log(mcqQuesResponse,writtenQuesResponse)
                 if (examResponse.status === 200) {
                     const exam = examResponse.data.exam;
                     setFormData({

@@ -60,7 +60,7 @@ export default function App({
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   question: q.statementMarkdown,
-                  points: q.points,
+                   points: Number(q.points) || 0,
                   difficultyType: q.difficultyType,
                   options: [
                       { id: 1, text: q.mcqOption.option1 },
@@ -147,7 +147,7 @@ export default function App({
 
     const handlePoints = (questionIndex: number, value: string) => {
         const newQuestions = [...questions];
-        newQuestions[questionIndex].points = parseInt(value) || 0;
+        newQuestions[questionIndex].points = value === "" ? 0 : Math.max(0, parseInt(value) || 0);
         setQuestions(newQuestions);
     };
 
@@ -324,7 +324,7 @@ export default function App({
                                 className="w-32"
                                 type="number"
                                 label="Points"
-                                value={questions[currentPage].points.toString()}
+                                value={questions[currentPage].points.toString()??"0"}
                                 onChange={(e) =>
                                     handlePoints(currentPage, e.target.value)
                                 }
