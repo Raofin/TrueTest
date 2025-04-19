@@ -2,16 +2,18 @@
 
 import '@/app/globals.css'
 import SideBar from '@/app/(admin)/sidebar/page'
+import withProtectedRoute from '@/components/withProtectedRoute '
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  readonly children: React.ReactNode
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+const AdminLayout = ({ children }: RootLayoutProps) => {
   return (
     <div className="flex min-h-screen ">
       <SideBar />
-      <main  suppressHydrationWarning className="flex-grow w-full ">{children}</main>
+      <div className="flex-grow w-full ml-44">{children}</div>
     </div>
   )
 }
+export default withProtectedRoute(AdminLayout)
