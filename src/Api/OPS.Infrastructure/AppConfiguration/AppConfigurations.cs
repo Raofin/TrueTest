@@ -6,6 +6,7 @@ using OPS.Infrastructure.AppConfiguration.Auth;
 using OPS.Infrastructure.AppConfiguration.Database;
 using OPS.Infrastructure.AppConfiguration.Email;
 using OPS.Infrastructure.AppConfiguration.Logging;
+using OPS.Infrastructure.AppConfiguration.OneCompiler;
 using Serilog;
 
 namespace OPS.Infrastructure.AppConfiguration;
@@ -22,6 +23,7 @@ public static class AppConfigurations
             .AddAuthorizationServices()
             .AddAuthenticationServices(configuration)
             .AddEmailServices(configuration)
+            .AddOneCompilerServices(configuration)
             .AddMemoryCache()
             .AddDependencies()
             .AddHealthChecks();

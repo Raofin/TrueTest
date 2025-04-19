@@ -62,4 +62,38 @@ public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor) : IUs
             ? accountId
             : throw new UnauthorizedAccessException("Account ID is missing or invalid.");
     }
+
+    public dynamic DecodeToken()
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims
+            .Select(c => new { c.Type, c.Value })
+            .ToList();
+
+        var result = new Dictionary<string, object>();
+
+        foreach (var claim in claims!)
+        {
+            if (result.ContainsKey(claim.Type))
+            {
+                if (result[claim.Type] is List<string> list)
+                {
+                    list.Add(claim.Value);
+                }
+                else
+                {
+                    result[claim.Type] = new List<string?>
+                    {
+                        result[claim.Type].ToString(),
+                        claim.Value
+                    };
+                }
+            }
+            else
+            {
+                result[claim.Type] = claim.Value;
+            }
+        }
+
+        return result;
+    }
 }

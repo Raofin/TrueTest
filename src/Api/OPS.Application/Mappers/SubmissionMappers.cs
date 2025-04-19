@@ -15,6 +15,10 @@ public static class SubmissionExtensions
         var submission = question.ProblemSubmissions.FirstOrDefault();
         var testCases = question.TestCases.ToList();
 
+        var language = Enum.TryParse(submission?.LanguageId, out LanguageId languageId)
+            ? languageId
+            : LanguageId.text;
+
         return new ProblemQuesWithSubmissionResponse(
             question.Id,
             question.StatementMarkdown,
@@ -25,11 +29,11 @@ public static class SubmissionExtensions
                 : new ProblemSubmissionTcResponse(
                     submission.Id,
                     submission.Code,
+                    language,
                     submission.Attempts,
                     submission.Score,
                     submission.IsFlagged,
                     submission.FlagReason,
-                    (ProgLanguageType)submission.ProgLanguageId,
                     MapTestCaseOutputs(submission.TestCaseOutputs, testCases)
                 )
         );

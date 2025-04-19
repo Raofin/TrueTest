@@ -122,7 +122,9 @@ internal static class DependencyInjection
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
                     BearerFormat = "JWT",
-                    Scheme = "bearer"
+                    Scheme = "bearer",
+                    Description =
+                        "🗝️ Admin Account\n\neyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJBY2NvdW50SWQiOiIxMTExMTExMS0xMTExLTExMTEtMTExMS0xMTExMTExMTExMTEiLCJVc2VybmFtZSI6ImFkbWluIiwiRW1haWwiOiJhZG1pbkB0cnVldGVzdC50ZWNoIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIkNhbmRpZGF0ZSIsIkFkbWluIl0sIlBlcm1pc3Npb24iOlsiQWNjZXNzT3duRXhhbXMiLCJTdWJtaXRBbnN3ZXJzIiwiUnVuQ29kZSIsIk1hbmFnZU93blByb2ZpbGUiLCJNYW5hZ2VBY2NvdW50cyIsIlZpZXdFeGFtcyIsIk1hbmFnZUV4YW1zIiwiTWFuYWdlUXVlc3Rpb25zIiwiVmlld1N1Ym1pc3Npb25zIiwiUmV2aWV3U3VibWlzc2lvbiJdLCJleHAiOjQ4OTkwMzMxOTUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3QiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0In0.VBPngQIwsybHrwZPYMA5sNpWew3S9_W7cDdpAD4mDyM"
                 }
             );
 
