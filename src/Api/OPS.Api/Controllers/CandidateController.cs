@@ -1,10 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Candidates.Commands;
 using OPS.Application.Features.Candidates.Queries;
+using OPS.Domain.Contracts.Core.OneCompiler;
 using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OPS.Infrastructure.Authentication.Permission.Permissions;
@@ -113,5 +115,20 @@ public class CandidateController(IMediator mediator) : BaseApiController
     {
         var response = await _mediator.Send(command, cancellationToken);
         return ToResult(response);
+    }
+
+    /// <summary>Execute and test codes for a problem-solving question.</summary>
+    /// <param name="command">Code with the Question Id to test</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
+    /// <returns>Test results</returns>
+    [AllowAnonymous]
+    [HttpPost("RunAnyCode")]
+    [EndpointDescription("Executes a code.")]
+    [ProducesResponseType<CodeRunResponse>(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> RunAnyCodeAsync(CodeRunCommand command, CancellationToken cancellationToken = default)
+    {
+        var response = await _mediator.Send(command, cancellationToken);
+        return Ok(response);
     }
 }
