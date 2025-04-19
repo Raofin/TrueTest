@@ -63,11 +63,11 @@ function ResetPasswordForm() {
             label="Email Address"
             name="email"
             type="email"
-            className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+            className=" rounded-xl"
             defaultValue={email ?? ''}
           />
           <Input
-            className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+            className=" rounded-xl"
             isRequired
             endContent={
               <button type="button" onClick={() => setIsVisible(!isVisible)}>
@@ -84,7 +84,7 @@ function ResetPasswordForm() {
             type={isVisible ? 'text' : 'password'}
           />
           <Input
-            className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+            className=" rounded-xl"
             isRequired
             endContent={
               <button type="button" onClick={() => setIsConfirmVisible(!isConfirmVisible)}>

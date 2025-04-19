@@ -23,6 +23,7 @@ import handleDelete from '@/components/handleDelete'
 import handleStatus from '@/components/handleStatus'
 import RoleFilter from '@/components/role-filter'
 import Paginate from '@/components/pagination'
+import toast from 'react-hot-toast'
 
 const columns = [
   { label: 'Username', key: 'username' },
@@ -60,7 +61,6 @@ export default function Component() {
   const [page, setPage] = useState(1)
   const [isActiveModalOpen, setIsActiveModalOpen] = useState(false)
   const [usersData, setUserData] = useState<User[]>([])
-  const [error, setError] = useState('')
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState('')
   const [status, setStatus] = useState<boolean>(true)
@@ -81,7 +81,7 @@ export default function Component() {
         }
       } catch (err) {
         const axiosError = err as AxiosError
-        setError(axiosError.message)
+        toast.error(axiosError.message)
       }
     }
     ManageUser()
@@ -189,18 +189,17 @@ export default function Component() {
   )
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="h-full flex flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Manage Users</h2>
-      <div className="mx-12 flex min-h-screen flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
-        {error && <p className="text-red-500 text-xl">{error}</p>}
+      <div className="h-full mx-44 mb-8 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
         <Table
           aria-label="Example table with custom cells, pagination"
           topContent={topContent}
           topContentPlacement="outside"
           selectionMode="multiple"
+          removeWrapper
           classNames={{
-            wrapper: ' ',
-            table: 'w-full ',
+            table: 'w-full h-full',
           }}
         >
           <TableHeader>

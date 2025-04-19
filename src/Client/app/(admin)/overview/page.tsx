@@ -16,9 +16,11 @@ export default function Component() {
     {id:'6', icon: <AiFillPieChart size={70} />, value: 75, title: 'Average Score', subtitle: 'across all candidates' },
   ]
   return (
-    <div className={`flex h-screen flex-wrap gap-6 w-full items-center justify-center max-w-[1200px] mx-auto`}>
-      <h1 className='w-full text-center text-3xl font-bold my-3'>Overview</h1>
-      {stats.map((stat) => (
+    <div>
+      <h1 className=' w-full text-center text-3xl font-bold my-5'>Overview</h1>
+      <div className="mt-20 flex items-center justify-center">
+    <div className=' flex flex-wrap max-w-[1200px] gap-5 w-full justify-center items-center'>
+    {stats.map((stat) => (
         <Card key={stat.id} className={`py-4 w-[300px] text-center shadow-none`}>
           <CardHeader className="pb-0 pt-2 px-4 flex flex-col items-center">
             {stat.icon}
@@ -29,7 +31,8 @@ export default function Component() {
             <p className="text-sm text-gray-400">{stat.subtitle}</p>
           </CardBody>
         </Card>
-      ))}
+      ))}</div>
+    </div>
     </div>
   )
 }

@@ -97,7 +97,7 @@ export default function MdEditor({ value, onChange }: MdEditorProps) {
  
   return (
     <MDEditor
-      className="w-full"
+      className="w-full dark:bg-[#18181b] dark:text-white"
       onChange={(newValue = '') => onChange(newValue)}
       textareaProps={{
         placeholder: 'Please enter Markdown text',

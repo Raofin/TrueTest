@@ -22,7 +22,6 @@ api.interceptors.request.use(
     return Promise.reject(new Error(error.message ?? 'Request failed'))
   }
 )
-
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
