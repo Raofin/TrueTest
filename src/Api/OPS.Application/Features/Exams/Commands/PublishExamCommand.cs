@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Commands;
@@ -33,8 +34,6 @@ public class PublishExamCommandValidator : AbstractValidator<PublishExamCommand>
 {
     public PublishExamCommandValidator()
     {
-        RuleFor(x => x.ExamId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+        RuleFor(x => x.ExamId).IsValidGuid();
     }
 }

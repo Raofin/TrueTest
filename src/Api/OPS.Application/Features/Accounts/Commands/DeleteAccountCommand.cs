@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Accounts.Commands;
@@ -18,6 +19,11 @@ public class DeleteAccountCommandHandler(IUnitOfWork unitOfWork)
         var account = await _unitOfWork.Account.GetAsync(request.AccountId, cancellationToken);
         if (account is null) return Error.NotFound();
 
+        if (account.Username is "rawfin" or "akhi" or "admin")
+        {
+            return Error.Conflict("This account cannot be deleted.");
+        }
+
         _unitOfWork.Account.Remove(account);
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 
@@ -29,8 +35,6 @@ public class DeleteAccountCommandValidator : AbstractValidator<DeleteAccountComm
 {
     public DeleteAccountCommandValidator()
     {
-        RuleFor(x => x.AccountId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
+        RuleFor(x => x.AccountId).IsValidGuid();
     }
 }

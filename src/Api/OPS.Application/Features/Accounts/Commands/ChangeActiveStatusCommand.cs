@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -34,8 +35,6 @@ public class ChangeActiveStatusValidator : AbstractValidator<ChangeActiveStatusC
 {
     public ChangeActiveStatusValidator()
     {
-        RuleFor(x => x.AccountId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
+        RuleFor(x => x.AccountId).IsValidGuid();
     }
 }

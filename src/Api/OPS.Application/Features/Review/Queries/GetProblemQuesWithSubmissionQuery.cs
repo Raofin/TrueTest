@@ -1,6 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -29,12 +30,7 @@ public class GetProblemQuesWithSubmissionQueryValidator : AbstractValidator<GetP
 {
     public GetProblemQuesWithSubmissionQueryValidator()
     {
-        RuleFor(x => x.ExamId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
-
-        RuleFor(x => x.AccountId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+        RuleFor(x => x.ExamId).IsValidGuid();
+        RuleFor(x => x.AccountId).IsValidGuid();
     }
 }

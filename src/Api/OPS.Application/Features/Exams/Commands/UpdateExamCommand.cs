@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -45,8 +46,7 @@ public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
     public UpdateExamCommandValidator()
     {
         RuleFor(x => x.ExamId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.Title)
             .MaximumLength(10)
