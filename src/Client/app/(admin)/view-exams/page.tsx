@@ -60,16 +60,16 @@ export default function ViewExam() {
 
   const paginatedExams = allExam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
   const handleEdit = (exam: Exam) => {
-    router.push(`/exams/create?id=${exam.examId}`)
+    router.push(`/exams/create?id=${exam.examId}&isEdit=true`)
   }
 const handleReview=(exam:Exam)=>{
    router.push(`/exams/review-results?examId=${exam.examId}?examTitle=${exam.title}`)
 }
 
   return (
-    <>
+    <div className='h-full flex flex-col justify-between'>
         <h1 className="w-full text-center text-3xl font-bold my-3">Exams</h1>
-      <div className='h-screen w-full flex flex-col gap-5 items-center justify-center'>
+      <div className='mt-8 w-full flex flex-col gap-5 items-center justify-center'>
         {paginatedExams.map((exam) => (
           <Card key={exam.examId} className="w-[1000px] shadow-none p-2">
             <CardHeader className="flex justify-between items-center ">
@@ -140,7 +140,7 @@ const handleReview=(exam:Exam)=>{
           </Card>
         ))}
       </div>
-        <div className="flex justify-center items-center py-5">
+        <div className="flex w-full justify-center items-center py-5">
           <span className="mx-4">
             Page {currentPage} of {totalPages}
           </span>
@@ -159,6 +159,6 @@ const handleReview=(exam:Exam)=>{
         confirmButtonText="Delete"
         onConfirm={() => setIsDeleteModalOpen(false)}
       />
-    </>
+    </div>
   )
 }

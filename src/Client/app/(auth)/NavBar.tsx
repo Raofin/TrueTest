@@ -45,16 +45,7 @@ export default function Component() {
             <NavbarItem className="text-[#3f3f46] dark:text-white ">
               <ThemeSwitch />
             </NavbarItem>
-            {/* <NavbarItem>
-              <Link href="#">
-                <FaCircleUser className="text-[#3f3f46] dark:text-white " size={24} />
-              </Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Link href="/login">
-                <BiSolidLogIn className="text-[#3f3f46] dark:text-white " size={24} />
-              </Link>
-            </NavbarItem> */}
+           
           </NavbarContent>
         </Navbar>
       </div>

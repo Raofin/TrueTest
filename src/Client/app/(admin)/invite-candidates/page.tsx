@@ -12,7 +12,6 @@ import {
   TableCell,
   Input,
   Button,
-  Pagination,
   SelectItem,
   Textarea,
   Tooltip,
@@ -73,7 +72,7 @@ export default function Component() {
       }
     }
     fetchExams()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const handleCopyEmail = useCallback((email: string) => {
     navigator.clipboard.writeText(email).then(() => {
@@ -235,10 +234,10 @@ export default function Component() {
   }
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="h-full flex flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center">Invite Candidates</h2>
 
-      <div className="min-h-screen px-8 flex flex-col rounded-xl pt-5 justify-between mx-12 bg-white dark:bg-[#18181b]">
+      <div className="h-full px-8 flex flex-col rounded-xl justify-between mx-44 my-8 bg-white dark:bg-[#18181b]">
        <div>
         <div className="w-full flex items-center justify-center mt-8">
           <p className="mr-4 ">Exam</p>
@@ -337,19 +336,11 @@ export default function Component() {
         </div>
         </div>
         <div className="p-2 m-2 flex justify-between items-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="primary"
-            page={page}
-            total={totalPages}
-            onChange={setPage}
-          />
+         <div></div>
 
           <div className="flex items-center gap-4">
             <span className="text-small">
-              Page {page} of {totalPages}
+              Page {page} of {totalPages+1}
             </span>
 
             <PaginationButtons
