@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using OPS.Persistence;
+using OPS.Persistence.Seeding;
 using Serilog;
 
 namespace OPS.Infrastructure.AppConfiguration.Database;
@@ -21,6 +22,7 @@ public static class Migration
         {
             Log.Information("Database does not exist. Creating it and applying migrations...");
             dbContext.Database.Migrate();
+            UserData.SeedUserData(dbContext);
         }
         else
         {
@@ -39,6 +41,7 @@ public static class Migration
             {
                 Log.Information("Database exists but is not up to date. Applying migrations...");
                 dbContext.Database.Migrate();
+                UserData.SeedUserData(dbContext);
             }
         }
     }

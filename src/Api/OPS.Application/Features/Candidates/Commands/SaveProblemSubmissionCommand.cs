@@ -11,7 +11,7 @@ namespace OPS.Application.Features.Candidates.Commands;
 public record ProblemSubmissionRequest(
     Guid QuestionId,
     string Code,
-    ProgLanguageType ProgLanguageType);
+    LanguageId Language);
 
 public record SaveProblemSubmissionsCommand(Guid ExamId, List<ProblemSubmissionRequest> Submissions)
     : IRequest<ErrorOr<Success>>;
@@ -41,15 +41,15 @@ public class SaveProblemSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserI
             {
                 submission.Code = req.Code;
                 submission.Attempts++;
-                submission.ProgLanguageId = (int)req.ProgLanguageType;
+                submission.LanguageId = req.Language.ToString();
             }
             else
             {
                 submission = new ProblemSubmission
                 {
                     Code = req.Code,
+                    LanguageId = req.Language.ToString(),
                     Attempts = 1,
-                    ProgLanguageId = (int)req.ProgLanguageType,
                     AccountId = userAccountId,
                     QuestionId = req.QuestionId
                 };
@@ -74,7 +74,7 @@ public class SaveProblemSubmissionsCommandValidator : AbstractValidator<SaveProb
                 .NotEmpty()
                 .NotEqual(Guid.Empty);
 
-            sub.RuleFor(x => x.ProgLanguageType)
+            sub.RuleFor(x => x.Language)
                 .IsInEnum();
 
             sub.RuleFor(x => x.Code)

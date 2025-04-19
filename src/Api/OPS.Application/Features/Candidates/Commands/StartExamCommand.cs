@@ -77,7 +77,9 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             question.Id,
             submission.Id,
             submission.Code,
-            (ProgLanguageType)submission.ProgLanguageId
+            Enum.TryParse(submission.LanguageId, out LanguageId languageId)
+                ? languageId
+                : LanguageId.text
         );
     }
 
