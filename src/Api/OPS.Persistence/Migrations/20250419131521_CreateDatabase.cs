@@ -143,20 +143,6 @@ namespace OPS.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProgLanguages",
-                schema: "Enum",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Language = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProgLanguages", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "QuestionTypes",
                 schema: "Enum",
                 columns: table => new
@@ -397,11 +383,11 @@ namespace OPS.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NewId()"),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LanguageId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Attempts = table.Column<int>(type: "int", nullable: false),
                     Score = table.Column<decimal>(type: "decimal(10,2)", nullable: false, defaultValueSql: "((0))"),
                     IsFlagged = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     FlagReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProgLanguageId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DateTime", nullable: false, defaultValueSql: "GetUtcDate()"),
@@ -415,13 +401,6 @@ namespace OPS.Persistence.Migrations
                         column: x => x.AccountId,
                         principalSchema: "User",
                         principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProblemSubmissions_ProgLanguages_ProgLanguageId",
-                        column: x => x.ProgLanguageId,
-                        principalSchema: "Enum",
-                        principalTable: "ProgLanguages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -600,24 +579,6 @@ namespace OPS.Persistence.Migrations
 
             migrationBuilder.InsertData(
                 schema: "Enum",
-                table: "ProgLanguages",
-                columns: new[] { "Id", "Language" },
-                values: new object[,]
-                {
-                    { 1, "Python" },
-                    { 2, "C" },
-                    { 3, "Cpp" },
-                    { 4, "Java" },
-                    { 5, "JavaScript" },
-                    { 6, "TypeScript" },
-                    { 7, "Csharp" },
-                    { 8, "Ruby" },
-                    { 9, "Go" },
-                    { 10, "PHP" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "Enum",
                 table: "QuestionTypes",
                 columns: new[] { "Id", "Type" },
                 values: new object[,]
@@ -771,12 +732,6 @@ namespace OPS.Persistence.Migrations
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProblemSubmissions_ProgLanguageId",
-                schema: "Submit",
-                table: "ProblemSubmissions",
-                column: "ProgLanguageId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProblemSubmissions_QuestionId",
                 schema: "Submit",
                 table: "ProblemSubmissions",
@@ -816,13 +771,6 @@ namespace OPS.Persistence.Migrations
                 table: "Profiles",
                 column: "IsDeleted",
                 filter: "[IsDeleted] = 0");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProgLanguages_Language",
-                schema: "Enum",
-                table: "ProgLanguages",
-                column: "Language",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Questions_DifficultyId",
@@ -963,10 +911,6 @@ namespace OPS.Persistence.Migrations
             migrationBuilder.DropTable(
                 name: "CloudFiles",
                 schema: "Core");
-
-            migrationBuilder.DropTable(
-                name: "ProgLanguages",
-                schema: "Enum");
 
             migrationBuilder.DropTable(
                 name: "Questions",

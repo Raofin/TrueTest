@@ -1,10 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPS.Api.Common;
 using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Candidates.Commands;
 using OPS.Application.Features.Candidates.Queries;
+using OPS.Domain.Contracts.Core.OneCompiler;
 using OPS.Infrastructure.Authentication.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OPS.Infrastructure.Authentication.Permission.Permissions;
@@ -55,7 +57,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [HttpPut("Submit/Problem/Save")]
     [HasPermission(SubmitAnswers)]
     [EndpointDescription("Creates or updates a problem-solving submission.")]
-    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<List<TestCodeResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> SaveProblemAsync(SaveProblemSubmissionsCommand command,
@@ -103,15 +105,14 @@ public class CandidateController(IMediator mediator) : BaseApiController
     /// <param name="command">Code with the Question Id to test</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Test results</returns>
-    [HttpPost("TestCode")]
-    [HasPermission(RunCode)]
-    [EndpointDescription("Execute and test codes for a problem-solving question.")]
-    [ProducesResponseType<List<TestCodeResponse>>(Status200OK)]
+    [AllowAnonymous]
+    [HttpPost("RunAnyCode")]
+    [EndpointDescription("Executes a code.")]
+    [ProducesResponseType<CodeRunResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    public async Task<IActionResult> TestCodeAsync(TestCodeCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> RunAnyCodeAsync(CodeRunCommand command, CancellationToken cancellationToken = default)
     {
         var response = await _mediator.Send(command, cancellationToken);
-        return ToResult(response);
+        return Ok(response);
     }
 }

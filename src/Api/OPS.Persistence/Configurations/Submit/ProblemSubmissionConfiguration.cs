@@ -14,15 +14,12 @@ public class ProblemSubmissionConfiguration : IEntityTypeConfiguration<ProblemSu
         entity.HasKey(e => e.Id);
 
         entity.Property(e => e.Code).IsRequired();
+        entity.Property(e => e.LanguageId).IsRequired();
         entity.Property(e => e.Score).HasColumnType(DecimalType).HasDefaultValueSql("((0))");
         entity.Property(e => e.IsFlagged).HasDefaultValue(false);
 
         new BaseEntityConfig<ProblemSubmission>().Configure(entity);
 
-        entity.HasOne(d => d.ProgLanguages)
-            .WithMany(p => p.ProblemSubmissions)
-            .HasForeignKey(d => d.ProgLanguageId)
-            .OnDelete(DeleteBehavior.Restrict);
         entity.HasOne(d => d.Account)
             .WithMany(p => p.ProblemSubmissions)
             .HasForeignKey(d => d.AccountId)

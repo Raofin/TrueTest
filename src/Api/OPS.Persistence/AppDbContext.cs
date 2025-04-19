@@ -16,7 +16,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Profile> Profiles { get; set; } = null!;
     public DbSet<ProfileLinks> ProfileLinks { get; set; } = null!;
     public DbSet<Difficulty> Difficulties { get; set; } = null!;
-    public DbSet<ProgLanguage> ProgLanguages { get; set; } = null!;
     public DbSet<QuestionType> QuestionTypes { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<Examination> Examinations { get; set; } = null!;
