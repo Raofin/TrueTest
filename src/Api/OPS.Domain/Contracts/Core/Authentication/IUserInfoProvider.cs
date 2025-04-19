@@ -6,4 +6,5 @@ public interface IUserInfoProvider
     CurrentUser GetCurrentUser();
     List<string> GetPermissions();
     Guid AccountId();
+    dynamic DecodeToken();
 }
