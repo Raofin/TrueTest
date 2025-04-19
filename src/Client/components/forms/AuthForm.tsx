@@ -24,7 +24,7 @@ interface AuthFormProps<T extends FieldValues> {
 
 const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>) => {
   const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up'
-  const { login, fetchUser } = useAuth()
+  const { login } = useAuth()
   const router = useRouter()
   const [error, setError] = useState('')
   const [formData, setFormData] = useState<T | null>(null)
@@ -184,7 +184,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
             toast.success('Signup successful!')
             router.push(ROUTES.PROFILE_SETUP)
             setAuthToken(response.data.token, false)
-            fetchUser()
           } else {
             router.push(ROUTES.SIGN_UP)
           }
@@ -195,11 +194,11 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         }
       }
     },
-    [formData, handleAuthError, handleOtpVerification, fetchUser, onOpenChange, router]
+    [formData, handleAuthError, handleOtpVerification, onOpenChange, router]
   )
 
   const handleSignin = useCallback(async (data: T) => {
-      login(data.usernameOrEmail, data.password, setError, rememberMe)
+      login(data.usernameOrEmail, data.password, setError, rememberMe,setLoading)
     },[login, rememberMe, setError]
   )
 

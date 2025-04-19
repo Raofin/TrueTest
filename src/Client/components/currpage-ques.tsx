@@ -1,27 +1,83 @@
 'use client'
 
-interface Question {
-  id: number
-  title: string
-  description: string
-  questionTypeId: number 
-  options?: string[]
-  points: number
+export interface TestCase {
+  testCaseId?: string;
+  input: string;
+  output: string;  
+  receivedOutput?: string;
+  status?: 'success' | 'error' | 'pending';
 }
 
-interface PageProps{
-  currentPage:number;
-  questions:Question[];
-  perpageques:number
+export interface ProblemQuestion {
+  questionId: string;
+  examId: string;
+  questionType: string;
+  statementMarkdown: string;
+  points: number;
+  difficultyType: string;
+  testCases: TestCase[];
 }
-export default function getQuestionsForCurrentPage ({currentPage,questions,perpageques}:PageProps){
-    const regularQuestions = questions.filter((q) => q.questionTypeId !== 3)
-    const codingQuestions = questions.filter((q) => q.questionTypeId === 3)
-    const regularQuestionsPages = Math.ceil(regularQuestions.length / perpageques)
-    if (currentPage <= regularQuestionsPages) {
-      const startIndex = (currentPage - 1) * perpageques
-      return regularQuestions.slice(startIndex, startIndex + perpageques)
-    }
-    const codingIndex = currentPage - regularQuestionsPages - 1
-    return codingIndex >= 0 && codingIndex < codingQuestions.length ? [codingQuestions[codingIndex]] : []
-  }
+
+
+interface WrittenQuestion {
+    questionId: string;
+    examId: string;
+    questionType: string;
+    hasLongAnswer: boolean;
+    statementMarkdown: string;
+    score: number;
+    difficultyType: string;
+}
+
+interface MCQOption {
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    isMultiSelect: boolean;
+    answerOptions: string;
+}
+
+interface MCQQuestion {
+    questionId: string;
+    examId: string;
+    questionType: string;
+    statementMarkdown: string;
+    score: number;
+    difficultyType: string;
+    mcqOption: MCQOption;
+}
+
+interface Questions {
+    problem: ProblemQuestion[];
+    written: WrittenQuestion[];
+    mcq: MCQQuestion[];
+}
+
+interface QuestionData {
+    questions: Questions;
+    submits: {
+        problem: [];
+        written: [];
+        mcq: [];
+    };
+}
+interface PageProps {
+  currentPage: number;
+  questions: QuestionData;
+  perpageques: number;
+}
+
+export default function getQuestionsForCurrentPage({ currentPage, questions, perpageques }: PageProps) {
+  const allQuestions = [
+    ...questions.questions.problem,
+    ...questions.questions.written,
+    ...questions.questions.mcq
+  ];
+  console.log(allQuestions)
+
+  const startIndex = (currentPage - 1) * perpageques;
+  const endIndex = startIndex + perpageques;
+  console.log(startIndex,endIndex)
+  return allQuestions.slice(startIndex, endIndex);
+}

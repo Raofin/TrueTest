@@ -23,18 +23,15 @@ export function FormattedDateYear({ date }: {readonly date: string }) {
   });
 }
 
-export function FormattedTime({ date }: {readonly date: string }) { 
-
-  const openDate = new Date(date);
-  const formattedTime = openDate.toLocaleTimeString(undefined, {
+export function convertUtcToLocalTime(utcTimeString: string): string {
+  const utcDate = new Date(utcTimeString + 'Z');
+  const localTimeString = utcDate.toLocaleTimeString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true
+    hour12: true,
   });
-  
-  return formattedTime;
+  return localTimeString;
 }
-
 
 export function  FormatTimeHourMinutes({minute}:FormatTimeProps) {
   const hours = Math.floor(minute / 60)
