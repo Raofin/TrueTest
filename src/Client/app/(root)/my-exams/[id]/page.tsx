@@ -15,23 +15,22 @@ import api from "@/lib/api";
 import toast from "react-hot-toast";
 
 export interface TestCase {
-  testCaseId?: string;
-  input: string;
-  output: string;  
-  receivedOutput?: string;
-  status?: 'success' | 'error' | 'pending';
+    testCaseId?: string;
+    input: string;
+    output: string;
+    receivedOutput?: string;
+    status?: "success" | "error" | "pending";
 }
 
 export interface ProblemQuestion {
-  questionId: string;
-  examId: string;
-  questionType: string;
-  statementMarkdown: string;
-  points: number;
-  difficultyType: string;
-  testCases: TestCase[];
+    questionId: string;
+    examId: string;
+    questionType: string;
+    statementMarkdown: string;
+    points: number;
+    difficultyType: string;
+    testCases: TestCase[];
 }
-
 
 interface WrittenQuestion {
     questionId: string;
@@ -110,11 +109,11 @@ export default function Component() {
                 if (resp.status === 200) {
                     const normalizedData = {
                         questions: {
-                            problem: resp.data.questions?.problem || [],
-                            written: resp.data.questions?.written || [],
-                            mcq: resp.data.questions?.mcq || [],
+                            problem: resp.data.questions?.problem ?? [],
+                            written: resp.data.questions?.written ?? [],
+                            mcq: resp.data.questions?.mcq ?? [],
                         },
-                        submits: resp.data.submits || {
+                        submits: resp.data.submits ?? {
                             problem: [],
                             written: [],
                             mcq: [],
@@ -178,7 +177,7 @@ export default function Component() {
                         count++;
                     }
                 } else if (typeof answer === "string") {
-                    if ((answer as string).trim()) {
+                    if (answer.trim()) {
                         count++;
                     }
                 }
@@ -306,33 +305,37 @@ export default function Component() {
                 <div className={`space-y-8 rounded-lg `}>
                     {currentQuestions.map((question) => (
                         <div key={question.questionId} className="space-y-4">
-                            {question.questionType === "MCQ" && (
-                                <MCQSubmission
-                                    question={question as MCQQuestion}
-                                    answers={answers}
-                                    setAnswers={setAnswers}
-                                    options={
-                                        [
-                                            (question as MCQQuestion)?.mcqOption
-                                                ?.option1,
-                                            (question as MCQQuestion)?.mcqOption
-                                                ?.option2,
-                                            (question as MCQQuestion)?.mcqOption
-                                                ?.option3,
-                                            (question as MCQQuestion)?.mcqOption
-                                                ?.option4,
-                                        ].filter(Boolean) as string[]
-                                    }
-                                />
-                            )}
+                            {question.questionType === "MCQ" &&
+                                (() => {
+                                    const mcqQuestion = question as MCQQuestion;
+                                    const mcqOptions = [
+                                        mcqQuestion.mcqOption?.option1,
+                                        mcqQuestion.mcqOption?.option2,
+                                        mcqQuestion.mcqOption?.option3,
+                                        mcqQuestion.mcqOption?.option4,
+                                    ].filter(Boolean) as string[];
+
+                                    return (
+                                        <MCQSubmission
+                                            question={mcqQuestion}
+                                            answers={answers}
+                                            setAnswers={setAnswers}
+                                            options={mcqOptions}
+                                        />
+                                    );
+                                })()}
                             {question.questionType === "Written" && (
                                 <>
                                     <div className="w-full flex justify-between">
                                         <h2 className="text-lg font-semibold">
-                                           #Question :
+                                            #Question :
                                         </h2>
                                         <p>
-                                            points:{(question as WrittenQuestion).score}
+                                            points:
+                                            {
+                                                (question as WrittenQuestion)
+                                                    .score
+                                            }
                                         </p>
                                     </div>
                                     <WrittenSubmission

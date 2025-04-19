@@ -18,20 +18,20 @@ interface WrittenQuestion {
     shortAnswerText?: string;
     longAnswerText?: string;
 }
+interface ExistingQuestion {
+    statementMarkdown: string;
+    points: number;
+    difficultyType: string;
+    hasLongAnswer: boolean;
+}
 interface FetchWrittenData {
     examId: string;
-    writtenQuestions: {
-        statementMarkdown: string;
-        points: number;
-        difficultyType: string;
-        hasLongAnswer: boolean;
-    }[];
+    writtenQuestions: ExistingQuestion[];
 }
 interface WrittenQuestionFormProps {
-    examId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    existingQuestions: any[];
-    onSaved: () => void;
+   readonly examId: string;
+   readonly existingQuestions: ExistingQuestion[];
+   readonly onSaved: () => void;
 }
 
 export default function Component({

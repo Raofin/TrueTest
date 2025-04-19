@@ -14,7 +14,7 @@ const decryptToken = (encryptedToken: string): string | null => {
   try {
     const bytes = CryptoJS.AES.decrypt(encryptedToken, SECRET_KEY);
     const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-    return decryptedData || null;
+    return decryptedData ?? null;
   } catch (error) {
     console.error("Failed to decrypt token:", error);
     return null;

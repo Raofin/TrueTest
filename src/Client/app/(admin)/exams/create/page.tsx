@@ -133,7 +133,7 @@ export default function CreateExamPage() {
                 const mcqQuesResponse = await api.get(
                     `/Questions/Mcq/ByExam/${examId}`
                 );
-                 console.log(mcqQuesResponse,writtenQuesResponse)
+
                 if (examResponse.status === 200) {
                     const exam = examResponse.data.exam;
                     setFormData({
@@ -154,22 +154,16 @@ export default function CreateExamPage() {
                         )
                     );
                 }
-                const components = [];
-                if (problemQuesResponse.data?.length) {
-                    components.push({ id: uuidv4(), type: "problemSolve" });
-                }
-                if (writtenQuesResponse.data?.length) {
-                    components.push({ id: uuidv4(), type: "writtenQues" });
-                }
-                if (mcqQuesResponse.data?.length) {
-                    components.push({ id: uuidv4(), type: "mcq" });
-                }
-                setActiveComponents(components);
-    
+                setActiveComponents([
+                    { id: uuidv4(), type: "problemSolve" },
+                    { id: uuidv4(), type: "writtenQues" },
+                    { id: uuidv4(), type: "mcq" }
+                ]);
+
                 setQuestionData({
-                    problemSolve: problemQuesResponse.data || [],
-                    writtenQues: writtenQuesResponse.data || [],
-                    mcq: mcqQuesResponse.data || [],
+                    problemSolve: problemQuesResponse.data ?? [],
+                    writtenQues: writtenQuesResponse.data ?? [],
+                    mcq: mcqQuesResponse.data ?? [],
                 });
             } catch (error) {
                 console.error("Error fetching exam or question data:", error);
@@ -179,6 +173,7 @@ export default function CreateExamPage() {
         
         FetchExamDetails();
     }, [examId, isEdit]);
+
     const handlePublishExam = async () => {
         if (examId) {
             try {

@@ -27,27 +27,26 @@ interface MCQQuestion {
     correctOptions: number[];
     difficultyType: string;
 }
-
+interface ExistingQuestion {
+    statementMarkdown: string;
+    points: number;
+    difficultyType: string;
+    mcqOption: {
+        option1: string;
+        option2: string;
+        option3: string;
+        option4: string;
+        isMultiSelect: boolean;
+        answerOptions: string;
+    };
+}
 interface FetchMcqData {
     examId: string;
-    mcqQuestions: {
-        statementMarkdown: string;
-        points: number;
-        difficultyType: string;
-        mcqOption: {
-            option1: string;
-            option2: string;
-            option3: string;
-            option4: string;
-            isMultiSelect: boolean;
-            answerOptions: string;
-        };
-    }[];
+    mcqQuestions: ExistingQuestion[];
 }
 interface MCQFormProps {
     readonly examId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly existingQuestions: any[];
+    readonly existingQuestions: ExistingQuestion[];
     readonly onSaved: () => void;
 }
 

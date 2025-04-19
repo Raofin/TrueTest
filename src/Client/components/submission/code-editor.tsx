@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Select, SelectItem } from "@heroui/react";
 import Editor from "@monaco-editor/react";
 import api from "@/lib/api";
@@ -24,11 +24,11 @@ export interface ProblemQuestion {
 }
 
 interface PageProps {
-    question: ProblemQuestion;
-    setAnswers: React.Dispatch<
+    readonly question: ProblemQuestion;
+    readonly setAnswers: React.Dispatch<
         React.SetStateAction<{ [key: string]: string | string[] }>
     >;
-    questionId: string;
+    readonly questionId: string;
 }
 
 interface CodeState {
@@ -67,12 +67,12 @@ export default function CodeEditor({
     setAnswers,
     questionId,
 }: PageProps) {
-    const [selectedLanguage, setSelectedLanguage] = React.useState("cpp");
+    const [selectedLanguage, setSelectedLanguage] = useState("cpp");
     const [codeStates, setCodeStates] = React.useState<CodeState>({});
-    const [selectedTestCase, setSelectedTestCase] = React.useState<number>(0);
-    const [formattedTestCases, setFormattedTestCases] = React.useState<
-        TestCase[]
-    >([]);
+    const [selectedTestCase, setSelectedTestCase] = useState<number>(0);
+    const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>(
+        []
+    );
 
     const displayedTestCases = [formattedTestCases[selectedTestCase]];
 
@@ -105,21 +105,22 @@ export default function CodeEditor({
     };
 
     const handleRun = async () => {
+        let progLanguageType = "Python";
+        if (selectedLanguage === "cpp") {
+            progLanguageType = "C++";
+        } else if (selectedLanguage === "python") {
+            progLanguageType = "Python";
+        } else if (selectedLanguage === "java") {
+            progLanguageType = "Java";
+        } else if (selectedLanguage === "javascript") {
+            progLanguageType = "JavaScript";
+        } else if (selectedLanguage === "c") {
+            progLanguageType = "C";
+        }
         const payload = {
             questionId: question.questionId,
             Code: codeStates[selectedLanguage],
-            progLanguageType:
-                selectedLanguage === "cpp"
-                    ? "CPlusPlus"
-                    : selectedLanguage === "python"
-                    ? "Python"
-                    : selectedLanguage === "java"
-                    ? "Java"
-                    : selectedLanguage === "javascript"
-                    ? "JavaScript"
-                    : selectedLanguage === "c"
-                    ? "C"
-                    : "Python",
+            progLanguageType: progLanguageType,
         };
         try {
             const response = await api.post("/Candidate/TestCode", payload);
@@ -131,14 +132,13 @@ export default function CodeEditor({
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         (r: any) => r.testCaseId === testCase.testCaseId
                     );
+                    let status = "pending";
+                    if (result && result.isAccepted) status = "success";
+                    else if (result && !result.isAccepted) status = "error";
                     return {
                         ...testCase,
-                        receivedOutput: result?.receivedOutput || "",
-                        status: result
-                            ? result.isAccepted
-                                ? "success"
-                                : "error"
-                            : "pending",
+                        receivedOutput: result?.receivedOutput ?? "",
+                        status: status,
                     } as TestCase;
                 });
 
@@ -165,12 +165,15 @@ export default function CodeEditor({
                     </div>
                     <div>
                         <h3 className="font-semibold">Test Cases:</h3>
-                        {question.testCases.map((testCase, index) => (
-                            <div key={index} className="mt-2 p-3 rounded-lg">
+                        {question.testCases.map((testCase) => (
+                            <div
+                                key={testCase.input}
+                                className="mt-2 p-3 rounded-lg"
+                            >
                                 <div>
                                     <span className="font-semibold">
                                         Input:
-                                    </span>{" "}
+                                    </span>
                                     {testCase.input}
                                 </div>
                                 <div>
@@ -193,8 +196,7 @@ export default function CodeEditor({
                             <Select
                                 aria-label="Select Language"
                                 selectedKeys={[selectedLanguage]}
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                onChange={(e: any) =>
+                                onChange={(e) =>
                                     setSelectedLanguage(e.target.value)
                                 }
                                 className="w-40"
@@ -229,38 +231,42 @@ export default function CodeEditor({
                     <div className="flex justify-between">
                         <p className="font-bold">Test Cases</p>
                         <div className="flex gap-2">
-                            {formattedTestCases.map((tc, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setSelectedTestCase(index)}
-                                    className={`w-8 h-8 rounded-lg text-white flex items-center justify-center 
-                    ${
-                        tc.status === "success"
-                            ? "bg-green-500"
-                            : tc.status === "error"
-                            ? "bg-red-500"
-                            : "bg-gray-500"
-                    } 
-                    ${
-                        selectedTestCase === index ? "ring-2 ring-blue-500" : ""
-                    }`}
-                                >
-                                    {index + 1}
-                                </button>
-                            ))}
+                            {formattedTestCases.map((tc, index) => {
+                                const getStatusColor = () => {
+                                    if (tc.status === "success")
+                                        return "bg-green-500";
+                                    if (tc.status === "error")
+                                        return "bg-red-500";
+                                    return "bg-gray-500";
+                                };
+                                const isSelected =
+                                    selectedTestCase === index
+                                        ? "ring-2 ring-blue-500"
+                                        : "";
+                                return (
+                                    <button
+                                        key={index}
+                                        onClick={() =>
+                                            setSelectedTestCase(index)
+                                        }
+                                        className={`w-8 h-8 rounded-lg text-white flex items-center justify-center ${getStatusColor()} ${isSelected}`}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 
-                    {displayedTestCases?.map((testCase, index) => (
+                    {displayedTestCases?.map((testCase) => (
                         <div
-                            key={index}
-                            className="grid grid-cols-3 gap-4 mt-3"
-                        >
+                            key={testCase?.input}
+                            className="grid grid-cols-3 gap-4 mt-3">
                             <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.input || "No input provided"}
+                                {testCase?.input ?? "No input provided"}
                             </div>
                             <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.output || "No output provided"}
+                                {testCase?.output ?? "No output provided"}
                             </div>
                         </div>
                     ))}

@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import React from 'react';
 
 interface ThemeSwitchProps {
-  withText?: boolean;
+  readonly withText?: boolean;
 }
 
 export default function ThemeSwitch({ withText }: ThemeSwitchProps) {

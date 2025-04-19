@@ -180,8 +180,8 @@ const FormFooter: React.FC<FormFooterProps> = ({
 interface ProblemSolvingFormProps {
     readonly examId: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    existingQuestions: any[];
-    onSaved: () => void;
+   readonly existingQuestions: any[];
+   readonly  onSaved: () => void;
 }
 
 export default function ProblemSolvingForm({
@@ -193,7 +193,7 @@ export default function ProblemSolvingForm({
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   question: q.statementMarkdown,
-                  testCases: q.testCases || [{ input: "", output: "" }],
+                  testCases: q.testCases ?? [{ input: "", output: "" }],
                   points: q.points,
                   difficultyType: q.difficultyType,
               }))
