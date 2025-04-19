@@ -13,11 +13,11 @@ public record ProblemQuesWithSubmissionResponse(
 public record ProblemSubmissionTcResponse(
     Guid ProblemSubmissionId,
     string Code,
+    LanguageId Language,
     int Attempts,
     decimal? Score,
     bool IsFlagged,
     string? FlagReason,
-    ProgLanguageType Language,
     List<TestCaseInputOutputResponse> TestCaseOutputs
 );
 
@@ -33,11 +33,11 @@ public record ProblemSubmissionResponse(
     Guid QuestionId,
     Guid ProblemSubmissionId,
     string Code,
+    LanguageId Language,
     int Attempts,
     decimal? Score,
     bool IsFlagged,
     string? FlagReason,
-    ProgLanguageType Language,
     List<TestCaseOutputResponse> TestCaseOutputs
 );
 
@@ -45,7 +45,7 @@ public record ProblemSubmitResponse(
     Guid QuestionId,
     Guid ProblemSubmissionId,
     string Code,
-    ProgLanguageType Language
+    LanguageId Language
 );
 
 public record TestCaseOutputResponse(

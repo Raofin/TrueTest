@@ -17,7 +17,7 @@ namespace OPS.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -149,79 +149,6 @@ namespace OPS.Persistence.Migrations
                         {
                             Id = 3,
                             DifficultyName = "Hard"
-                        });
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Enum.ProgLanguage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Language")
-                        .IsUnique();
-
-                    b.ToTable("ProgLanguages", "Enum");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Language = "Python"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Language = "C"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Language = "Cpp"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Language = "Java"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Language = "JavaScript"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Language = "TypeScript"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Language = "Csharp"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Language = "Ruby"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Language = "Go"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Language = "PHP"
                         });
                 });
 
@@ -694,8 +621,9 @@ namespace OPS.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("ProgLanguageId")
-                        .HasColumnType("int");
+                    b.Property<string>("LanguageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
@@ -711,8 +639,6 @@ namespace OPS.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("ProgLanguageId");
 
                     b.HasIndex("QuestionId");
 
@@ -1167,12 +1093,6 @@ namespace OPS.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OPS.Domain.Entities.Enum.ProgLanguage", "ProgLanguages")
-                        .WithMany("ProblemSubmissions")
-                        .HasForeignKey("ProgLanguageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("OPS.Domain.Entities.Exam.Question", "Question")
                         .WithMany("ProblemSubmissions")
                         .HasForeignKey("QuestionId")
@@ -1180,8 +1100,6 @@ namespace OPS.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-
-                    b.Navigation("ProgLanguages");
 
                     b.Navigation("Question");
                 });
@@ -1279,11 +1197,6 @@ namespace OPS.Persistence.Migrations
             modelBuilder.Entity("OPS.Domain.Entities.Enum.Difficulty", b =>
                 {
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("OPS.Domain.Entities.Enum.ProgLanguage", b =>
-                {
-                    b.Navigation("ProblemSubmissions");
                 });
 
             modelBuilder.Entity("OPS.Domain.Entities.Enum.QuestionType", b =>

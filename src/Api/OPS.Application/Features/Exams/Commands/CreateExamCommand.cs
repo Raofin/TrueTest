@@ -53,9 +53,6 @@ public class CreateExamCommandValidator : AbstractValidator<CreateExamCommand>
         RuleFor(x => x.DurationMinutes)
             .GreaterThan(0);
 
-        RuleFor(x => x.OpensAt)
-            .GreaterThan(DateTime.UtcNow);
-
         RuleFor(x => x.ClosesAt)
             .GreaterThan(x => x.OpensAt);
     }

@@ -18,6 +18,7 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             throw new ArgumentException("Both username and email cannot be null or empty.");
 
         var exists = await _dbContext.Accounts
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(a =>
                 (!string.IsNullOrEmpty(username) && a.Username == username) ||

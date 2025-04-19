@@ -31,7 +31,9 @@
     <PackageVersion Include="Serilog" Version="4.2.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.MSSqlServer" Version="8.1.0" />
-    <!-- Email -->
+    <!-- Miscellaneous -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="FluentEmail.Smtp" Version="3.0.2" />
+    <PackageVersion Include="Refit.HttpClientFactory" Version="8.0.0" />
   </ItemGroup>
 </Project>
