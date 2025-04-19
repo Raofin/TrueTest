@@ -12,7 +12,6 @@ import {
   TableCell,
   Input,
   Button,
-  Pagination,
   SelectItem,
   Textarea,
   Tooltip,
@@ -27,7 +26,6 @@ import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useEmailParser } from '@/hooks/useEmailParser'
 import isValidEmail from '@/components/check-valid-email'
-
 
 interface Exam {
   examId: string
@@ -74,7 +72,8 @@ export default function Component() {
       }
     }
     fetchExams()
-  }, [exams])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const handleCopyEmail = useCallback((email: string) => {
     navigator.clipboard.writeText(email).then(() => {
       setCopiedEmail(email)
@@ -235,12 +234,13 @@ export default function Component() {
   }
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="h-full flex flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center">Invite Candidates</h2>
 
-      <div className="min-h-screen flex flex-col rounded-xl pt-5 justify-between mx-12 bg-white dark:bg-[#18181b]">
-        <div className="w-full flex items-center justify-center mb-4">
-          <p className="mr-4">Exam</p>
+      <div className="h-full px-8 flex flex-col rounded-xl justify-between mx-44 my-8 bg-white dark:bg-[#18181b]">
+       <div>
+        <div className="w-full flex items-center justify-center mt-8">
+          <p className="mr-4 ">Exam</p>
           <Select
             label="Select an exam"
             className="max-w-md bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
@@ -252,11 +252,10 @@ export default function Component() {
               <SelectItem key={exam.examId}>{exam.title}</SelectItem>
             ))}
           </Select>
-        </div>
-
-        <div className="mb-6">
+          </div>
+        <div className="my-6">
           <h1 className="ml-6 my-2">Candidate Email Import</h1>
-          <div className="flex gap-2 px-5">
+          <div className="flex gap-2 px-5 mb-8">
             <Textarea
               value={fileContent}
               onChange={(e) => setFileContent(e.target.value)}
@@ -283,7 +282,7 @@ export default function Component() {
               </Button>
             </div>
           </div>
-        </div>
+      
 
         <div className="mb-4">
           <div className="my-4 flex justify-between items-center">
@@ -302,10 +301,14 @@ export default function Component() {
           </div>
 
           <Table
-            aria-label="Candidate emails table"
+            aria-label="Example table without border and shadow"
             selectionMode="multiple"
+            removeWrapper
             classNames={{
-              wrapper: 'max-h-[400px] overflow-y-auto',
+              base: 'max-h-[400px]',
+              table: 'min-w-full',
+              th: 'bg-transparent',
+              td: 'border-b border-divider',
             }}
           >
             <TableHeader>
@@ -330,21 +333,14 @@ export default function Component() {
             </TableBody>
           </Table>
         </div>
-
+        </div>
+        </div>
         <div className="p-2 m-2 flex justify-between items-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="primary"
-            page={page}
-            total={totalPages}
-            onChange={setPage}
-          />
+         <div></div>
 
           <div className="flex items-center gap-4">
             <span className="text-small">
-              Page {page} of {totalPages}
+              Page {page} of {totalPages+1}
             </span>
 
             <PaginationButtons

@@ -6,7 +6,7 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
-import {FormattedDateWeekday, FormattedTime,FormatTimeHourMinutes} from '@/components/format-date-time'
+import {FormattedDateWeekday, convertUtcToLocalTime,FormatTimeHourMinutes} from '@/components/format-date-time'
 import {useRouter } from 'next/navigation'
 
 interface Exam {
@@ -29,7 +29,7 @@ interface Exam {
 }
 
 
-const ITEMS_PER_PAGE = 2
+const ITEMS_PER_PAGE = 3
 
 export default function ViewExam() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -60,18 +60,18 @@ export default function ViewExam() {
 
   const paginatedExams = allExam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
   const handleEdit = (exam: Exam) => {
-    router.push(`/exams/create?id=${exam.examId}`)
+    router.push(`/exams/create?id=${exam.examId}&isEdit=true`)
   }
 const handleReview=(exam:Exam)=>{
    router.push(`/exams/review-results?examId=${exam.examId}?examTitle=${exam.title}`)
 }
 
   return (
-    <>
-      <div className={`h-screen flex flex-col justify-between w-full`}>
+    <div className='h-full flex flex-col justify-between'>
         <h1 className="w-full text-center text-3xl font-bold my-3">Exams</h1>
+      <div className='mt-8 w-full flex flex-col gap-5 items-center justify-center'>
         {paginatedExams.map((exam) => (
-          <Card key={exam.examId} className="mx-8 p-4 shadow-none">
+          <Card key={exam.examId} className="w-[1000px] shadow-none p-2">
             <CardHeader className="flex justify-between items-center ">
               <div className="flex items-end gap-1">
                 <h1 className="text-2xl font-bold flex gap-1 items-end text-[#3f3f46] dark:text-white">{exam.title}</h1>
@@ -114,10 +114,10 @@ const handleReview=(exam:Exam)=>{
                     <span className="text-[#71717a] dark:text-white">Duration: </span><FormatTimeHourMinutes minute={exam.durationMinutes}/> hr
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Starts at: </span><FormattedTime date={exam.opensAt}/>
+                    <span className="text-[#71717a] dark:text-white">Starts at: </span>{convertUtcToLocalTime(exam.opensAt)}
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Closes at: </span><FormattedTime date={exam.closesAt}/>
+                    <span className="text-[#71717a] dark:text-white">Closes at: </span>{convertUtcToLocalTime(exam.closesAt)}
                   </p>
                 </div>
                 <div className="flex flex-col flex-1">
@@ -134,19 +134,13 @@ const handleReview=(exam:Exam)=>{
                     <span className="text-[#71717a] dark:text-white">Score: </span> {exam.totalPoints}
                   </p>
                 </div>
-                <div className="flex flex-col flex-1">
-                  <p>
-                    <span className="text-[#71717a] dark:text-white">Invited Candidates: </span> 0
-                  </p>
-                  <p>
-                    <span className="text-[#71717a] dark:text-white">Accepted: </span> {exam.acceptedCandidates}
-                  </p>
-                </div>
+                
               </div>
             </CardBody>
           </Card>
         ))}
-        <div className="flex justify-center items-center my-4">
+      </div>
+        <div className="flex w-full justify-center items-center py-5">
           <span className="mx-4">
             Page {currentPage} of {totalPages}
           </span>
@@ -157,7 +151,6 @@ const handleReview=(exam:Exam)=>{
             onNext={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
           />
         </div>
-      </div>
       <CommonModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -166,6 +159,6 @@ const handleReview=(exam:Exam)=>{
         confirmButtonText="Delete"
         onConfirm={() => setIsDeleteModalOpen(false)}
       />
-    </>
+    </div>
   )
 }

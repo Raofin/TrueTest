@@ -5,9 +5,11 @@ import '@/app/globals.css'
 import NavBar from '@/app/navigation-header/NavBar'
 
 import Logo from '@/components/ui/logo/page'
-import { Link, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
+import { Navbar, NavbarContent, NavbarItem } from '@heroui/react'
+import { useRouter } from 'next/navigation'
 
 export default function RootNavBar() {
+  const router=useRouter()
   return (
     <div className="flex w-full justify-between items-center bg-[#eeeef0] dark:bg-[#000000]">
       <div className="bg-[#eeeef0] dark:bg-[#000000] mt-2">
@@ -21,15 +23,11 @@ export default function RootNavBar() {
           }}
         >
           <NavbarContent className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end">
-            <NavbarItem>
-              <Link className="text-default-500" href="/home" size="sm">
+            <NavbarItem style={{cursor:'pointer'}} onClick={()=>router.push('/home')}>
                 Home
-              </Link>
             </NavbarItem>
-            <NavbarItem>
-              <Link className="text-default-500" href="/my-exams" size="sm">
+            <NavbarItem  style={{cursor:'pointer'}} onClick={()=>router.push('/my-exams')}>
                 My Exams
-              </Link>
             </NavbarItem>
           </NavbarContent>
         </Navbar>

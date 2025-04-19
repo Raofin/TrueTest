@@ -1,8 +1,8 @@
 'use client'
 
 import api from '@/lib/api'
-import { Button, Card, Link } from '@heroui/react'
-import { usePathname } from 'next/navigation'
+import { Button, Card } from '@heroui/react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { FormatDatewithTime } from '../format-date-time'
 
@@ -16,7 +16,11 @@ interface User {
 export default function Component() {
   const path = usePathname()
   const [route, setRoute] = useState('')
+  const router=useRouter()
   const [userSetting, setUserSettings] = useState<User | null>(null)
+  const handleSettingsEdit=()=>{
+    router.push(`/${route}/edit/?username=${userSetting?.username}`)
+  }
   useEffect(() => {
     if (path.startsWith('/settings')) setRoute('settings')
     else setRoute('mysettings')
@@ -36,7 +40,7 @@ export default function Component() {
     fetchData()
   }, [])
   return (
-    <div className="mt-32 flex items-center justify-center ">
+    <div className="h-full flex items-center justify-center ">
       <Card className={`p-8 rounded-lg max-w-md w-full shadow-none bg-white dark:bg-[#18181b]`}>
         <h1 className="text-2xl font-semibold mb-6 text-center">Account settings</h1>
         <hr />
@@ -60,10 +64,10 @@ export default function Component() {
           </div>
         </div>
         <div className="mt-5 flex w-full justify-center">
-          <Button color="primary">
-            <Link className="text-white" href={`/${route}/edit/?username=${userSetting?.username}`}>
+          <Button color="primary" onPress={handleSettingsEdit}>
+           
               Change Settings
-            </Link>
+           
           </Button>
         </div>
       </Card>

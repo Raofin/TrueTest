@@ -3,30 +3,56 @@
 import { Card, CardBody, Checkbox, Button } from '@heroui/react'
 import { useState } from 'react'
 import RootNavBar from '@/app/(root)/root-navbar'
+import { convertUtcToLocalTime, FormattedDateWeekday } from './format-date-time'
+
 
 interface ExamData {
+  examId:string
   title: string
-  totalQuestions: number
-  duration: string
-  problemSolving: number
-  written: number
-  mcq: number
-  totalScore: number
+  totalPoints: number
+  durationMinutes: string
+  problemSolvingPoints: number
+  status:string
+  writtenPoints: number
+  mcqPoints: number
+  opensAt:string
+  closesAt:string
 }
 interface PageProps {
-  readonly examData: ExamData
   readonly startExam: () => void
   readonly setExamStarted: (started: boolean) => void
+  readonly startExamPage:ExamData
 }
 
-export default function StartExam({ examData, setExamStarted, startExam }: PageProps) {
+export default function StartExam({startExamPage, setExamStarted, startExam }: PageProps) {
+  const [currentExam]=useState(startExamPage)
   const [agreedToTerms, setAgreedToTerms] = useState({
     capture: false,
     screenMonitor: false,
     audio: false,
     clipboard: false,
   })
+  
+if (!currentExam?.closesAt) return;
 
+const now = new Date();
+const closesAt = new Date(currentExam.closesAt);
+const nowUTC = new Date(
+  now.getUTCFullYear(),
+  now.getUTCMonth(),
+  now.getUTCDate(),
+  now.getUTCHours(),
+  now.getUTCMinutes(),
+  now.getUTCSeconds()
+);
+const timeLeftInMs = closesAt.getTime() - nowUTC.getTime();
+const isClosed = timeLeftInMs <= 0;
+const absTimeLeft = Math.abs(timeLeftInMs);
+const secondsLeft = isClosed ? 0 : Math.floor((absTimeLeft / 1000) % 60);
+const minutesLeft = isClosed ? 0 : Math.floor((absTimeLeft / (1000 * 60)) % 60);
+const hoursLeft = isClosed ? 0 : Math.floor(absTimeLeft / (1000 * 60 * 60));
+
+console.log(`Time Left: ${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`);
   return (
     <div>
       <RootNavBar />
@@ -36,40 +62,39 @@ export default function StartExam({ examData, setExamStarted, startExam }: PageP
             <div className="space-y-3 ">
               <div className="flex w-full justify-between">
                 <h1 className="text-2xl font-bold w-full">
-                  {examData.title}
-                  <span className={`ml-2 text-sm text-red-500`}>Running</span>
+                  {currentExam?.title}
+                  <span className={`ml-2 text-sm text-red-500`}>{currentExam?.status}</span>
                 </h1>
                 <div className="flex items-center gap-1 before:content-[''] before:w-2 before:h-2 before:bg-red-500 before:rounded-full">
-                  <p>45:03s</p>
-                  <p>left</p>
+                <p className='w-[80px] text-sm'> {isClosed? '' : `${hoursLeft}h ${minutesLeft}m left`}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-[#71717a] dark:text-white">Date:</span> Friday, 21 Nov 2026
+                  <span className="text-[#71717a] dark:text-white">Date:</span> {currentExam?.closesAt && <FormattedDateWeekday date={currentExam?.closesAt}/>}
                 </div>
                 <div className="text-right">
-                  <span className="text-[#71717a] dark:text-white">Problem Solving:</span> {examData.problemSolving}
+                  <span className="text-[#71717a] dark:text-white">Problem Solving:</span> {currentExam?.problemSolvingPoints}
                 </div>
                 <div>
-                  <span className="text-[#71717a] dark:text-white">Starts at:</span> 9:00 PM
+                  <span className="text-[#71717a] dark:text-white">Starts at:</span>{currentExam?.opensAt && convertUtcToLocalTime(currentExam.opensAt)}
                 </div>
                 <div className="text-right">
-                  <span className="text-[#71717a] dark:text-white">Written:</span> {examData.written}
+                  <span className="text-[#71717a] dark:text-white">Written:</span> {currentExam?.writtenPoints}
                 </div>
                 <div>
-                  <span className="text-[#71717a] dark:text-white">Closes at:</span> 10:20 PM
+                  <span className="text-[#71717a] dark:text-white">Closes at:</span> {currentExam?.closesAt && convertUtcToLocalTime(currentExam.closesAt)}
                 </div>
                 <div className="text-right">
-                  <span className="text-[#71717a] dark:text-white">MCQ:</span> {examData.mcq}
+                  <span className="text-[#71717a] dark:text-white">MCQ:</span> {currentExam?.mcqPoints}
                 </div>
                 <div>
-                  <span className="text-[#71717a] dark:text-white">Duration:</span> {examData.duration}
+                  <span className="text-[#71717a] dark:text-white">Duration:</span> {currentExam?.durationMinutes}
                 </div>
                 <div className="text-right">
                   <span className="text-[#71717a] dark:text-white">Score: </span>
-                  {examData.totalScore}
+                  {currentExam?.totalPoints}
                 </div>
               </div>
               <hr className="my-2" />
