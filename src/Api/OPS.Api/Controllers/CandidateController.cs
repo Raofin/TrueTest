@@ -57,7 +57,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [HttpPut("Submit/Problem/Save")]
     [HasPermission(SubmitAnswers)]
     [EndpointDescription("Creates or updates a problem-solving submission.")]
-    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<List<TestCodeResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> SaveProblemAsync(SaveProblemSubmissionsCommand command,
@@ -95,22 +95,6 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> SaveMcqSubmissionAsync(SaveMcqSubmissionsCommand command,
-        CancellationToken cancellationToken = default)
-    {
-        var response = await _mediator.Send(command, cancellationToken);
-        return ToResult(response);
-    }
-
-    /// <summary>Execute and test codes for a problem-solving question.</summary>
-    /// <param name="command">Code with the Question Id to test</param>
-    /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Test results</returns>
-    [HttpPost("TestCode")]
-    [HasPermission(RunCode)]
-    [EndpointDescription("Execute and test codes for a problem-solving question.")]
-    [ProducesResponseType<List<TestCodeResponse>>(Status200OK)]
-    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    public async Task<IActionResult> TestCodeAsync(TestCodeCommand command,
         CancellationToken cancellationToken = default)
     {
         var response = await _mediator.Send(command, cancellationToken);
