@@ -2,6 +2,7 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Common.Constants;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -47,8 +48,7 @@ public class UpdateAccountCommandValidator : AbstractValidator<UpdateAccountComm
     public UpdateAccountCommandValidator()
     {
         RuleFor(x => x.AccountId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.Username)
             .NotEmpty()

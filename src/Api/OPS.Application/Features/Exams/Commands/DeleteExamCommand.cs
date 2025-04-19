@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Commands;
@@ -29,8 +30,6 @@ public class DeleteExamCommandValidator : AbstractValidator<DeleteExamCommand>
 {
     public DeleteExamCommandValidator()
     {
-        RuleFor(x => x.ExamId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
+        RuleFor(x => x.ExamId).IsValidGuid();
     }
 }

@@ -1,6 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -27,8 +28,6 @@ public class GetAllWrittenByExamIdQueryValidator : AbstractValidator<GetAllWritt
 {
     public GetAllWrittenByExamIdQueryValidator()
     {
-        RuleFor(x => x.ExamId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+        RuleFor(x => x.ExamId).IsValidGuid();
     }
 }

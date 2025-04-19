@@ -1,6 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
@@ -44,8 +45,6 @@ public class MakeAdminCommandValidator : AbstractValidator<MakeAdminCommand>
 {
     public MakeAdminCommandValidator()
     {
-        RuleForEach(x => x.AccountIds)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+        RuleForEach(x => x.AccountIds).IsValidGuid();
     }
 }

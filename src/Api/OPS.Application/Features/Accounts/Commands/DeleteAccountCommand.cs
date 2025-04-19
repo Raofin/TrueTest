@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Accounts.Commands;
@@ -34,8 +35,6 @@ public class DeleteAccountCommandValidator : AbstractValidator<DeleteAccountComm
 {
     public DeleteAccountCommandValidator()
     {
-        RuleFor(x => x.AccountId)
-            .NotEmpty()
-            .Must(id => id != Guid.Empty);
+        RuleFor(x => x.AccountId).IsValidGuid();
     }
 }
