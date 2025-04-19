@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
@@ -68,8 +69,7 @@ public class SaveMcqSubmissionsCommandValidator : AbstractValidator<SaveMcqSubmi
         RuleForEach(x => x.Submissions).ChildRules(sub =>
         {
             sub.RuleFor(x => x.QuestionId)
-                .NotEmpty()
-                .NotEqual(Guid.Empty);
+                .IsValidGuid();
 
             sub.RuleFor(x => x.CandidateAnswerOptions)
                 .NotEmpty()

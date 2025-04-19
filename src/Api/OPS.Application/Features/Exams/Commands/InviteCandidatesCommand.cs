@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.Exam;
@@ -69,8 +70,7 @@ public class InviteCandidatesCommandValidator : AbstractValidator<InviteCandidat
     public InviteCandidatesCommandValidator()
     {
         RuleFor(x => x.ExamId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
+            .IsValidGuid();
 
         RuleFor(x => x.Emails)
             .NotEmpty()
