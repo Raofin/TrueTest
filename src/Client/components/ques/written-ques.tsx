@@ -257,6 +257,7 @@ export default function Component({
                     </div>
                 ))}
                 <div className="flex w-full justify-between items-center my-3 p-5">
+                  <div></div>
                     <div className="flex items-center gap-2 ml-12">
                         <span>
                             Page {currentPage + 1} of {totalPages}
