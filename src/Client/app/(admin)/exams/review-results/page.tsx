@@ -190,8 +190,7 @@ export default function Component() {
                 <Button
                   size="sm"
                   isDisabled={examData.submissions.findIndex((sub) => sub.accountId === selectedCandidateId) <= 0}
-                  onPress={handlePrevCandidate}
-                >
+                  onPress={handlePrevCandidate} >
                   Previous
                 </Button>
                 <Button

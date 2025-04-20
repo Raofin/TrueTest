@@ -309,7 +309,7 @@ export default function Component() {
             });
         }
     };
-    if (!examStarted && startExamPage) {
+    if (startExamPage) {
         return (
             <StartExam
                 startExamPage={startExamPage}
@@ -332,8 +332,6 @@ export default function Component() {
             </div>
         );
     }
-
-
     return (
         <>
             {examStarted && (
@@ -376,7 +374,7 @@ export default function Component() {
                     </div>
                 </div>
             )}
-            <div className="mx-5 mt-3  border-none px-8">
+            <div className="mx-5 mt-3  border-none px-8 h-full flex flex-col justify-between">
                 <div className={`space-y-8 rounded-lg `}>
                     {currentQuestions.map((question) => (
                         <div key={question.questionId} className="space-y-4">

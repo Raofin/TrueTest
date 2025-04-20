@@ -135,7 +135,7 @@ export default function CodeEditor({
                         />
                     </div>
                     <div>
-                        <h3 className="font-semibold">Test Cases:</h3>
+                        <h3 className="font-semibold">Example</h3>
                         {question.testCases.map((testCase) => (
                             <div
                                 key={testCase.input}
@@ -149,8 +149,8 @@ export default function CodeEditor({
                                 </div>
                                 <div>
                                     <span className="font-semibold">
-                                        Expected Output:
-                                    </span>{" "}
+                                         Output:
+                                    </span>
                                     {testCase.output}
                                 </div>
                             </div>
@@ -237,7 +237,7 @@ export default function CodeEditor({
                     {displayedTestCases?.map((testCase) => (
                         <div
                             key={testCase?.input}
-                            className="grid grid-cols-3 gap-4 mt-3">
+                            className="grid grid-cols-3 gap-4 mt-3 min-h-[100px]">
                             <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
                                 {testCase?.input ?? "No input provided"}
                             </div>
