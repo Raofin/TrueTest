@@ -314,14 +314,23 @@ export default function Component() {
                                         mcqQuestion.mcqOption?.option3,
                                         mcqQuestion.mcqOption?.option4,
                                     ].filter(Boolean) as string[];
-
                                     return (
+                                        <>
+                                        <div className="w-full flex justify-between">
+                                        <h2 className="text-lg font-semibold">
+                                            #Question :
+                                        </h2>
+                                        <p>
+                                            points: {(question as MCQQuestion).score}
+                                        </p>
+                                    </div>
                                         <MCQSubmission
                                             question={mcqQuestion}
                                             answers={answers}
                                             setAnswers={setAnswers}
                                             options={mcqOptions}
                                         />
+                                        </>
                                     );
                                 })()}
                             {question.questionType === "Written" && (
