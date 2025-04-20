@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Input, Textarea, TimeInput } from "@heroui/react";
 import { CalendarDate, Time } from "@internationalized/date";
 import { DatePicker } from "@heroui/date-picker";
@@ -11,8 +11,9 @@ import "@/app/globals.css";
 import { v4 as uuidv4 } from "uuid";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
+import { convertUtcToLocalTime } from "@/components/format-date-time";
 
 interface FormData {
     title: string;
@@ -31,9 +32,13 @@ function parseTime(time: string): Time | null {
 
 export default function CreateExamPage() {
     const [date, setDate] = useState<CalendarDate | null>(null);
-    const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([]);
+    const [activeComponents, setActiveComponents] = useState<
+        { id: string; type: string }[]
+    >([]);
+    const searchParams = useSearchParams();
     const route = useRouter();
-    const [examId,setExamId]=useState("")
+    const [examId, setExamId] = useState(searchParams.get("id") ?? "");
+    const isEdit = searchParams.get("isEdit") === "true";
     const [formData, setFormData] = useState<FormData>({
         title: "",
         description: "",
@@ -48,7 +53,7 @@ export default function CreateExamPage() {
         writtenQues: false,
         mcq: false,
     });
-    const [questionData] = useState({
+    const [questionData, setQuestionData] = useState({
         problemSolve: [],
         writtenQues: [],
         mcq: [],
@@ -95,19 +100,79 @@ export default function CreateExamPage() {
                 date: new Date(date.year, date.month - 1, date.day).toISOString(),
             };
     
-            const response = await api.post("/Exam/Create", examData);
-
+            let response;
+            if (isEdit && examId) {
+                response = await api.put(`/Exam/Update/${examId}`, examData);
+            } else {
+                response = await api.post("/Exam/Create", examData);
+            }
+    
             if (response.status === 200) {
-                toast.success(`Exam created successfully.`);
-                setExamId(response.data.examId);
-                
+                toast.success(`Exam ${isEdit ? 'updated' : 'created'} successfully.`);
+                if (!isEdit) {
+                    setExamId(response.data.examId);
+                }
             }
         } catch (err) {
             const error = err as AxiosError;
             toast.error(error?.message);
         }
     };
+    useEffect(() => {
+        const FetchExamDetails = async () => {
+            try {
+                if (!examId || !isEdit) return;
+                
+                const examResponse = await api.get(`/Exam/${examId}`);
+                const problemQuesResponse = await api.get(
+                    `/Questions/Problem/ByExam/${examId}`
+                );
+                const writtenQuesResponse = await api.get(
+                    `/Questions/Written/ByExam/${examId}`
+                );
+                const mcqQuesResponse = await api.get(
+                    `/Questions/Mcq/ByExam/${examId}`
+                );
 
+                if (examResponse.status === 200) {
+                    const exam = examResponse.data.exam;
+                    setFormData({
+                        title: exam.title,
+                        description: exam.description,
+                        durationMinutes: exam.durationMinutes,
+                        totalPoints: exam.totalPoints,
+                        opensAt: convertUtcToLocalTime(exam.opensAt),
+                        closesAt: convertUtcToLocalTime(exam.closesAt),
+                    });
+                    
+                    const opensAtDate = new Date(exam.opensAt);
+                    setDate(
+                        new CalendarDate(
+                            opensAtDate.getFullYear(),
+                            opensAtDate.getMonth() + 1,
+                            opensAtDate.getDate()
+                        )
+                    );
+                }
+                setActiveComponents([
+                    { id: uuidv4(), type: "problemSolve" },
+                    { id: uuidv4(), type: "writtenQues" },
+                    { id: uuidv4(), type: "mcq" }
+                ]);
+
+                setQuestionData({
+                    problemSolve: problemQuesResponse.data ?? [],
+                    writtenQues: writtenQuesResponse.data ?? [],
+                    mcq: mcqQuesResponse.data ?? [],
+                });
+            } catch (error) {
+                console.error("Error fetching exam or question data:", error);
+                toast.error("Failed to load exam data");
+            }
+        };
+        
+        FetchExamDetails();
+    }, [examId, isEdit]);
 
     const handlePublishExam = async () => {
         if (examId) {
@@ -157,7 +222,7 @@ export default function CreateExamPage() {
     };
     return (
         <div className="mx-44 flex flex-col gap-8">
-            <h1 className="w-full text-center text-3xl font-bold my-3">{`Create Exam`}</h1>
+            <h1 className="w-full text-center text-3xl font-bold my-3">{`Edit Exam`}</h1>
             <Card
                 className={`flex shadow-none flex-col justify-between p-8 items-center `}
             >
