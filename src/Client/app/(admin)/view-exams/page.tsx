@@ -60,7 +60,7 @@ export default function ViewExam() {
 
   const paginatedExams = allExam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
   const handleEdit = (exam: Exam) => {
-    router.push(`/exams/create?id=${exam.examId}&isEdit=true`)
+    router.push(`/exams/edit?id=${exam.examId}&isEdit=true`)
   }
 const handleReview=(exam:Exam)=>{
    router.push(`/exams/review-results?examId=${exam.examId}?examTitle=${exam.title}`)
