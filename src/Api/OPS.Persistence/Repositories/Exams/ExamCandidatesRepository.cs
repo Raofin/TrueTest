@@ -33,6 +33,15 @@ internal class ExamCandidatesRepository(AppDbContext dbContext)
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<string>> GetEmailsByExamAsync(Guid examId, List<string> emails,
+        CancellationToken cancellationToken)
+    {
+        return await _dbContext.ExamCandidates
+            .Where(ec => ec.ExaminationId == examId && emails.Contains(ec.CandidateEmail))
+            .Select(ec => ec.CandidateEmail)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<ExamCandidate>> GetExamParticipantsAsync(Guid examId, CancellationToken cancellationToken)
     {
         return await _dbContext.ExamCandidates

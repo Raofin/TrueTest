@@ -23,25 +23,17 @@ public class InviteCandidatesCommandHandler(IUnitOfWork unitOfWork, IAccountEmai
 
         var emailsToInvite = request.Emails.Distinct().ToList();
 
-        var accounts = await _unitOfWork.Account.SelectAsync(
-            a => emailsToInvite.Contains(a.Email),
-            a => new { a.Email, a.Id },
-            cancellationToken
+        var accounts = await _unitOfWork.Account.GetByEmailsAsync(emailsToInvite, cancellationToken);
+
+        var existingCandidates = await _unitOfWork.ExamCandidate.GetEmailsByExamAsync(
+            request.ExamId, emailsToInvite, cancellationToken
         );
 
-        var existingCandidates = await _unitOfWork.ExamCandidate.SelectAsync(
-            ec => ec.ExaminationId == request.ExamId && emailsToInvite.Contains(ec.CandidateEmail),
-            ec => ec.CandidateEmail,
-            cancellationToken
-        );
-
-        var accountLookup = accounts.ToDictionary(a => a.Email, a => a.Id);
-        var existingEmails = existingCandidates.ToHashSet();
         var candidates = new List<ExamCandidate>();
 
         foreach (var email in emailsToInvite)
         {
-            if (existingEmails.Contains(email)) continue;
+            if (existingCandidates.Contains(email)) continue;
 
             var examCandidate = new ExamCandidate
             {
@@ -49,17 +41,20 @@ public class InviteCandidatesCommandHandler(IUnitOfWork unitOfWork, IAccountEmai
                 ExaminationId = request.ExamId
             };
 
-            if (accountLookup.TryGetValue(email, out var accountId))
-                examCandidate.AccountId = accountId;
+            var account = accounts.FirstOrDefault(a => a.Email == email);
+            if (account != null) examCandidate.AccountId = account.Id;
 
             candidates.Add(examCandidate);
         }
 
-        _unitOfWork.ExamCandidate.AddRange(candidates);
-        await _unitOfWork.CommitAsync(cancellationToken);
+        if (candidates.Count != 0)
+        {
+            _unitOfWork.ExamCandidate.AddRange(candidates);
+            await _unitOfWork.CommitAsync(cancellationToken);
 
-        _accountEmails.SendExamInvitation(candidates.Select(c => c.CandidateEmail).ToList(),
-            exam.Title, exam.OpensAt, exam.DurationMinutes, cancellationToken);
+            _accountEmails.SendExamInvitation(candidates.Select(c => c.CandidateEmail).ToList(),
+                exam.Title, exam.OpensAt, exam.DurationMinutes, cancellationToken);
+        }
 
         return Result.Success;
     }
