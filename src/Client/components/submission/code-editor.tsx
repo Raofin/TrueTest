@@ -108,8 +108,6 @@ export default function CodeEditor({
         let progLanguageType = "Python";
         if (selectedLanguage === "cpp") {
             progLanguageType = "C++";
-        } else if (selectedLanguage === "python") {
-            progLanguageType = "Python";
         } else if (selectedLanguage === "java") {
             progLanguageType = "Java";
         } else if (selectedLanguage === "javascript") {
@@ -133,8 +131,8 @@ export default function CodeEditor({
                         (r: any) => r.testCaseId === testCase.testCaseId
                     );
                     let status = "pending";
-                    if (result && result.isAccepted) status = "success";
-                    else if (result && !result.isAccepted) status = "error";
+                    if (result?.isAccepted) status = "success";
+                    else if (!result?.isAccepted) status = "error";
                     return {
                         ...testCase,
                         receivedOutput: result?.receivedOutput ?? "",

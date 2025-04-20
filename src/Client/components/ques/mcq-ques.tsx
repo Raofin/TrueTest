@@ -60,7 +60,7 @@ export default function App({
             ? existingQuestions.map((q) => ({
                   question: q.statementMarkdown,
                    points: Number(q.points) || 0,
-                  difficultyType: q.difficultyType,
+                  difficultyType: "Easy",
                   options: [
                       { id: 1, text: q.mcqOption.option1 },
                       { id: 2, text: q.mcqOption.option2 },
@@ -82,7 +82,7 @@ export default function App({
                       ],
                       correctOptions: [],
                       points: 0,
-                      difficultyType: "",
+                      difficultyType: "Easy",
                   },
               ]
     );
@@ -138,7 +138,7 @@ export default function App({
                 ],
                 correctOptions: [],
                 points: 0,
-                difficultyType: "",
+                difficultyType: "Easy",
             },
         ]);
         setCurrentPage(questions.length);
@@ -150,26 +150,11 @@ export default function App({
         setQuestions(newQuestions);
     };
 
-    const handleDifficultyChange = (questionIndex: number, value: string) => {
-        const newQuestions = [...questions];
-        newQuestions[questionIndex].difficultyType = value;
-        setQuestions(newQuestions);
-    };
-
     const handleSubmit = () => {
         const FetchData = async () => {
-            const hasMissingDifficulty = questions.some(
-                (problem) =>
-                    !problem.difficultyType ||
-                    problem.difficultyType.trim() === ""
-            );
             const hasMissingPoints = questions.some(
                 (problem) => !problem.points
             );
-            if (hasMissingDifficulty) {
-                toast.error("Please select a difficulty level");
-                return;
-            }
             if (hasMissingPoints) {
                 toast.error("Please input points of the mcq question");
                 return;
@@ -179,7 +164,7 @@ export default function App({
                 mcqQuestions: questions.map((q) => ({
                     statementMarkdown: q.question,
                     points: q.points,
-                    difficultyType: q.difficultyType,
+                    difficultyType: "Easy",
                     mcqOption: {
                         option1: q.options[0].text,
                         option2: q.options[1].text,
@@ -208,7 +193,7 @@ export default function App({
                             ],
                             correctOptions: [],
                             points: 0,
-                            difficultyType: "",
+                            difficultyType: "Easy",
                         },
                     ]);
                     setCurrentPage(0);
@@ -235,30 +220,6 @@ export default function App({
                             <h2 className="text-2xl my-3">
                                 MCQ Question : {currentPage + 1}
                             </h2>
-                            <div className="w-full flex justify-end mr-5">
-                                {questions[currentPage] && (
-                                    <select
-                                        className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
-                                        value={
-                                            questions[currentPage]
-                                                .difficultyType
-                                        }
-                                        onChange={(e) =>
-                                            handleDifficultyChange(
-                                                currentPage,
-                                                e.target.value
-                                            )
-                                        }
-                                    >
-                                        <option value="">
-                                            Select Difficulty
-                                        </option>
-                                        <option value="easy">Easy</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="hard">Hard</option>
-                                    </select>
-                                )}
-                            </div>
                         </CardHeader>
                         <CardBody className="flex flex-col gap-4 p-8">
                             <Textarea

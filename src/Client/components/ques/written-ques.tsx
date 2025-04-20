@@ -45,7 +45,7 @@ export default function Component({
                   id: uuidv4(),
                   question: q.statementMarkdown,
                   points: Number(q.points) || 0,
-                  difficultyType: q.difficultyType,
+                  difficultyType: "Easy",
                   isShortAnswer: !q.hasLongAnswer,
                   isLongAnswer: q.hasLongAnswer,
               }))
@@ -56,7 +56,7 @@ export default function Component({
                       isShortAnswer: false,
                       isLongAnswer: false,
                       points: 0,
-                      difficultyType: "",
+                      difficultyType: "Easy",
                   },
               ]
     );
@@ -75,7 +75,7 @@ export default function Component({
                     isShortAnswer: false,
                     isLongAnswer: false,
                     points: 0,
-                    difficultyType: "",
+                    difficultyType: "Easy",
                 },
             ];
             const newTotalPages = Math.ceil(
@@ -121,30 +121,10 @@ export default function Component({
         );
     };
 
-    const handleDifficultyChange = (
-        questionId: string,
-        difficultyType: string
-    ) => {
-        setWrittenQuestions((prevQuestions) => {
-            return prevQuestions.map((question) =>
-                question.id === questionId
-                    ? { ...question, difficultyType: difficultyType }
-                    : question
-            );
-        });
-    };
     const handleSaveWrittenQuestions = async () => {
-        const hasMissingDifficulty = writtenQuestions.some(
-            (problem) =>
-                !problem.difficultyType || problem.difficultyType.trim() === ""
-        );
         const hasMissingPoints = writtenQuestions.some(
             (problem) => !problem.points
         );
-        if (hasMissingDifficulty) {
-            toast.error("Please select a difficulty level");
-            return;
-        }
         if (hasMissingPoints) {
             toast.error("Please input points of the written question");
             return;
@@ -155,7 +135,7 @@ export default function Component({
                 writtenQuestions: writtenQuestions.map((q) => ({
                     statementMarkdown: q.question,
                     points: q.points,
-                    difficultyType: q.difficultyType,
+                    difficultyType:"Easy",
                     hasLongAnswer: q.isLongAnswer,
                 })),
             };
@@ -173,7 +153,7 @@ export default function Component({
                         isShortAnswer: false,
                         isLongAnswer: false,
                         points: 0,
-                        difficultyType: "",
+                        difficultyType: "Easy",
                     },
                 ]);
                 setCurrentPage(0);
@@ -210,23 +190,6 @@ export default function Component({
 
                 {currentQuestions.map((question) => (
                     <div key={question.id} className="w-full">
-                        <div className=" mr-8 w-full flex justify-end">
-                            <select
-                                className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300 mx-2"
-                                value={question.difficultyType}
-                                onChange={(e) =>
-                                    handleDifficultyChange(
-                                        question.id,
-                                        e.target.value
-                                    )
-                                }
-                            >
-                                <option value="">Select difficulty</option>
-                                <option value="easy">Easy</option>
-                                <option value="medium">Medium</option>
-                                <option value="hard">Hard</option>
-                            </select>
-                        </div>
                         <div className="p-4 mx-5 rounded-lg mt-4">
                             <Textarea
                                 label="Written Question"
@@ -294,6 +257,7 @@ export default function Component({
                     </div>
                 ))}
                 <div className="flex w-full justify-between items-center my-3 p-5">
+                  <div></div>
                     <div className="flex items-center gap-2 ml-12">
                         <span>
                             Page {currentPage + 1} of {totalPages}
