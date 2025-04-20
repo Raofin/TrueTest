@@ -19,7 +19,7 @@ interface ExamData {
   closesAt:string
 }
 interface PageProps {
-  readonly startExam: () => void
+  readonly startExam: (initial:number) => void
   readonly setExamStarted: (started: boolean) => void
   readonly startExamPage:ExamData
 }
@@ -152,7 +152,7 @@ console.log(`Time Left: ${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`);
                   isDisabled={!Object.values(agreedToTerms).every(Boolean)}
                   onPress={() => {
                     setExamStarted(true)
-                    startExam()
+                    startExam(Math.floor(absTimeLeft/1000))
                   }}
                 >
                   Start Exam

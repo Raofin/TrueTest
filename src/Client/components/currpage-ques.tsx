@@ -1,5 +1,6 @@
 'use client'
 
+
 export interface TestCase {
   testCaseId?: string;
   input: string;
@@ -7,6 +8,7 @@ export interface TestCase {
   receivedOutput?: string;
   status?: 'success' | 'error' | 'pending';
 }
+
 
 export interface ProblemQuestion {
   questionId: string;
@@ -19,6 +21,8 @@ export interface ProblemQuestion {
 }
 
 
+
+
 interface WrittenQuestion {
     questionId: string;
     examId: string;
@@ -29,6 +33,7 @@ interface WrittenQuestion {
     difficultyType: string;
 }
 
+
 interface MCQOption {
     option1: string;
     option2: string;
@@ -37,6 +42,7 @@ interface MCQOption {
     isMultiSelect: boolean;
     answerOptions: string;
 }
+
 
 interface MCQQuestion {
     questionId: string;
@@ -48,11 +54,13 @@ interface MCQQuestion {
     mcqOption: MCQOption;
 }
 
+
 interface Questions {
     problem: ProblemQuestion[];
     written: WrittenQuestion[];
     mcq: MCQQuestion[];
 }
+
 
 interface QuestionData {
     questions: Questions;
@@ -65,19 +73,23 @@ interface QuestionData {
 interface PageProps {
   currentPage: number;
   questions: QuestionData;
-  perpageques: number;
 }
 
-export default function getQuestionsForCurrentPage({ currentPage, questions, perpageques }: PageProps) {
-  const allQuestions = [
-    ...questions.questions.problem,
-    ...questions.questions.written,
-    ...questions.questions.mcq
-  ];
-  console.log(allQuestions)
 
-  const startIndex = (currentPage - 1) * perpageques;
-  const endIndex = startIndex + perpageques;
-  console.log(startIndex,endIndex)
-  return allQuestions.slice(startIndex, endIndex);
+export default function getQuestionsForCurrentPage({ currentPage, questions }: PageProps) {
+    const problemQuestions = questions.questions.problem;
+    const writtenAndMcqQuestions = [
+        ...questions.questions.written,
+        ...questions.questions.mcq,
+    ];
+
+
+    if (currentPage <= problemQuestions.length) {
+        return [problemQuestions[currentPage - 1]];
+    } else {
+        const adjustedPage = currentPage - problemQuestions.length;
+        const startIndex = (adjustedPage - 1) * 5;
+        const endIndex = startIndex + 5;
+        return writtenAndMcqQuestions.slice(startIndex, endIndex);
+    }
 }

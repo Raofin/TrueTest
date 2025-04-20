@@ -1,9 +1,12 @@
 "use client";
 
+
 import React, { useEffect, useState } from "react";
 import { Button, Card, Select, SelectItem } from "@heroui/react";
 import Editor from "@monaco-editor/react";
 import api from "@/lib/api";
+import { languages } from "@/lib/language-selector";
+
 
 export interface TestCase {
     testCaseId?: string;
@@ -12,6 +15,7 @@ export interface TestCase {
     receivedOutput?: string;
     status?: "success" | "error" | "pending";
 }
+
 
 export interface ProblemQuestion {
     questionId: string;
@@ -23,73 +27,47 @@ export interface ProblemQuestion {
     testCases: TestCase[];
 }
 
+
 interface PageProps {
     readonly question: ProblemQuestion;
     readonly setAnswers: React.Dispatch<
         React.SetStateAction<{ [key: string]: string | string[] }>
     >;
     readonly questionId: string;
+    readonly examId: string;
 }
+
 
 interface CodeState {
     [key: string]: string;
 }
-
-const languages = [
-    {
-        label: "C++",
-        value: "cpp",
-        defaultCode:
-            "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}",
-    },
-    { label: "Python", value: "python", defaultCode: "# Your code here" },
-    {
-        label: "Java",
-        value: "java",
-        defaultCode:
-            "public class Main {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}",
-    },
-    {
-        label: "JavaScript",
-        value: "javascript",
-        defaultCode: "function solve(input) {\n    // Your code here\n}",
-    },
-    {
-        label: "C",
-        value: "c",
-        defaultCode:
-            "#include <stdio.h>\n\nint main() {\n    // Your code here\n    return 0;\n}",
-    },
-];
-
 export default function CodeEditor({
     question,
     setAnswers,
     questionId,
+    examId
 }: PageProps) {
     const [selectedLanguage, setSelectedLanguage] = useState("cpp");
     const [codeStates, setCodeStates] = React.useState<CodeState>({});
     const [selectedTestCase, setSelectedTestCase] = useState<number>(0);
-    const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>(
-        []
-    );
-
+    const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>([]);
+    const [displayTestCase,setDisplayTestCase]=useState<boolean>(false);
     const displayedTestCases = [formattedTestCases[selectedTestCase]];
-
     useEffect(() => {
         const initialStates: CodeState = {};
         languages.forEach((lang) => {
             initialStates[lang.value] = lang.defaultCode;
         });
         setCodeStates(initialStates);
-
         const initializedTestCases = question.testCases.map((tc) => ({
             ...tc,
             receivedOutput: "",
+            output:"",
             status: "pending" as const,
         }));
         setFormattedTestCases(initializedTestCases);
     }, [question.testCases]);
+
 
     const handleCodeChange = (value: string | undefined) => {
         if (value !== undefined) {
@@ -104,26 +82,20 @@ export default function CodeEditor({
         }
     };
 
+
     const handleRun = async () => {
-        let progLanguageType = "Python";
-        if (selectedLanguage === "cpp") {
-            progLanguageType = "C++";
-        } else if (selectedLanguage === "java") {
-            progLanguageType = "Java";
-        } else if (selectedLanguage === "javascript") {
-            progLanguageType = "JavaScript";
-        } else if (selectedLanguage === "c") {
-            progLanguageType = "C";
-        }
         const payload = {
+            examId:examId,
             questionId: question.questionId,
-            Code: codeStates[selectedLanguage],
-            progLanguageType: progLanguageType,
+            code: codeStates[selectedLanguage],
+            language: selectedLanguage,
         };
         try {
-            const response = await api.post("/Candidate/TestCode", payload);
+            const response = await api.put("/Candidate/Submit/Problem/Save", payload);
             if (response.status === 200) {
                 const data = await response.data;
+        
+              setDisplayTestCase(true)
 
                 const updated = formattedTestCases.map((testCase) => {
                     const result = data.find(
@@ -135,11 +107,11 @@ export default function CodeEditor({
                     else if (!result?.isAccepted) status = "error";
                     return {
                         ...testCase,
+                        output:result?.output??"",
                         receivedOutput: result?.receivedOutput ?? "",
                         status: status,
                     } as TestCase;
                 });
-
                 setFormattedTestCases(updated);
             } else {
                 console.error("Failed to execute code");
@@ -148,6 +120,7 @@ export default function CodeEditor({
             console.error("Error during code execution:", error);
         }
     };
+
 
     return (
         <div className="grid grid-cols-2 gap-4">
@@ -225,7 +198,7 @@ export default function CodeEditor({
                         />
                     </div>
                 </Card>
-                <Card className="p-4 rounded-lg">
+              {displayTestCase &&  <Card className="p-4 rounded-lg">
                     <div className="flex justify-between">
                         <p className="font-bold">Test Cases</p>
                         <div className="flex gap-2">
@@ -256,6 +229,11 @@ export default function CodeEditor({
                         </div>
                     </div>
 
+                       <div className='flex w-full justify-between'>
+                         <p>Input</p>
+                         <p>Output</p>
+                         <p>Recieved Output</p>
+                       </div>
                     {displayedTestCases?.map((testCase) => (
                         <div
                             key={testCase?.input}
@@ -266,10 +244,15 @@ export default function CodeEditor({
                             <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
                                 {testCase?.output ?? "No output provided"}
                             </div>
+                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
+                                {testCase?.receivedOutput ?? "No output provided"}
+                            </div>
                         </div>
                     ))}
-                </Card>
+                </Card>}
             </div>
         </div>
     );
 }
+
+
