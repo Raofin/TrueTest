@@ -16,6 +16,7 @@ internal class ProblemSubmissionRepository(AppDbContext dbContext)
     {
         return await _dbContext.ProblemSubmissions
             .Where(ps => ps.QuestionId == questionId && ps.AccountId == accountId)
+            .Include(ps => ps.Question)
             .SingleOrDefaultAsync(cancellationToken);
     }
 

@@ -17,6 +17,8 @@ internal class McqSubmissionRepository(AppDbContext dbContext)
     {
         return await _dbContext.McqSubmissions
             .Where(s => s.AccountId == accountId && s.QuestionId == questionId)
+            .Include(s => s.Question)
+            .Include(s => s.McqOption)
             .SingleOrDefaultAsync(cancellationToken);
     }
 

@@ -45,13 +45,10 @@ public class SaveProblemSubmissionsCommandHandler(
         var submission = await _unitOfWork.ProblemSubmission
             .GetAsync(request.QuestionId, userAccountId, cancellationToken);
 
-        var points = (await _unitOfWork.Question.SelectAsync(
-            x => x.Id == request.QuestionId,
-            x => x.Points,
-            cancellationToken)).First();
-
-        List<TestCodeResponse> testResults = await RunTestCasesAsync(request, cancellationToken);
+        var testResults = await RunTestCasesAsync(request, cancellationToken);
         var isAccepted = testResults.All(tc => tc.IsAccepted);
+
+        var points = await _unitOfWork.Question.GetPointsAsync(request.QuestionId, cancellationToken);
 
         UpsertSubmission(submission, request, userAccountId, isAccepted, points);
 
