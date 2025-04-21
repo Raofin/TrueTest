@@ -74,4 +74,13 @@ internal class QuestionRepository(AppDbContext dbContext) : Repository<Question>
             .OrderBy(q => q.CreatedAt)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<decimal> GetPointsAsync(Guid questionId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Questions
+            .AsNoTracking()
+            .Where(q => q.Id == questionId)
+            .Select(q => q.Points)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

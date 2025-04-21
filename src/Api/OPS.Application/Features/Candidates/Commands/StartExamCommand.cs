@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using System.Diagnostics.CodeAnalysis;
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 using OPS.Application.Common.Extensions;
@@ -28,10 +29,10 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
             request.ExamId, userAccountId, cancellationToken);
 
         if (candidate == null)
-            return Error.Unauthorized(description: "Candidate was not invited to this exam");
+            return Error.Forbidden(description: "Candidate was not invited to this exam");
 
-        if (candidate.Examination.ClosesAt < DateTime.UtcNow)
-            return Error.Unauthorized(description: "Exam is already submitted or ended");
+        if (candidate.SubmittedAt < DateTime.UtcNow)
+            return Error.Forbidden(description: "Exam is already submitted or ended");
 
         var exam = await _unitOfWork.Exam.GetWithQuesAndSubmissionsAsync(
             request.ExamId, userAccountId, cancellationToken);
@@ -67,6 +68,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static ProblemSubmitResponse? ToProblemSubmitDto(Question question)
     {
         if (question.ProblemSubmissions.FirstOrDefault() is null)
@@ -84,6 +86,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static WrittenSubmitResponse? ToWrittenSubmitDto(Question question)
     {
         if (question.WrittenSubmissions.FirstOrDefault() is null)
@@ -98,6 +101,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static McqSubmitResponse? ToMcqSubmitDto(Question question)
     {
         if (question.McqSubmissions.FirstOrDefault() is null)

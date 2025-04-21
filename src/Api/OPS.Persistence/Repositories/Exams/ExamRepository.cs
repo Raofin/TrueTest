@@ -14,6 +14,7 @@ internal class ExamRepository(AppDbContext dbContext) : Repository<Examination>(
         return await _dbContext.Examinations
             .AsNoTracking()
             .Where(e => e.ExamCandidates.Any(ec => ec.AccountId == accountId))
+            .Include(e => e.ExamCandidates.Where(ec => ec.AccountId == accountId))
             .OrderBy(e => e.OpensAt)
             .ToListAsync(cancellationToken);
     }
