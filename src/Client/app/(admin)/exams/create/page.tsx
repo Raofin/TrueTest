@@ -58,7 +58,7 @@ export default function ExamFormPage() {
         problemSolve: [],
         writtenQues: [],
         mcq: [],
-    }); 
+    });
     const [isLoading, setIsLoading] = useState(true);
 
     const handleComponentSaved = (type: keyof typeof saveStatus) => {
@@ -74,13 +74,16 @@ export default function ExamFormPage() {
 
     const handleSaveExam = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+
         if (!date) {
             toast.error("Please select a date");
             return;
         }
         try {
-            const formatDateTimeToUTC = (timeString: string | undefined, selectedDate: CalendarDate | null): string => {
+            const formatDateTimeToUTC = (
+                timeString: string | undefined,
+                selectedDate: CalendarDate | null
+            ): string => {
                 if (!timeString || !selectedDate) return "";
                 const [hoursStr, minutesStr] = timeString.split(":");
                 const hours = parseInt(hoursStr, 10);
@@ -94,25 +97,37 @@ export default function ExamFormPage() {
                 );
                 return localDate.toISOString();
             };
-    
+
             const examData = {
                 ...formData,
                 opensAt: formatDateTimeToUTC(formData.opensAt, date),
                 closesAt: formatDateTimeToUTC(formData.closesAt, date),
-                date: new Date(date.year, date.month - 1, date.day).toISOString(),
+                date: new Date(
+                    date.year,
+                    date.month - 1,
+                    date.day
+                ).toISOString(),
             };
-    
-            let response;
-            if (isEdit && examId) {
-                response = await api.put(`/Exam/Update/${examId}`, examData);
-            } else {
-                response = await api.post("/Exam/Create", examData);
+            if(examData.opensAt>=examData.closesAt){
+                toast.error("please input correct start and end time")
             }
-    
-            if (response.status === 200) {
-                toast.success(`Exam ${isEdit ? 'updated' : 'created'} successfully.`);
+            let resp;
+            if (isEdit && examId) {
+                resp = await api.patch(`/Exam/Update`, {examId,examData});
+            } else {
+                resp = await api.post("/Exam/Create", examData);
+            }
+             
+            if (resp.status === 200) {
+                if(resp.data.totalPoints!== resp.data.problemSolvingPoints+resp.data.writtenPoints+resp.data.mcqPoints){
+                    toast.error("Please make sure total points match the exam score.")
+                     return;
+                   }
+                toast.success(
+                    `Exam ${isEdit ? "updated" : "created"} successfully.`
+                );
                 if (!isEdit) {
-                    setExamId(response.data.examId);
+                    setExamId(resp.data.examId);
                 }
             }
         } catch (err) {
@@ -138,12 +153,12 @@ export default function ExamFormPage() {
                     examResponse,
                     problemQuesResponse,
                     writtenQuesResponse,
-                    mcqQuesResponse
+                    mcqQuesResponse,
                 ] = await Promise.all([
                     api.get(`/Exam/${examId}`),
                     api.get(`/Questions/Problem/ByExam/${examId}`),
                     api.get(`/Questions/Written/ByExam/${examId}`),
-                    api.get(`/Questions/Mcq/ByExam/${examId}`)
+                    api.get(`/Questions/Mcq/ByExam/${examId}`),
                 ]);
 
                 if (examResponse.status === 200) {
@@ -156,7 +171,7 @@ export default function ExamFormPage() {
                         opensAt: convertUtcToLocalTime(exam.opensAt),
                         closesAt: convertUtcToLocalTime(exam.closesAt),
                     });
-                    
+
                     const opensAtDate = new Date(exam.opensAt);
                     setDate(
                         new CalendarDate(
@@ -173,9 +188,15 @@ export default function ExamFormPage() {
                     mcq: mcqQuesResponse.data ?? [],
                 });
                 setActiveComponents([
-                    problemQuesResponse.data ?? { id: uuidv4(), type: "problemSolve" },
-                    writtenQuesResponse.data ?? { id: uuidv4(), type: "writtenQues" },
-                    mcqQuesResponse.data ?? { id: uuidv4(), type: "mcq" }
+                    problemQuesResponse.data ?? {
+                        id: uuidv4(),
+                        type: "problemSolve",
+                    },
+                    writtenQuesResponse.data ?? {
+                        id: uuidv4(),
+                        type: "writtenQues",
+                    },
+                    mcqQuesResponse.data ?? { id: uuidv4(), type: "mcq" },
                 ]);
             } catch (error) {
                 console.error("Error fetching exam data:", error);
@@ -192,7 +213,9 @@ export default function ExamFormPage() {
     const handlePublishExam = async () => {
         if (examId) {
             try {
-                const response = await api.post(`/Exam/Publish?examId=${examId}`);
+                const response = await api.post(
+                    `/Exam/Publish?examId=${examId}`
+                );
                 if (response.status === 200) {
                     toast.success("Exam published successfully.");
                 }
@@ -246,7 +269,11 @@ export default function ExamFormPage() {
     };
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                Loading...
+            </div>
+        );
     }
 
     return (
@@ -254,9 +281,12 @@ export default function ExamFormPage() {
             <h1 className="w-full text-center text-3xl font-bold my-3">
                 {isEdit ? "Edit Exam" : "Create Exam"}
             </h1>
-            
+
             <Card className="flex shadow-none flex-col justify-between p-8 items-center">
-                <form className="flex gap-4 flex-wrap flex-col w-full" onSubmit={handleSaveExam}>
+                <form
+                    className="flex gap-4 flex-wrap flex-col w-full"
+                    onSubmit={handleSaveExam}
+                >
                     <Input
                         className="rounded-2xl"
                         isRequired
@@ -264,7 +294,9 @@ export default function ExamFormPage() {
                         name="title"
                         type="text"
                         value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        onChange={(e) =>
+                            setFormData({ ...formData, title: e.target.value })
+                        }
                     />
                     <Textarea
                         className="rounded-2xl"
@@ -272,7 +304,12 @@ export default function ExamFormPage() {
                         label="Description"
                         name="description"
                         value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        onChange={(e) =>
+                            setFormData({
+                                ...formData,
+                                description: e.target.value,
+                            })
+                        }
                     />
                     <div className="flex gap-5">
                         <DatePicker
@@ -292,7 +329,10 @@ export default function ExamFormPage() {
                             onChange={(e) => {
                                 const value = parseInt(e.target.value);
                                 if (!isNaN(value)) {
-                                    setFormData({ ...formData, durationMinutes: value });
+                                    setFormData({
+                                        ...formData,
+                                        durationMinutes: value,
+                                    });
                                 }
                             }}
                         />
@@ -303,7 +343,12 @@ export default function ExamFormPage() {
                             className="rounded-2xl"
                             value={parseTime(formData.opensAt)}
                             isRequired
-                            onChange={(time) => setFormData({ ...formData, opensAt: handleOpenCloseTime(time) })}
+                            onChange={(time) =>
+                                setFormData({
+                                    ...formData,
+                                    opensAt: handleOpenCloseTime(time),
+                                })
+                            }
                             hourCycle={12}
                         />
                         <TimeInput
@@ -311,7 +356,12 @@ export default function ExamFormPage() {
                             className="rounded-2xl"
                             value={parseTime(formData.closesAt)}
                             isRequired
-                            onChange={(time) => setFormData({ ...formData, closesAt: handleOpenCloseTime(time) })}
+                            onChange={(time) =>
+                                setFormData({
+                                    ...formData,
+                                    closesAt: handleOpenCloseTime(time),
+                                })
+                            }
                             hourCycle={12}
                         />
                     </div>
@@ -325,17 +375,26 @@ export default function ExamFormPage() {
                         onChange={(e) => {
                             const value = parseInt(e.target.value);
                             if (!isNaN(value)) {
-                                setFormData({ ...formData, totalPoints: value });
+                                setFormData({
+                                    ...formData,
+                                    totalPoints: value,
+                                });
                             }
                         }}
                     />
                     <div className="flex justify-end mt-2 gap-3">
                         {isEdit && (
                             <>
-                                <Button color="success" onPress={handlePublishExam}>
+                                <Button
+                                    color="success"
+                                    onPress={handlePublishExam}
+                                >
                                     Publish
                                 </Button>
-                                <Button color="danger" onPress={handleDeleteExam}>
+                                <Button
+                                    color="danger"
+                                    onPress={handleDeleteExam}
+                                >
                                     Delete
                                 </Button>
                             </>
@@ -375,17 +434,25 @@ export default function ExamFormPage() {
 
             {examId && (
                 <div className="flex gap-3 justify-center my-4">
-                    {!activeComponents.some(c => c.type === "problemSolve") && (
-                        <Button onPress={() => handleAddComponent("problemSolve")}>
+                    {!activeComponents.some(
+                        (c) => c.type === "problemSolve"
+                    ) && (
+                        <Button
+                            onPress={() => handleAddComponent("problemSolve")}
+                        >
                             Add Problem Solving Question
                         </Button>
                     )}
-                    {!activeComponents.some(c => c.type === "writtenQues") && (
-                        <Button onPress={() => handleAddComponent("writtenQues")}>
+                    {!activeComponents.some(
+                        (c) => c.type === "writtenQues"
+                    ) && (
+                        <Button
+                            onPress={() => handleAddComponent("writtenQues")}
+                        >
                             Add Written Question
                         </Button>
                     )}
-                    {!activeComponents.some(c => c.type === "mcq") && (
+                    {!activeComponents.some((c) => c.type === "mcq") && (
                         <Button onPress={() => handleAddComponent("mcq")}>
                             Add MCQ Question
                         </Button>

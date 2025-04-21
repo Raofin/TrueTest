@@ -26,6 +26,7 @@ interface Exam {
   problemSolving: number
   written: number
   mcq: number
+  isPublished:boolean
 }
 
 
@@ -50,6 +51,23 @@ export default function ViewExam() {
     }
     handleViewExam()
   }, [])
+  const handlePublishExam = async (exam:Exam) => {
+    if (exam.examId) {
+        try {
+            const response = await api.post(`/Exam/Publish?examId=${exam.examId}`);
+            if (response.status === 200) {
+                toast.success("Exam published successfully.");
+                setAllExam(prevExams => 
+                  prevExams.map(e => 
+                    e.examId === exam.examId ? { ...e, isPublished: true } : e
+                  )
+                );
+            }
+        } catch {
+           toast.error("An unexpected error has occured.Please try again.");
+        }
+    }
+};
   useEffect(() => {
     setCurrentPage((prev) => Math.min(prev, totalPages))
     if (currentPage > totalPages) {
@@ -91,11 +109,11 @@ const handleReview=(exam:Exam)=>{
                     return (
                       <Button color="primary" onPress={()=>handleReview(exam)}>Review</Button>
                     )
-                  } else if (exam.status === 'Scheduled') {
+                  } else if (!exam.isPublished) {
                     return (
                       <>
                         <Button onPress={() => handleEdit(exam)}>Edit</Button>
-                        <Button color="primary">Publish</Button>
+                        <Button color="primary" onPress={()=>handlePublishExam(exam)}>Publish</Button>
                       </>
                     )
                   } else {

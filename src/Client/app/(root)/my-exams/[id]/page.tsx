@@ -324,7 +324,7 @@ export default function Component() {
               questions,
           })
         : [];
-    console.log(currentPage, currentQuestions);
+
     if (currentQuestions.length === 0) {
         return (
             <div className="flex justify-center items-center h-full">
