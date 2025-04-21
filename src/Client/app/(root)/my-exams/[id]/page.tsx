@@ -128,7 +128,6 @@ export default function Component() {
                         },
                     };
                     setQuestions(normalizedData);
-                    console.log(normalizedData);
                 }
             } catch {
                 toast.error("An unexpected error has occured");
@@ -151,7 +150,6 @@ export default function Component() {
     useEffect(() => {
         if (startExamPage && examStarted) {
             const examDurationSeconds = parseInt(startExamPage.durationMinutes) * 60;
-           console.log(examDurationSeconds,timeLeft)
             setTimeLeft(Math.min(examDurationSeconds,timeLeft));
             const timer = setInterval(() => {
                 setTimeLeft((prev) => {

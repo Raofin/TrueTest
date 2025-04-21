@@ -108,25 +108,24 @@ export default function ExamFormPage() {
                     date.day
                 ).toISOString(),
             };
-            if(examData.opensAt>=examData.closesAt){
-                toast.error("please input correct start and end time")
+            if (examData.opensAt >= examData.closesAt) {
+                toast.error("please input correct start and end time");
             }
             let resp;
             if (isEdit && examId) {
-                resp = await api.patch(`/Exam/Update`, {examId,examData});
+                resp = await api.patch(`/Exam/Update`, { examId, examData });
+                if (resp.status === 200) {
+                    if (resp.data.totalPoints !== resp.data.problemSolvingPoints +resp.data.writtenPoints +resp.data.mcqPoints
+                    ) {
+                        toast.error("Please make sure total points match the exam score.");
+                        return;
+                    }
+                    toast.success(`Exam updated successfully.`);
+                }
             } else {
                 resp = await api.post("/Exam/Create", examData);
-            }
-             
-            if (resp.status === 200) {
-                if(resp.data.totalPoints!== resp.data.problemSolvingPoints+resp.data.writtenPoints+resp.data.mcqPoints){
-                    toast.error("Please make sure total points match the exam score.")
-                     return;
-                   }
-                toast.success(
-                    `Exam ${isEdit ? "updated" : "created"} successfully.`
-                );
-                if (!isEdit) {
+                if (resp.status === 200) {
+                    toast.success(`Exam created successfully.`);
                     setExamId(resp.data.examId);
                 }
             }
@@ -135,7 +134,6 @@ export default function ExamFormPage() {
             toast.error(error?.message);
         }
     };
-
     useEffect(() => {
         const fetchExamDetails = async () => {
             try {

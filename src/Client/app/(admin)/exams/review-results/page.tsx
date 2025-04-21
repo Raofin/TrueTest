@@ -134,7 +134,7 @@ export default function Component() {
         const response = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`);
         console.log('Submission API Response:', response.data);
         if (response.status === 200) {
-          if (response.data.submission) {
+          if (response.data) {
             setSelectedCandidateSubmission(response.data.submission);
           } else {
             console.warn('missing submission data');
