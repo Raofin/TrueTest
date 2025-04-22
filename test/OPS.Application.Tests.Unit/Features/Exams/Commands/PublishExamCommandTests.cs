@@ -1,5 +1,6 @@
 using ErrorOr;
 using FluentAssertions;
+using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Exams.Commands;
 using OPS.Domain;
@@ -11,38 +12,39 @@ public class PublishExamCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly PublishExamCommandHandler _sut;
-    private readonly Examination _exam;
-    private readonly Guid _validExamId = Guid.NewGuid();
-    private readonly Guid _nonExistentExamId = Guid.NewGuid();
+    private readonly PublishExamCommandValidator _validator = new();
+    private readonly Examination _existingExam;
 
     public PublishExamCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
         _sut = new PublishExamCommandHandler(_unitOfWork);
 
-        _exam = new Examination
+        _existingExam = new Examination
         {
-            Id = _validExamId,
-            TotalPoints = 100,
+            Id = Guid.NewGuid(),
+            Title = "Test Exam",
             IsPublished = false,
+            TotalPoints = 100,
             Questions = new List<Question>
             {
-                new() { Points = 40 },
-                new() { Points = 60 }
+                new() { Id = Guid.NewGuid(), Points = 50 },
+                new() { Id = Guid.NewGuid(), Points = 50 }
             }
         };
     }
 
     [Fact]
-    public async Task Handle_WhenExamExistsAndPointsMatch_ShouldPublishExamAndReturnSuccess()
+    public async Task Handle_WhenValidRequest_ShouldPublishExam()
     {
         // Arrange
-        _unitOfWork.Exam.GetWithQuestionsAsync(_validExamId, Arg.Any<CancellationToken>())
-            .Returns(_exam);
+        var command = new PublishExamCommand(_existingExam.Id);
+
+        _unitOfWork.Exam.GetWithQuestionsAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns(_existingExam);
+
         _unitOfWork.CommitAsync(Arg.Any<CancellationToken>())
             .Returns(1);
-
-        var command = new PublishExamCommand(_validExamId);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -50,18 +52,19 @@ public class PublishExamCommandTests
         // Assert
         result.IsError.Should().BeFalse();
         result.Value.Should().Be(Result.Success);
-        _exam.IsPublished.Should().BeTrue();
+        _existingExam.IsPublished.Should().BeTrue();
+
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WhenExamDoesNotExist_ShouldReturnNotFoundError()
+    public async Task Handle_WhenExamNotFound_ShouldReturnNotFoundError()
     {
         // Arrange
-        _unitOfWork.Exam.GetWithQuestionsAsync(_nonExistentExamId, Arg.Any<CancellationToken>())
-            .Returns((Examination?)null);
+        var command = new PublishExamCommand(Guid.NewGuid());
 
-        var command = new PublishExamCommand(_nonExistentExamId);
+        _unitOfWork.Exam.GetWithQuestionsAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns((Examination?)null);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -69,61 +72,31 @@ public class PublishExamCommandTests
         // Assert
         result.IsError.Should().BeTrue();
         result.FirstError.Type.Should().Be(ErrorType.NotFound);
+
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WhenPointsDoNotMatch_ShouldReturnConflictError()
-    {
-        // Arrange
-        var examWithMismatchedPoints = new Examination
-        {
-            Id = _validExamId,
-            TotalPoints = 100,
-            IsPublished = false,
-            Questions = new List<Question>
-            {
-                new() { Points = 30 },
-                new() { Points = 60 }
-            }
-        };
-
-        _unitOfWork.Exam.GetWithQuestionsAsync(_validExamId, Arg.Any<CancellationToken>())
-            .Returns(examWithMismatchedPoints);
-
-        var command = new PublishExamCommand(_validExamId);
-
-        // Act
-        var result = await _sut.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Conflict);
-        result.FirstError.Description.Should().Be("Total points of questions do not match the exam total points.");
-        examWithMismatchedPoints.IsPublished.Should().BeFalse();
-        await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenExamIsAlreadyPublished_ShouldReturnConflictError()
+    public async Task Handle_WhenExamAlreadyPublished_ShouldReturnConflictError()
     {
         // Arrange
         var publishedExam = new Examination
         {
-            Id = _validExamId,
-            TotalPoints = 100,
+            Id = Guid.NewGuid(),
+            Title = "Published Exam",
             IsPublished = true,
+            TotalPoints = 100,
             Questions = new List<Question>
             {
-                new() { Points = 40 },
-                new() { Points = 60 }
+                new() { Id = Guid.NewGuid(), Points = 50 },
+                new() { Id = Guid.NewGuid(), Points = 50 }
             }
         };
 
-        _unitOfWork.Exam.GetWithQuestionsAsync(_validExamId, Arg.Any<CancellationToken>())
-            .Returns(publishedExam);
+        var command = new PublishExamCommand(publishedExam.Id);
 
-        var command = new PublishExamCommand(_validExamId);
+        _unitOfWork.Exam.GetWithQuestionsAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns(publishedExam);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -132,6 +105,61 @@ public class PublishExamCommandTests
         result.IsError.Should().BeTrue();
         result.FirstError.Type.Should().Be(ErrorType.Conflict);
         result.FirstError.Description.Should().Be("Exam is already published");
+
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenPointsMismatch_ShouldReturnConflictError()
+    {
+        // Arrange
+        var examWithMismatchedPoints = new Examination
+        {
+            Id = Guid.NewGuid(),
+            Title = "Mismatched Points Exam",
+            IsPublished = false,
+            TotalPoints = 100,
+            Questions = new List<Question>
+            {
+                new() { Id = Guid.NewGuid(), Points = 40 },
+                new() { Id = Guid.NewGuid(), Points = 40 }
+            }
+        };
+
+        var command = new PublishExamCommand(examWithMismatchedPoints.Id);
+
+        _unitOfWork.Exam.GetWithQuestionsAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns(examWithMismatchedPoints);
+
+        // Act
+        var result = await _sut.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Type.Should().Be(ErrorType.Conflict);
+        result.FirstError.Description.Should().Be("Total points of questions do not match the exam total points.");
+
+        await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public void Validate_WhenValidCommand_ShouldNotHaveValidationErrors()
+    {
+        // Arrange
+        var command = new PublishExamCommand(Guid.NewGuid());
+
+        // Act & Assert
+        _validator.TestValidate(command).ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void Validate_WhenExamIdIsEmpty_ShouldHaveValidationError()
+    {
+        // Arrange
+        var command = new PublishExamCommand(Guid.Empty);
+
+        // Act & Assert
+        _validator.TestValidate(command)
+            .ShouldHaveValidationErrorFor(x => x.ExamId);
     }
 }
