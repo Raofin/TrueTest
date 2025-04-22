@@ -6,7 +6,6 @@ using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
-using Throw;
 
 namespace OPS.Application.Features.User.Commands;
 
@@ -25,79 +24,99 @@ public class SaveProfileCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
 
-    public async Task<ErrorOr<ProfileResponse>> Handle(SaveProfileCommand request,
-        CancellationToken cancellationToken)
+    public async Task<ErrorOr<ProfileResponse>> Handle(SaveProfileCommand request, CancellationToken cancellationToken)
     {
         var userAccountId = _userInfoProvider.AccountId();
 
-        if (request.ImageFileId.HasValue)
-        {
-            var isExists = await _unitOfWork.CloudFile.IsExistsAsync(request.ImageFileId.Value, cancellationToken);
-            if (!isExists) return Error.Unexpected(description: "Image file not found.");
-        }
+        if (!await ValidateImageFile(request.ImageFileId, cancellationToken))
+            return Error.Unexpected(description: "Image file not found.");
 
         var profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
         if (profile is null)
         {
-            profile = new Profile
-            {
-                AccountId = userAccountId,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Bio = request.Bio,
-                InstituteName = request.InstituteName,
-                PhoneNumber = request.PhoneNumber,
-                ImageFileId = request.ImageFileId,
-                ProfileLinks = request.ProfileLinks
-                    .Select(x => new ProfileLinks { Name = x.Name!, Link = x.Link! })
-                    .ToList()
-            };
-
-            _unitOfWork.Profile.Add(profile);
+            CreateProfile(request, userAccountId);
         }
         else
         {
-            profile.FirstName = request.FirstName ?? profile.FirstName;
-            profile.LastName = request.LastName ?? profile.LastName;
-            profile.Bio = request.Bio ?? profile.Bio;
-            profile.InstituteName = request.InstituteName ?? profile.InstituteName;
-            profile.PhoneNumber = request.PhoneNumber ?? profile.PhoneNumber;
-
-            if (request.ImageFileId.HasValue)
-            {
-                profile.ImageFileId = request.ImageFileId;
-            }
-
-            foreach (var linkRequest in request.ProfileLinks)
-            {
-                if (!linkRequest.ProfileLinkId.HasValue)
-                {
-                    var profileLink = new ProfileLinks
-                    {
-                        ProfileId = profile.Id,
-                        Name = linkRequest.Name!,
-                        Link = linkRequest.Link!
-                    };
-
-                    _unitOfWork.ProfileLink.Add(profileLink);
-                }
-                else
-                {
-                    var profileLink = await _unitOfWork.ProfileLink.GetAsync(
-                        linkRequest.ProfileLinkId!.Value, cancellationToken);
-                    profileLink.ThrowIfNull("Profile link not found.");
-
-                    profileLink.Name = linkRequest.Name ?? profileLink.Name;
-                    profileLink.Link = linkRequest.Link ?? profileLink.Link;
-                }
-            }
+            await UpdateProfile(profile, request, cancellationToken);
         }
 
         await _unitOfWork.CommitAsync(cancellationToken);
-        profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
 
+        profile = await _unitOfWork.Profile.GetByAccountId(userAccountId, cancellationToken);
         return profile.MapToDto()!;
+    }
+
+    private async Task<bool> ValidateImageFile(Guid? imageFileId, CancellationToken cancellationToken)
+    {
+        if (!imageFileId.HasValue) return true;
+        return await _unitOfWork.CloudFile.IsExistsAsync(imageFileId.Value, cancellationToken);
+    }
+
+    private void CreateProfile(SaveProfileCommand request, Guid accountId)
+    {
+        var profile = new Profile
+        {
+            AccountId = accountId,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Bio = request.Bio,
+            InstituteName = request.InstituteName,
+            PhoneNumber = request.PhoneNumber,
+            ImageFileId = request.ImageFileId,
+            ProfileLinks = request.ProfileLinks.Select(
+                x => new ProfileLinks
+                {
+                    Name = x.Name!,
+                    Link = x.Link!
+                }
+            ).ToList()
+        };
+
+        _unitOfWork.Profile.Add(profile);
+    }
+
+    private async Task UpdateProfile(Profile profile, SaveProfileCommand request, CancellationToken cancellationToken)
+    {
+        profile.FirstName = request.FirstName ?? profile.FirstName;
+        profile.LastName = request.LastName ?? profile.LastName;
+        profile.Bio = request.Bio ?? profile.Bio;
+        profile.InstituteName = request.InstituteName ?? profile.InstituteName;
+        profile.PhoneNumber = request.PhoneNumber ?? profile.PhoneNumber;
+
+        if (request.ImageFileId.HasValue)
+        {
+            profile.ImageFileId = request.ImageFileId;
+        }
+
+        await UpdateProfileLinks(profile, request.ProfileLinks, cancellationToken);
+    }
+
+    private async Task UpdateProfileLinks(Profile profile, List<ProfileLinkRequest> links,
+        CancellationToken cancellationToken)
+    {
+        foreach (var linkRequest in links)
+        {
+            if (!linkRequest.ProfileLinkId.HasValue)
+            {
+                _unitOfWork.ProfileLink.Add(new ProfileLinks
+                {
+                    ProfileId = profile.Id,
+                    Name = linkRequest.Name!,
+                    Link = linkRequest.Link!
+                });
+            }
+            else
+            {
+                var profileLink =
+                    await _unitOfWork.ProfileLink.GetAsync(linkRequest.ProfileLinkId.Value, cancellationToken);
+                if (profileLink is null) continue;
+
+                profileLink.Name = linkRequest.Name ?? profileLink.Name;
+                profileLink.Link = linkRequest.Link ?? profileLink.Link;
+            }
+        }
     }
 }
 
