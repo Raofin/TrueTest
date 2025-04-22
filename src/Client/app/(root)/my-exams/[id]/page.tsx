@@ -78,14 +78,16 @@ export default function Component() {
     const searchParams = useSearchParams();
     const { id } = useParams();
     const [totalPage, setTotalPage] = useState(1);
-    const isExamStarted = searchParams.get("started") === "true";
-    const [examStarted] = useState(isExamStarted);
-    const [timeLeft, setTimeLeft] = useState(() => {
+    const [examStarted] = useState(() => {
+        return searchParams.get("started") === "true";
+      });
+      const [duration] = useState(() => {
+        return parseInt(searchParams.get("duration") || "0");
+      });
+      const [timeLeft, setTimeLeft] = useState(() => {
         const initial = parseInt(searchParams.get("timeLeft") || "0");
-        const duration = parseInt(searchParams.get("duration") || "0");
-        console.log(initial, duration * 60);
-        return Math.min(initial, duration * 60);
-    });
+        return Math.min(initial, duration * 60); 
+      });
     const [answers, setAnswers] = useState<{
         [key: string]: string | string[];
     }>({});

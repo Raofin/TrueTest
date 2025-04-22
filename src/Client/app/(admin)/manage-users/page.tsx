@@ -191,7 +191,7 @@ export default function Component() {
   return (
     <div className="h-full flex flex-col justify-between">
       <h2 className="text-2xl font-bold my-5 text-center flex justify-center"> Manage Users</h2>
-      <div className="h-full mx-44 mb-8 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
+      <div className="h-full mx-40 px-5 mb-8 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">
         <Table
           aria-label="Example table with custom cells, pagination"
           topContent={topContent}

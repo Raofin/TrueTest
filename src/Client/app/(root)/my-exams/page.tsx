@@ -7,7 +7,7 @@ import RootNavBar from '@/app/(root)/root-navbar'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-import { convertUtcToLocalTime, FormatTimeHourMinutes } from '@/components/format-date-time'
+import { convertUtcToLocalTime, formatTimeHourMinutes } from '@/components/format-date-time'
 
 interface ExamResponse {
   exam: Exam
@@ -152,7 +152,7 @@ export default function ExamList() {
                         </p>
                         <p>
                           <span className="text-[#71717a] dark:text-white">Duration :</span>{' '}
-                          <FormatTimeHourMinutes minute={exam.durationMinutes} /> hr
+                          {formatTimeHourMinutes(exam.durationMinutes)} hr
                         </p>
                         <p>
                           <span className="text-[#71717a] dark:text-white"> Starts at :</span>

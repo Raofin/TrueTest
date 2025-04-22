@@ -6,6 +6,7 @@ import RootNavBar from "@/app/(root)/root-navbar";
 import {
     convertUtcToLocalTime,
     FormattedDateWeekday,
+    formatTimeHourMinutes,
 } from "@/components/format-date-time";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -131,18 +132,18 @@ export default function StartExam() {
                                 <div className="text-right">
                                     <span className="text-[#71717a] dark:text-white">
                                         MCQ:
-                                    </span>{" "}
+                                    </span>
                                     {currentExam?.mcqPoints}
                                 </div>
                                 <div>
                                     <span className="text-[#71717a] dark:text-white">
                                         Duration:
-                                    </span>{" "}
-                                    {currentExam?.durationMinutes}
+                                    </span>
+                                    {formatTimeHourMinutes(parseInt(currentExam?.durationMinutes))} hr
                                 </div>
                                 <div className="text-right">
                                     <span className="text-[#71717a] dark:text-white">
-                                        Score:{" "}
+                                        Score:
                                     </span>
                                     {currentExam?.totalPoints}
                                 </div>

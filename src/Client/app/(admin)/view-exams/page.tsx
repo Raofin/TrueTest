@@ -6,7 +6,7 @@ import PaginationButtons from '@/components/ui/pagination-button'
 import CommonModal from '@/components/ui/Modal/edit-delete-modal'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
-import {FormattedDateWeekday, convertUtcToLocalTime,FormatTimeHourMinutes} from '@/components/format-date-time'
+import {FormattedDateWeekday, convertUtcToLocalTime, formatTimeHourMinutes} from '@/components/format-date-time'
 import {useRouter } from 'next/navigation'
 
 interface Exam {
@@ -129,7 +129,7 @@ const handleReview=(exam:Exam)=>{
                     <span className="text-[#71717a] dark:text-white">Date: </span><FormattedDateWeekday date={exam.opensAt}/>
                   </p>
                   <p>
-                    <span className="text-[#71717a] dark:text-white">Duration: </span><FormatTimeHourMinutes minute={exam.durationMinutes}/> hr
+                    <span className="text-[#71717a] dark:text-white">Duration: </span>{formatTimeHourMinutes(exam.durationMinutes)} hr
                   </p>
                   <p>
                     <span className="text-[#71717a] dark:text-white">Starts at: </span>{convertUtcToLocalTime(exam.opensAt)}

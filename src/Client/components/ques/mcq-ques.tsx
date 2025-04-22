@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Button,
     Textarea,
@@ -48,12 +48,14 @@ interface MCQFormProps {
     readonly examId: string;
     readonly existingQuestions: ExistingQuestion[];
     readonly onSaved: () => void;
+    readonly mcqPoints: (points: number) => void;
 }
 
 export default function App({
     examId,
     existingQuestions,
     onSaved,
+    mcqPoints
 }: MCQFormProps) {
     const [questions, setQuestions] = useState<MCQQuestion[]>(
         existingQuestions.length > 0
@@ -86,7 +88,7 @@ export default function App({
                   },
               ]
     );
-
+    
     const [currentPage, setCurrentPage] = useState(0);
     const [saveButton, setSaveButton] = useState(false);
     const handleQuestionChange = (index: number, value: string) => {
@@ -94,7 +96,10 @@ export default function App({
         newQuestions[index].question = value;
         setQuestions(newQuestions);
     };
-
+     useEffect(() => {
+              const total = questions.reduce((sum, problem) => sum + (problem.points || 0), 0);
+              mcqPoints(total);
+          }, [questions, mcqPoints]);
     const handleOptionChange = (
         questionIndex: number,
         optionId: number,
@@ -175,27 +180,26 @@ export default function App({
                     },
                 })),
             };
-
             try {
                 const resp = await api.post("/Questions/Mcq/Create", payload);
                 if (resp.status === 200) {
                     toast.success("MCQ questions saved successfully!");
                     onSaved();
                     setSaveButton(!saveButton);
-                    // setQuestions([
-                    //     {
-                    //         question: "",
-                    //         options: [
-                    //             { id: 1, text: "" },
-                    //             { id: 2, text: "" },
-                    //             { id: 3, text: "" },
-                    //             { id: 4, text: "" },
-                    //         ],
-                    //         correctOptions: [],
-                    //         points: 0,
-                    //         difficultyType: "Easy",
-                    //     },
-                    // ]);
+                    setQuestions([
+                        {
+                            question: "",
+                            options: [
+                                { id: 1, text: "" },
+                                { id: 2, text: "" },
+                                { id: 3, text: "" },
+                                { id: 4, text: "" },
+                            ],
+                            correctOptions: [],
+                            points: 0,
+                            difficultyType: "Easy",
+                        },
+                    ]);
                     setCurrentPage(0);
                 } else {
                     toast.error("Failed to save MCQ questions");
@@ -207,7 +211,6 @@ export default function App({
         };
         FetchData();
     };
-
     return (
         <div className="flex justify-center ">
             <div className="w-full flex flex-col">
@@ -316,7 +319,7 @@ export default function App({
                             <Button
                                 color="primary"
                                 type="submit"
-                                // isDisabled={saveButton}
+                                isDisabled={saveButton}
                                 onPress={handleSubmit}
                             >
                                 Save

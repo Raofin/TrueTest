@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Form, Button, Textarea, Card, Input } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
@@ -182,12 +182,14 @@ interface ProblemSolvingFormProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
    readonly existingQuestions: any[];
    readonly  onSaved: () => void;
+   readonly problemPoints: (points: number) => void;
 }
 
 export default function ProblemSolvingForm({
     examId,
     existingQuestions,
     onSaved,
+    problemPoints
 }: ProblemSolvingFormProps) {
     const [problems, setProblems] = useState<Problem[]>(
         existingQuestions.length > 0
@@ -208,7 +210,11 @@ export default function ProblemSolvingForm({
     );
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
-
+    useEffect(() => {
+        const total = problems.reduce((sum, problem) => sum + (problem.points || 0), 0);
+        problemPoints(total);
+    }, [problems, problemPoints]);
+    
     const handleSaveProblem = async (e: React.FormEvent) => {
         e.preventDefault();
         const hasMissingDifficulty = problems.some(
@@ -240,14 +246,14 @@ export default function ProblemSolvingForm({
             if (response.status === 200) {
                 toast.success("Problems saved successfully!");
                 onSaved();
-                // setProblems([
-                //     {
-                //         question: "",
-                //         testCases: [{ input: "", output: "" }],
-                //         points: 0,
-                //         difficultyType: "",
-                //     },
-                // ]);
+                setProblems([
+                    {
+                        question: "",
+                        testCases: [{ input: "", output: "" }],
+                        points: 0,
+                        difficultyType: "",
+                    },
+                ]);
                 setCurrentPage(0);
                 setSaveButton(!saveButton)
             } else {
@@ -308,7 +314,7 @@ export default function ProblemSolvingForm({
         }
 
         updateProblem(problemIndex, updatedProblem);
-        toast.success("Test case deleted");
+
     };
 
     const handleRefreshTestCase = (
@@ -452,7 +458,7 @@ export default function ProblemSolvingForm({
                                     )
                                 }
                             />
-                            <Button type="submit" color="primary"  >
+                            <Button type="submit" color="primary" isDisabled={saveButton} >
                                 Save
                             </Button>
                         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button, Textarea, Checkbox, Card, Input } from "@heroui/react";
 import PaginationButtons from "@/components/ui/pagination-button";
 import { v4 as uuidv4 } from "uuid";
@@ -32,19 +32,21 @@ interface WrittenQuestionFormProps {
    readonly examId: string;
    readonly existingQuestions: ExistingQuestion[];
    readonly onSaved: () => void;
+   readonly writtenPoints: (points: number) => void;
 }
 
 export default function Component({
     examId,
     existingQuestions,
     onSaved,
+    writtenPoints
 }: WrittenQuestionFormProps) {
     const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestion[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   id: uuidv4(),
                   question: q.statementMarkdown,
-                  points: Number(q.points) ,
+                  points: q.points ,
                   difficultyType: "Easy",
                   isShortAnswer: !q.hasLongAnswer,
                   isLongAnswer: q.hasLongAnswer,
@@ -60,11 +62,13 @@ export default function Component({
                   },
               ]
     );
-
     const [currentPage, setCurrentPage] = useState(0);
     const [saveButton, setSaveButton] = useState(false);
     const questionsPerPage = 1;
-
+    useEffect(() => {
+           const total = writtenQuestions.reduce((sum, problem) => sum + (problem.points || 0), 0);
+           writtenPoints(total);
+       }, [writtenQuestions, writtenPoints]);
     const handleAddWrittenQuestion = () => {
         setWrittenQuestions((prevQuestions) => {
             const newQuestions: WrittenQuestion[] = [
@@ -146,16 +150,16 @@ export default function Component({
             if (response.status === 200) {
                 toast.success("Written questions saved successfully!");
                 onSaved();
-                // setWrittenQuestions([
-                //     {
-                //         id: uuidv4(),
-                //         question: "",
-                //         isShortAnswer: false,
-                //         isLongAnswer: false,
-                //         points: 0,
-                //         difficultyType: "Easy",
-                //     },
-                // ]);
+                setWrittenQuestions([
+                    {
+                        id: uuidv4(),
+                        question: "",
+                        isShortAnswer: false,
+                        isLongAnswer: false,
+                        points: 0,
+                        difficultyType: "Easy",
+                    },
+                ]);
                 setCurrentPage(0);
                 setSaveButton(!saveButton);
             } else {
