@@ -1,5 +1,7 @@
 ﻿using ErrorOr;
+using FluentValidation;
 using MediatR;
+using OPS.Application.Common.Extensions;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -33,5 +35,13 @@ public class GetCandidatesByExamQueryHandler(IUnitOfWork unitOfWork)
                 )
             ).ToList()
         );
+    }
+}
+
+public class GetCandidatesByExamQueryValidator : AbstractValidator<GetCandidatesByExamQuery>
+{
+    public GetCandidatesByExamQueryValidator()
+    {
+        RuleFor(x => x.ExamId).IsValidGuid();
     }
 }

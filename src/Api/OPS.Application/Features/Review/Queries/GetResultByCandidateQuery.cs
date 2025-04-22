@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using System.Diagnostics.CodeAnalysis;
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 using OPS.Application.Common.Extensions;
@@ -50,6 +51,7 @@ public class GetResultsByExamQueryHandler(IUnitOfWork unitOfWork)
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static ProblemSubmissionResponse? ToProblemSubmissionDto(Question question)
     {
         if (question.ProblemSubmissions.FirstOrDefault() is null)
@@ -76,6 +78,7 @@ public class GetResultsByExamQueryHandler(IUnitOfWork unitOfWork)
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static WrittenSubmissionResponse? ToWrittenSubmissionDto(Question question)
     {
         if (question.WrittenSubmissions.FirstOrDefault() is null)
@@ -91,6 +94,7 @@ public class GetResultsByExamQueryHandler(IUnitOfWork unitOfWork)
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static McqSubmissionResponse? ToMcqSubmissionDto(Question question)
     {
         if (question.McqSubmissions.FirstOrDefault() is null)

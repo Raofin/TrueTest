@@ -2,7 +2,6 @@ using ErrorOr;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
-using OPS.Application.Dtos;
 using OPS.Application.Features.Candidates.Commands;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
