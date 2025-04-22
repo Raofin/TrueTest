@@ -5,7 +5,7 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Mappers;
 
-public static class SubmissionExtensions
+public static class SubmissionMappers
 {
     public static ProblemQuesWithSubmissionResponse? ToProblemWithSubmissionDto(this Question question)
     {

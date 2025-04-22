@@ -4,7 +4,7 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Mappers;
 
-public static class ExamExtensions
+public static class ExamMappers
 {
     public static ExamResponse MapToDto(this Examination exam)
     {
