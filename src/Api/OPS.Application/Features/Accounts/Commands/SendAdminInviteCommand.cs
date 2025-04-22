@@ -22,6 +22,11 @@ public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork, IAccountEmail
         var emails = await _unitOfWork.AdminInvite.GetUninvitedEmails(request.Email, cancellationToken);
         var existingAccounts = await _unitOfWork.Account.GetByEmailsWithRoleAsync(emails, cancellationToken);
 
+        if (emails.Count == 0 && existingAccounts.Count == 0)
+        {
+            return Result.Success;
+        }
+
         var nonAdminEmails = existingAccounts
             .Where(ea => ea.AccountRoles.All(ar => ar.RoleId != (int)RoleType.Admin))
             .ToList();
