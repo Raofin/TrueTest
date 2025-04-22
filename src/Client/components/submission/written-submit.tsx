@@ -21,10 +21,7 @@ interface PageProps {
 export default function WrittenSubmission({ question, setAnswers, answers }: PageProps) {
     return (
         <Card className=" p-5 shadow-none bg-white dark:bg-[#18181b]">
-            <div className="w-full flex justify-between">
-                <h2 className="text-lg font-semibold">#Question :</h2>
-                <p>points: {question.score}</p>
-            </div>
+           
             <div className={`space-y-4 p-4 rounded-lg `}>
                 <p>{question.statementMarkdown}</p>
                 <textarea

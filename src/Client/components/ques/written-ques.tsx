@@ -44,7 +44,7 @@ export default function Component({
             ? existingQuestions.map((q) => ({
                   id: uuidv4(),
                   question: q.statementMarkdown,
-                  points: Number(q.points) || 0,
+                  points: Number(q.points) ,
                   difficultyType: "Easy",
                   isShortAnswer: !q.hasLongAnswer,
                   isLongAnswer: q.hasLongAnswer,
@@ -146,16 +146,16 @@ export default function Component({
             if (response.status === 200) {
                 toast.success("Written questions saved successfully!");
                 onSaved();
-                setWrittenQuestions([
-                    {
-                        id: uuidv4(),
-                        question: "",
-                        isShortAnswer: false,
-                        isLongAnswer: false,
-                        points: 0,
-                        difficultyType: "Easy",
-                    },
-                ]);
+                // setWrittenQuestions([
+                //     {
+                //         id: uuidv4(),
+                //         question: "",
+                //         isShortAnswer: false,
+                //         isLongAnswer: false,
+                //         points: 0,
+                //         difficultyType: "Easy",
+                //     },
+                // ]);
                 setCurrentPage(0);
                 setSaveButton(!saveButton);
             } else {
@@ -278,7 +278,6 @@ export default function Component({
                     <Button
                         color="primary"
                         className="mr-4"
-                        isDisabled={saveButton}
                         onPress={handleSaveWrittenQuestions}
                     >
                         Save

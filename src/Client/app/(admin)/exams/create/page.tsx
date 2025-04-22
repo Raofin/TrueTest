@@ -141,12 +141,10 @@ export default function ExamFormPage() {
                     setIsLoading(false);
                     return;
                 }
-
                 if (!examId) {
                     route.push("/exams");
                     return;
                 }
-
                 const [
                     examResponse,
                     problemQuesResponse,
@@ -211,14 +209,14 @@ export default function ExamFormPage() {
     const handlePublishExam = async () => {
         if (examId) {
             try {
-                const response = await api.post(
-                    `/Exam/Publish?examId=${examId}`
-                );
+                const response = await api.post(`/Exam/Publish?examId=${examId}`);
                 if (response.status === 200) {
                     toast.success("Exam published successfully.");
+                    resetForm()
                 }
             } catch {
-                toast.error("Failed to publish exam");
+                    toast.error("Failed to publish exam.Please make sure total points match the exam score.");
+                  
             }
         } else {
             toast.error("Please save the exam first.");
@@ -232,7 +230,7 @@ export default function ExamFormPage() {
                 if (response.status === 200) {
                     toast.success("Exam deleted successfully.");
                     resetForm();
-                    route.push("/exams");
+                    route.push("/view-exams");
                 }
             } catch {
                 toast.error("Failed to delete exam");
@@ -381,7 +379,7 @@ export default function ExamFormPage() {
                         }}
                     />
                     <div className="flex justify-end mt-2 gap-3">
-                        {isEdit && (
+                      
                             <>
                                 <Button
                                     color="success"
@@ -396,7 +394,7 @@ export default function ExamFormPage() {
                                     Delete
                                 </Button>
                             </>
-                        )}
+                     
                         <Button color="primary" type="submit">
                             {isEdit ? "Update" : "Save"}
                         </Button>

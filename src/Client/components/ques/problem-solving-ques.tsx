@@ -240,14 +240,14 @@ export default function ProblemSolvingForm({
             if (response.status === 200) {
                 toast.success("Problems saved successfully!");
                 onSaved();
-                setProblems([
-                    {
-                        question: "",
-                        testCases: [{ input: "", output: "" }],
-                        points: 0,
-                        difficultyType: "",
-                    },
-                ]);
+                // setProblems([
+                //     {
+                //         question: "",
+                //         testCases: [{ input: "", output: "" }],
+                //         points: 0,
+                //         difficultyType: "",
+                //     },
+                // ]);
                 setCurrentPage(0);
                 setSaveButton(!saveButton)
             } else {
@@ -452,7 +452,7 @@ export default function ProblemSolvingForm({
                                     )
                                 }
                             />
-                            <Button type="submit" color="primary" isDisabled={saveButton} >
+                            <Button type="submit" color="primary"  >
                                 Save
                             </Button>
                         </div>

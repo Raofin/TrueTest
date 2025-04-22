@@ -1,20 +1,17 @@
 "use client";
 
-
 import React, { useEffect, useState } from "react";
-import { Button, Link, Pagination } from "@heroui/react";
+import { Button, Pagination } from "@heroui/react";
 import CodeEditor from "@/components/submission/code-editor";
 import "@/app/globals.css";
 import getQuestionsForCurrentPage from "@/components/currpage-ques";
 import { FormatTimeHourMinutesSeconds } from "@/components/format-date-time";
-import StartExam from "@/components/start-exam";
 import WrittenSubmission from "@/components/submission/written-submit";
 import MCQSubmission from "@/components/submission/mcq-submit";
 import Logo from "@/components/ui/logo/page";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
-
 
 export interface TestCase {
     testCaseId?: string;
@@ -23,8 +20,6 @@ export interface TestCase {
     receivedOutput?: string;
     status?: "success" | "error" | "pending";
 }
-
-
 export interface ProblemQuestion {
     questionId: string;
     examId: string;
@@ -34,8 +29,6 @@ export interface ProblemQuestion {
     difficultyType: string;
     testCases: TestCase[];
 }
-
-
 interface WrittenQuestion {
     questionId: string;
     examId: string;
@@ -45,8 +38,6 @@ interface WrittenQuestion {
     score: number;
     difficultyType: string;
 }
-
-
 interface MCQOption {
     option1: string;
     option2: string;
@@ -55,8 +46,6 @@ interface MCQOption {
     isMultiSelect: boolean;
     answerOptions: string;
 }
-
-
 interface MCQQuestion {
     questionId: string;
     examId: string;
@@ -66,15 +55,11 @@ interface MCQQuestion {
     difficultyType: string;
     mcqOption: MCQOption;
 }
-
-
 interface Questions {
     problem: ProblemQuestion[];
     written: WrittenQuestion[];
     mcq: MCQQuestion[];
 }
-
-
 interface QuestionData {
     questions: Questions;
     submits: {
@@ -83,23 +68,24 @@ interface QuestionData {
         mcq: [];
     };
 }
-interface ExamData {
-    examId: string;
-    title: string;
-    totalPoints: number;
-    durationMinutes: string;
-    problemSolvingPoints: number;
-    status: string;
-    writtenPoints: number;
-    mcqPoints: number;
-    opensAt: string;
-    closesAt: string;
+
+interface CodeAnswers {
+    [questionId: string]: string;
 }
 export default function Component() {
     const [currentPage, setCurrentPage] = useState(1);
-    const [timeLeft, setTimeLeft] = useState(24*3600*3600);
-    const [examStarted, setExamStarted] = useState(false);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { id } = useParams();
     const [totalPage, setTotalPage] = useState(1);
+    const isExamStarted = searchParams.get("started") === "true";
+    const [examStarted] = useState(isExamStarted);
+    const [timeLeft, setTimeLeft] = useState(() => {
+        const initial = parseInt(searchParams.get("timeLeft") || "0");
+        const duration = parseInt(searchParams.get("duration") || "0");
+        console.log(initial, duration * 60);
+        return Math.min(initial, duration * 60);
+    });
     const [answers, setAnswers] = useState<{
         [key: string]: string | string[];
     }>({});
@@ -107,9 +93,9 @@ export default function Component() {
     const [codingQues, setCodingQues] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [questionsLeft, setQuestionsLeft] = useState(0);
-    const [startExamPage, setStartExamPage] = useState<ExamData>();
+    const [codeAnswers, setCodeAnswers] = useState<CodeAnswers>({});
     const [questions, setQuestions] = useState<QuestionData | null>(null);
-    const { id } = useParams();
+
     useEffect(() => {
         const FetchData = async () => {
             try {
@@ -142,95 +128,114 @@ export default function Component() {
         const codingQuestionsCount = questions.questions.problem.length;
         setRegularQues(regularQuestionsCount);
         setCodingQues(codingQuestionsCount);
-        setTotalPage(Math.ceil((Math.ceil(regularQuestionsCount/5)+ codingQuestionsCount)));
+        setTotalPage(
+            Math.ceil(
+                Math.ceil(regularQuestionsCount / 5) + codingQuestionsCount
+            )
+        );
         setQuestionsLeft(regularQuestionsCount + codingQuestionsCount);
+        const initialCodeAnswers: CodeAnswers = {};
+        questions.questions.problem.forEach((q) => {
+            initialCodeAnswers[q.questionId] = "";
+        });
+        setCodeAnswers(initialCodeAnswers);
     }, [questions]);
-
-
     useEffect(() => {
-        if (startExamPage && examStarted) {
-            const examDurationSeconds = parseInt(startExamPage.durationMinutes) * 60;
-            setTimeLeft(Math.min(examDurationSeconds,timeLeft));
-            const timer = setInterval(() => {
-                setTimeLeft((prev) => {
-                    if (prev <= 1) {
-                        clearInterval(timer);
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
-            return () => clearInterval(timer);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [examStarted, startExamPage]);
-    const getOptionNumbers = (question: MCQQuestion, selectedOptions: string[]): string => {
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    router.push("/my-exams");
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [examStarted, id, router]);
+    const getOptionNumbers = (
+        question: MCQQuestion,
+        selectedOptions: string[]
+    ): string => {
         return selectedOptions
-          .map(option => {
-            if (option === question.mcqOption.option1) return '1';
-            if (option === question.mcqOption.option2) return '2';
-            if (option === question.mcqOption.option3) return '3';
-            if (option === question.mcqOption.option4) return '4';
-            return '';
-          })
-          .filter(Boolean)
-          .join(',');
-      };
-      
-      const submitAllAnswers = async () => {
+            .map((option) => {
+                if (option === question.mcqOption.option1) return "1";
+                if (option === question.mcqOption.option2) return "2";
+                if (option === question.mcqOption.option3) return "3";
+                if (option === question.mcqOption.option4) return "4";
+                return "";
+            })
+            .filter(Boolean)
+            .join(",");
+    };
+    const submitAllAnswers = async () => {
         try {
-          if (!questions) return;
-          const mcqSubmissions = questions.questions.mcq
-            .filter(q => answers[q.questionId] && Array.isArray(answers[q.questionId]))
-            .map(q => ({
-              questionId: q.questionId,
-              candidateAnswerOptions: getOptionNumbers(q, answers[q.questionId] as string[]),
-            }));
-          const writtenSubmissions = questions.questions.written
-            .filter(q => answers[q.questionId] && typeof answers[q.questionId] === 'string')
-            .map(q => ({
-              questionId: q.questionId,
-              candidateAnswer: answers[q.questionId] as string,
-            }));
-      
-          const promises = [];
-          
-          if (mcqSubmissions.length > 0) {
-            promises.push(api.put('/Candidate/Submit/Mcq/Save', {
-              examId: id,
-              submissions: mcqSubmissions
-            }));
-          }
-      
-          if (writtenSubmissions.length > 0) {
-            promises.push(api.put('/Candidate/Submit/Written/Save', {
-              examId: id,
-              submissions: writtenSubmissions
-            }));
-          }
-      
-          if (promises.length === 0) {
-            toast.error('No answers to submit');
-            return;
-          }
-      
-          await Promise.all(promises);
-          toast.success('All answers submitted successfully!');
-          return true;
+            if (!questions) return;
+            const mcqSubmissions = questions.questions.mcq
+                .filter(
+                    (q) =>
+                        answers[q.questionId] &&
+                        Array.isArray(answers[q.questionId])
+                )
+                .map((q) => ({
+                    questionId: q.questionId,
+                    candidateAnswerOptions: getOptionNumbers(
+                        q,
+                        answers[q.questionId] as string[]
+                    ),
+                }));
+            const writtenSubmissions = questions.questions.written
+                .filter(
+                    (q) =>
+                        answers[q.questionId] &&
+                        typeof answers[q.questionId] === "string"
+                )
+                .map((q) => ({
+                    questionId: q.questionId,
+                    candidateAnswer: answers[q.questionId] as string,
+                }));
+
+            const promises = [];
+
+            if (mcqSubmissions.length > 0) {
+                promises.push(
+                    api.put("/Candidate/Submit/Mcq/Save", {
+                        examId: id,
+                        submissions: mcqSubmissions,
+                    })
+                );
+            }
+
+            if (writtenSubmissions.length > 0) {
+                promises.push(
+                    api.put("/Candidate/Submit/Written/Save", {
+                        examId: id,
+                        submissions: writtenSubmissions,
+                    })
+                );
+            }
+
+            if (promises.length === 0) {
+                toast.error("No answers to submit");
+                return;
+            }
+
+            await Promise.all(promises);
+            toast.success("All answers submitted successfully!");
+            return true;
         } catch (error) {
-          console.error('Error submitting answers:', error);
-          toast.error('Failed to submit some answers');
-          return false;
+            console.error("Error submitting answers:", error);
+            toast.error("Failed to submit some answers");
+            return false;
         }
-      };
-      
-      
-      const handleSubmitAndExit = async () => {
+    };
+    const handleSubmitAndExit = async () => {
         const success = await submitAllAnswers();
         if (success) {
-          exitFullscreen();
+            exitFullscreen();
+            router.push("/my-exams");
         }
-      };
+    };
     useEffect(() => {
         let count = 0;
         if (!questions) return;
@@ -252,10 +257,15 @@ export default function Component() {
                     }
                 }
             }
+            if (
+                question.questionType === "ProblemSolving" &&
+                codeAnswers[question.questionId]?.trim()
+            ) {
+                count++;
+            }
         });
         setQuestionsLeft(regularQues + codingQues - count);
-    }, [answers, questions, regularQues, codingQues]);
-
+    }, [answers, questions, regularQues, codingQues, codeAnswers]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -275,21 +285,6 @@ export default function Component() {
         };
     }, [isFullscreen]);
 
-
-    useEffect(() => {
-        const FetchData = async () => {
-            try {
-                const resp = await api.get(`/Candidate/Exams`);
-                if (resp.status === 200) {
-                    const exam = resp.data.find(
-                        (e: ExamData) => e.examId === id
-                    );
-                    setStartExamPage(exam);
-                }
-            } catch {}
-        };
-        FetchData();
-    }, [id]);
     const exitFullscreen = () => {
         if (document.exitFullscreen) {
             setIsFullscreen(true);
@@ -298,24 +293,14 @@ export default function Component() {
             });
         }
     };
-    const startExam = (initialTime: number) => {
-        setExamStarted(true);
-        setTimeLeft(initialTime);
+    useEffect(() => {
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch((err) => {
                 console.error("Error attempting fullscreen:", err);
             });
         }
-    };
-    if (startExamPage) {
-        return (
-            <StartExam
-                startExamPage={startExamPage}
-                setExamStarted={setExamStarted}
-                startExam={startExam}
-            />
-        );
-    }
+    }, []);
+
     const currentQuestions = questions
         ? getQuestionsForCurrentPage({
               currentPage,
@@ -359,16 +344,14 @@ export default function Component() {
                                 </p>
                             </div>
                         </div>
-                        <Link href="/my-exams">
-                            <Button
-                                onPress={handleSubmitAndExit}
-                                color="primary"
-                                size="md"
-                                radius="full"
-                            >
-                                Submit Exam
-                            </Button>
-                        </Link>
+                        <Button
+                            onPress={handleSubmitAndExit}
+                            color="primary"
+                            size="md"
+                            radius="full"
+                        >
+                            Submit Exam
+                        </Button>
                     </div>
                 </div>
             )}
@@ -387,20 +370,25 @@ export default function Component() {
                                     ].filter(Boolean) as string[];
                                     return (
                                         <>
-                                        <div className="w-full flex justify-between">
-                                        <h2 className="text-lg font-semibold">
-                                            #Question :
-                                        </h2>
-                                        <p>
-                                            points: {(question as MCQQuestion).score}
-                                        </p>
-                                    </div>
-                                        <MCQSubmission
-                                            question={mcqQuestion}
-                                            answers={answers}
-                                            setAnswers={setAnswers}
-                                            options={mcqOptions}
-                                        />
+                                            <div className="w-full flex justify-between">
+                                                <h2 className="text-lg font-semibold">
+                                                    #Question :
+                                                </h2>
+                                                <p>
+                                                    points:{" "}
+                                                    {
+                                                        (
+                                                            question as MCQQuestion
+                                                        ).score
+                                                    }
+                                                </p>
+                                            </div>
+                                            <MCQSubmission
+                                                question={mcqQuestion}
+                                                answers={answers}
+                                                setAnswers={setAnswers}
+                                                options={mcqOptions}
+                                            />
                                         </>
                                     );
                                 })()}
@@ -411,6 +399,7 @@ export default function Component() {
                                             #Question :
                                         </h2>
                                         <p>
+                                            {" "}
                                             points:
                                             {
                                                 (question as WrittenQuestion)
@@ -432,7 +421,7 @@ export default function Component() {
                                             #Question :
                                         </h2>
                                         <p>
-                                            points:
+                                            points:{" "}
                                             {
                                                 (question as ProblemQuestion)
                                                     .points
@@ -440,7 +429,7 @@ export default function Component() {
                                         </p>
                                     </div>
                                     <CodeEditor
-                                        examId={id?.toString()??""}
+                                        examId={id?.toString() ?? ""}
                                         question={question as ProblemQuestion}
                                         setAnswers={setAnswers}
                                         questionId={question.questionId}

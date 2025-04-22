@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useEffect, useState } from "react";
 import { Button, Card, Select, SelectItem } from "@heroui/react";
 import Editor from "@monaco-editor/react";
@@ -254,5 +253,4 @@ export default function CodeEditor({
         </div>
     );
 }
-
 

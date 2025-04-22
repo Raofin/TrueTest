@@ -182,20 +182,20 @@ export default function App({
                     toast.success("MCQ questions saved successfully!");
                     onSaved();
                     setSaveButton(!saveButton);
-                    setQuestions([
-                        {
-                            question: "",
-                            options: [
-                                { id: 1, text: "" },
-                                { id: 2, text: "" },
-                                { id: 3, text: "" },
-                                { id: 4, text: "" },
-                            ],
-                            correctOptions: [],
-                            points: 0,
-                            difficultyType: "Easy",
-                        },
-                    ]);
+                    // setQuestions([
+                    //     {
+                    //         question: "",
+                    //         options: [
+                    //             { id: 1, text: "" },
+                    //             { id: 2, text: "" },
+                    //             { id: 3, text: "" },
+                    //             { id: 4, text: "" },
+                    //         ],
+                    //         correctOptions: [],
+                    //         points: 0,
+                    //         difficultyType: "Easy",
+                    //     },
+                    // ]);
                     setCurrentPage(0);
                 } else {
                     toast.error("Failed to save MCQ questions");
@@ -316,7 +316,7 @@ export default function App({
                             <Button
                                 color="primary"
                                 type="submit"
-                                isDisabled={saveButton}
+                                // isDisabled={saveButton}
                                 onPress={handleSubmit}
                             >
                                 Save
