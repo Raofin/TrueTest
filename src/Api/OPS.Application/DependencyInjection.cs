@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Diagnostics.CodeAnalysis;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using OPS.Application.CrossCutting.BackgroundServices;
 using OPS.Application.CrossCutting.Behaviors;
@@ -6,6 +7,7 @@ using OPS.Application.Services.AuthService;
 
 namespace OPS.Application;
 
+[ExcludeFromCodeCoverage]
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)

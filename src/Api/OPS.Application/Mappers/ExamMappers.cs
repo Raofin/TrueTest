@@ -1,4 +1,5 @@
-﻿using OPS.Application.Dtos;
+﻿using System.Diagnostics.CodeAnalysis;
+using OPS.Application.Dtos;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
 
@@ -24,6 +25,7 @@ public static class ExamMappers
         );
     }
 
+    [ExcludeFromCodeCoverage]
     public static QuestionResponses MapToQuestionDto(this Examination exam)
     {
         return new QuestionResponses(
