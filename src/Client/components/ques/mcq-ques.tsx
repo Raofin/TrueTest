@@ -316,20 +316,13 @@ export default function App({
                                 />
                             </div>
 
-                            <Button
-                                color="primary"
-                                type="submit"
-                                isDisabled={saveButton}
-                                onPress={handleSubmit}
-                            >
-                                Save
-                            </Button>
                         </div>
                     </Card>
                 )}
 
-                <div className="w-full my-3 text-center">
+                <div className="w-full flex gap-3 my-3 text-center">
                     <Button onPress={addNewQuestion}>Add MCQ Question</Button>
+                    <Button color="primary" isDisabled={saveButton} onPress={handleSubmit}> Save All</Button>
                 </div>
             </div>
         </div>

@@ -241,10 +241,10 @@ export default function CodeEditor({
                                 {testCase?.input ?? "No input provided"}
                             </div>
                             <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.output ?? "No output provided"}
+                                {testCase?.receivedOutput ?? "No output provided"}
                             </div>
                             <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.receivedOutput ?? "No output provided"}
+                                {testCase?.output ?? "No output provided"}
                             </div>
                         </div>
                     ))}

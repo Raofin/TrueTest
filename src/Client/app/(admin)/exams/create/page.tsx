@@ -35,8 +35,8 @@ export default function ExamFormPage() {
     const [problemQuesPoint, setProblemQuesPoint] = useState<number>(0);
     const [writtenQuesPoint, setWrittenQuesPoint] = useState<number>(0);
     const [mcqQuesPoint, setMcqQuesPoint] = useState<number>(0);
-    const [totalPoints, setTotalPoints] = useState<number>();
-    console.log(problemQuesPoint,writtenQuesPoint,mcqQuesPoint)
+    const [totalPoints, setTotalPoints] = useState<number>(0);
+    const [lastUpdatedField, setLastUpdatedField] = useState<string | null>(null);
     const [activeComponents, setActiveComponents] = useState<
         { id: string; type: string }[]
     >([]);
@@ -65,7 +65,7 @@ export default function ExamFormPage() {
         mcq: [],
     });
     const [isLoading, setIsLoading] = useState(true);
-
+    const calculatedTotal = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
     const handleComponentSaved = (type: keyof typeof saveStatus) => {
         setSaveStatus((prev) => ({ ...prev, [type]: true }));
     };
@@ -74,25 +74,12 @@ export default function ExamFormPage() {
         setActiveComponents([
             ...activeComponents,
             { id: uuidv4(), type: componentType },
-        ]);
+        ])
     };
-    useEffect(() => {
-        const total = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
-        setFormData(prev => ({
-            ...prev,
-            totalPoints: total
-        }));
-    }, [problemQuesPoint, writtenQuesPoint, mcqQuesPoint]);
     const handleSaveExam = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!date) {
             toast.error("Please select a date");
-            return;
-        }
-        const calculatedTotal = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
-    
-        if (calculatedTotal !== formData.totalPoints) {
-            toast.error(`Total points (${formData.totalPoints}) must match sum of all questions (${calculatedTotal})`);
             return;
         }
         try {
@@ -131,15 +118,6 @@ export default function ExamFormPage() {
             if (isEdit && examId) {
                 resp = await api.patch(`/Exam/Update`, { examId, examData });
                 if (resp.status === 200) {
-                    if (
-                        resp.data.totalPoints !==
-                        resp.data.problemSolvingPoints +
-                            resp.data.writtenPoints +
-                            resp.data.mcqPoints
-                    ) {
-                        toast.error("Please make sure total points match the exam score.");
-                        return;
-                    }
                     toast.success(`Exam updated successfully.`);
                     route.push("/view-exams")
                 }
@@ -155,7 +133,7 @@ export default function ExamFormPage() {
             toast.error(error?.message);
         }
     };
-    useEffect(() => {
+useEffect(() => {
         const fetchExamDetails = async () => {
             try {
                 if (!isEdit) {
@@ -201,21 +179,22 @@ export default function ExamFormPage() {
                     writtenQues: writtenQuesResponse.data ?? [],
                     mcq: mcqQuesResponse.data ?? [],
                 });
-                setActiveComponents([
-                    problemQuesResponse.data ?? {
-                        id: uuidv4(),
-                        type: "problemSolve",
-                    },
-                    writtenQuesResponse.data ?? {
-                        id: uuidv4(),
-                        type: "writtenQues",
-                    },
-                    mcqQuesResponse.data ?? { id: uuidv4(), type: "mcq" },
-                ]);
+                const components: { id: string; type: string }[] = [];
+
+                if (problemQuesResponse.data?.length) {
+                    components.push({ id: uuidv4(), type: "problemSolve" });
+                }
+                if (writtenQuesResponse.data?.length) {
+                    components.push({ id: uuidv4(), type: "writtenQues" });
+                }
+                if (mcqQuesResponse.data?.length) {
+                    components.push({ id: uuidv4(), type: "mcq" });
+                }
+                setActiveComponents(components);
             } catch (error) {
                 console.error("Error fetching exam data:", error);
                 toast.error("Failed to load exam data");
-                route.push("/exams");
+                route.push("/view-exams");
             } finally {
                 setIsLoading(false);
             }
@@ -223,9 +202,32 @@ export default function ExamFormPage() {
 
         fetchExamDetails();
     }, [examId, isEdit, route, totalPoints]);
+ useEffect(()=>{
+    const debounceTimer = setTimeout(() => {
+         const calculatedTotal = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
+        if (calculatedTotal !== formData.totalPoints) {
+            const message = `Points updated: 
+            Problem Solving: ${problemQuesPoint}
+            Written: ${writtenQuesPoint}
+            MCQ: ${mcqQuesPoint}
+            Total Calculated: ${calculatedTotal}
+            Exam Total Points: ${formData.totalPoints}`;
 
+        toast(message, {
+            duration: 4000,
+            position: 'bottom-right',
+            style: {
+                whiteSpace: 'pre-line'
+            }
+        })}},1000); 
+    return () => clearTimeout(debounceTimer);
+ },[mcqQuesPoint, problemQuesPoint, writtenQuesPoint])
     const handlePublishExam = async () => {
         if (examId) {
+            if (lastUpdatedField) {
+                toast.error(`Please make sure total points (${formData.totalPoints}) match sum of all questions (${calculatedTotal})`);
+                setLastUpdatedField(null);
+            }
             try {
                 const response = await api.post(
                     `/Exam/Publish?examId=${examId}`
@@ -235,13 +237,37 @@ export default function ExamFormPage() {
                     resetForm();
                 }
             } catch {
-                toast.error("Failed to publish exam.Please make sure total points match the exam score.");
+                toast.error("Failed to publish exam.");
             }
         } else {
             toast.error("Please save the exam first.");
         }
     };
+    const handleProblemPointsChange = (points: number) => {
+        setProblemQuesPoint(points);
+        setLastUpdatedField('problemSolve');
+    };
 
+    const handleWrittenPointsChange = (points: number) => {
+        setWrittenQuesPoint(points);
+        setLastUpdatedField('writtenQues');
+    };
+
+    const handleMcqPointsChange = (points: number) => {
+        setMcqQuesPoint(points);
+        setLastUpdatedField('mcq');
+    };
+
+    const handleTotalPointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value);
+        if (!isNaN(value)) {
+            setFormData({
+                ...formData,
+                totalPoints: value,
+            });
+            setLastUpdatedField('totalPoints');
+        }
+    };
     const handleDeleteExam = async () => {
         if (examId) {
             const response = await api.delete(`/Exam/Delete/${examId}`);
@@ -382,15 +408,7 @@ export default function ExamFormPage() {
                         type="number"
                         min="1"
                         value={formData.totalPoints.toString()}
-                        onChange={(e) => {
-                            const value = parseInt(e.target.value);
-                            if (!isNaN(value)) {
-                                setFormData({
-                                    ...formData,
-                                    totalPoints: value,
-                                });
-                            }
-                        }}
+                        onChange={handleTotalPointsChange}
                     />
                     <div className="flex justify-end mt-2 gap-3">
                         <>
@@ -415,7 +433,7 @@ export default function ExamFormPage() {
                             examId={examId}
                             existingQuestions={questionData.problemSolve}
                             onSaved={() => handleComponentSaved("problemSolve")}
-                            problemPoints={setProblemQuesPoint}
+                            problemPoints={handleProblemPointsChange}
                         />
                     )}
                     {component.type === "writtenQues" && (
@@ -423,7 +441,7 @@ export default function ExamFormPage() {
                             examId={examId}
                             existingQuestions={questionData.writtenQues}
                             onSaved={() => handleComponentSaved("writtenQues")}
-                            writtenPoints={setWrittenQuesPoint}
+                            writtenPoints={handleWrittenPointsChange}
                         />
                     )}
                     {component.type === "mcq" && (
@@ -431,12 +449,11 @@ export default function ExamFormPage() {
                             examId={examId}
                             existingQuestions={questionData.mcq}
                             onSaved={() => handleComponentSaved("mcq")}
-                            mcqPoints={setMcqQuesPoint}
+                            mcqPoints={handleMcqPointsChange}
                         />
                     )}
                 </div>
             ))}
-
             {examId && (
                 <div className="flex gap-3 justify-center my-4">
                     {!activeComponents.some(

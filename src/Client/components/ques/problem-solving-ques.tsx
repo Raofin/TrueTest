@@ -381,15 +381,13 @@ export default function ProblemSolvingForm({
     const [saveButton,setSaveButton]=useState(false)
     return (
         <div>
-            <Card className="border-none shadow-none bg-white dark:bg-[#18181b]">
+              <Form className="w-full flex flex-col gap-4 p-5 border-none" onSubmit={handleSaveProblem}>
+            <Card className="w-full border-none shadow-none bg-white dark:bg-[#18181b]">
                 <h2 className="w-full flex justify-center text-2xl my-3">
                     Problem Solving Question : {currentProblemIndex + 1}
                 </h2>
-                <div className="flex justify-center p-4">
-                    <Form
-                        className="w-full flex flex-col gap-4 p-5 border-none"
-                        onSubmit={handleSaveProblem}
-                    >
+                <div className="w-full flex flex-col justify-center p-4">
+                  
                         {currentProblems.map((problem, index) => (
                             <ProblemItem
                                 key={index}
@@ -458,19 +456,23 @@ export default function ProblemSolvingForm({
                                     )
                                 }
                             />
-                            <Button type="submit" color="primary" isDisabled={saveButton} >
+                           {/* <Button type="submit" color="primary" isDisabled={saveButton} >
                                 Save
-                            </Button>
+                            </Button> */}
                         </div>
-                    </Form>
+                   
                 </div>
             </Card>
 
-            <div className="flex w-full justify-center mt-5">
+            <div className="flex gap-3 w-full justify-center mt-5">
                 <Button onPress={handleAddProblem}>
                     Add Problem Solving Question
                 </Button>
+                <Button type="submit" color="primary" isDisabled={saveButton} >
+                                Save All
+                            </Button>
             </div>
+             </Form>
         </div>
     );
 }
