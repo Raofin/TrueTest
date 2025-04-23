@@ -326,14 +326,9 @@ export default function Component({
                                     </Checkbox>
                                 </label>
                                 <div className="w-full flex justify-end gap-3 mt-4">
-                                    <Button
-                                        color="primary"
-                                        onPress={() =>
-                                            handleUpdateQuestion(question.id)
-                                        }
-                                    >
-                                        {question.questionId ? "Update" : ""}
-                                    </Button>
+                                {question.questionId && <Button color="primary" onPress={() =>
+                                            handleUpdateQuestion(question.id)}>Update
+                                    </Button>}
                                     <Button
                                         color="danger"
                                          onPress={() =>
