@@ -1,4 +1,4 @@
-name: SonarCloud - .NET Code Quality Analysis
+name: 🌥️ SonarQube Cloud
 
 on:
   push:
@@ -6,12 +6,12 @@ on:
       - main
       - develop
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [ opened, synchronize, reopened ]
   workflow_dispatch:
 
 jobs:
   sonarcloud-analysis:
-    name: Analyze .NET Codebase with SonarCloud
+    name: Analyze .NET Code Quality
     runs-on: ubuntu-latest
     environment: SonarCloud
 
