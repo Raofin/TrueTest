@@ -11,6 +11,7 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Features.Review.Queries;
 
+[ExcludeFromCodeCoverage]
 public record ExamResultResponse(
     ExamResponse Exam,
     AccountBasicInfoResponse Account,

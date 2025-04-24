@@ -5,6 +5,4 @@ using OPS.Persistence.Repositories.Common;
 namespace OPS.Persistence.Repositories.Users;
 
 internal class AccountRoleRepository(AppDbContext dbContext)
-    : Repository<AccountRole>(dbContext), IAccountRoleRepository
-{
-}
+    : Repository<AccountRole>(dbContext), IAccountRoleRepository;

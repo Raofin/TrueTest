@@ -4,7 +4,4 @@ using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Questions;
 
-internal class McqOptionRepository(AppDbContext dbContext) : Repository<McqOption>(dbContext), IMcqOptionRepository
-{
-    private readonly AppDbContext _dbContext = dbContext;
-}
+internal class McqOptionRepository(AppDbContext dbContext) : Repository<McqOption>(dbContext), IMcqOptionRepository;

@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using System.Diagnostics.CodeAnalysis;
+using ErrorOr;
 using MediatR;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
@@ -7,6 +8,7 @@ using OPS.Domain.Contracts.Core.Authentication;
 
 namespace OPS.Application.Features.User.Queries;
 
+[ExcludeFromCodeCoverage]
 public record GetUserDetailsQuery : IRequest<ErrorOr<AccountWithDetailsResponse>>;
 
 public class GetUserDetailsQueryHandler(

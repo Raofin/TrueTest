@@ -44,7 +44,7 @@ public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider u
         {
             var now = DateTime.UtcNow;
             candidate.StartedAt = now;
-            candidate.SubmittedAt = now > exam.ClosesAt ? exam.ClosesAt : now.AddMinutes(exam.DurationMinutes);
+            candidate.SubmittedAt = now.AddMinutes(exam.DurationMinutes);
 
             await _unitOfWork.CommitAsync(cancellationToken);
         }
