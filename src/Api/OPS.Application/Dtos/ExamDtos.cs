@@ -33,13 +33,6 @@ public record ExamQuesWithSubmissionResponse(
     QuestionsWithSubmissionResponse QuestionsWithSubmission
 );
 
-public record ExamResultsResponse(
-    decimal Score,
-    DateTime? StartedAt,
-    DateTime? SubmittedAt,
-    bool HasCheated
-);
-
 public record QuestionsWithSubmissionResponse(
     List<ProblemQuesWithSubmissionResponse?> Problem,
     List<WrittenQuesWithSubmissionResponse?> Written,

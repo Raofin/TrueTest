@@ -112,6 +112,32 @@ public class LoginQueryTests
     }
 
     [Fact]
+    public async Task Handle_WhenValidCredentials_ShouldCallAuthenticateUser()
+    {
+        // Arrange
+        var query = new LoginQuery("testuser", "password123");
+        var authResponse = new AuthenticationResponse("token", _existingAccount.MapToDtoWithDetails()!);
+
+        _unitOfWork.Account.GetWithDetails(query.UsernameOrEmail, Arg.Any<CancellationToken>())
+            .Returns(_existingAccount);
+
+        _passwordHasher.VerifyPassword(_existingAccount.PasswordHash, _existingAccount.Salt, query.Password)
+            .Returns(true);
+
+        _authService.AuthenticateUser(_existingAccount)
+            .Returns(authResponse);
+
+        // Act
+        var result = await _sut.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.IsError.Should().BeFalse();
+        result.Value.Should().BeEquivalentTo(authResponse);
+
+        _authService.Received(1).AuthenticateUser(_existingAccount);
+    }
+
+    [Fact]
     public void Validate_WhenValidQuery_ShouldNotHaveValidationErrors()
     {
         // Arrange

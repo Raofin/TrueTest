@@ -1,4 +1,5 @@
-﻿using OPS.Domain.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using OPS.Domain.Enums;
 
 namespace OPS.Application.Dtos;
 
@@ -21,6 +22,7 @@ public record ProblemSubmissionTcResponse(
     List<TestCaseInputOutputResponse> TestCaseOutputs
 );
 
+[ExcludeFromCodeCoverage]
 public record TestCaseInputOutputResponse(
     Guid TestCaseId,
     bool IsAccepted,
@@ -68,6 +70,7 @@ public record McqSubmissionResponse(
     decimal? Score
 );
 
+[ExcludeFromCodeCoverage]
 public record McqSubmitResponse(
     Guid QuestionId,
     Guid McqSubmissionId,
@@ -88,6 +91,7 @@ public record WrittenSubmissionResponse(
     decimal? Score
 );
 
+[ExcludeFromCodeCoverage]
 public record WrittenSubmitResponse(
     Guid QuestionId,
     Guid WrittenSubmissionId,

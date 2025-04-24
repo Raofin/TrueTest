@@ -4,7 +4,7 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Mappers;
 
-public static class QuestionExtensions
+public static class QuestionMappers
 {
     public static ProblemQuestionResponse MapToProblemQuestionDto(this Question question)
     {

@@ -1,9 +1,11 @@
-﻿using ErrorOr;
+﻿using System.Diagnostics.CodeAnalysis;
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 
 namespace OPS.Application.CrossCutting.Behaviors;
 
+[ExcludeFromCodeCoverage]
 public class ValidationBehavior<TRequest, TResponse>(IValidator<TRequest>? validator = null)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>

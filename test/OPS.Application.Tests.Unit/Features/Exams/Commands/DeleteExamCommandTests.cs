@@ -1,5 +1,6 @@
 using ErrorOr;
 using FluentAssertions;
+using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Exams.Commands;
 using OPS.Domain;
@@ -11,39 +12,33 @@ public class DeleteExamCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly DeleteExamCommandHandler _sut;
-    private readonly Examination _unpublishedExam;
-    private readonly Examination _publishedExam;
-    private readonly Guid _validExamId = Guid.NewGuid();
-    private readonly Guid _nonExistentExamId = Guid.NewGuid();
+    private readonly DeleteExamCommandValidator _validator = new();
+    private readonly Examination _existingExam;
 
     public DeleteExamCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
         _sut = new DeleteExamCommandHandler(_unitOfWork);
 
-        _unpublishedExam = new Examination
+        _existingExam = new Examination
         {
-            Id = _validExamId,
+            Id = Guid.NewGuid(),
+            Title = "Test Exam",
             IsPublished = false
-        };
-
-        _publishedExam = new Examination
-        {
-            Id = _validExamId,
-            IsPublished = true
         };
     }
 
     [Fact]
-    public async Task Handle_WhenExamExistsAndUnpublished_ShouldDeleteExamAndReturnSuccess()
+    public async Task Handle_WhenValidRequest_ShouldDeleteExam()
     {
         // Arrange
-        _unitOfWork.Exam.GetAsync(_validExamId, Arg.Any<CancellationToken>())
-            .Returns(_unpublishedExam);
+        var command = new DeleteExamCommand(_existingExam.Id);
+
+        _unitOfWork.Exam.GetAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns(_existingExam);
+
         _unitOfWork.CommitAsync(Arg.Any<CancellationToken>())
             .Returns(1);
-
-        var command = new DeleteExamCommand(_validExamId);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -51,18 +46,19 @@ public class DeleteExamCommandTests
         // Assert
         result.IsError.Should().BeFalse();
         result.Value.Should().Be(Result.Success);
-        _unitOfWork.Exam.Received(1).Remove(_unpublishedExam);
+
+        _unitOfWork.Exam.Received(1).Remove(_existingExam);
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WhenExamDoesNotExist_ShouldReturnNotFoundError()
+    public async Task Handle_WhenExamNotFound_ShouldReturnNotFoundError()
     {
         // Arrange
-        _unitOfWork.Exam.GetAsync(_nonExistentExamId, Arg.Any<CancellationToken>())
-            .Returns((Examination?)null);
+        var command = new DeleteExamCommand(Guid.NewGuid());
 
-        var command = new DeleteExamCommand(_nonExistentExamId);
+        _unitOfWork.Exam.GetAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns((Examination?)null);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -70,6 +66,7 @@ public class DeleteExamCommandTests
         // Assert
         result.IsError.Should().BeTrue();
         result.FirstError.Type.Should().Be(ErrorType.NotFound);
+
         _unitOfWork.Exam.DidNotReceive().Remove(Arg.Any<Examination>());
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
     }
@@ -78,10 +75,17 @@ public class DeleteExamCommandTests
     public async Task Handle_WhenExamIsPublished_ShouldReturnValidationError()
     {
         // Arrange
-        _unitOfWork.Exam.GetAsync(_validExamId, Arg.Any<CancellationToken>())
-            .Returns(_publishedExam);
+        var publishedExam = new Examination
+        {
+            Id = Guid.NewGuid(),
+            Title = "Published Exam",
+            IsPublished = true
+        };
 
-        var command = new DeleteExamCommand(_validExamId);
+        var command = new DeleteExamCommand(publishedExam.Id);
+
+        _unitOfWork.Exam.GetAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns(publishedExam);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -89,6 +93,7 @@ public class DeleteExamCommandTests
         // Assert
         result.IsError.Should().BeTrue();
         result.FirstError.Type.Should().Be(ErrorType.Validation);
+
         _unitOfWork.Exam.DidNotReceive().Remove(Arg.Any<Examination>());
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
     }
@@ -97,12 +102,13 @@ public class DeleteExamCommandTests
     public async Task Handle_WhenCommitFails_ShouldReturnUnexpectedError()
     {
         // Arrange
-        _unitOfWork.Exam.GetAsync(_validExamId, Arg.Any<CancellationToken>())
-            .Returns(_unpublishedExam);
+        var command = new DeleteExamCommand(_existingExam.Id);
+
+        _unitOfWork.Exam.GetAsync(command.ExamId, Arg.Any<CancellationToken>())
+            .Returns(_existingExam);
+
         _unitOfWork.CommitAsync(Arg.Any<CancellationToken>())
             .Returns(0);
-
-        var command = new DeleteExamCommand(_validExamId);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -110,7 +116,29 @@ public class DeleteExamCommandTests
         // Assert
         result.IsError.Should().BeTrue();
         result.FirstError.Type.Should().Be(ErrorType.Unexpected);
-        _unitOfWork.Exam.Received(1).Remove(_unpublishedExam);
+
+        _unitOfWork.Exam.Received(1).Remove(_existingExam);
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public void Validate_WhenValidCommand_ShouldNotHaveValidationErrors()
+    {
+        // Arrange
+        var command = new DeleteExamCommand(Guid.NewGuid());
+
+        // Act & Assert
+        _validator.TestValidate(command).ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void Validate_WhenExamIdIsEmpty_ShouldHaveValidationError()
+    {
+        // Arrange
+        var command = new DeleteExamCommand(Guid.Empty);
+
+        // Act & Assert
+        _validator.TestValidate(command)
+            .ShouldHaveValidationErrorFor(x => x.ExamId);
     }
 }

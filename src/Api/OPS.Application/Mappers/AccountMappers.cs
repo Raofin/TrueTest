@@ -4,7 +4,7 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Mappers;
 
-public static class AccountExtensions
+public static class AccountMappers
 {
     public static AccountResponse MapToDto(this Account account)
     {
