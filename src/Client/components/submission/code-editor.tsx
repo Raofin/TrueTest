@@ -121,11 +121,11 @@ export default function CodeEditor({
                         console.log(saveData);
                         const updatedWithSave = updatedTestCasesAfterRun.map((testCase) => {
                             const result = saveData.find(
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 (r: any) => r.testCaseId === testCase.testCaseId
                             );
                             let status = testCase.status;
                             let output = testCase.output;
-    
                             if (result?.isAccepted) status = "success";
                             else if (result?.isAccepted === false) status = "error";
                             if (result?.output) output = result.output;     

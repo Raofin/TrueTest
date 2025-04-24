@@ -96,12 +96,11 @@ interface CandidateSubmission {
 }
 
 export default function Component() {
-  const [examData, setExamData] = useState<ExamData|null>(null)
+  const [examData, setExamData] = useState<ExamData>()
   const [candidateList, setCandidateList] = useState<CandidateData[]>([])
   const [selectedCandidateSubmission, setSelectedCandidateSubmission] = useState<CandidateSubmission | null>(null)
   const searchParams = useSearchParams()
   const examId = searchParams.get('examId')
-  const examTitle = searchParams.get('examTitle')
   const [selectedCandidateId, setSelectedCandidateId] = useState<string>('')
   const [flaggedQuestions, setFlaggedQuestions] = useState<{
     [accountId: string]: { [questionId: string]: boolean }
@@ -131,11 +130,11 @@ export default function Component() {
       try {
         if (!selectedCandidateId || !examId) return;
         console.log(`Fetching submission for: ${examId}/${selectedCandidateId}`);
-        const response = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`);
-        console.log('Submission API Response:', response.data);
-        if (response.status === 200) {
-          if (response.data) {
-            setSelectedCandidateSubmission(response.data.submission);
+        const result = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`);
+        console.log('Submission API Response:', result.data);
+        if (result.status === 200) {
+          if (result.data) {
+            setSelectedCandidateSubmission(result.data.submission);
           } else {
             console.warn('missing submission data');
             setSelectedCandidateSubmission({
@@ -193,7 +192,7 @@ export default function Component() {
       <h2 className="text-2xl font-bold text-center my-5">Review Results</h2>
       <div className="w-full px-12 border-none flex flex-col gap-4">
         <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none">
-          <h1 className="text-xl font-semibold w-full text-center">Exam: {examTitle || examData?.title}</h1>
+          <h1 className="text-xl font-semibold w-full text-center">Exam: {examData?.title}</h1>
 
           <div className="flex flex-col gap-3">
             <div className="flex w-full items-center justify-between">
@@ -216,32 +215,28 @@ export default function Component() {
                 <Button
                   size="sm"
                   isDisabled={candidateList.findIndex((candidate) => candidate.account.accountId === selectedCandidateId) <= 0}
-                  onPress={handlePrevCandidate}
-                >
+                  onPress={handlePrevCandidate}>
                   Previous
                 </Button>
                 <Button
                   size="sm"
                   isDisabled={
                     candidateList.findIndex((candidate) => candidate.account.accountId === selectedCandidateId) >=
-                    candidateList.length - 1
-                  }
-                  onPress={handleNextCandidate}
-                >
+                    candidateList.length - 1}
+                  onPress={handleNextCandidate}>
                   Next
                 </Button>
               </div>
             </div>
-
             {selectedCandidate && (
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-default-500">Score: </span>
-                  {selectedCandidate.result.totalScore}/{examData?.totalPoints || 0}
+                  {/* {selectedCandidate.result.totalScore}/{examData?.totalPoints || 0} */}
                 </div>
                 <div>
                   <span className="text-default-500">Submitted At: </span>
-                  {new Date(selectedCandidate.result.submittedAt).toLocaleString()}
+                  {/* {new Date(selectedCandidate.result.submittedAt).toLocaleString()} */}
                 </div>
               </div>
             )}

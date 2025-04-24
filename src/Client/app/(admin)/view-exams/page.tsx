@@ -81,7 +81,7 @@ export default function ViewExam() {
     router.push(`/exams/create?id=${exam.examId}&isEdit=true`)
   }
 const handleReview=(exam:Exam)=>{
-   router.push(`/exams/review-results?examId=${exam.examId}?examTitle=${exam.title}`)
+   router.push(`/exams/review-results?examId=${exam.examId}`)
 }
 
   return (
