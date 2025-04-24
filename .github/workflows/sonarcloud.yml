@@ -1,0 +1,75 @@
+name: SonarCloud - .NET Code Quality Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  sonarcloud-analysis:
+    name: Analyze .NET Codebase with SonarCloud
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🧰 Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: ☕ Setup Java (required for SonarCloud)
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
+      - name: 📥 Install SonarScanner CLI for .NET
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: 📦 Restore project dependencies
+        run: dotnet restore
+
+      - name: 🚀 Start SonarCloud analysis
+        env:
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
+            /o:"${{ secrets.SONAR_ORGANIZATION }}" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
+            /d:sonar.language="cs" \
+            /d:sonar.sourceEncoding="UTF-8" \
+            /d:sonar.qualitygate.wait=true \
+            /d:sonar.scanner.scanAll=false \
+            /d:sonar.scm.provider="git" \
+            /d:sonar.alm.github.api.url="https://api.github.com" \
+            /d:sonar.inclusions="${{ vars.SONAR_INCLUSIONS }}" \
+            /d:sonar.exclusions="${{ vars.SONAR_EXCLUSIONS }}" \
+            /d:sonar.test.inclusions="${{ vars.SONAR_TEST_INCLUSIONS }}" \
+            /d:sonar.coverage.exclusions="${{ vars.SONAR_COVERAGE_EXCLUSIONS }}" \
+            /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
+
+      - name: 🛠️ Build solution
+        run: dotnet build --no-restore --configuration Release
+
+      - name: ✅ Run tests and collect coverage
+        run: |
+          dotnet tool install --global dotnet-coverage
+          dotnet-coverage collect "dotnet test --no-build --configuration Release" -f xml -o "coverage.xml"
+
+      - name: 🧾 End SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
