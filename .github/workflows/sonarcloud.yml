@@ -13,6 +13,7 @@ jobs:
   sonarcloud-analysis:
     name: Analyze .NET Codebase with SonarCloud
     runs-on: ubuntu-latest
+    environment: SonarCloud
 
     steps:
       - name: 🔄 Checkout code
