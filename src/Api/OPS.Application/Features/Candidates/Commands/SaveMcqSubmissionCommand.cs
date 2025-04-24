@@ -33,20 +33,23 @@ public class SaveMcqSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserInfoP
             var submission = await _unitOfWork.McqSubmission
                 .GetByAccountIdAsync(req.QuestionId, userAccountId, cancellationToken);
 
+            var question = await _unitOfWork.Question.GetWithMcqOption(req.QuestionId, cancellationToken);
+
+            var score = question!.McqOption!.AnswerOptions == req.CandidateAnswerOptions
+                ? question.Points
+                : 0;
+
             if (submission is not null)
             {
                 submission.AnswerOptions = req.CandidateAnswerOptions;
+                submission.Score = score;
             }
             else
             {
-                var question = await _unitOfWork.Question
-                    .GetWithMcqOption(req.QuestionId, cancellationToken);
-
-                if (question is null) return Error.Unexpected(description: $"Invalid question: {req.QuestionId}");
-
                 submission = new McqSubmission
                 {
                     AnswerOptions = req.CandidateAnswerOptions,
+                    Score = score,
                     AccountId = userAccountId,
                     McqOptionId = question.McqOption!.Id,
                     QuestionId = req.QuestionId

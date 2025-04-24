@@ -26,7 +26,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [HttpGet("Exams")]
     [HasPermission(AccessOwnExams)]
     [EndpointDescription("Retrieves all exams of the authenticated user.")]
-    [ProducesResponseType<List<ExamResponse>>(Status200OK)]
+    [ProducesResponseType<List<ExamWithResultResponse>>(Status200OK)]
     public async Task<IActionResult> GetExamsAsync(CancellationToken cancellationToken)
     {
         var query = new GetAllExamsByCandidateQuery();
@@ -101,6 +101,23 @@ public class CandidateController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
+    // submit an exam
+    /// <summary>Submits the exam for the authenticated user.</summary>
+    /// <param name="examId">Exam Id.</param>
+    /// <param name="cancellationToken">Request cancellation token.</param>
+    /// <returns>Exam submission result.</returns>
+    [HttpPatch("Submit/Exam/{examId:guid}")]
+    [HasPermission(SubmitAnswers)]
+    [EndpointDescription("Submits the exam for the authenticated user.")]
+    [ProducesResponseType(Status200OK)]
+    [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    public async Task<IActionResult> SubmitExamAsync(Guid examId, CancellationToken cancellationToken)
+    {
+        var command = new SubmitExamCommand(examId);
+        var response = await _mediator.Send(command, cancellationToken);
+        return ToResult(response);
+    }
+
     /// <summary>Execute and test codes for a problem-solving question.</summary>
     /// <param name="command">Code with the Question Id to test</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
@@ -110,7 +127,8 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [EndpointDescription("Executes a code.")]
     [ProducesResponseType<CodeRunResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    public async Task<IActionResult> RunAnyCodeAsync(CodeRunCommand command, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> RunAnyCodeAsync(CodeRunCommand command,
+        CancellationToken cancellationToken = default)
     {
         var response = await _mediator.Send(command, cancellationToken);
         return Ok(response);

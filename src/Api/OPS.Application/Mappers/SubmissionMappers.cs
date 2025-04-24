@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using OPS.Application.Dtos;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
@@ -5,7 +6,7 @@ using OPS.Domain.Enums;
 
 namespace OPS.Application.Mappers;
 
-public static class SubmissionExtensions
+public static class SubmissionMappers
 {
     public static ProblemQuesWithSubmissionResponse? ToProblemWithSubmissionDto(this Question question)
     {
@@ -39,6 +40,7 @@ public static class SubmissionExtensions
         );
     }
 
+    [ExcludeFromCodeCoverage]
     private static List<TestCaseInputOutputResponse> MapTestCaseOutputs(
         IEnumerable<TestCaseOutput> outputs, List<TestCase> testCases)
     {
@@ -74,6 +76,7 @@ public static class SubmissionExtensions
         );
     }
 
+    [ExcludeFromCodeCoverage]
     public static WrittenQuesWithSubmissionResponse? ToWrittenWithSubmissionDto(this Question question)
     {
         if (question.QuestionTypeId != (int)QuestionType.Written)

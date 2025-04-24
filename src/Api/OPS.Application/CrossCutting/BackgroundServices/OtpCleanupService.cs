@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OPS.Domain;
 
 namespace OPS.Application.CrossCutting.BackgroundServices;
 
+[ExcludeFromCodeCoverage]
 internal class OtpCleanupService(IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;

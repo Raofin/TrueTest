@@ -1,10 +1,11 @@
-﻿using OPS.Application.Dtos;
+﻿using System.Diagnostics.CodeAnalysis;
+using OPS.Application.Dtos;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
 
 namespace OPS.Application.Mappers;
 
-public static class ExamExtensions
+public static class ExamMappers
 {
     public static ExamResponse MapToDto(this Examination exam)
     {
@@ -24,6 +25,7 @@ public static class ExamExtensions
         );
     }
 
+    [ExcludeFromCodeCoverage]
     public static QuestionResponses MapToQuestionDto(this Examination exam)
     {
         return new QuestionResponses(

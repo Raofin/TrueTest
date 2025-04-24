@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="OPS.Application.Tests.Unit" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OPS.Persistence\OPS.Persistence.csproj" />
   </ItemGroup>
 

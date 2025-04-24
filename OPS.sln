@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DE8D69CC-D51E-44AB-B618-D7B5F6885206}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01}"
+	ProjectSection(SolutionItems) = preProject
+		src\Api\Directory.Packages.props = src\Api\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Api", "src\Api\OPS.Api\OPS.Api.csproj", "{D192DD34-4D01-4187-B461-353EB077E91A}"
 EndProject
@@ -18,6 +21,28 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Application", "src\Api\OPS.Application\OPS.Application.csproj", "{12DA9794-C72C-4FAC-80E7-799B8FE5B566}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Client", "src\Client\Client.esproj", "{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{4BB88E8D-2971-42F3-BB83-FB36C54A4E7B}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Packages.props = test\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OPS.Application.Tests.Unit", "test\OPS.Application.Tests.Unit\OPS.Application.Tests.Unit.csproj", "{C4DF5E59-2EA2-4337-B536-1FE79749AA5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.sonarcloud.properties = .sonarcloud.properties
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{24D40A46-8736-4998-87A2-6076023C469C}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,17 +76,27 @@ Global
 		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C4DF5E59-2EA2-4337-B536-1FE79749AA5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4DF5E59-2EA2-4337-B536-1FE79749AA5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4DF5E59-2EA2-4337-B536-1FE79749AA5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4DF5E59-2EA2-4337-B536-1FE79749AA5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
 		{D192DD34-4D01-4187-B461-353EB077E91A} = {44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01}
 		{366C6D55-55D1-460C-8E27-7ED6162DD9DF} = {44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01}
 		{4705BF7F-B14B-44C6-8F0C-B8F47F8D4C24} = {44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01}
 		{2FFC0590-8E45-4580-99E7-39052907F711} = {44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01}
 		{12DA9794-C72C-4FAC-80E7-799B8FE5B566} = {44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01}
 		{97F0E8B0-23EB-4290-8446-E88DC8FBF5F1} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
-		{44E66A5E-CC0A-4C38-97E0-2A76F7CD9E01} = {DE8D69CC-D51E-44AB-B618-D7B5F6885206}
+		{C4DF5E59-2EA2-4337-B536-1FE79749AA5D} = {4BB88E8D-2971-42F3-BB83-FB36C54A4E7B}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{24D40A46-8736-4998-87A2-6076023C469C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2AD71239-8D5D-40C3-9842-9B3994876569}
 	EndGlobalSection
 EndGlobal

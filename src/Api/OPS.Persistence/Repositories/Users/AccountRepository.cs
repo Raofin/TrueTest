@@ -36,6 +36,14 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<List<Account>> GetByEmailsAsync(List<string> emails, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Accounts
+            .AsNoTracking()
+            .Where(a => emails.Contains(a.Email))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<Account>> GetByEmailsWithRoleAsync(List<string> emails, CancellationToken cancellationToken)
     {
         return await _dbContext.Accounts
