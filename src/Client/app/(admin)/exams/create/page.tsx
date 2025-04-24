@@ -220,6 +220,7 @@ useEffect(() => {
             }
         })}},1000); 
     return () => clearTimeout(debounceTimer);
+ // eslint-disable-next-line react-hooks/exhaustive-deps
  },[mcqQuesPoint, problemQuesPoint, writtenQuesPoint])
     const handlePublishExam = async () => {
         if (examId) {

@@ -67,7 +67,7 @@ export default function Component() {
         const fetchExams = async () => {
             try {
                 setIsLoading(true);
-                const response = await api.get("/Exam/Publish");
+                const response = await api.get("/Exam");
                 if (response.status === 200) {
                     setExams(response.data);
                     console.log(exams);
