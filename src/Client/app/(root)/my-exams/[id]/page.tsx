@@ -68,9 +68,6 @@ interface QuestionData {
         mcq: [];
     };
 }
-interface CodeAnswers {
-    [questionId: string]: string;
-}
 
 interface TestCaseResults {
     [questionId: string]: TestCase[];
