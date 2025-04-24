@@ -89,30 +89,30 @@ export default function App({
               ]
     );
     const handleDeleteQuestion = async (index: number) => {
-        if(index===1){
-            setQuestions([
-                {
-                    questionId: "",
-                    question: "",
-                    options: [
-                        { id: 1, text: "" },
-                        { id: 2, text: "" },
-                        { id: 3, text: "" },
-                        { id: 4, text: "" },
-                    ],
-                    correctOptions: [],
-                    points: 0,
-                    difficultyType: "Easy",
-                },
-            ])
-        }
         const questionToDelete = questions[index];
         try {
             if (questionToDelete.questionId) 
                 await api.delete(`/Questions/Mcq/Delete/${questionToDelete.questionId}`);
+            if(questions.length===1){
+                setQuestions([
+                    {
+                        questionId: "",
+                        question: "",
+                        options: [
+                            { id: 1, text: "" },
+                            { id: 2, text: "" },
+                            { id: 3, text: "" },
+                            { id: 4, text: "" },
+                        ],
+                        correctOptions: [],
+                        points: 0,
+                        difficultyType: "Easy",
+                    },
+                ])
+            }
             setQuestions((prev) => prev.filter((_, i) => i !== index));
             if (currentPage >= questions.length - 1) {
-                setCurrentPage(Math.max(1, currentPage - 1));
+                setCurrentPage(Math.max(0, currentPage - 1));
             }
             toast.success("Question deleted successfully");
         } catch (error) {

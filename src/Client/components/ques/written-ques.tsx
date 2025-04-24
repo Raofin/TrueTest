@@ -99,10 +99,8 @@ export default function Component({
             if (backendId) {
                 await api.delete(`/Questions/Written/Delete/${backendId}`);
             }
-            setWrittenQuestions((prev) =>
-                prev.filter((q) => q.id !== questionId)
-            );
-            if (writtenQuestions.length === 0) {
+           
+            if (writtenQuestions.length === 1) {
                 setWrittenQuestions([
                     {
                         id: uuidv4(),
@@ -114,6 +112,9 @@ export default function Component({
                         isLongAnswer: false,
                     },
                 ]);}
+                setWrittenQuestions((prev) =>
+                    prev.filter((q) => q.id !== questionId)
+                );
             if (currentPage >= Math.ceil((writtenQuestions.length - 1) / questionsPerPage)) {
                 setCurrentPage(Math.max(0, currentPage - 1));
             }

@@ -224,9 +224,7 @@ useEffect(() => {
     const handlePublishExam = async () => {
         if (examId) {
             try {
-                const response = await api.post(
-                    `/Exam/Publish?examId=${examId}`
-                );
+                const response = await api.post(`/Exam/Publish?examId=${examId}`);
                 if (response.status === 200) {
                     toast.success("Exam published successfully.");
                     route.push('/view-exams')

@@ -208,30 +208,25 @@ export default function ProblemSolvingForm({
                   },
               ]
     );
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
     const handleDeleteProblem = async (problemIndex: number) => {
-        if(problemIndex===1){
-           setProblems([{
-            question: "",
-            testCases: [{ input: "", output: "" }],
-            points: 0,
-            difficultyType: "",
-        }])
-        }
-        const problemToDelete = problems[problemIndex];
+       const problemToDelete = problems[problemIndex];
         try {
             if (problemToDelete.questionId) {
-                await api.delete(
-                    `/Questions/Problem/Delete/${problemToDelete.questionId}`
-                );
+                await api.delete(`/Questions/Problem/Delete/${problemToDelete.questionId}`);
+            }
+            if(problems.length==1){
+                setProblems([{
+                    question: "",
+                    testCases: [{ input: "", output: "" }],
+                    points: 0,
+                    difficultyType: "",
+                }])
             }
             setProblems((prev) => prev.filter((_, i) => i !== problemIndex));
-            if (
-                currentPage >=
-                Math.ceil((problems.length - 1) / problemsPerPage)
-            ) {
-                setCurrentPage(Math.max(1, currentPage - 1));
+            if (currentPage >=Math.ceil((problems.length - 1) / problemsPerPage)) {
+                setCurrentPage(Math.max(0, currentPage - 1));
             }
             toast.success("Problem deleted successfully");
         } catch (error) {
