@@ -102,10 +102,19 @@ export default function Component({
             setWrittenQuestions((prev) =>
                 prev.filter((q) => q.id !== questionId)
             );
-            if (
-                currentPage >=
-                Math.ceil((writtenQuestions.length - 1) / questionsPerPage)
-            ) {
+            if (writtenQuestions.length === 0) {
+                setWrittenQuestions([
+                    {
+                        id: uuidv4(),
+                        questionId: "",
+                        question: "",
+                        points: 0,
+                        difficultyType: "Easy",
+                        isShortAnswer: false,
+                        isLongAnswer: false,
+                    },
+                ]);}
+            if (currentPage >= Math.ceil((writtenQuestions.length - 1) / questionsPerPage)) {
                 setCurrentPage(Math.max(0, currentPage - 1));
             }
 
@@ -278,8 +287,9 @@ export default function Component({
                                         e.target.value
                                     )
                                 }/>
-                            <div className="flex items-center gap-4 mt-5">
-                                <Input
+                            <div className="w-full flex justify-between gap-4 mt-5">
+                                 <div className="flex  gap-3">
+                                 <Input
                                     className="w-32"
                                     type="number"
                                     label="Points"
@@ -307,7 +317,6 @@ export default function Component({
                                         Short Answer
                                     </Checkbox>
                                 </label>
-
                                 <label>
                                     <Checkbox
                                         isSelected={question.isLongAnswer}
@@ -325,7 +334,8 @@ export default function Component({
                                         Long Answer
                                     </Checkbox>
                                 </label>
-                                <div className="w-full flex justify-end gap-3 mt-4">
+                                 </div>
+                                <div className="flex  gap-3">
                                 {question.questionId && <Button color="primary" onPress={() =>
                                             handleUpdateQuestion(question.id)}>Update
                                     </Button>}
@@ -343,8 +353,7 @@ export default function Component({
                         </div>
                     </div>
                 ))}
-                <div className="flex w-full justify-between items-center my-3 p-5">
-                    <div></div>
+                <div className="flex w-full justify-center items-center my-3 p-5">
                     <div className="flex items-center gap-2 ml-12">
                         <span>
                             Page {currentPage + 1} of {totalPages}

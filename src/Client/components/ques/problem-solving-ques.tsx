@@ -35,8 +35,8 @@ interface ProblemItemProps {
     onPointsChange: (value: number) => void;
     onAddTestCase: () => void;
     onDifficultyChange: (value: string) => void;
-    onDeleteProblem: () => void; 
-    onUpdateProblem: () => void; 
+    onDeleteProblem: () => void;
+    onUpdateProblem: () => void;
 }
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
@@ -163,8 +163,6 @@ const FormFooter: React.FC<FormFooterProps> = ({
     onPrevious,
     onNext,
 }) => (
-    <div className="flex w-full justify-between items-center mt-4">
-        <div className="w-32" />
         <div className="flex gap-2 items-center">
             <span>
                 Page {currentPage + 1} of {totalPages}
@@ -176,8 +174,6 @@ const FormFooter: React.FC<FormFooterProps> = ({
                 onNext={onNext}
             />
         </div>
-        <div />
-    </div>
 );
 
 interface ProblemSolvingFormProps {
@@ -212,9 +208,17 @@ export default function ProblemSolvingForm({
                   },
               ]
     );
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const problemsPerPage = 1;
     const handleDeleteProblem = async (problemIndex: number) => {
+        if(problemIndex===1){
+           setProblems([{
+            question: "",
+            testCases: [{ input: "", output: "" }],
+            points: 0,
+            difficultyType: "",
+        }])
+        }
         const problemToDelete = problems[problemIndex];
         try {
             if (problemToDelete.questionId) {
@@ -227,7 +231,7 @@ export default function ProblemSolvingForm({
                 currentPage >=
                 Math.ceil((problems.length - 1) / problemsPerPage)
             ) {
-                setCurrentPage(Math.max(0, currentPage - 1));
+                setCurrentPage(Math.max(1, currentPage - 1));
             }
             toast.success("Problem deleted successfully");
         } catch (error) {
@@ -484,103 +488,120 @@ export default function ProblemSolvingForm({
                 className="w-full flex flex-col gap-4 p-5 border-none"
                 onSubmit={handleSaveProblem}
             >
-              <Card className="w-full border-none shadow-none bg-white dark:bg-[#18181b]">
-    <h2 className="w-full flex justify-center text-2xl my-3">
-        Problem Solving Question : {currentProblemIndex + 1}
-    </h2>
-    <div className="w-full flex flex-col justify-center p-4">
-        {currentProblems.map((problem, index) => (
-            <div key={index}> 
-                <ProblemItem
-                    problem={{ ...problem, points: problem.points }}
-                    onDeleteTestCase={(testCaseIndex) =>
-                        handleDeleteTestCase(
-                            currentProblemIndex + index,
-                            testCaseIndex
-                        )
-                    }
-                    onRefreshTestCase={(testCaseIndex) =>
-                        handleRefreshTestCase(
-                            currentProblemIndex + index,
-                            testCaseIndex
-                        )
-                    }
-                    onTestCaseChange={(
-                        testCaseIndex,
-                        field,
-                        value
-                    ) =>
-                        handleTestCaseChange(
-                            currentProblemIndex + index,
-                            testCaseIndex,
-                            field,
-                            value
-                        )
-                    }
-                    onQuestionChange={(value) =>
-                        handleQuestionChange(
-                            currentProblemIndex + index,
-                            value
-                        )
-                    }
-                    onPointsChange={(value) =>
-                        handlePointsChange(
-                            currentProblemIndex + index,
-                            value
-                        )
-                    }
-                    onDifficultyChange={(value) =>
-                        handleDifficultyChange(
-                            currentProblemIndex + index,
-                            value
-                        )
-                    }
-                    onAddTestCase={() =>
-                        addTestCase(currentProblemIndex + index)
-                    }
-                    onDeleteProblem={() =>
-                        handleDeleteProblem(
-                            currentProblemIndex + index
-                        )
-                    }
-                    onUpdateProblem={() =>
-                        handleUpdateProblem(
-                            currentProblemIndex + index
-                        )
-                    }
-                />
-                <div className="flex w-full mt-5">
-                    <FormFooter
-                        totalPages={totalPages}
-                        currentPage={currentPage}
-                        onPrevious={() =>
-                            setCurrentPage(Math.max(0, currentPage - 1))
-                        }
-                        onNext={() =>
-                            setCurrentPage(
-                                Math.min(
-                                    totalPages - 1,
-                                    currentPage + 1
-                                )
-                            )
-                        }
-                    />
-                    <div className="w-full flex justify-end gap-3 mt-4">
-                    {problem.questionId && <Button color="primary"
-                         onPress={() => handleUpdateProblem(currentProblemIndex + index)}>
-                           Update
-                        </Button>}
-                        <Button
-                            color="danger"
-                            onPress={() => handleDeleteProblem(currentProblemIndex + index)}>
-                            Delete
-                        </Button>
+                <Card className="w-full border-none shadow-none bg-white dark:bg-[#18181b]">
+                    <h2 className="w-full flex justify-center text-2xl my-3">
+                        Problem Solving Question : {currentProblemIndex + 1}
+                    </h2>
+                    <div className="w-full flex flex-col justify-center p-4">
+                        {currentProblems.map((problem, index) => (
+                            <div key={index}>
+                                <ProblemItem
+                                    problem={{
+                                        ...problem,
+                                        points: problem.points,
+                                    }}
+                                    onDeleteTestCase={(testCaseIndex) =>
+                                        handleDeleteTestCase(
+                                            currentProblemIndex + index,
+                                            testCaseIndex
+                                        )
+                                    }
+                                    onRefreshTestCase={(testCaseIndex) =>
+                                        handleRefreshTestCase(
+                                            currentProblemIndex + index,
+                                            testCaseIndex
+                                        )
+                                    }
+                                    onTestCaseChange={(
+                                        testCaseIndex,
+                                        field,
+                                        value
+                                    ) =>
+                                        handleTestCaseChange(
+                                            currentProblemIndex + index,
+                                            testCaseIndex,
+                                            field,
+                                            value
+                                        )
+                                    }
+                                    onQuestionChange={(value) =>
+                                        handleQuestionChange(
+                                            currentProblemIndex + index,
+                                            value
+                                        )
+                                    }
+                                    onPointsChange={(value) =>
+                                        handlePointsChange(
+                                            currentProblemIndex + index,
+                                            value
+                                        )
+                                    }
+                                    onDifficultyChange={(value) =>
+                                        handleDifficultyChange(
+                                            currentProblemIndex + index,
+                                            value
+                                        )
+                                    }
+                                    onAddTestCase={() =>
+                                        addTestCase(currentProblemIndex + index)
+                                    }
+                                    onDeleteProblem={() =>
+                                        handleDeleteProblem(
+                                            currentProblemIndex + index
+                                        )
+                                    }
+                                    onUpdateProblem={() =>
+                                        handleUpdateProblem(
+                                            currentProblemIndex + index
+                                        )
+                                    }
+                                />
+                                <div className="flex w-full justify-between mt-5">
+                                <div />
+                                    <FormFooter
+                                        totalPages={totalPages}
+                                        currentPage={currentPage}
+                                        onPrevious={() =>
+                                            setCurrentPage(
+                                                Math.max(0, currentPage - 1)
+                                            )
+                                        }
+                                        onNext={() =>
+                                            setCurrentPage(
+                                                Math.min(
+                                                    totalPages - 1,
+                                                    currentPage + 1
+                                                )
+                                            )
+                                        }
+                                    />
+                                    <div className="flex  gap-3">
+                                        {problem.questionId && (
+                                            <Button
+                                                color="primary"
+                                                onPress={() =>
+                                                    handleUpdateProblem(
+                                                        currentProblemIndex +
+                                                            index
+                                                    )
+                                                }
+                                            >
+                                                Update
+                                            </Button>
+                                        )}
+                                        <Button
+                                            color="danger"
+                                            onPress={() =>
+                                                handleDeleteProblem(
+                                                    currentProblemIndex + index
+                                                )}>
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div> ))}
                     </div>
-                </div>
-            </div>
-        ))}
-    </div>
-</Card>
+                </Card>
                 <div className="flex gap-3 w-full justify-center mt-5">
                     <Button onPress={handleAddProblem}>
                         Add Problem Solving Question
@@ -588,8 +609,7 @@ export default function ProblemSolvingForm({
                     <Button
                         type="submit"
                         color="primary"
-                        isDisabled={saveButton}
-                    >
+                        isDisabled={saveButton}>
                         Save All
                     </Button>
                 </div>

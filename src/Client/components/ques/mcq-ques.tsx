@@ -89,14 +89,30 @@ export default function App({
               ]
     );
     const handleDeleteQuestion = async (index: number) => {
+        if(index===1){
+            setQuestions([
+                {
+                    questionId: "",
+                    question: "",
+                    options: [
+                        { id: 1, text: "" },
+                        { id: 2, text: "" },
+                        { id: 3, text: "" },
+                        { id: 4, text: "" },
+                    ],
+                    correctOptions: [],
+                    points: 0,
+                    difficultyType: "Easy",
+                },
+            ])
+        }
         const questionToDelete = questions[index];
-
         try {
             if (questionToDelete.questionId) 
                 await api.delete(`/Questions/Mcq/Delete/${questionToDelete.questionId}`);
             setQuestions((prev) => prev.filter((_, i) => i !== index));
             if (currentPage >= questions.length - 1) {
-                setCurrentPage(Math.max(0, currentPage - 1));
+                setCurrentPage(Math.max(1, currentPage - 1));
             }
             toast.success("Question deleted successfully");
         } catch (error) {
@@ -384,7 +400,7 @@ export default function App({
                                 onChange={(e) => handlePoints(currentPage, e.target.value) }
                                 min="0"
                             />
-                            <div className="flex items-center gap-2 ">
+                            <div className="flex gap-3 ">
                                 <span> Page {currentPage + 1} of {questions.length}</span>
                                 <PaginationButtons
                                     currentIndex={currentPage + 1}
@@ -404,7 +420,7 @@ export default function App({
                                     }
                                 />
                             </div>
-                            <div className="w-full flex justify-end gap-3">
+                            <div className="flex gap-3">
                             {questions[currentPage].questionId && <Button color="primary"
                                     onPress={() => handleUpdateQuestion(currentPage)}>
                                         Update</Button>}

@@ -36,7 +36,6 @@ export default function ExamFormPage() {
     const [writtenQuesPoint, setWrittenQuesPoint] = useState<number>(0);
     const [mcqQuesPoint, setMcqQuesPoint] = useState<number>(0);
     const [totalPoints, setTotalPoints] = useState<number>(0);
-    const [lastUpdatedField, setLastUpdatedField] = useState<string | null>(null);
     const [activeComponents, setActiveComponents] = useState<
         { id: string; type: string }[]
     >([]);
@@ -224,20 +223,18 @@ useEffect(() => {
  },[mcqQuesPoint, problemQuesPoint, writtenQuesPoint])
     const handlePublishExam = async () => {
         if (examId) {
-            if (lastUpdatedField) {
-                toast.error(`Please make sure total points (${formData.totalPoints}) match sum of all questions (${calculatedTotal})`);
-                setLastUpdatedField(null);
-            }
             try {
                 const response = await api.post(
                     `/Exam/Publish?examId=${examId}`
                 );
                 if (response.status === 200) {
                     toast.success("Exam published successfully.");
+                    route.push('/view-exams')
                     resetForm();
                 }
             } catch {
-                toast.error("Failed to publish exam.");
+                toast.error(`Failed to publish exam.Please make sure total points (${formData.totalPoints}) match sum of all questions (${calculatedTotal})`);
+               
             }
         } else {
             toast.error("Please save the exam first.");
@@ -245,17 +242,14 @@ useEffect(() => {
     };
     const handleProblemPointsChange = (points: number) => {
         setProblemQuesPoint(points);
-        setLastUpdatedField('problemSolve');
     };
 
     const handleWrittenPointsChange = (points: number) => {
         setWrittenQuesPoint(points);
-        setLastUpdatedField('writtenQues');
     };
 
     const handleMcqPointsChange = (points: number) => {
         setMcqQuesPoint(points);
-        setLastUpdatedField('mcq');
     };
 
     const handleTotalPointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -265,7 +259,6 @@ useEffect(() => {
                 ...formData,
                 totalPoints: value,
             });
-            setLastUpdatedField('totalPoints');
         }
     };
     const handleDeleteExam = async () => {
