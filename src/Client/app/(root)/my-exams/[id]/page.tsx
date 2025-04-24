@@ -105,19 +105,19 @@ export default function Component() {
                     };
                     setQuestions(normalizedData);
                     const initialAnswers: { [key: string]: string | string[] } = {};
-                    normalizedData.questions.problem.forEach((q) => {
+                    normalizedData.questions.problem.forEach((q:ProblemQuestion) => {
                         initialAnswers[q.questionId] = "";
                     });
-                    normalizedData.questions.written.forEach((q) => {
+                    normalizedData.questions.written.forEach((q:WrittenQuestion) => {
                         initialAnswers[q.questionId] = "";
                     });
-                    normalizedData.questions.mcq.forEach((q) => {
+                    normalizedData.questions.mcq.forEach((q:MCQQuestion) => {
                         initialAnswers[q.questionId] = [];
                     });
                     setAnswers(initialAnswers);
                     const initialTestCaseResults: TestCaseResults = {};
-                    normalizedData.questions.problem.forEach((q) => {
-                        initialTestCaseResults[q.questionId] = q.testCases.map(tc => ({ ...tc, receivedOutput: "", status: "pending" }));
+                    normalizedData.questions.problem.forEach((q:ProblemQuestion) => {
+                        initialTestCaseResults[q.questionId] = q.testCases.map((tc:TestCase) => ({ ...tc, receivedOutput: "", status: "pending" }));
                     });
                     setTestCaseResults(initialTestCaseResults);
                 }
