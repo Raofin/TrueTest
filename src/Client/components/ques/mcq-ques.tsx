@@ -109,10 +109,11 @@ export default function App({
                         difficultyType: "Easy",
                     },
                 ])
-            }
+            }else{
             setQuestions((prev) => prev.filter((_, i) => i !== index));
             if (currentPage >= questions.length - 1) {
                 setCurrentPage(Math.max(0, currentPage - 1));
+            }
             }
             toast.success("Question deleted successfully");
         } catch (error) {

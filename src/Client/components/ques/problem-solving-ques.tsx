@@ -223,10 +223,11 @@ export default function ProblemSolvingForm({
                     points: 0,
                     difficultyType: "",
                 }])
-            }
+            }else {
             setProblems((prev) => prev.filter((_, i) => i !== problemIndex));
             if (currentPage >=Math.ceil((problems.length - 1) / problemsPerPage)) {
                 setCurrentPage(Math.max(0, currentPage - 1));
+            }
             }
             toast.success("Problem deleted successfully");
         } catch (error) {

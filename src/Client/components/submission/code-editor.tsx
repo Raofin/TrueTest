@@ -6,7 +6,6 @@ import Editor from "@monaco-editor/react";
 import api from "@/lib/api";
 import { languages } from "@/lib/language-selector";
 
-
 export interface TestCase {
     testCaseId?: string;
     input: string;
@@ -14,7 +13,6 @@ export interface TestCase {
     receivedOutput?: string;
     status?: "success" | "error" | "pending";
 }
-
 
 export interface ProblemQuestion {
     questionId: string;
@@ -26,7 +24,6 @@ export interface ProblemQuestion {
     testCases: TestCase[];
 }
 
-
 interface PageProps {
     readonly question: ProblemQuestion;
     readonly setAnswers: React.Dispatch<
@@ -35,7 +32,6 @@ interface PageProps {
     readonly questionId: string;
     readonly examId: string;
 }
-
 
 interface CodeState {
     [key: string]: string;
@@ -50,8 +46,9 @@ export default function CodeEditor({
     const [codeStates, setCodeStates] = React.useState<CodeState>({});
     const [selectedTestCase, setSelectedTestCase] = useState<number>(0);
     const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>([]);
-    const [displayTestCase,setDisplayTestCase]=useState<boolean>(false);
+    const [displayTestCase, setDisplayTestCase] = useState<boolean>(false);
     const displayedTestCases = [formattedTestCases[selectedTestCase]];
+
     useEffect(() => {
         const initialStates: CodeState = {};
         languages.forEach((lang) => {
@@ -61,12 +58,11 @@ export default function CodeEditor({
         const initializedTestCases = question.testCases.map((tc) => ({
             ...tc,
             receivedOutput: "",
-            output:"",
+            output: "",
             status: "pending" as const,
         }));
         setFormattedTestCases(initializedTestCases);
     }, [question.testCases]);
-
 
     const handleCodeChange = (value: string | undefined) => {
         if (value !== undefined) {
@@ -81,45 +77,71 @@ export default function CodeEditor({
         }
     };
 
-
     const handleRun = async () => {
-        const payload = {
-            examId:examId,
-            questionId: question.questionId,
-            code: codeStates[selectedLanguage],
-            language: selectedLanguage,
-        };
-        try {
-            const response = await api.put("/Candidate/Submit/Problem/Save", payload);
-            if (response.status === 200) {
-                const data = await response.data;
-        
-              setDisplayTestCase(true)
+        const currentCode = codeStates[selectedLanguage];
+        const currentInput = question.testCases[selectedTestCase]?.input ?? "";
 
-                const updated = formattedTestCases.map((testCase) => {
-                    const result = data.find(
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (r: any) => r.testCaseId === testCase.testCaseId
-                    );
-                    let status = "pending";
-                    if (result?.isAccepted) status = "success";
-                    else if (!result?.isAccepted) status = "error";
-                    return {
-                        ...testCase,
-                        output:result?.output??"",
-                        receivedOutput: result?.receivedOutput ?? "",
-                        status: status,
-                    } as TestCase;
+        const payloadOfAnyCode = {
+            code: currentCode,
+            input: currentInput,
+            languageId: selectedLanguage,
+        };
+
+        try {
+            const runResponse = await api.post('/Candidate/RunAnyCode', payloadOfAnyCode);
+            if (runResponse.status === 200) {
+                const runData = await runResponse.data;
+                const updatedTestCases = formattedTestCases.map((tc, index) => {
+                    if (index === selectedTestCase) {
+                        return {
+                            ...tc,
+                            receivedOutput: runData.stdout ?? runData.stderr ?? runData.exception ?? "No output",
+                            status: runData.status === "success" ? "success" : "error" as TestCase["status"],
+                        };
+                    }
+                    return tc;
                 });
-                setFormattedTestCases(updated);
+                setFormattedTestCases(updatedTestCases);
+                setDisplayTestCase(true);
+                const savePayload = {
+                    examId: examId,
+                    questionId: question.questionId,
+                    code: currentCode,
+                    language: selectedLanguage,
+                };
+                try {
+                    const saveResponse = await api.put("/Candidate/Submit/Problem/Save", savePayload);
+                    if (saveResponse.status === 200) {
+                        const saveData = await saveResponse.data;
+                        const updatedWithSave = formattedTestCases.map((testCase) => {
+                            const result = saveData.find(
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                (r: any) => r.testCaseId === testCase.testCaseId
+                            );
+                            let status = testCase.status; 
+                            if (result?.isAccepted) status = "success";
+                            else if (result?.isAccepted === false) status = "error";
+                            return {
+                                ...testCase,
+                                output: result?.output ?? "",
+                                receivedOutput: testCase.receivedOutput ?? "",
+                                status: status as "success" | "error" | "pending",
+                            };
+                        });
+                        setFormattedTestCases(updatedWithSave);
+                    } else {
+                        console.error("Failed to save code");
+                    }
+                } catch (saveError) {
+                    console.error("Error during code save:", saveError);
+                }
             } else {
-                console.error("Failed to execute code");
+                console.error("Failed to run code");
             }
-        } catch (error) {
-            console.error("Error during code execution:", error);
+        } catch (runError) {
+            console.error("Error during code execution:", runError);
         }
     };
-
 
     return (
         <div className="grid grid-cols-2 gap-4">
@@ -148,7 +170,7 @@ export default function CodeEditor({
                                 </div>
                                 <div>
                                     <span className="font-semibold">
-                                         Output:
+                                        Output:
                                     </span>
                                     {testCase.output}
                                 </div>
@@ -197,7 +219,7 @@ export default function CodeEditor({
                         />
                     </div>
                 </Card>
-              {displayTestCase &&  <Card className="p-4 rounded-lg">
+                {displayTestCase && <Card className="p-4 rounded-lg">
                     <div className="flex justify-between">
                         <p className="font-bold">Test Cases</p>
                         <div className="flex gap-2">
@@ -228,23 +250,23 @@ export default function CodeEditor({
                         </div>
                     </div>
 
-                       <div className='flex w-full justify-between'>
-                         <p>Input</p>
-                         <p>Output</p>
-                         <p>Recieved Output</p>
-                       </div>
+                    <div className='flex w-full justify-between mt-4'>
+                        <p className="font-semibold">Input</p>
+                        <p className="font-semibold">Received Output</p>
+                        <p className="font-semibold">Expected Output</p>
+                    </div>
                     {displayedTestCases?.map((testCase) => (
                         <div
                             key={testCase?.input}
                             className="grid grid-cols-3 gap-4 mt-3 min-h-[100px]">
-                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
+                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                 {testCase?.input ?? "No input provided"}
                             </div>
-                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.receivedOutput ?? "No output provided"}
+                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
+                                {testCase?.receivedOutput ?? "No output yet"}
                             </div>
-                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.output ?? "No output provided"}
+                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
+                                {testCase?.output ?? "No expected output"}
                             </div>
                         </div>
                     ))}
@@ -253,4 +275,3 @@ export default function CodeEditor({
         </div>
     );
 }
-
