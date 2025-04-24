@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using System.Diagnostics.CodeAnalysis;
+using ErrorOr;
 using MediatR;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
@@ -9,6 +10,7 @@ namespace OPS.Application.Features.Candidates.Queries;
 
 public record ExamWithResultResponse(ExamResponse Exam, ResultResponse? Result);
 
+[ExcludeFromCodeCoverage]
 public record GetAllExamsByCandidateQuery : IRequest<ErrorOr<List<ExamWithResultResponse>>>;
 
 public class GetAllExamsByCandidateQueryHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
