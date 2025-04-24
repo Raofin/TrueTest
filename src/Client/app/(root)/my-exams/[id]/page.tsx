@@ -423,7 +423,7 @@ export default function Component() {
                                             #Question :
                                         </h2>
                                         <p>
-                                            points:{" "}
+                                            points:
                                             {
                                                 (question as ProblemQuestion)
                                                     .points

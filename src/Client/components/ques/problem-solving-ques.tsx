@@ -322,7 +322,6 @@ export default function ProblemSolvingForm({
     const handleUpdateProblem = async (problemIndex: number) => {
         const problemToUpdate = problems[problemIndex];
         if (!problemToUpdate) return;
-
         try {
             if (!problemToUpdate.questionId) {
                 const response = await api.post("/Questions/Problem/Create", {

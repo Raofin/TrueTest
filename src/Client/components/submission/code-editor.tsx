@@ -58,10 +58,11 @@ export default function CodeEditor({
         const initializedTestCases = question.testCases.map((tc) => ({
             ...tc,
             receivedOutput: "",
-            output: "",
+            output:tc.output||"Error",
             status: "pending" as const,
         }));
         setFormattedTestCases(initializedTestCases);
+        console.log(initializedTestCases)
     }, [question.testCases]);
 
     const handleCodeChange = (value: string | undefined) => {
@@ -76,32 +77,36 @@ export default function CodeEditor({
             }));
         }
     };
-
     const handleRun = async () => {
         const currentCode = codeStates[selectedLanguage];
         const currentInput = question.testCases[selectedTestCase]?.input ?? "";
-
+    
         const payloadOfAnyCode = {
             code: currentCode,
             input: currentInput,
             languageId: selectedLanguage,
         };
-
+    
         try {
             const runResponse = await api.post('/Candidate/RunAnyCode', payloadOfAnyCode);
             if (runResponse.status === 200) {
                 const runData = await runResponse.data;
-                const updatedTestCases = formattedTestCases.map((tc, index) => {
+                console.log(runData);
+                const newReceivedOutput = runData.stdout ?? runData.stderr ?? runData.exception ?? "No output";
+                const newStatus = runData.status === "success" ? "success" : "error" as TestCase["status"];
+    
+                const updatedTestCasesAfterRun = formattedTestCases.map((tc, index) => {
                     if (index === selectedTestCase) {
                         return {
                             ...tc,
-                            receivedOutput: runData.stdout ?? runData.stderr ?? runData.exception ?? "No output",
-                            status: runData.status === "success" ? "success" : "error" as TestCase["status"],
+                            output:tc.output ||"Error",
+                            receivedOutput: newReceivedOutput,
+                            status: newStatus,
                         };
                     }
                     return tc;
                 });
-                setFormattedTestCases(updatedTestCases);
+                setFormattedTestCases(updatedTestCasesAfterRun);
                 setDisplayTestCase(true);
                 const savePayload = {
                     examId: examId,
@@ -113,18 +118,20 @@ export default function CodeEditor({
                     const saveResponse = await api.put("/Candidate/Submit/Problem/Save", savePayload);
                     if (saveResponse.status === 200) {
                         const saveData = await saveResponse.data;
-                        const updatedWithSave = formattedTestCases.map((testCase) => {
+                        console.log(saveData);
+                        const updatedWithSave = updatedTestCasesAfterRun.map((testCase) => {
                             const result = saveData.find(
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 (r: any) => r.testCaseId === testCase.testCaseId
                             );
-                            let status = testCase.status; 
+                            let status = testCase.status;
+                            let output = testCase.output;
+    
                             if (result?.isAccepted) status = "success";
                             else if (result?.isAccepted === false) status = "error";
+                            if (result?.output) output = result.output;     
                             return {
                                 ...testCase,
-                                output: result?.output ?? "",
-                                receivedOutput: testCase.receivedOutput ?? "",
+                                output: output ?? "",
                                 status: status as "success" | "error" | "pending",
                             };
                         });
@@ -142,7 +149,6 @@ export default function CodeEditor({
             console.error("Error during code execution:", runError);
         }
     };
-
     return (
         <div className="grid grid-cols-2 gap-4">
             <Card className="border-none rounded-lg p-4 shadow-none bg-white dark:bg-[#18181b]">
