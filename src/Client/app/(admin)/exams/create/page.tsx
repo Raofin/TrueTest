@@ -419,15 +419,12 @@ useEffect(() => {
                         onChange={handleTotalPointsChange}
                     />
                     <div className="flex justify-end mt-2 gap-3">
-                        <>
                             {published && <Button color="success" onPress={handlePublishExam}>
                                 Publish
                             </Button>}
                             <Button color="danger" onPress={handleDeleteExam}>
                                 Delete
                             </Button>
-                        </>
-
                         <Button color="primary" type="submit">
                             {isEdit ? "Update" : "Save"}
                         </Button>
