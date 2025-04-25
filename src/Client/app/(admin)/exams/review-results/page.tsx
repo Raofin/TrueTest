@@ -117,12 +117,12 @@ export default function Component() {
     const [examData, setExamData] = useState<ExamData>();
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
+    const [mcqPoints, setMcqPoints] = useState<number | undefined>();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
     const [totalPoints, setTotalPoints] = useState<number | undefined>();
     const [candidateList, setCandidateList] = useState<CandidateData[]>([]);
-    const [editedSubmission, setEditedSubmission] =
-        useState<CandidateSubmission | null>(null);
+    const [editedSubmission, setEditedSubmission] = useState<CandidateSubmission | null>(null);
     const searchParams = useSearchParams();
     const examId = searchParams.get("examId");
     const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
@@ -391,7 +391,7 @@ export default function Component() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <span className="text-default-500">Score:</span>
-                                    {selectedCandidate.result.totalScore}/{totalPoints}
+                                    {(mcqPoints||0)+(writtenPoints||0)+(problemPoints||0)}/{totalPoints}
                                 </div>
                                 <div>
                                     <span className="text-default-500">Submitted At:</span>
@@ -575,7 +575,7 @@ export default function Component() {
                                   const questionData = questionsData[submission.questionId];
                                   const isCorrect = questionData?.answersOption === submission.answerOptions;
                                   const questionScore = isCorrect ? questionData?.score : 0;
-  
+                                   setMcqPoints(questionScore)
                                   return (
                                       <div key={submission.questionId} className="space-y-4 mb-6 p-4 border rounded-lg">
                                           <h3 className="font-medium">Question :</h3>
