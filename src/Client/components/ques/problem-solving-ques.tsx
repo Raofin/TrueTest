@@ -574,13 +574,7 @@ export default function ProblemSolvingForm({
                                         {problem.questionId && (
                                             <Button
                                                 color="primary"
-                                                onPress={() =>
-                                                    handleUpdateProblem(
-                                                        currentProblemIndex +
-                                                            index
-                                                    )
-                                                }
-                                            >
+                                                onPress={() =>handleUpdateProblem(currentProblemIndex +index)}>
                                                 Update
                                             </Button>
                                         )}

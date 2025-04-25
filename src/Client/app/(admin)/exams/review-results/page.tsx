@@ -121,7 +121,6 @@ export default function Component() {
         console.error('Error fetching candidate data:', error);
       }
     };
-    
     if (examId) fetchCandidateData();
   }, [examId]);
   
@@ -129,9 +128,7 @@ export default function Component() {
     const fetchSubmissionData = async () => {
       try {
         if (!selectedCandidateId || !examId) return;
-        console.log(`Fetching submission for: ${examId}/${selectedCandidateId}`);
         const result = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`);
-        console.log('Submission API Response:', result.data);
         if (result.status === 200) {
           if (result.data) {
             setSelectedCandidateSubmission(result.data.submission);
@@ -152,9 +149,6 @@ export default function Component() {
   
     fetchSubmissionData();
   }, [examId, selectedCandidateId]);
-  
-  console.log('Selected candidate ID:', selectedCandidateId);
-  console.log('Making API call to:', `/Review/Candidates/${examId}/${selectedCandidateId}`);
   const handleCandidateChange = (value: string) => {
     setSelectedCandidateId(value)
   }
@@ -164,7 +158,6 @@ export default function Component() {
       setSelectedCandidateId(candidateList[currentIndex - 1].account.accountId)
     }
   }
-
   const handleNextCandidate = () => {
     const currentIndex = candidateList.findIndex((candidate) => candidate.account.accountId === selectedCandidateId)
     if (currentIndex < candidateList.length - 1) {
@@ -180,20 +173,16 @@ export default function Component() {
       return newFlags
     })
   }
-
   const isQuestionFlagged = (accountId: string, questionId: string) => {
     return flaggedQuestions[accountId]?.[questionId] ?? false
   }
-
   const selectedCandidate = candidateList.find((candidate) => candidate.account.accountId === selectedCandidateId)
-
   return (
     <div className="mx-44 flex flex-col justify-between">
       <h2 className="text-2xl font-bold text-center my-5">Review Results</h2>
       <div className="w-full px-12 border-none flex flex-col gap-4">
-        <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none">
+        <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none border-none">
           <h1 className="text-xl font-semibold w-full text-center">Exam: {examData?.title}</h1>
-
           <div className="flex flex-col gap-3">
             <div className="flex w-full items-center justify-between">
               <div className="flex gap-2 items-center">
@@ -232,17 +221,16 @@ export default function Component() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-default-500">Score: </span>
-                  {/* {selectedCandidate.result.totalScore}/{examData?.totalPoints || 0} */}
+                   {selectedCandidate.result.totalScore}/{examData?.totalPoints} 
                 </div>
                 <div>
                   <span className="text-default-500">Submitted At: </span>
-                  {/* {new Date(selectedCandidate.result.submittedAt).toLocaleString()} */}
+                   {new Date(selectedCandidate.result.submittedAt).toLocaleString()}
                 </div>
               </div>
             )}
           </div>
         </Card>
-
         {selectedCandidateId && selectedCandidateSubmission && (
           <div className="bg-white dark:bg-[#18181b] p-5 rounded-xl">
             <h2 className="w-full text-center">

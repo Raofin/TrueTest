@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { convertUtcToLocalTime } from "@/components/format-date-time";
+import LoadingModal from '@/components/ui/Modal/LoadingModal'
 
 interface FormData {
     title: string;
@@ -36,12 +37,13 @@ export default function ExamFormPage() {
     const [writtenQuesPoint, setWrittenQuesPoint] = useState<number>(0);
     const [mcqQuesPoint, setMcqQuesPoint] = useState<number>(0);
     const [totalPoints, setTotalPoints] = useState<number>(0);
+    const [published,setPublished]=useState<boolean>(false)
     const [activeComponents, setActiveComponents] = useState<
         { id: string; type: string }[]
     >([]);
     const searchParams = useSearchParams();
     const route = useRouter();
-    const [examId, setExamId] = useState(searchParams.get("id") ?? "");
+    const [examId, setExamId] = useState(searchParams.get("id")||"");
     const isEdit = searchParams.get("isEdit") === "true";
     const [formData, setFormData] = useState<FormData>({
         title: "",
@@ -81,6 +83,7 @@ export default function ExamFormPage() {
             toast.error("Please select a date");
             return;
         }
+        setIsLoading(true)
         try {
             const formatDateTimeToUTC = (
                 timeString: string | undefined,
@@ -100,7 +103,10 @@ export default function ExamFormPage() {
                 return localDate.toISOString();
             };
             const examData = {
-                ...formData,
+                title: formData.title,
+                description: formData.description,
+                durationMinutes: formData.durationMinutes,
+                totalPoints:formData.totalPoints,
                 opensAt: formatDateTimeToUTC(formData.opensAt, date),
                 closesAt: formatDateTimeToUTC(formData.closesAt, date),
                 date: new Date(
@@ -114,10 +120,21 @@ export default function ExamFormPage() {
                 toast.error("please input correct start and end time");
             }
             let resp;
-            if (isEdit && examId) {
-                resp = await api.patch(`/Exam/Update`, { examId, examData });
+            if (examId) {
+                console.log(examData)
+                const payload={
+                        examId: examId,
+                        title: formData.title,
+                        description: formData.description,
+                        durationMinutes: formData.durationMinutes,
+                        totalPoints:formData.totalPoints,
+                        opensAt: formatDateTimeToUTC(formData.opensAt, date),
+                        closesAt: formatDateTimeToUTC(formData.closesAt, date),
+                }
+                resp = await api.patch(`/Exam/Update`, payload)
                 if (resp.status === 200) {
                     toast.success(`Exam updated successfully.`);
+                    console.log(resp.data);
                     route.push("/view-exams")
                 }
             } else {
@@ -130,17 +147,21 @@ export default function ExamFormPage() {
         } catch (err) {
             const error = err as AxiosError;
             toast.error(error?.message);
+        }finally{
+            setIsLoading(false)
         }
     };
 useEffect(() => {
         const fetchExamDetails = async () => {
+            setIsLoading(true)
             try {
                 if (!isEdit) {
                     setIsLoading(false);
                     return;
                 }
                 if (!examId) {
-                    route.push("/exams");
+                    console.log("herer")
+                    route.push("/view-exams");
                     return;
                 }
                 const [
@@ -156,6 +177,7 @@ useEffect(() => {
                 ]);
                 if (examResponse.status === 200) {
                     const exam = examResponse.data.exam;
+                    console.log(exam)
                     setFormData({
                         title: exam.title,
                         description: exam.description,
@@ -224,17 +246,19 @@ useEffect(() => {
  },[mcqQuesPoint, problemQuesPoint, writtenQuesPoint])
     const handlePublishExam = async () => {
         if (examId) {
+            setIsLoading(true)
             try {
                 const response = await api.post(`/Exam/Publish?examId=${examId}`);
                 if (response.status === 200) {
                     toast.success("Exam published successfully.");
+                    setPublished(true)
                     route.push('/view-exams')
                     resetForm();
                 }
             } catch {
                 toast.error(`Failed to publish exam.Please make sure total points (${formData.totalPoints}) match sum of all questions (${calculatedTotal})`);
-               
-            }
+            }finally{
+            setIsLoading(false)}
         } else {
             toast.error("Please save the exam first.");
         }
@@ -280,7 +304,6 @@ useEffect(() => {
             opensAt: "",
             closesAt: "",
         });
-        setExamId("");
         setDate(null);
         setActiveComponents([]);
         setQuestionData({
@@ -296,16 +319,9 @@ useEffect(() => {
             time.minute
         ).padStart(2, "0")}`;
     };
-
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                Loading...
-            </div>
-        );
-    }
-
     return (
+        <>
+        <LoadingModal isOpen={isLoading} message='Loading...' />
         <div className="mx-44 flex flex-col gap-8">
             <h1 className="w-full text-center text-3xl font-bold my-3">
                 {isEdit ? "Edit Exam" : "Create Exam"}
@@ -404,9 +420,9 @@ useEffect(() => {
                     />
                     <div className="flex justify-end mt-2 gap-3">
                         <>
-                            <Button color="success" onPress={handlePublishExam}>
+                            {published && <Button color="success" onPress={handlePublishExam}>
                                 Publish
-                            </Button>
+                            </Button>}
                             <Button color="danger" onPress={handleDeleteExam}>
                                 Delete
                             </Button>
@@ -474,5 +490,6 @@ useEffect(() => {
                 </div>
             )}
         </div>
+        </>
     );
 }

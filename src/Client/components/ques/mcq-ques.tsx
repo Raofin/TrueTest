@@ -55,7 +55,6 @@ export default function App({
     onSaved,
     mcqPoints,
 }: MCQFormProps) {
-    console.log(existingQuestions)
     const [questions, setQuestions] = useState<MCQQuestion[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
