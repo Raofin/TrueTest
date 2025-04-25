@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useState } from "react";
-import Logo from "@/components/ui/logo/page";
+import Logo from "@/components/ui/TrueTestLogo";
 import ThemeSwitch from "@/app/ThemeSwitch";
 import { Avatar } from "@heroui/react";
 import { PiNotepadFill } from "react-icons/pi";
@@ -151,7 +151,7 @@ const Sidebar = () => {
                                 <IoLogOut size={24} />
                             </div>
                             {!isCollapsed && (
-                                <Link href="/signin" className={`text-sm`}>
+                                <Link href="/" className={`text-sm`}>
                                     <button onClick={logout}> Log Out </button>
                                 </Link>
                             )}

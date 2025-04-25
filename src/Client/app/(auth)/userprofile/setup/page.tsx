@@ -7,10 +7,11 @@ import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
 import { FormData } from '@/components/types/profile'
 import ROUTES from '@/constants/route'
+import LoadingModal from '@/components/ui/Modal/LoadingModal'
 
 export default function ProfileSetUp() {
   const router = useRouter()
-
+  const [loading,setLoading]=useState(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -23,6 +24,7 @@ export default function ProfileSetUp() {
 
   const handleProfileEdit = async (e: React.FormEvent) => {
     e.preventDefault()
+   setLoading(true)
     try {
       const response = await api.put(ROUTES.PROFILE_SAVE, formData)
       if (response.status === 200) {
@@ -34,6 +36,8 @@ export default function ProfileSetUp() {
       }
     } catch {
       alert('Profile update failed. Please try again.')
+    }finally{
+      setLoading(false)
     }
   }
 
@@ -50,6 +54,7 @@ export default function ProfileSetUp() {
 
   return (
     <div className="flex justify-center items-center">
+      <LoadingModal isOpen={loading} message="Loading..." />
       <Form className="py-5 px-8 rounded-lg shadow-none bg-white dark:bg-[#18181b]" onSubmit={handleProfileEdit}>
         <h2 className="w-full text-xl font-bold text-center">Add Details</h2>
         <ProfileEdit formData={formData} setFormData={setFormData} />

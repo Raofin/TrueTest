@@ -33,13 +33,13 @@ api.interceptors.response.use(
       try {
         if (typeof window !== 'undefined') {
           removeAuthToken()
-          window.location.href = '/signin'
+          window.location.href = '/'
         }
         return Promise.reject(new Error('Session expired. Please log in again.'))
       } catch {
         if (typeof window !== 'undefined') {
           removeAuthToken()
-          window.location.href = '/signin'
+          window.location.href = '/'
         }
         return Promise.reject(new Error('Authentication failed. Please log in again.'))
       }

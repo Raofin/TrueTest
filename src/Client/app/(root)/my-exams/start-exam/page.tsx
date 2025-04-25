@@ -40,7 +40,7 @@ export default function StartExam() {
     if (!currentExam?.closesAt) return null; 
     const handleStartExam = () => {
         if (currentExam?.examId) {
-            router.push(`/my-exams/${currentExam.examId}?started=true&timeLeft=${timeLeftInSeconds}&duration=${currentExam.durationMinutes}`);
+            router.push(`/my-exams/${currentExam.examId}`);
         }
     };
     const now = new Date();
@@ -56,8 +56,6 @@ export default function StartExam() {
     const timeLeftInMs = closesAt.getTime() - nowUTC.getTime();
     const isClosed = timeLeftInMs <= 0;
     const absTimeLeft = Math.abs(timeLeftInMs);
-    const timeLeftInSeconds = Math.floor(absTimeLeft / 1000);
-    // const secondsLeft = isClosed ? 0 : Math.floor((absTimeLeft / 1000) % 60);
     const minutesLeft = isClosed
         ? 0
         : Math.floor((absTimeLeft / (1000 * 60)) % 60);

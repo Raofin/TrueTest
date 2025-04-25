@@ -55,7 +55,7 @@ export default function ExamList() {
           setExamsData(res.data)
         } else if (res.status === 401) {
           toast.error('Unauthorized')
-          router.push('/signin')
+          router.push('/')
         } else if (res.status === 500) {
           toast.error('Internal Server Error')
         }

@@ -31,7 +31,7 @@ interface MCQQuestion {
 interface ExistingQuestion {
     questionId?: string;
     statementMarkdown: string;
-    points: number;
+    score: number;
     difficultyType: string;
     mcqOption: {
         option1: string;
@@ -55,12 +55,13 @@ export default function App({
     onSaved,
     mcqPoints,
 }: MCQFormProps) {
+    console.log(existingQuestions)
     const [questions, setQuestions] = useState<MCQQuestion[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   questionId: q.questionId,
                   question: q.statementMarkdown,
-                  points: Number(q.points) || 0,
+                  points: Number(q.score) || 0,
                   difficultyType: "Easy",
                   options: [
                       { id: 1, text: q.mcqOption.option1 },

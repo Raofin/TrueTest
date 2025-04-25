@@ -16,6 +16,7 @@ import axios from 'axios'
 import OTPModal from '@/components/ui/Modal/otp-verification'
 import SignUpFormFields from './SignUpFormField'
 import SignInFormFields from './SignInFormField'
+import LoadingModal from '../ui/Modal/LoadingModal'
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>
@@ -204,6 +205,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
 
   return (
     <div>
+      <LoadingModal isOpen={loading} message="Loading..." />
       <form
         onSubmit={formType === 'SIGN_IN' ? handleSubmit(handleSignin) : handleSubmit(onSubmit)}
         className="flex w-full flex-wrap gap-4 flex-col"

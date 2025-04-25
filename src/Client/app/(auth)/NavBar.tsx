@@ -1,7 +1,7 @@
 'use client'
 
 import { Link, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
-import Logo from '@/components/ui/logo/page'
+import Logo from '@/components/ui/TrueTestLogo'
 import ThemeSwitch from '../ThemeSwitch'
 
 export default function Component() {

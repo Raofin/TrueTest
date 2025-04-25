@@ -20,7 +20,7 @@ interface WrittenQuestion {
 interface ExistingQuestion {
     questionId: string;
     statementMarkdown: string;
-    points: number;
+    score: number;
     difficultyType: string;
     hasLongAnswer: boolean;
 }
@@ -37,13 +37,14 @@ export default function Component({
     onSaved,
     writtenPoints,
 }: WrittenQuestionFormProps) {
+   
     const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestion[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   id: uuidv4(),
                   questionId: q.questionId, 
                   question: q.statementMarkdown,
-                  points: q.points || 0,
+                  points: q.score || 0,
                   difficultyType: q.difficultyType || "Easy",
                   isShortAnswer: !q.hasLongAnswer,
                   isLongAnswer: q.hasLongAnswer,

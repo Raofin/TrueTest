@@ -26,7 +26,7 @@ import {
 } from "@heroui/react";
 import SearchIcon from "@/components/ui/search-icon";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import CommonModal from "@/components/ui/Modal/edit-delete-modal";
+import CommonModal from "@/components/ui/Modal/EditDeleteModal";
 import PaginationButtons from "@/components/ui/pagination-button";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
@@ -67,7 +67,7 @@ export default function Component() {
         const fetchExams = async () => {
             try {
                 setIsLoading(true);
-                const response = await api.get("/Exam");
+                const response = await api.get("/Exam/Publish");
                 if (response.status === 200) {
                     setExams(response.data);
                     console.log(exams);
@@ -419,7 +419,7 @@ export default function Component() {
 
                     <div className="flex items-center gap-4">
                         <span className="text-small">
-                            Page {page} of {Math.max(totalPages,1)}
+                            Page {page} of {Math.max(totalPages, 1)}
                         </span>
 
                         <PaginationButtons
@@ -432,7 +432,6 @@ export default function Component() {
                                 setPage((p) => Math.min(totalPages, p + 1))
                             }
                         />
-
                         <Button
                             color="primary"
                             onPress={handleSendInvites}
