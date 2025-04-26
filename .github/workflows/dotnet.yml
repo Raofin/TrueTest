@@ -1,9 +1,10 @@
 name: 🚀 .NET CI
 
 on:
-  branches:
-    - main
-    - develop
+  push:
+    branches:
+      - main
+      - develop
   pull_request:
     branches:
       - main
@@ -13,6 +14,8 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: 📥 Checkout code
