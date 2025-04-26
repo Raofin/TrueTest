@@ -1,0 +1,59 @@
+services:
+
+  sql_server:
+    container_name: sql_server
+    hostname: sql_server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'P@ss9999'
+    ports:
+      - "6666:1433"
+    volumes:
+      - sql_server_data:/var/opt/mssql
+    restart: unless-stopped
+    networks:
+      - backend
+
+  api:
+    build:
+      context: src/Api
+      dockerfile: Dockerfile
+    container_name: truetest-api
+    ports:
+      - "9998:9998"
+    depends_on:
+      - sql_server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=sql_server,1433;Initial Catalog=TrueTest;User ID=sa;Password=P@ss9999;TrustServerCertificate=True
+      # 🔧 Smtp
+      - EmailSettings__Email=
+      - EmailSettings__Password=
+      # 🔧 OneCompiler
+      - OneCompilerSettings__ApiKey=
+    restart: unless-stopped
+    networks:
+      - backend
+
+  client:
+    build:
+      context: src/Client
+      dockerfile: Dockerfile
+    container_name: truetest-client
+    ports:
+      - "9999:9999"
+    depends_on:
+      - api
+    environment:
+      - NODE_ENV=production
+      - PORT=9999
+      - HOSTNAME=0.0.0.0
+    restart: unless-stopped
+
+volumes:
+  sql_server_data:
+
+networks:
+  backend:
+    driver: bridge
