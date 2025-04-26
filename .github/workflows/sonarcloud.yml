@@ -36,7 +36,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: 📦 Restore project dependencies
-        run: dotnet restore
+        run: dotnet restore OPS.sln
 
       - name: 🚀 Start SonarCloud analysis
         env:
@@ -68,12 +68,12 @@ jobs:
             /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
 
       - name: 🛠️ Build solution
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build OPS.sln --no-restore --configuration Release
 
       - name: ✅ Run tests and collect coverage
         run: |
           dotnet tool install --global dotnet-coverage
-          dotnet-coverage collect "dotnet test --no-build --configuration Release" -f xml -o "coverage.xml"
+          dotnet-coverage collect "dotnet test OPS.sln --no-build --configuration Release" -f xml -o "coverage.xml"
 
       - name: 🧾 End SonarCloud analysis
         env:
