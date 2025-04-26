@@ -372,12 +372,16 @@ export default function App({
                     </Card>
                 <div className="w-full flex gap-3 my-3 text-center justify-center">
                     <Button onPress={addNewQuestion}>Add MCQ Question</Button>
-                    <Button
+                   {!saveButton ? <Button
                         color="primary"
-                        isDisabled={saveButton}
                         onPress={handleSubmit}>
                         Save All
+                    </Button>: <Button
+                        color="primary"
+                        onPress={handleSubmit}>
+                        Update All
                     </Button>
+                    }
                 </div></>
                 )}
             </div>
