@@ -36,7 +36,6 @@ interface ProblemItemProps {
     onAddTestCase: () => void;
     onDifficultyChange: (value: string) => void;
     onDeleteProblem: () => void;
-    onUpdateProblem: () => void;
 }
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
@@ -319,51 +318,6 @@ export default function ProblemSolvingForm({
             toast.error(err.message ?? "Failed to save problems");
         }
     };
-    const handleUpdateProblem = async (problemIndex: number) => {
-        const problemToUpdate = problems[problemIndex];
-        if (!problemToUpdate) return;
-        try {
-            if (!problemToUpdate.questionId) {
-                const response = await api.post("/Questions/Problem/Create", {
-                    examId,
-                    problemQuestions: [
-                        {
-                            statementMarkdown: problemToUpdate.question,
-                            points: problemToUpdate.points,
-                            difficultyType: problemToUpdate.difficultyType,
-                            testCases: problemToUpdate.testCases,
-                        },
-                    ],
-                });
-
-                if (response.status === 200) {
-                    setProblems((prev) =>
-                        prev.map((p, i) =>
-                            i === problemIndex
-                                ? {
-                                      ...p,
-                                      questionId: response.data[0]?.questionId,
-                                  }
-                                : p
-                        )
-                    );
-                    toast.success("Problem saved successfully!");
-                }
-            } else {
-                await api.patch("/Questions/Problem/Update", {
-                    questionId: problemToUpdate.questionId,
-                    statementMarkdown: problemToUpdate.question,
-                    points: problemToUpdate.points,
-                    difficultyType: problemToUpdate.difficultyType,
-                    testCases: problemToUpdate.testCases,
-                });
-                toast.success("Problem updated successfully!");
-            }
-        } catch (error) {
-            const err = error as AxiosError;
-            toast.error(err.message ?? "Failed to save problem");
-        }
-    };
     const updateProblem = (index: number, updatedProblem: Problem) => {
         setProblems((prev) => [
             ...prev.slice(0, index),
@@ -545,11 +499,6 @@ export default function ProblemSolvingForm({
                                             currentProblemIndex + index
                                         )
                                     }
-                                    onUpdateProblem={() =>
-                                        handleUpdateProblem(
-                                            currentProblemIndex + index
-                                        )
-                                    }
                                 />
                                 <div className="flex w-full justify-between mt-5">
                                 <div />
@@ -570,14 +519,6 @@ export default function ProblemSolvingForm({
                                             )
                                         }
                                     />
-                                    <div className="flex  gap-3">
-                                        {problem.questionId && (
-                                            <Button
-                                                color="primary"
-                                                onPress={() =>handleUpdateProblem(currentProblemIndex +index)}>
-                                                Update
-                                            </Button>
-                                        )}
                                         <Button
                                             color="danger"
                                             onPress={() =>
@@ -586,7 +527,6 @@ export default function ProblemSolvingForm({
                                                 )}>
                                             Delete
                                         </Button>
-                                    </div>
                                 </div>
                             </div> ))}
                     </div>
@@ -595,12 +535,17 @@ export default function ProblemSolvingForm({
                     <Button onPress={handleAddProblem}>
                         Add Problem Solving Question
                     </Button>
-                    <Button
+                  {!saveButton ?  <Button
                         type="submit"
-                        color="primary"
-                        isDisabled={saveButton}>
+                        color="primary">
                         Save All
-                    </Button>
+                    </Button>:
+                    <Button
+                    type="submit"
+                    color="primary">
+                    Update All
+                </Button>
+                    }
                 </div>
             </Form>
         </div>

@@ -36,8 +36,7 @@ export default function Component({
     existingQuestions,
     onSaved,
     writtenPoints,
-}: WrittenQuestionFormProps) {
-   
+}: WrittenQuestionFormProps) { 
     const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestion[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
@@ -124,54 +123,6 @@ export default function Component({
         } catch (error) {
             const err = error as AxiosError;
             toast.error(err.message ?? "Failed to delete question");
-        }
-    };
-    const handleUpdateQuestion = async (questionId: string) => {
-        const questionToUpdate = writtenQuestions.find(
-            (q) => q.id === questionId
-        );
-        if (!questionToUpdate) return;
-
-        try {
-            if (!questionToUpdate.questionId) {
-                const response = await api.post("/Questions/Written/Create", {
-                    examId: examId,
-                    writtenQuestions: [
-                        {
-                            statementMarkdown: questionToUpdate.question,
-                            points: questionToUpdate.points,
-                            difficultyType: questionToUpdate.difficultyType,
-                            hasLongAnswer: questionToUpdate.isLongAnswer,
-                        },
-                    ],
-                });
-
-                if (response.status === 200) {
-                    setWrittenQuestions((prev) =>
-                        prev.map((q) =>
-                            q.id === questionId
-                                ? {
-                                      ...q,
-                                      questionId: response.data[0]?.questionId,
-                                  }
-                                : q
-                        )
-                    );
-                    toast.success("Question saved successfully!");
-                }
-            } else {
-                await api.patch("/Questions/Written/Update", {
-                    questionId: questionToUpdate.questionId,
-                    statementMarkdown: questionToUpdate.question,
-                    points: questionToUpdate.points,
-                    difficultyType: questionToUpdate.difficultyType,
-                    hasLongAnswer: questionToUpdate.isLongAnswer,
-                });
-                toast.success("Question updated successfully!");
-            }
-        } catch (error) {
-            const err = error as AxiosError;
-            toast.error(err.message ?? "Failed to save question");
         }
     };
     const handleQuestionChange = (questionId: string, newQuestion: string) => {
@@ -338,9 +289,6 @@ export default function Component({
                                 </label>
                                  </div>
                                 <div className="flex  gap-3">
-                                {question.questionId && <Button color="primary" onPress={() =>
-                                            handleUpdateQuestion(question.id)}>Update
-                                    </Button>}
                                     <Button
                                         color="danger"
                                          onPress={() =>
@@ -379,13 +327,13 @@ export default function Component({
                 <Button onPress={handleAddWrittenQuestion}>
                     Add Written Question
                 </Button>
-                <Button
-                    isDisabled={saveButton}
-                    color="primary"
-                    onPress={handleSaveWrittenQuestions}
-                >
+                {!saveButton ? <Button color="primary"
+                    onPress={handleSaveWrittenQuestions} >
                     Save All
-                </Button>
+                </Button>: <Button color="primary"
+                    onPress={handleSaveWrittenQuestions} >
+                    Update All
+                </Button> }
             </div>
         </div>
     );

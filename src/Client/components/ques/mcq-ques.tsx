@@ -183,63 +183,6 @@ export default function App({
         ]);
         setCurrentPage(questions.length);
     };
-    const handleUpdateQuestion = async (index: number) => {
-        const questionToUpdate = questions[index];
-        if (!questionToUpdate) return;
-
-        try {
-            if (!questionToUpdate.questionId) {
-                const response = await api.post("/Questions/Mcq/Create", {
-                    examId: examId,
-                    mcqQuestions: [
-                        {
-                            statementMarkdown: questionToUpdate.question,
-                            points: questionToUpdate.points,
-                            difficultyType: "Easy",
-                            mcqOption: {
-                                option1: questionToUpdate.options[0].text,
-                                option2: questionToUpdate.options[1].text,
-                                option3: questionToUpdate.options[2].text,
-                                option4: questionToUpdate.options[3].text,
-                                isMultiSelect:
-                                    questionToUpdate.correctOptions.length > 1,
-                                answerOptions:
-                                    questionToUpdate.correctOptions.join(","),
-                            },
-                        },
-                    ],
-                });
-
-                if (response.status === 200) {
-                    setQuestions((prev) => prev.map((q, i) =>i === index ? {
-                                      ...q, questionId: response.data[0]?.questionId,
-                                  }: q
-                        ));
-                    toast.success("Question saved successfully!");
-                }
-            } else {
-                await api.patch("/Questions/Mcq/Update", {
-                    questionId: questionToUpdate.questionId,
-                    statementMarkdown: questionToUpdate.question,
-                    points: questionToUpdate.points,
-                    difficultyType: questionToUpdate.difficultyType,
-                    mcqOption: {
-                        option1: questionToUpdate.options[0].text,
-                        option2: questionToUpdate.options[1].text,
-                        option3: questionToUpdate.options[2].text,
-                        option4: questionToUpdate.options[3].text,
-                        isMultiSelect:
-                            questionToUpdate.correctOptions.length > 1,
-                        answerOptions:
-                            questionToUpdate.correctOptions.join(","),
-                    },
-                });
-                toast.success("Question updated successfully!");
-            }
-        } catch (error) {
-            const err = error as AxiosError;
-            toast.error(err.message ?? "Failed to save question");
-        }    };
     const handlePoints = (questionIndex: number, value: string) => {
         const newQuestions = [...questions];
         newQuestions[questionIndex].points =
@@ -295,7 +238,6 @@ export default function App({
             }
             const updatePromises = existingQuestions.map((q) => {
                 if (!q.questionId) return;
-
                 return api.patch("/Questions/Mcq/Update", {
                     questionId: q.questionId,
                     statementMarkdown: q.question,
@@ -311,7 +253,6 @@ export default function App({
                     },
                 });
             });
-
             await Promise.all(updatePromises);
             toast.success("MCQ questions saved successfully!");
             onSaved();
@@ -421,15 +362,12 @@ export default function App({
                                     }
                                 />
                             </div>
-                            <div className="flex gap-3">
-                            {questions[currentPage].questionId && <Button color="primary"
-                                    onPress={() => handleUpdateQuestion(currentPage)}>
-                                        Update</Button>}
+                           
                                 <Button color="danger"
                                     onPress={() =>handleDeleteQuestion(currentPage)}
                                     className="mb-4">
                                     Delete </Button>
-                            </div>
+                           
                         </div>
                     </Card>
                 <div className="w-full flex gap-3 my-3 text-center justify-center">
