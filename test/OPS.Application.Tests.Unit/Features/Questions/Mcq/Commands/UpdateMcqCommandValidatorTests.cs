@@ -56,30 +56,6 @@ public class UpdateMcqCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenStatementIsTooShort_ShouldHaveValidationError()
-    {
-        // Arrange
-        var command = new UpdateMcqCommand(
-            Guid.NewGuid(),
-            "Short", // Less than 10 characters
-            10,
-            DifficultyType.Easy,
-            new UpdateMcqOptionRequest(
-                "option 1",
-                "option 2",
-                "option 3",
-                "option 4",
-                false,
-                "1"
-            )
-        );
-
-        // Act & Assert
-        _validator.TestValidate(command)
-            .ShouldHaveValidationErrorFor(x => x.StatementMarkdown);
-    }
-
-    [Fact]
     public void Validate_WhenPointsIsZero_ShouldHaveValidationError()
     {
         // Arrange

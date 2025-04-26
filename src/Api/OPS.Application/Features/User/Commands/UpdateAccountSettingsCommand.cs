@@ -51,7 +51,7 @@ public class UpdateAccountSettingsCommandHandler(
                 request.CurrentPassword!
             );
 
-            if (!isVerified) return Error.Unauthorized(description: "Invalid current password");
+            if (!isVerified) return Error.Forbidden(description: "Invalid current password");
 
             var (hashedPassword, salt) = _passwordHasher.HashPassword(request.NewPassword);
             account.PasswordHash = hashedPassword;
