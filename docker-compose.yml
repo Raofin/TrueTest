@@ -7,9 +7,8 @@ services:
     environment:
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: 'P@ss9999'
-      MSSQL_TCP_PORT: 9999
     ports:
-      - "6666:9999"
+      - "6666:1433"
     volumes:
       - sql_server_data:/var/opt/mssql
     restart: unless-stopped
@@ -27,7 +26,12 @@ services:
       - sql_server
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=sql_server,6666;Database=TrueTest;User Id=sa;Password=P@ss9999;TrustServerCertificate=true;
+      - ConnectionStrings__DefaultConnection=Data Source=sql_server,1433;Initial Catalog=TrueTest;User ID=sa;Password=P@ss9999;TrustServerCertificate=True
+      # 🔧 Smtp
+      - EmailSettings__Email=
+      - EmailSettings__Password=
+      # 🔧 OneCompiler
+      - OneCompilerSettings__ApiKey=
     restart: unless-stopped
     networks:
       - backend

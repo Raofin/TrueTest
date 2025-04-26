@@ -24,7 +24,7 @@ WORKDIR /app
 # 🌍 Set environment variables
 ENV NODE_ENV=production
 ENV PORT=9999
-ENV HOSTNAME="0.0.0.0"
+ENV HOSTNAME=0.0.0.0
 
 # 📦 Copy build artifacts to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
