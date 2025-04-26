@@ -198,35 +198,67 @@ export default function Component() {
             );
         }
     };
-
-    const updateProblemSubmission = (
-        questionId: string,
-        updates: Partial<ProblemSubmission>
-    ) => {
-        setEditedSubmission((prev) => {
-            if (!prev) return null;
-            return {
-                ...prev,
-                problem: prev.problem.map((p) =>
-                    p.questionId === questionId ? { ...p, ...updates } : p
-                ),
-            };
-        });
-    };
-    const updateWrittenSubmission = (
-        questionId: string,
-        updates: Partial<WrittenSubmission>
-    ) => {
-        setEditedSubmission((prev) => {
-            if (!prev) return null;
-            return {
-                ...prev,
-                written: prev.written.map((w) =>
-                    w.questionId === questionId ? { ...w, ...updates } : w
-                ),
-            };
-        });
-    };
+const updateProblemSubmission = (
+    questionId: string,
+    updates: Partial<ProblemSubmission>
+  ) => {
+    setEditedSubmission((prev) => {
+      if (!prev) return null;
+      
+      const updatedProblem = prev.problem.map(p => 
+        p.questionId === questionId ? {...p, ...updates} : p
+      );
+      const newProblemScore = updatedProblem.reduce((sum, p) => sum + p.score, 0);
+      setCandidateList(prevCandidates => prevCandidates.map(candidate => {
+        if (candidate.account.accountId === selectedCandidateId) {
+          return {
+            ...candidate,
+            result: {
+              ...candidate.result,
+              problemSolvingScore: newProblemScore,
+              totalScore: newProblemScore + 
+                         candidate.result.writtenScore + 
+                         candidate.result.mcqScore
+            }
+          };
+        }
+        return candidate;
+      }));
+  
+      return {...prev, problem: updatedProblem};
+    });
+  };
+  
+  const updateWrittenSubmission = (
+    questionId: string,
+    updates: Partial<WrittenSubmission>
+  ) => {
+    setEditedSubmission((prev) => {
+      if (!prev) return null;
+  
+      const updatedWritten = prev.written.map(w => 
+        w.questionId === questionId ? {...w, ...updates} : w
+      );
+      const newWrittenScore = updatedWritten.reduce((sum, w) => sum + w.score, 0)
+      setCandidateList(prevCandidates => prevCandidates.map(candidate => {
+        if (candidate.account.accountId === selectedCandidateId) {
+          return {
+            ...candidate,
+            result: {
+              ...candidate.result,
+              writtenScore: newWrittenScore,
+              totalScore: candidate.result.problemSolvingScore + 
+                         newWrittenScore + 
+                         candidate.result.mcqScore
+            }
+          };
+        }
+        return candidate;
+      }));
+  
+      return {...prev, written: updatedWritten};
+    });
+  };
     const handleSaveAll = async () => {
         if (!editedSubmission || !examId || !selectedCandidateId) return;
         try {
