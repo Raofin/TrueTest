@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Button,
     Textarea,
@@ -21,6 +21,7 @@ interface MCQOption {
 }
 
 interface MCQQuestion {
+    questionId?: string;
     question: string;
     points: number;
     options: MCQOption[];
@@ -28,8 +29,9 @@ interface MCQQuestion {
     difficultyType: string;
 }
 interface ExistingQuestion {
+    questionId?: string;
     statementMarkdown: string;
-    points: number;
+    score: number;
     difficultyType: string;
     mcqOption: {
         option1: string;
@@ -40,26 +42,25 @@ interface ExistingQuestion {
         answerOptions: string;
     };
 }
-interface FetchMcqData {
-    examId: string;
-    mcqQuestions: ExistingQuestion[];
-}
+
 interface MCQFormProps {
     readonly examId: string;
     readonly existingQuestions: ExistingQuestion[];
     readonly onSaved: () => void;
+    readonly mcqPoints: (points: number) => void;
 }
-
 export default function App({
     examId,
     existingQuestions,
     onSaved,
+    mcqPoints,
 }: MCQFormProps) {
     const [questions, setQuestions] = useState<MCQQuestion[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
+                  questionId: q.questionId,
                   question: q.statementMarkdown,
-                   points: Number(q.points) || 0,
+                  points: Number(q.score) || 0,
                   difficultyType: "Easy",
                   options: [
                       { id: 1, text: q.mcqOption.option1 },
@@ -73,6 +74,7 @@ export default function App({
               }))
             : [
                   {
+                      questionId: "",
                       question: "",
                       options: [
                           { id: 1, text: "" },
@@ -86,7 +88,39 @@ export default function App({
                   },
               ]
     );
-
+    const handleDeleteQuestion = async (index: number) => {
+        const questionToDelete = questions[index];
+        try {
+            if (questionToDelete.questionId) 
+                await api.delete(`/Questions/Mcq/Delete/${questionToDelete.questionId}`);
+            if(questions.length===1){
+                setQuestions([
+                    {
+                        questionId: "",
+                        question: "",
+                        options: [
+                            { id: 1, text: "" },
+                            { id: 2, text: "" },
+                            { id: 3, text: "" },
+                            { id: 4, text: "" },
+                        ],
+                        correctOptions: [],
+                        points: 0,
+                        difficultyType: "Easy",
+                    },
+                ])
+            }else{
+            setQuestions((prev) => prev.filter((_, i) => i !== index));
+            if (currentPage >= questions.length - 1) {
+                setCurrentPage(Math.max(0, currentPage - 1));
+            }
+            }
+            toast.success("Question deleted successfully");
+        } catch (error) {
+            const err = error as AxiosError;
+            toast.error(err.message ?? "Failed to delete question");
+        }
+    };
     const [currentPage, setCurrentPage] = useState(0);
     const [saveButton, setSaveButton] = useState(false);
     const handleQuestionChange = (index: number, value: string) => {
@@ -94,7 +128,13 @@ export default function App({
         newQuestions[index].question = value;
         setQuestions(newQuestions);
     };
-
+    useEffect(() => {
+        const total = questions.reduce(
+            (sum, problem) => sum + (problem.points || 0),
+            0
+        );
+        mcqPoints(total);
+    }, [questions, mcqPoints]);
     const handleOptionChange = (
         questionIndex: number,
         optionId: number,
@@ -143,28 +183,66 @@ export default function App({
         ]);
         setCurrentPage(questions.length);
     };
-
     const handlePoints = (questionIndex: number, value: string) => {
         const newQuestions = [...questions];
-        newQuestions[questionIndex].points = value === "" ? 0 : Math.max(0, parseInt(value) || 0);
+        newQuestions[questionIndex].points =
+            value === "" ? 0 : Math.max(0, parseInt(value) || 0);
         setQuestions(newQuestions);
     };
+    const handleSubmit = async () => {
+        const hasMissingPoints = questions.some((problem) => !problem.points);
+        if (hasMissingPoints) {
+            toast.error("Please input points of the mcq question");
+            return;
+        }
+        try {
+            const newQuestions = questions.filter((q) => !q.questionId);
+            const existingQuestions = questions.filter((q) => q.questionId);
+            if (newQuestions.length > 0) {
+                const createResponse = await api.post("/Questions/Mcq/Create", {
+                    examId: examId,
+                    mcqQuestions: newQuestions.map((q) => ({
+                        statementMarkdown: q.question,
+                        points: q.points,
+                        difficultyType: "Easy",
+                        mcqOption: {
+                            option1: q.options[0].text,
+                            option2: q.options[1].text,
+                            option3: q.options[2].text,
+                            option4: q.options[3].text,
+                            isMultiSelect: q.correctOptions.length > 1,
+                            answerOptions: q.correctOptions.join(","),
+                        },
+                    })),
+                });
 
-    const handleSubmit = () => {
-        const FetchData = async () => {
-            const hasMissingPoints = questions.some(
-                (problem) => !problem.points
-            );
-            if (hasMissingPoints) {
-                toast.error("Please input points of the mcq question");
-                return;
+                if (createResponse.status === 200) {
+                    setQuestions((prev) =>
+                        prev.map((q) => {
+                            if (!q.questionId) {
+                                const newQ = createResponse.data.find(
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    (newQuestion: any) =>
+                                        newQuestion.statementMarkdown ===
+                                            q.question &&
+                                        newQuestion.points === q.points
+                                );
+                                return newQ
+                                    ? { ...q, questionId: newQ.questionId }
+                                    : q;
+                            }
+                            return q;
+                        })
+                    );
+                }
             }
-            const payload: FetchMcqData = {
-                examId: examId,
-                mcqQuestions: questions.map((q) => ({
+            const updatePromises = existingQuestions.map((q) => {
+                if (!q.questionId) return;
+                return api.patch("/Questions/Mcq/Update", {
+                    questionId: q.questionId,
                     statementMarkdown: q.question,
                     points: q.points,
-                    difficultyType: "Easy",
+                    difficultyType: q.difficultyType,
                     mcqOption: {
                         option1: q.options[0].text,
                         option2: q.options[1].text,
@@ -173,45 +251,21 @@ export default function App({
                         isMultiSelect: q.correctOptions.length > 1,
                         answerOptions: q.correctOptions.join(","),
                     },
-                })),
-            };
-
-            try {
-                const resp = await api.post("/Questions/Mcq/Create", payload);
-                if (resp.status === 200) {
-                    toast.success("MCQ questions saved successfully!");
-                    onSaved();
-                    setSaveButton(!saveButton);
-                    setQuestions([
-                        {
-                            question: "",
-                            options: [
-                                { id: 1, text: "" },
-                                { id: 2, text: "" },
-                                { id: 3, text: "" },
-                                { id: 4, text: "" },
-                            ],
-                            correctOptions: [],
-                            points: 0,
-                            difficultyType: "Easy",
-                        },
-                    ]);
-                    setCurrentPage(0);
-                } else {
-                    toast.error("Failed to save MCQ questions");
-                }
-            } catch (error) {
-                const err = error as AxiosError;
-                toast.error(err.message ?? "Failed to save problems");
-            }
-        };
-        FetchData();
+                });
+            });
+            await Promise.all(updatePromises);
+            toast.success("MCQ questions saved successfully!");
+            onSaved();
+            setSaveButton(!saveButton);
+        } catch (error) {
+            const err = error as AxiosError;
+            toast.error(err.message ?? "Failed to save questions");
+        }
     };
-
     return (
         <div className="flex justify-center ">
             <div className="w-full flex flex-col">
-                {questions.length > 0 && (
+                {questions.length > 0 && (<>
                     <Card
                         key={currentPage}
                         className="w-full shadow-none bg-white dark:bg-[#18181b]"
@@ -284,16 +338,12 @@ export default function App({
                                 className="w-32"
                                 type="number"
                                 label="Points"
-                                value={questions[currentPage].points.toString()??"0"}
-                                onChange={(e) =>
-                                    handlePoints(currentPage, e.target.value)
-                                }
+                                value={questions[currentPage].points.toString() ??"0"}
+                                onChange={(e) => handlePoints(currentPage, e.target.value) }
                                 min="0"
                             />
-                            <div className="flex items-center gap-2 ">
-                                <span>
-                                    Page {currentPage + 1} of {questions.length}
-                                </span>
+                            <div className="flex gap-3 ">
+                                <span> Page {currentPage + 1} of {questions.length}</span>
                                 <PaginationButtons
                                     currentIndex={currentPage + 1}
                                     totalItems={questions.length}
@@ -312,22 +362,28 @@ export default function App({
                                     }
                                 />
                             </div>
-
-                            <Button
-                                color="primary"
-                                type="submit"
-                                isDisabled={saveButton}
-                                onPress={handleSubmit}
-                            >
-                                Save
-                            </Button>
+                           
+                                <Button color="danger"
+                                    onPress={() =>handleDeleteQuestion(currentPage)}
+                                    className="mb-4">
+                                    Delete </Button>
+                           
                         </div>
                     </Card>
-                )}
-
-                <div className="w-full my-3 text-center">
+                <div className="w-full flex gap-3 my-3 text-center justify-center">
                     <Button onPress={addNewQuestion}>Add MCQ Question</Button>
-                </div>
+                   {!saveButton ? <Button
+                        color="primary"
+                        onPress={handleSubmit}>
+                        Save All
+                    </Button>: <Button
+                        color="primary"
+                        onPress={handleSubmit}>
+                        Update All
+                    </Button>
+                    }
+                </div></>
+                )}
             </div>
         </div>
     );

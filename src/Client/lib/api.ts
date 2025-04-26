@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { getAuthToken, removeAuthToken } from './auth'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://localhost:9999'
 const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
+  baseURL: `${API_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -33,13 +34,13 @@ api.interceptors.response.use(
       try {
         if (typeof window !== 'undefined') {
           removeAuthToken()
-          window.location.href = '/signin'
+          window.location.href = '/'
         }
         return Promise.reject(new Error('Session expired. Please log in again.'))
       } catch {
         if (typeof window !== 'undefined') {
           removeAuthToken()
-          window.location.href = '/signin'
+          window.location.href = '/'
         }
         return Promise.reject(new Error('Authentication failed. Please log in again.'))
       }
