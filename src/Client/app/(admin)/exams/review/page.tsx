@@ -93,6 +93,7 @@ export default function Component() {
     const examId = searchParams.get("examId");
     const candidateId = searchParams.get("candidateId");
     const [selectedCandidateId, setSelectedCandidateId] = useState<string>(candidateId||"");
+    const [exam, setExam] = useState<ExamData>();
     const [unsavedChanges, setUnsavedChanges] = useState<Record<string, CandidateSubmission>>({});
 
     useEffect(() => {
@@ -116,6 +117,7 @@ export default function Component() {
                             questionType: "written",
                         };
                     });
+                    setExam(exam)
                     setQuestionsData(newQuestionsData);
                     setProblemPoints(exam.problemSolvingPoints);
                     setWrittenPoints(exam.writtenPoints);
@@ -296,12 +298,12 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
     return (
         <div className="mx-44 flex flex-col justify-between">
             <h2 className="text-2xl font-bold text-center my-5">
-                Review Results
+                Review
             </h2>
             <div className="w-full px-12 -none flex flex-col gap-4">
                 <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none -none">
                     <h1 className="text-xl font-semibold w-full text-center">
-                        Exam: {questionsData?.title}
+                        Exam: {exam?.title}
                     </h1>
                     <div className="flex flex-col gap-3">
                         <div className="flex w-full items-center justify-between">
