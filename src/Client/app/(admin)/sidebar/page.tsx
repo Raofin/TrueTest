@@ -13,6 +13,7 @@ import { MdEmail } from "react-icons/md";
 import { RiAdminFill, RiDashboardFill } from "react-icons/ri";
 import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
 import { useAuth } from "@/context/AuthProvider";
+import { MdRateReview } from "react-icons/md";
 
 const menuItems = [
     {
@@ -51,6 +52,12 @@ const menuItems = [
         label: "Add Admins",
         path: "/add-admins",
     },
+    {
+        key: "review",
+        icon: <MdRateReview size={30} />,
+        label: "Review Results",
+        path: "/exams/results",
+    }
 ];
 const Sidebar = () => {
     const pathname = usePathname();

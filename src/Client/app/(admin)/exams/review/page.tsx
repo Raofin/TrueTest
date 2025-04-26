@@ -91,7 +91,8 @@ export default function Component() {
     const [editedSubmission, setEditedSubmission] = useState<CandidateSubmission | null>(null);
     const searchParams = useSearchParams();
     const examId = searchParams.get("examId");
-    const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
+    const candidateId = searchParams.get("candidateId");
+    const [selectedCandidateId, setSelectedCandidateId] = useState<string>(candidateId||"");
 
     useEffect(() => {
         const fetchExamData = async () => {
@@ -186,7 +187,6 @@ export default function Component() {
             );
         }
     };
-
     const handleNextCandidate = () => {
         const currentIndex = candidateList.findIndex(
             (c) => c.account.accountId === selectedCandidateId
