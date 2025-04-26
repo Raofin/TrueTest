@@ -27,7 +27,7 @@ jobs:
           dotnet-version: 9.0.x
 
       - name: 📦 Restore dependencies
-        run: dotnet restore
+        run: dotnet restore OPS.sln
 
       - name: 🏗️ Build solution
         run: dotnet build OPS.sln --no-restore --configuration Release
