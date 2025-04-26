@@ -93,9 +93,7 @@ export default function Component() {
     const examId = searchParams.get("examId");
     const candidateId = searchParams.get("candidateId");
     const [selectedCandidateId, setSelectedCandidateId] = useState<string>(candidateId||"");
-    const [exam, setExam] = useState<ExamData>();
-    const [unsavedChanges, setUnsavedChanges] = useState<Record<string, CandidateSubmission>>({});
-
+    const [exam,setExam]=useState<ExamData>()
     useEffect(() => {
         const fetchExamData = async () => {
             if (!examId) return;
@@ -153,10 +151,6 @@ export default function Component() {
         const fetchSubmissionData = async () => {
             try {
                 if (!selectedCandidateId || !examId) return;
-                if (unsavedChanges[selectedCandidateId]) {
-                    setEditedSubmission(unsavedChanges[selectedCandidateId]);
-                    return;
-                  }
                 const response = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`);
                 if (response.status === 200) {
                     const submissionData = response.data;
@@ -179,11 +173,9 @@ export default function Component() {
             }
         };
         fetchSubmissionData();
-    }, [examId, selectedCandidateId, unsavedChanges]);
+    }, [examId, selectedCandidateId]);
+
     const handleCandidateChange = (value: string) => {
-        if (unsavedChanges[selectedCandidateId]) {
-            if (!confirm("You have unsaved changes. Continue?")) return;
-          }
         setSelectedCandidateId(value);
     };
     const handlePrevCandidate = () => {
@@ -191,7 +183,7 @@ export default function Component() {
             (c) => c.account.accountId === selectedCandidateId
         );
         if (currentIndex > 0) {
-            handleCandidateChange(
+            setSelectedCandidateId(
                 candidateList[currentIndex - 1].account.accountId
             );
         }
@@ -201,29 +193,18 @@ export default function Component() {
             (c) => c.account.accountId === selectedCandidateId
         );
         if (currentIndex < candidateList.length - 1) {
-            handleCandidateChange(
+            setSelectedCandidateId(
                 candidateList[currentIndex + 1].account.accountId
             );
         }
     };
-    const updateSubmission = (updater: typeof updateProblemSubmission) => 
-        (questionId: string, updates: Partial<ProblemSubmission>) => {
-          updater(questionId, updates);
-          setUnsavedChanges(prev => ({
-            ...prev,
-            [selectedCandidateId]: editedSubmission!
-          }));
-        };
-        
+
     const updateProblemSubmission = (
         questionId: string,
         updates: Partial<ProblemSubmission>
     ) => {
         setEditedSubmission((prev) => {
             if (!prev) return null;
-            if (updates.isFlagged === false) {
-                updates.flagReason = null;
-              }
             return {
                 ...prev,
                 problem: prev.problem.map((p) =>
@@ -238,9 +219,6 @@ export default function Component() {
     ) => {
         setEditedSubmission((prev) => {
             if (!prev) return null;
-            if (updates.isFlagged === false) {
-                updates.flagReason = null;
-              }
             return {
                 ...prev,
                 written: prev.written.map((w) =>
@@ -249,8 +227,6 @@ export default function Component() {
             };
         });
     };
-const safeUpdateProblem = updateSubmission(updateProblemSubmission);
-const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
     const handleSaveAll = async () => {
         if (!editedSubmission || !examId || !selectedCandidateId) return;
         try {
@@ -282,11 +258,6 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
                 problem: result.data.submission.problem,
                 written: result.data.submission.written
             });
-            setUnsavedChanges(prev => {
-                const newState = { ...prev };
-                delete newState[selectedCandidateId];
-                return newState;
-              });
         } catch (error) {
             console.error("Error saving submissions:", error);
             toast.error("Failed to save changes");
@@ -418,11 +389,9 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
                                                         className="w-16"
                                                         value={submission.score}
                                                         onChange={(e) =>
-                                                            safeUpdateProblem(
-                                                              submission.questionId,
-                                                              { score: parseInt(e.target.value) }
-                                                            )
-                                                          }
+                                                            updateProblemSubmission(
+                                                                submission.questionId,
+                                                                { score: parseInt( e.target.value )} ) }
                                                     /> /{problemPoints}
                                                 </div>
                                                 <Button
@@ -435,10 +404,12 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
                                                             submission.isFlagged
                                                         }
                                                         onChange={(e) =>
-                                                            safeUpdateProblem(
+                                                            updateProblemSubmission(
                                                                 submission.questionId,
-                                                                { isFlagged: e.target.checked }
-                                                              )
+                                                                {
+                                                                    isFlagged:e.target.checked,
+                                                                }
+                                                            )
                                                         }
                                                     />
                                                     Flag Solution
@@ -451,10 +422,8 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
                                                 placeholder="Flag reason"
                                                 value={submission.flagReason || ""}
                                                 onChange={(e) =>
-                                                    safeUpdateProblem(
-                                                        submission.questionId,
-                                                        { flagReason: e.target.value }
-                                                      )
+                                                    updateProblemSubmission(
+                                                        submission.questionId,{flagReason:e.target.value})
                                                 }/>)}
                                     </div>
                                 ))}
@@ -493,11 +462,11 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
                                                         className="w-16"
                                                         value={submission.score}
                                                         onChange={(e) =>
-                                                            safeUpdateWritten( 
-                                                              submission.questionId,
-                                                              { score: parseInt(e.target.value) }
+                                                            updateWrittenSubmission(
+                                                                submission.questionId,
+                                                                {score: parseInt(e.target.value)}
                                                             )
-                                                          }
+                                                        }
                                                     />
                                                     /{writtenPoints}
                                                 </div>
@@ -511,11 +480,9 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
                                                             submission.isFlagged
                                                         }
                                                         onChange={(e) =>
-                                                            safeUpdateWritten( 
-                                                              submission.questionId,
-                                                              { isFlagged: e.target.checked }
-                                                            )
-                                                          }
+                                                            updateWrittenSubmission(
+                                                                submission.questionId,
+                                                                {isFlagged:e.target.checked})}
                                                     />
                                                     Flag Solution
                                                 </Button>
@@ -527,11 +494,10 @@ const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
                                                 placeholder="Flag reason"
                                                 value={submission.flagReason || ""}
                                                 onChange={(e) =>
-                                                    safeUpdateWritten(  
-                                                      submission.questionId,
-                                                      { flagReason: e.target.value }
+                                                    updateWrittenSubmission(
+                                                        submission.questionId,{flagReason:e.target.value,}
                                                     )
-                                                  }
+                                                }
                                             />
                                         )}
                                     </div>
