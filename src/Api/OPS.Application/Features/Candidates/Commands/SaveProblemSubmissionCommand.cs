@@ -5,6 +5,7 @@ using OPS.Application.Common.Extensions;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Contracts.Core.OneCompiler;
+using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
 
@@ -90,32 +91,38 @@ public class SaveProblemSubmissionsCommandHandler(
     private async Task<List<TestCodeResponse>> RunTestCasesAsync(
         SaveProblemSubmissionsCommand request, CancellationToken ct)
     {
-        var testCases = await _unitOfWork.TestCase
-            .GetByQuestionIdAsync(request.QuestionId, ct);
-
+        var testCases = await _unitOfWork.TestCase.GetByQuestionIdAsync(request.QuestionId, ct);
         var responses = new List<TestCodeResponse>();
 
         foreach (var testCase in testCases)
         {
-            CodeRunResponse result = await _oneCompilerApi.CodeRunAsync(
-                request.Language,
-                request.Code,
-                testCase.Input
-            );
-
-            var response = new TestCodeResponse(
-                testCase.Id,
-                testCase.ExpectedOutput.TrimEnd() == result.Stdout?.TrimEnd(),
-                result.Stdout,
-                result.Stderr,
-                result.Exception,
-                result.ExecutionTime
-            );
-
+            var response = await ExecuteTestCaseAsync(request, testCase);
             responses.Add(response);
         }
 
         return responses;
+    }
+
+    private async Task<TestCodeResponse> ExecuteTestCaseAsync(
+        SaveProblemSubmissionsCommand request, TestCase testCase)
+    {
+        var result = await _oneCompilerApi.CodeRunAsync(request.Language, request.Code, testCase.Input);
+
+        return new TestCodeResponse(
+            testCase.Id,
+            IsAccepted(result, testCase.ExpectedOutput),
+            result.Stdout,
+            result.Stderr,
+            result.Exception,
+            result.ExecutionTime
+        );
+    }
+
+    private static bool IsAccepted(CodeRunResponse result, string expectedOutput)
+    {
+        return result.Stderr == null
+               && result.Exception == null
+               && expectedOutput.TrimEnd() == result.Stdout?.TrimEnd();
     }
 }
 

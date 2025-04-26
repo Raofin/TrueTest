@@ -58,7 +58,7 @@ public class UpdateWrittenCommandValidator : AbstractValidator<UpdateWrittenComm
             .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
-            .MinimumLength(10)
+            .MinimumLength(1)
             .When(x => !string.IsNullOrEmpty(x.StatementMarkdown));
 
         RuleFor(x => x.Points)

@@ -95,7 +95,7 @@ public class CreateMcqQuestionRequestValidator : AbstractValidator<CreateMcqQues
     {
         RuleFor(x => x.StatementMarkdown)
             .NotEmpty()
-            .MinimumLength(10);
+            .MinimumLength(1);
 
         RuleFor(x => x.Points)
             .GreaterThan(0)

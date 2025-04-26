@@ -93,7 +93,7 @@ public class ProblemQuestionRequestValidator : AbstractValidator<CreateProblemQu
     public ProblemQuestionRequestValidator()
     {
         RuleFor(x => x.StatementMarkdown)
-            .MinimumLength(10);
+            .MinimumLength(1);
 
         RuleFor(x => x.Points)
             .GreaterThan(0)
