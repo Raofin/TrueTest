@@ -93,6 +93,7 @@ export default function Component() {
     const examId = searchParams.get("examId");
     const candidateId = searchParams.get("candidateId");
     const [selectedCandidateId, setSelectedCandidateId] = useState<string>(candidateId||"");
+    const [unsavedChanges, setUnsavedChanges] = useState<Record<string, CandidateSubmission>>({});
 
     useEffect(() => {
         const fetchExamData = async () => {
@@ -150,6 +151,10 @@ export default function Component() {
         const fetchSubmissionData = async () => {
             try {
                 if (!selectedCandidateId || !examId) return;
+                if (unsavedChanges[selectedCandidateId]) {
+                    setEditedSubmission(unsavedChanges[selectedCandidateId]);
+                    return;
+                  }
                 const response = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`);
                 if (response.status === 200) {
                     const submissionData = response.data;
@@ -172,9 +177,11 @@ export default function Component() {
             }
         };
         fetchSubmissionData();
-    }, [examId, selectedCandidateId]);
-
+    }, [examId, selectedCandidateId, unsavedChanges]);
     const handleCandidateChange = (value: string) => {
+        if (unsavedChanges[selectedCandidateId]) {
+            if (!confirm("You have unsaved changes. Continue?")) return;
+          }
         setSelectedCandidateId(value);
     };
     const handlePrevCandidate = () => {
@@ -182,7 +189,7 @@ export default function Component() {
             (c) => c.account.accountId === selectedCandidateId
         );
         if (currentIndex > 0) {
-            setSelectedCandidateId(
+            handleCandidateChange(
                 candidateList[currentIndex - 1].account.accountId
             );
         }
@@ -192,18 +199,29 @@ export default function Component() {
             (c) => c.account.accountId === selectedCandidateId
         );
         if (currentIndex < candidateList.length - 1) {
-            setSelectedCandidateId(
+            handleCandidateChange(
                 candidateList[currentIndex + 1].account.accountId
             );
         }
     };
-
+    const updateSubmission = (updater: typeof updateProblemSubmission) => 
+        (questionId: string, updates: Partial<ProblemSubmission>) => {
+          updater(questionId, updates);
+          setUnsavedChanges(prev => ({
+            ...prev,
+            [selectedCandidateId]: editedSubmission!
+          }));
+        };
+        
     const updateProblemSubmission = (
         questionId: string,
         updates: Partial<ProblemSubmission>
     ) => {
         setEditedSubmission((prev) => {
             if (!prev) return null;
+            if (updates.isFlagged === false) {
+                updates.flagReason = null;
+              }
             return {
                 ...prev,
                 problem: prev.problem.map((p) =>
@@ -218,6 +236,9 @@ export default function Component() {
     ) => {
         setEditedSubmission((prev) => {
             if (!prev) return null;
+            if (updates.isFlagged === false) {
+                updates.flagReason = null;
+              }
             return {
                 ...prev,
                 written: prev.written.map((w) =>
@@ -226,6 +247,8 @@ export default function Component() {
             };
         });
     };
+const safeUpdateProblem = updateSubmission(updateProblemSubmission);
+const safeUpdateWritten = updateSubmission(updateWrittenSubmission);
     const handleSaveAll = async () => {
         if (!editedSubmission || !examId || !selectedCandidateId) return;
         try {
@@ -257,6 +280,11 @@ export default function Component() {
                 problem: result.data.submission.problem,
                 written: result.data.submission.written
             });
+            setUnsavedChanges(prev => {
+                const newState = { ...prev };
+                delete newState[selectedCandidateId];
+                return newState;
+              });
         } catch (error) {
             console.error("Error saving submissions:", error);
             toast.error("Failed to save changes");
@@ -388,9 +416,11 @@ export default function Component() {
                                                         className="w-16"
                                                         value={submission.score}
                                                         onChange={(e) =>
-                                                            updateProblemSubmission(
-                                                                submission.questionId,
-                                                                { score: parseInt( e.target.value )} ) }
+                                                            safeUpdateProblem(
+                                                              submission.questionId,
+                                                              { score: parseInt(e.target.value) }
+                                                            )
+                                                          }
                                                     /> /{problemPoints}
                                                 </div>
                                                 <Button
@@ -403,12 +433,10 @@ export default function Component() {
                                                             submission.isFlagged
                                                         }
                                                         onChange={(e) =>
-                                                            updateProblemSubmission(
+                                                            safeUpdateProblem(
                                                                 submission.questionId,
-                                                                {
-                                                                    isFlagged:e.target.checked,
-                                                                }
-                                                            )
+                                                                { isFlagged: e.target.checked }
+                                                              )
                                                         }
                                                     />
                                                     Flag Solution
@@ -421,8 +449,10 @@ export default function Component() {
                                                 placeholder="Flag reason"
                                                 value={submission.flagReason || ""}
                                                 onChange={(e) =>
-                                                    updateProblemSubmission(
-                                                        submission.questionId,{flagReason:e.target.value})
+                                                    safeUpdateProblem(
+                                                        submission.questionId,
+                                                        { flagReason: e.target.value }
+                                                      )
                                                 }/>)}
                                     </div>
                                 ))}
@@ -461,11 +491,11 @@ export default function Component() {
                                                         className="w-16"
                                                         value={submission.score}
                                                         onChange={(e) =>
-                                                            updateWrittenSubmission(
-                                                                submission.questionId,
-                                                                {score: parseInt(e.target.value)}
+                                                            safeUpdateWritten( 
+                                                              submission.questionId,
+                                                              { score: parseInt(e.target.value) }
                                                             )
-                                                        }
+                                                          }
                                                     />
                                                     /{writtenPoints}
                                                 </div>
@@ -479,9 +509,11 @@ export default function Component() {
                                                             submission.isFlagged
                                                         }
                                                         onChange={(e) =>
-                                                            updateWrittenSubmission(
-                                                                submission.questionId,
-                                                                {isFlagged:e.target.checked})}
+                                                            safeUpdateWritten( 
+                                                              submission.questionId,
+                                                              { isFlagged: e.target.checked }
+                                                            )
+                                                          }
                                                     />
                                                     Flag Solution
                                                 </Button>
@@ -493,10 +525,11 @@ export default function Component() {
                                                 placeholder="Flag reason"
                                                 value={submission.flagReason || ""}
                                                 onChange={(e) =>
-                                                    updateWrittenSubmission(
-                                                        submission.questionId,{flagReason:e.target.value,}
+                                                    safeUpdateWritten(  
+                                                      submission.questionId,
+                                                      { flagReason: e.target.value }
                                                     )
-                                                }
+                                                  }
                                             />
                                         )}
                                     </div>

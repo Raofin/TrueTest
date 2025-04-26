@@ -45,7 +45,7 @@ interface Candidate {
     };
 }
 
-export const ExamHeader = ({
+ const ExamHeader = ({
     exams,
     selectedExamId,
     onSelectExam,
@@ -138,7 +138,7 @@ export const ExamHeader = ({
         </Card>
     );
 };
-export const UserList = ({
+ const UserList = ({
     candidates,
     examId,
 }: {
@@ -290,7 +290,7 @@ export const UserList = ({
     );
 };
 
-const App: React.FC = () => {
+const Component: React.FC = () => {
     const [exams, setExams] = useState<Exam[]>([]);
     const [selectedExamId, setSelectedExamId] = useState<string>("");
     const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -339,7 +339,6 @@ const App: React.FC = () => {
                             <UserList
                                 candidates={candidates}
                                 examId={selectedExamId}
-                              
                             />
                         </CardBody>
                     </Card>
@@ -349,7 +348,7 @@ const App: React.FC = () => {
     );
 };
 
-export default App;
+export default Component;
 
 function calculateDuration(start: string, end: string): string {
     const startTime = new Date(start).getTime();
