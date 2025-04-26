@@ -3,7 +3,7 @@
 import React from 'react'
 import NavBar from '@/app/(auth)/NavBar'
 import '@/app/globals.css'
-import Logo from '@/components/ui/logo/page'
+import Logo from '@/components/ui/TrueTestLogo'
 import { Link } from '@heroui/react'
 import { usePathname } from 'next/navigation'
 
