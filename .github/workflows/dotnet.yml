@@ -1,9 +1,10 @@
 name: 🚀 .NET CI
 
 on:
-  branches:
-    - main
-    - develop
+  push:
+    branches:
+      - main
+      - develop
   pull_request:
     branches:
       - main
@@ -13,6 +14,8 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: 📥 Checkout code
@@ -27,7 +30,7 @@ jobs:
         run: dotnet restore
 
       - name: 🏗️ Build solution
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build OPS.sln --no-restore --configuration Release
 
       - name: ✅ Run tests
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: dotnet test OPS.sln --no-build --configuration Release --verbosity normal

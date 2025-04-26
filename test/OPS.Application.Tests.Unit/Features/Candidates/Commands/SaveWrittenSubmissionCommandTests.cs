@@ -66,7 +66,7 @@ public class SaveWrittenSubmissionCommandTests
     }
 
     [Fact]
-    public async Task Handle_WhenNotValidCandidate_ShouldReturnUnauthorizedError()
+    public async Task Handle_WhenNotValidCandidate_ShouldReturnForbiddenError()
     {
         // Arrange
         var submissions = new List<WrittenSubmissionRequest>
@@ -84,7 +84,7 @@ public class SaveWrittenSubmissionCommandTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Unauthorized);
+        result.FirstError.Type.Should().Be(ErrorType.Forbidden);
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
     }
 
