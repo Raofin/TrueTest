@@ -13,20 +13,6 @@ interface TestCase {
     receivedOutput: string;
 }
 interface CandidateData {
-    exam: {
-        examId: string;
-        title: string;
-        description: string;
-        totalPoints: number;
-        problemSolvingPoints: number;
-        writtenPoints: number;
-        mcqPoints: number;
-        durationMinutes: number;
-        isPublished: true;
-        status: string;
-        opensAt: string;
-        closesAt: string;
-    };
     account: {
         accountId: string;
         username: string;
@@ -55,7 +41,10 @@ interface ProblemSubmission {
     flagReason: string | null;
     testCaseOutputs: TestCase[];
 }
-
+interface CandidatesResponse {
+    exam: ExamData;
+    candidates: CandidateData[];
+  }
 interface WrittenSubmission {
     questionId: string;
     writtenSubmissionId: string;
@@ -64,18 +53,31 @@ interface WrittenSubmission {
     isFlagged: boolean;
     flagReason: string | null;
 }
-
-interface McqSubmission {
-    questionId: string;
-    mcqSubmissionId: string;
-    answerOptions: string;
-    score: number;
-}
-
 interface CandidateSubmission {
     problem: ProblemSubmission[];
     written: WrittenSubmission[];
-    mcq: McqSubmission[];
+}
+interface ExamData {
+    examId: string;
+    title: string;
+    description: string;
+    totalPoints: number;
+    problemSolvingPoints: number;
+    writtenPoints: number;
+    mcqPoints: number;
+    durationMinutes: number;
+    isPublished: boolean;
+    status: string;
+    opensAt: string;
+    closesAt: string;
+}
+
+interface ExamResponse {
+    exam: ExamData;
+    questions: {
+        problem: ProblemSubmission[];
+        written: WrittenSubmission[];
+    };
 }
 
 export default function Component() {
@@ -90,11 +92,12 @@ export default function Component() {
     const searchParams = useSearchParams();
     const examId = searchParams.get("examId");
     const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
+
     useEffect(() => {
         const fetchExamData = async () => {
             if (!examId) return;
             try {
-                const response = await api.get(`/Exam/${examId}`);
+                const response = await api.get<ExamResponse>(`/Exam/${examId}`);
                 if (response.status === 200) {
                     const { exam, questions } = response.data;
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,14 +126,16 @@ export default function Component() {
         };
         fetchExamData();
     }, [examId]);
+
     useEffect(() => {
         const fetchCandidateData = async () => {
             try {
-                const response = await api.get(`/Review/Candidates/${examId}`);
+                const response = await api.get<CandidatesResponse>(`/Review/Candidates/${examId}`);
                 if (response.status === 200) {
-                    setCandidateList(response.data);
-                    if (response.data.length > 0) {
-                        setSelectedCandidateId(response.data[0].account.accountId);
+                    setCandidateList(response.data.candidates);
+                    console.log(response.data)
+                    if (response.data.candidates.length > 0) {
+                        setSelectedCandidateId(response.data.candidates[0].account.accountId);
                     }
                 }
             } catch (error) {
@@ -139,27 +144,25 @@ export default function Component() {
         };
         if (examId) fetchCandidateData();
     }, [examId]);
+
     useEffect(() => {
         const fetchSubmissionData = async () => {
             try {
                 if (!selectedCandidateId || !examId) return;
-                const response = await api.get(
-                    `/Review/Candidates/${examId}/${selectedCandidateId}`
-                );
+                const response = await api.get(`/Review/Candidates/${examId}/${selectedCandidateId}`);
                 if (response.status === 200) {
                     const submissionData = response.data;
                     const processedData = {
-                        problem: submissionData.problem.map((p: ProblemSubmission) => ({
+                        problem: submissionData.submission.problem.map((p: ProblemSubmission) => ({
                             ...p,
                             isFlagged: p.isFlagged || false,
                             flagReason: p.flagReason || null,
                         })),
-                        written: submissionData.written.map((w: WrittenSubmission) => ({
+                        written: submissionData.submission.written.map((w: WrittenSubmission) => ({
                             ...w,
                             isFlagged: w.isFlagged || false,
                             flagReason: w.flagReason || null,
                         })),
-                        mcq: submissionData.mcq,
                     };
                     setEditedSubmission(processedData);
                 }
@@ -230,7 +233,7 @@ export default function Component() {
                 await api.patch("/Review/Submission/Problem", {
                     examId: examId,
                     accountId: selectedCandidateId,
-                    problemSubmitId: problem.problemSubmissionId,
+                    problemSubmissionId: problem.problemSubmissionId,
                     score: problem.score,
                     isFlagged: problem.isFlagged,
                     flagReason: problem.flagReason,
@@ -250,7 +253,10 @@ export default function Component() {
             const result = await api.get(
                 `/Review/Candidates/${examId}/${selectedCandidateId}`
             );
-            setEditedSubmission(result.data.submission);
+            setEditedSubmission({
+                problem: result.data.submission.problem,
+                written: result.data.submission.written
+            });
         } catch (error) {
             console.error("Error saving submissions:", error);
             toast.error("Failed to save changes");
@@ -264,8 +270,8 @@ export default function Component() {
             <h2 className="text-2xl font-bold text-center my-5">
                 Review Results
             </h2>
-            <div className="w-full px-12 border-none flex flex-col gap-4">
-                <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none border-none">
+            <div className="w-full px-12 -none flex flex-col gap-4">
+                <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none -none">
                     <h1 className="text-xl font-semibold w-full text-center">
                         Exam: {questionsData?.title}
                     </h1>
@@ -309,15 +315,31 @@ export default function Component() {
                             </div>
                         </div>
                         {selectedCandidate && (
-                            <div className="flex items-center justify-between">
+                            <div>
+                                <div className="flex items-center justify-between">
                                 <div>
                                     <span className="text-default-500">Score:</span>
-                                    {(mcqPoints||0)+(writtenPoints||0)+(problemPoints||0)}/{totalPoints}
+                                        {selectedCandidate.result.totalScore}/{totalPoints}
                                 </div>
                                 <div>
                                     <span className="text-default-500">Submitted At:</span>
                                     {new Date(selectedCandidate.result.submittedAt).toLocaleString()}
                                 </div>
+                            </div>
+                            <div className='flex w-full justify-between'>
+                                 <div>
+                                    <span className="text-default-500">Problem Solving:</span>
+                                        {selectedCandidate.result.problemSolvingScore}/{problemPoints}
+                                </div>
+                                 <div>
+                                    <span className="text-default-500">Written Question:</span>
+                                        {selectedCandidate.result.writtenScore}/{writtenPoints}
+                                </div>
+                                 <div>
+                                    <span className="text-default-500">MCQ:</span>
+                                        {selectedCandidate.result.mcqScore}/{mcqPoints}
+                                </div>
+                            </div>
                             </div>
                         )}
                     </div>
@@ -336,25 +358,26 @@ export default function Component() {
                                 </h2>
                                 {editedSubmission.problem.map((submission) => (
                                     <div key={submission.questionId}
-                                        className="space-y-4 mb-6 p-4 border rounded-lg">
-                                        <h3 className="font-medium"> Question :</h3>
+                                        className="space-y-4 mb-6 p-4   rounded-lg">
+                                        <h3 className="font-medium"> Problem Statement :</h3>
                                         <div className="font-medium">
                                             {questionsData[
                                                 submission.questionId
                                             ] ? (
-                                             <ReactMarkdown>
-                                              { questionsData[ submission.questionId].statementMarkdown}
-                                              </ReactMarkdown>
+                                                <ReactMarkdown>
+                                                { questionsData[ submission.questionId].statementMarkdown}
+                                                </ReactMarkdown>
                                             ) : ("Loading question...")}
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Code Submission: </h4>
-                                            <Card className="p-4 border-none rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
+                                            <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
                                                 <div className="font-mono text-sm whitespace-pre-wrap p-2">
                                                     {submission.code}
                                                 </div>
                                             </Card>
                                         </div>
+                                       
                                         <div>
                                             <h4 className="font-semibold mb-2"> Result</h4>
                                             <div className="flex items-center gap-5">
@@ -412,22 +435,18 @@ export default function Component() {
                                 </h2>
                                 {editedSubmission.written.map((submission) => (
                                     <div key={submission.questionId}
-                                        className="space-y-4 mb-6 p-4 border rounded-lg">
-                                        <h3 className="font-medium">Question :</h3>
-                                        <div  className="space-y-4 mb-6 p-4 border rounded-lg">
-                                          <div className="font-medium">
-                                            {questionsData[submission.questionId] ? (
-                                              <ReactMarkdown>{questionsData[submission.questionId].statementMarkdown}</ReactMarkdown>
-                                            ) : (
-                                              'Loading question...'
-                                            )}
-                                          </div>
-                                        <div>
-                                            <h4 className="font-semibold mb-2">
-                                                Answer:
-                                            </h4>
-                                            <Card className="p-4 border-none rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
-                                                <div className="whitespace-pre-wrap p-2">
+                                        className="space-y-4 p-4  rounded-lg">
+                                        <div  className="space-y-4  p-4  rounded-lg">
+                                            <div className="font-medium">
+                                                {questionsData[submission.questionId] ? (
+                                                    <ReactMarkdown>{questionsData[submission.questionId].statementMarkdown}</ReactMarkdown>
+                                                ) : (
+                                                    'Loading question...'
+                                                )}
+                                            </div>
+                                            <div>
+                                                <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
+                                                    <div className="whitespace-pre-wrap p-2">
                                                     {submission.answer}
                                                 </div>
                                             </Card>
