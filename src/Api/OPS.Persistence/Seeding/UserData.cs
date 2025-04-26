@@ -19,6 +19,7 @@ public static class UserData
                 PasswordHash = hash,
                 Salt = salt,
                 AccountRoles = new List<AccountRole> { new() { RoleId = 1 }, new() { RoleId = 3 } },
+                CreatedAt = DateTime.UtcNow.AddMinutes(-2),
                 Profile = new Profile
                 {
                     FirstName = "Zaid Amin",
@@ -43,6 +44,7 @@ public static class UserData
                 PasswordHash = hash,
                 Salt = salt,
                 AccountRoles = new List<AccountRole> { new() { RoleId = 1 }, new() { RoleId = 3 } },
+                CreatedAt = DateTime.UtcNow.AddMinutes(-1),
             },
             new()
             {
