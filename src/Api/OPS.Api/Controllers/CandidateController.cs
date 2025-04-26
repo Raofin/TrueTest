@@ -59,6 +59,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [EndpointDescription("Creates or updates a problem-solving submission.")]
     [ProducesResponseType<List<TestCodeResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<ExceptionResponse>(Status403Forbidden)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> SaveProblemAsync(SaveProblemSubmissionsCommand command,
         CancellationToken cancellationToken = default)
@@ -76,6 +77,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [EndpointDescription("Creates or updates a written submission.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<ExceptionResponse>(Status403Forbidden)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> SaveWrittenSubmissionAsync(SaveWrittenSubmissionsCommand command,
         CancellationToken cancellationToken = default)
@@ -93,6 +95,7 @@ public class CandidateController(IMediator mediator) : BaseApiController
     [EndpointDescription("Creates or updates an MCQ submission.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<ExceptionResponse>(Status403Forbidden)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> SaveMcqSubmissionAsync(SaveMcqSubmissionsCommand command,
         CancellationToken cancellationToken = default)
