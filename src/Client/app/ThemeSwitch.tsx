@@ -23,7 +23,7 @@ export default function ThemeSwitch({ withText }: ThemeSwitchProps) {
         style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
       >
         <IoSunnySharp style={iconStyle} />
-        {withText && <span>Light</span>}
+        {withText && <span className='ml-1'>Light</span>}
       </button>
     );
   }
@@ -34,7 +34,7 @@ export default function ThemeSwitch({ withText }: ThemeSwitchProps) {
       style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
     >
       <IoMoon style={iconStyle} />
-      {withText && <span>Dark</span>}
+      {withText && <span className='ml-1'>Dark</span>}
     </button>
   );
 }

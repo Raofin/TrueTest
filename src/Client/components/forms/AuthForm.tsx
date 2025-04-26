@@ -98,13 +98,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   const handleFieldBlur = useCallback(
     async (field: 'username' | 'email') => {
       const value = watch(field as Path<T>)
-      if (!value) {
-        setUniqueError(field as Path<T>, {
-          type: 'manual',
-          message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
-        })
-        return
-      }
       if (field === 'username') setUniqueUsernameError('')
       if (field === 'email') setUniqueEmailError('')
 
@@ -113,11 +106,9 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         if (!errors[field]) {
           await checkUserUniqueness(field, value)
         }
-      } else {
-        setError(`${field} is required`)
       }
     },
-    [checkUserUniqueness, errors, setUniqueError, trigger, watch]
+    [checkUserUniqueness, errors, trigger, watch]
   )
 
   const handleOtpVerification = useCallback(
@@ -127,7 +118,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         toast.error('OTP is required')
         return
       }
-
       try {
         const verifyResponse = await api.post(ROUTES.ISVALIDOTP, {
           email: formData?.email,

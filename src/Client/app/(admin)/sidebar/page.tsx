@@ -134,7 +134,7 @@ const Sidebar = () => {
                             {!isCollapsed && (
                                 <div className="flex">
                                     <Link href="/settings">
-                                        <p className={`text-sm`}>Settings</p>
+                                        Settings
                                     </Link>
                                 </div>
                             )}
@@ -144,14 +144,12 @@ const Sidebar = () => {
                             {!isCollapsed && <ThemeSwitch withText={true} />}
                         </div>
                         <div
-                            className="flex items-center gap-2"
-                            suppressHydrationWarning
-                        >
+                            className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full flex items-center justify-center">
                                 <IoLogOut size={24} />
                             </div>
                             {!isCollapsed && (
-                                <Link href="/" className={`text-sm`}>
+                                <Link href="/">
                                     <button onClick={logout}> Log Out </button>
                                 </Link>
                             )}

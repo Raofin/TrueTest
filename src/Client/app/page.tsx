@@ -32,7 +32,7 @@ export default function Component() {
     }, [authenticatedUser?.roles, router]);
     return (
         <div className="h-full flex flex-col justify-between">
-             <div className=" w-full flex justify-between items-center h-16 px-2">
+             <div className=" w-full flex justify-between items-center h-16 px-14 pt-3">
                   <div className="bg-[#eeeef0] dark:bg-[#000000]">
                     <Logo />
                   </div>
@@ -66,7 +66,8 @@ export default function Component() {
                         </NavbarItem>
                       </NavbarContent>
                       <NavbarContent className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]" justify="end">
-                       <NavbarItem><Link href='/signin' className="text-black dark:text-white">Sign In</Link></NavbarItem>
+                       <NavbarItem><Link href='/signin' className="text-[#3f3f46] dark:text-white">Sign In</Link></NavbarItem>
+                       <NavbarItem><Link href='/signup' className="text-[#3f3f46] dark:text-white">Register</Link></NavbarItem>
                         <NavbarItem className="text-[#3f3f46] dark:text-white ">
                           <ThemeSwitch />
                         </NavbarItem>
@@ -77,7 +78,7 @@ export default function Component() {
             <div className="flex justify-around items-center gap-12 ">
                 <div className="flex flex-col items-center gap-4 flex-1">
                     <div className="flex items-center gap-2">
-                       <Logo size={80} textsz={'text-4xl'}/>
+                       <Logo size={80} textsz={'text-6xl'}/>
                     </div>
                     <div className="flex flex-col items-center justify-center text-8xl font-bold ">
                         <p> Your Secure Platform</p>

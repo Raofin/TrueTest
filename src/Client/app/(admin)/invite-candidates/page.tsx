@@ -73,7 +73,7 @@ export default function Component() {
                     console.log(exams);
                 }
             } catch {
-                toast.error("Failed to load exams");
+                
             } finally {
                 setIsLoading(false);
             }

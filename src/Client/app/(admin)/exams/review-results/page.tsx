@@ -12,41 +12,6 @@ interface TestCase {
     expectedOutput: string;
     receivedOutput: string;
 }
-
-interface Question {
-    questionId: string;
-    questionTitle: string;
-    questionDescription: string;
-    inputFormat?: string;
-    outputFormat?: string;
-    constraints?: string;
-    userAnswer?: string;
-    testCases: TestCase[];
-    pointsAwarded: number;
-    maxPoints: number;
-    questionType: "code" | "written" | "mcq";
-}
-
-interface Submission {
-    accountId: string;
-    username: string;
-    email: string;
-    result: {
-        totalScore: number;
-        problemSolvingScore: number;
-        submittedAt: string;
-        hasReviewed: boolean;
-        isReviewed: boolean;
-    };
-    questions: Question[];
-}
-
-interface ExamData {
-    title: string;
-    submissions: Submission[];
-    totalPoints: number;
-}
-
 interface CandidateData {
     exam: {
         examId: string;
@@ -114,7 +79,6 @@ interface CandidateSubmission {
 }
 
 export default function Component() {
-    const [examData, setExamData] = useState<ExamData>();
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
@@ -127,74 +91,46 @@ export default function Component() {
     const examId = searchParams.get("examId");
     const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
     useEffect(() => {
-        const fetchQuestions = async () => {
-            if (!editedSubmission) return;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const newQuestionsData: Record<string, any> = {};
-            await Promise.all(
-                editedSubmission.problem.map(async (submission) => {
-                    try {
-                        const response = await api.get(`/Questions/Problem/${submission.questionId}`);
-                        newQuestionsData[submission.questionId] = response.data;
-                    } catch (error) {
-                        console.error(`Failed to fetch problem question ${submission.questionId}:`, error);
-                        newQuestionsData[submission.questionId] = {
-                            error: "Failed to load question",
+        const fetchExamData = async () => {
+            if (!examId) return;
+            try {
+                const response = await api.get(`/Exam/${examId}`);
+                if (response.status === 200) {
+                    const { exam, questions } = response.data;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const newQuestionsData: Record<string, any> = {};
+                    questions.problem.forEach((q: ProblemSubmission) => {
+                        newQuestionsData[q.questionId] = {
+                            ...q,
+                            questionType: "problem",
                         };
-                    }
-                })
-            );
-            await Promise.all(
-                editedSubmission.written.map(async (submission) => {
-                    try {
-                        const response = await api.get(
-                            `/Questions/Written/${submission.questionId}`
-                        );
-                        newQuestionsData[submission.questionId] = response.data;
-                    } catch (error) {
-                        console.error(
-                            `Failed to fetch written question ${submission.questionId}:`,
-                            error
-                        );
-                        newQuestionsData[submission.questionId] = {
-                            error: "Failed to load question",
+                    });
+                    questions.written.forEach((q: WrittenSubmission) => {
+                        newQuestionsData[q.questionId] = {
+                            ...q,
+                            questionType: "written",
                         };
-                    }
-                })
-            );
-            await Promise.all(
-                editedSubmission.mcq.map(async (submission) => {
-                    try {
-                        const response = await api.get(
-                            `/Questions/Mcq/${submission.questionId}`
-                        );
-                        newQuestionsData[submission.questionId] = response.data;
-                    } catch (error) {
-                        console.error(
-                            `Failed to fetch MCQ question ${submission.questionId}:`,
-                            error
-                        );
-                        newQuestionsData[submission.questionId] = {
-                            error: "Failed to load question",
-                        };
-                    }
-                })
-            );
-            setQuestionsData(newQuestionsData);
+                    });
+                    setQuestionsData(newQuestionsData);
+                    setProblemPoints(exam.problemSolvingPoints);
+                    setWrittenPoints(exam.writtenPoints);
+                    setMcqPoints(exam.mcqPoints);
+                    setTotalPoints(exam.totalPoints);
+                }
+            } catch (error) {
+                console.error("Error fetching exam data:", error);
+            }
         };
-        fetchQuestions();
-    }, [editedSubmission]);
+        fetchExamData();
+    }, [examId]);
     useEffect(() => {
         const fetchCandidateData = async () => {
             try {
                 const response = await api.get(`/Review/Candidates/${examId}`);
                 if (response.status === 200) {
-                    setExamData(response.data.exam);
-                    setCandidateList(response.data.candidates);
-                    if (response.data.candidates.length > 0) {
-                        setSelectedCandidateId(
-                            response.data.candidates[0].account.accountId
-                        );
+                    setCandidateList(response.data);
+                    if (response.data.length > 0) {
+                        setSelectedCandidateId(response.data[0].account.accountId);
                     }
                 }
             } catch (error) {
@@ -203,40 +139,27 @@ export default function Component() {
         };
         if (examId) fetchCandidateData();
     }, [examId]);
-
     useEffect(() => {
         const fetchSubmissionData = async () => {
             try {
                 if (!selectedCandidateId || !examId) return;
-
-                const result = await api.get(
+                const response = await api.get(
                     `/Review/Candidates/${examId}/${selectedCandidateId}`
                 );
-                if (result.status === 200) {
-                    const initialData = result.data.submission || {
-                        problem: [],
-                        written: [],
-                        mcq: [],
-                    };
-                    setTotalPoints(result.data.exam.totalPoints);
-                    setProblemPoints(result.data.exam.problemSolvingPoints);
-                    setWrittenPoints(result.data.exam.writtenPoints);
+                if (response.status === 200) {
+                    const submissionData = response.data;
                     const processedData = {
-                        problem: initialData.problem.map(
-                            (p: ProblemSubmission) => ({
-                                ...p,
-                                isFlagged: p.isFlagged || false,
-                                flagReason: p.flagReason || null,
-                            })
-                        ),
-                        written: initialData.written.map(
-                            (w: WrittenSubmission) => ({
-                                ...w,
-                                isFlagged: w.isFlagged || false,
-                                flagReason: w.flagReason || null,
-                            })
-                        ),
-                        mcq: initialData.mcq,
+                        problem: submissionData.problem.map((p: ProblemSubmission) => ({
+                            ...p,
+                            isFlagged: p.isFlagged || false,
+                            flagReason: p.flagReason || null,
+                        })),
+                        written: submissionData.written.map((w: WrittenSubmission) => ({
+                            ...w,
+                            isFlagged: w.isFlagged || false,
+                            flagReason: w.flagReason || null,
+                        })),
+                        mcq: submissionData.mcq,
                     };
                     setEditedSubmission(processedData);
                 }
@@ -286,7 +209,6 @@ export default function Component() {
             };
         });
     };
-
     const updateWrittenSubmission = (
         questionId: string,
         updates: Partial<WrittenSubmission>
@@ -301,7 +223,6 @@ export default function Component() {
             };
         });
     };
-
     const handleSaveAll = async () => {
         if (!editedSubmission || !examId || !selectedCandidateId) return;
         try {
@@ -346,7 +267,7 @@ export default function Component() {
             <div className="w-full px-12 border-none flex flex-col gap-4">
                 <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none border-none">
                     <h1 className="text-xl font-semibold w-full text-center">
-                        Exam: {examData?.title}
+                        Exam: {questionsData?.title}
                     </h1>
                     <div className="flex flex-col gap-3">
                         <div className="flex w-full items-center justify-between">
@@ -428,7 +349,7 @@ export default function Component() {
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Code Submission: </h4>
-                                            <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
+                                            <Card className="p-4 border-none rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
                                                 <div className="font-mono text-sm whitespace-pre-wrap p-2">
                                                     {submission.code}
                                                 </div>
@@ -462,9 +383,7 @@ export default function Component() {
                                                             updateProblemSubmission(
                                                                 submission.questionId,
                                                                 {
-                                                                    isFlagged:
-                                                                        e.target
-                                                                            .checked,
+                                                                    isFlagged:e.target.checked,
                                                                 }
                                                             )
                                                         }
@@ -507,7 +426,7 @@ export default function Component() {
                                             <h4 className="font-semibold mb-2">
                                                 Answer:
                                             </h4>
-                                            <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
+                                            <Card className="p-4 border-none rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
                                                 <div className="whitespace-pre-wrap p-2">
                                                     {submission.answer}
                                                 </div>
@@ -566,51 +485,6 @@ export default function Component() {
                                 ))}
                             </div>
                         )}
-                        {editedSubmission.mcq.length > 0 && (
-                          <div className="mb-8">
-                              <h2 className="text-lg font-semibold mb-4">
-                                  MCQ Submissions
-                              </h2>
-                              {editedSubmission.mcq.map((submission) => {
-                                  const questionData = questionsData[submission.questionId];
-                                  const isCorrect = questionData?.answersOption === submission.answerOptions;
-                                  const questionScore = isCorrect ? questionData?.score : 0;
-                                   setMcqPoints(questionScore)
-                                  return (
-                                      <div key={submission.questionId} className="space-y-4 mb-6 p-4 border rounded-lg">
-                                          <h3 className="font-medium">Question :</h3>
-                                          <div className="font-medium">
-                                              {questionData ? (
-                                                  <ReactMarkdown>{questionData.statementMarkdown}</ReactMarkdown>
-                                              ) : (
-                                                  'Loading question...'
-                                              )}
-                                          </div>
-                                          <div>
-                                              <h4 className="font-semibold mb-2">
-                                                  Selected Option:
-                                              </h4>
-                                              <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
-                                                  <div className="whitespace-pre-wrap p-2">
-                                                      Option {submission.answerOptions}
-                                                  </div>
-                                              </Card>
-                                          </div>
-                                          <div>
-                                              <h4 className="font-semibold mb-2">
-                                                  Result
-                                              </h4>
-                                              <div className="flex items-center gap-3">
-                                                  <span>Points</span>
-                                                  {questionScore}
-                                                  <span>/ {questionData?.score ?? 'N/A'}</span>
-                                              </div>
-                                              </div>
-                                          </div>
-                                  );
-                              })}
-                          </div>
-                      )}
                         <div className="w-full flex justify-center">
                             <Button
                                 className="my-3"

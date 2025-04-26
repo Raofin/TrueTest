@@ -37,7 +37,6 @@ export default function ExamFormPage() {
     const [writtenQuesPoint, setWrittenQuesPoint] = useState<number>(0);
     const [mcqQuesPoint, setMcqQuesPoint] = useState<number>(0);
     const [totalPoints, setTotalPoints] = useState<number>(0);
-    const [published,setPublished]=useState<boolean>(false)
     const [activeComponents, setActiveComponents] = useState<
         { id: string; type: string }[]
     >([]);
@@ -160,7 +159,6 @@ useEffect(() => {
                     return;
                 }
                 if (!examId) {
-                    console.log("herer")
                     route.push("/view-exams");
                     return;
                 }
@@ -251,7 +249,6 @@ useEffect(() => {
                 const response = await api.post(`/Exam/Publish?examId=${examId}`);
                 if (response.status === 200) {
                     toast.success("Exam published successfully.");
-                    setPublished(true)
                     route.push('/view-exams')
                     resetForm();
                 }
@@ -266,15 +263,12 @@ useEffect(() => {
     const handleProblemPointsChange = (points: number) => {
         setProblemQuesPoint(points);
     };
-
     const handleWrittenPointsChange = (points: number) => {
         setWrittenQuesPoint(points);
     };
-
     const handleMcqPointsChange = (points: number) => {
         setMcqQuesPoint(points);
     };
-
     const handleTotalPointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         if (!isNaN(value)) {
@@ -312,7 +306,6 @@ useEffect(() => {
             mcq: [],
         });
     };
-
     const handleOpenCloseTime = (time: Time | null): string => {
         if (!time) return "";
         return `${String(time.hour).padStart(2, "0")}:${String(
@@ -329,8 +322,7 @@ useEffect(() => {
             <Card className="flex shadow-none flex-col justify-between p-8 items-center">
                 <form
                     className="flex gap-4 flex-wrap flex-col w-full"
-                    onSubmit={handleSaveExam}
-                >
+                    onSubmit={handleSaveExam}>
                     <Input
                         className="rounded-2xl"
                         isRequired
@@ -419,9 +411,9 @@ useEffect(() => {
                         onChange={handleTotalPointsChange}
                     />
                     <div className="flex justify-end mt-2 gap-3">
-                            {published && <Button color="success" onPress={handlePublishExam}>
+                             <Button color="success" onPress={handlePublishExam}>
                                 Publish
-                            </Button>}
+                            </Button>
                             <Button color="danger" onPress={handleDeleteExam}>
                                 Delete
                             </Button>
