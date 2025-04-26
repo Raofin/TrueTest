@@ -29,7 +29,7 @@ public class LoginQueryHandler(
 
         return isVerified
             ? _authService.AuthenticateUser(account)
-            : Error.Unauthorized();
+            : Error.Forbidden();
     }
 }
 

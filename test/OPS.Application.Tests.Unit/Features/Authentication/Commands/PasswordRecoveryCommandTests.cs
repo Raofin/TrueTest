@@ -99,7 +99,7 @@ public class PasswordRecoveryCommandTests
     }
 
     [Fact]
-    public async Task Handle_WhenInvalidOtp_ShouldReturnUnauthorizedError()
+    public async Task Handle_WhenInvalidOtp_ShouldReturnForbiddenError()
     {
         // Arrange
         var command = new PasswordRecoveryCommand(
@@ -119,7 +119,7 @@ public class PasswordRecoveryCommandTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Unauthorized);
+        result.FirstError.Type.Should().Be(ErrorType.Forbidden);
         result.FirstError.Description.Should().Be("Invalid OTP.");
 
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());

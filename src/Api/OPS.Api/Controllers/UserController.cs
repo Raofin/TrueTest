@@ -53,6 +53,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     [EndpointDescription("Updates account settings of the authenticated user.")]
     [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command,
         CancellationToken cancellationToken = default)

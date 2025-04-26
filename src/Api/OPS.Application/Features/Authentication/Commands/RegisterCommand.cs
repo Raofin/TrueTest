@@ -35,7 +35,7 @@ public class RegisterCommandHandler(
         if (!isUserUnique) return Error.Conflict();
 
         var isValidOtp = await _unitOfWork.Otp.IsValidOtpAsync(request.Email, request.Otp, cancellationToken);
-        if (!isValidOtp) return Error.Unauthorized(description: "Invalid OTP.");
+        if (!isValidOtp) return Error.Forbidden(description: "Invalid OTP.");
 
         var (hashedPassword, salt) = _passwordHasher.HashPassword(request.Password);
 

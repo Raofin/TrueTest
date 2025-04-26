@@ -88,7 +88,7 @@ public class LoginQueryTests
     }
 
     [Fact]
-    public async Task Handle_WhenPasswordInvalid_ShouldReturnUnauthorizedError()
+    public async Task Handle_WhenPasswordInvalid_ShouldReturnForbiddenError()
     {
         // Arrange
         var query = new LoginQuery("testuser", "wrongpassword");
@@ -104,7 +104,7 @@ public class LoginQueryTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Unauthorized);
+        result.FirstError.Type.Should().Be(ErrorType.Forbidden);
 
         await _unitOfWork.Account.Received(1).GetWithDetails(
             query.UsernameOrEmail,

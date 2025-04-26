@@ -190,7 +190,7 @@ public class UpdateAccountSettingsCommandTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Unauthorized);
+        result.FirstError.Type.Should().Be(ErrorType.Forbidden);
         result.FirstError.Description.Should().Be("Invalid current password");
 
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
