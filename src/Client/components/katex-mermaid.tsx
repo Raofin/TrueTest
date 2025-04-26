@@ -1,13 +1,11 @@
 'use client'
 
-
 import React, { useState, useRef, useEffect, Fragment, useCallback } from 'react'
 import MDEditor from '@uiw/react-md-editor'
 import mermaid from 'mermaid'
 import katex from 'katex'
 import 'katex/dist/katex.css'
 import rehypeSanitize from 'rehype-sanitize'
-
 
 const randomid = () => {
   const array = new Uint32Array(10)
@@ -17,7 +15,6 @@ const randomid = () => {
     .join('')
     .substring(0, 15)
 }
-
 
 interface CodeProps {
   children?: React.ReactNode

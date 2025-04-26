@@ -1,8 +1,3 @@
-
-type FormatTimeProps = {
-  minute: number;
-};
-
 export function FormattedDateWeekday({ date }: {readonly date: string }) {
   const openDate = new Date(date);
 
@@ -33,9 +28,9 @@ export function convertUtcToLocalTime(utcTimeString: string): string {
   return localTimeString;
 }
 
-export function  FormatTimeHourMinutes({minute}:FormatTimeProps) {
+export function formatTimeHourMinutes(minute: number): string {
   const hours = Math.floor(minute / 60)
-  const minutes =Math.floor(minute % 60).toString().padStart(2, '0');
+  const minutes = (minute % 60).toString().padStart(2, '0')
   return `${hours}:${minutes}`
 }
 export function FormatTimeHourMinutesSeconds({ seconds }:{seconds:number}) {

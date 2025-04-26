@@ -17,7 +17,7 @@ export default function Component() {
   return (
     <>
     <RootNavBar/>
-    <div className="flex flex-col gap-6 items-center justify-center text-center h-screen w-full ">
+    <div className="flex flex-col gap-6 items-center justify-center text-center h-full w-full ">
       <div className="gap-5 flex">
         {stats.map((stat) => (
           <Card key={stat.id} className="py-4 w-[200px] text-center flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]">

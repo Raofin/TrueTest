@@ -26,7 +26,7 @@ public class SaveMcqSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserInfoP
         var isValidCandidate = await _unitOfWork.ExamCandidate
             .IsValidCandidate(userAccountId, request.ExamId, cancellationToken);
 
-        if (!isValidCandidate) return Error.Unauthorized();
+        if (!isValidCandidate) return Error.Forbidden();
 
         foreach (var req in request.Submissions)
         {

@@ -6,7 +6,10 @@ on:
       - main
       - develop
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types:
+      - opened
+      - synchronize
+      - reopened
   workflow_dispatch:
 
 jobs:
@@ -14,6 +17,10 @@ jobs:
     name: Analyze .NET Code Quality
     runs-on: ubuntu-latest
     environment: SonarCloud
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
 
     steps:
       - name: 🔄 Checkout code

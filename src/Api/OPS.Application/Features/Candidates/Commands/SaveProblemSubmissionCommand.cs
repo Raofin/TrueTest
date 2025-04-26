@@ -40,7 +40,7 @@ public class SaveProblemSubmissionsCommandHandler(
         var isValidCandidate = await _unitOfWork.ExamCandidate
             .IsValidCandidate(userAccountId, request.ExamId, cancellationToken);
 
-        if (!isValidCandidate) return Error.Unauthorized();
+        if (!isValidCandidate) return Error.Forbidden();
 
         var submission = await _unitOfWork.ProblemSubmission
             .GetAsync(request.QuestionId, userAccountId, cancellationToken);

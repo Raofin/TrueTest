@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Select, SelectItem } from "@heroui/react";
 import Editor from "@monaco-editor/react";
 import api from "@/lib/api";
+import { languages } from "@/lib/language-selector";
 
 export interface TestCase {
     testCaseId?: string;
@@ -28,52 +29,29 @@ interface PageProps {
     readonly setAnswers: React.Dispatch<
         React.SetStateAction<{ [key: string]: string | string[] }>
     >;
+    readonly answers: { [key: string]: string | string[] };
     readonly questionId: string;
-}
-
+    readonly examId: string;
+    readonly persistedTestCaseResults?: TestCase[]; 
+    readonly onTestCaseRunComplete: (questionId: string, results: TestCase[]) => void;
+    }
 interface CodeState {
     [key: string]: string;
 }
-
-const languages = [
-    {
-        label: "C++",
-        value: "cpp",
-        defaultCode:
-            "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}",
-    },
-    { label: "Python", value: "python", defaultCode: "# Your code here" },
-    {
-        label: "Java",
-        value: "java",
-        defaultCode:
-            "public class Main {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}",
-    },
-    {
-        label: "JavaScript",
-        value: "javascript",
-        defaultCode: "function solve(input) {\n    // Your code here\n}",
-    },
-    {
-        label: "C",
-        value: "c",
-        defaultCode:
-            "#include <stdio.h>\n\nint main() {\n    // Your code here\n    return 0;\n}",
-    },
-];
-
 export default function CodeEditor({
     question,
     setAnswers,
     questionId,
+    answers,
+    examId,
+    persistedTestCaseResults, 
+    onTestCaseRunComplete, 
 }: PageProps) {
     const [selectedLanguage, setSelectedLanguage] = useState("cpp");
     const [codeStates, setCodeStates] = React.useState<CodeState>({});
     const [selectedTestCase, setSelectedTestCase] = useState<number>(0);
-    const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>(
-        []
-    );
-
+    const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>([]);
+    const [displayTestCase, setDisplayTestCase] = useState<boolean>(false);
     const displayedTestCases = [formattedTestCases[selectedTestCase]];
 
     useEffect(() => {
@@ -81,15 +59,25 @@ export default function CodeEditor({
         languages.forEach((lang) => {
             initialStates[lang.value] = lang.defaultCode;
         });
-        setCodeStates(initialStates);
-
-        const initializedTestCases = question.testCases.map((tc) => ({
-            ...tc,
-            receivedOutput: "",
-            status: "pending" as const,
-        }));
-        setFormattedTestCases(initializedTestCases);
-    }, [question.testCases]);
+        const existingCode = answers[questionId] as string | undefined;
+        if (existingCode) {
+            setCodeStates({ [selectedLanguage]: existingCode });
+        } else {
+            setCodeStates(initialStates);
+        }
+        if (persistedTestCaseResults) {
+            setFormattedTestCases(persistedTestCaseResults);
+        } else {
+            const initializedTestCases = question.testCases.map((tc) => ({
+                ...tc,
+                receivedOutput: "",
+                output: tc.output || "Error",
+                status: "pending" as const,
+            }));
+            setFormattedTestCases(initializedTestCases);
+        }
+        console.log(formattedTestCases);
+    }, [question.testCases, questionId, answers, persistedTestCaseResults, formattedTestCases, selectedLanguage]);
 
     const handleCodeChange = (value: string | undefined) => {
         if (value !== undefined) {
@@ -104,48 +92,52 @@ export default function CodeEditor({
         }
     };
 
+    const handleLanguageChange = (newLanguage: string) => {
+        setSelectedLanguage(newLanguage);
+    };
+
     const handleRun = async () => {
-        let progLanguageType = "Python";
-        if (selectedLanguage === "cpp") {
-            progLanguageType = "C++";
-        } else if (selectedLanguage === "java") {
-            progLanguageType = "Java";
-        } else if (selectedLanguage === "javascript") {
-            progLanguageType = "JavaScript";
-        } else if (selectedLanguage === "c") {
-            progLanguageType = "C";
-        }
-        const payload = {
+        const currentCode = codeStates[selectedLanguage];
+        const savePayload = {
+            examId: examId,
             questionId: question.questionId,
-            Code: codeStates[selectedLanguage],
-            progLanguageType: progLanguageType,
+            code: currentCode,
+            language: selectedLanguage,
         };
         try {
-            const response = await api.post("/Candidate/TestCode", payload);
-            if (response.status === 200) {
-                const data = await response.data;
+            const saveResponse = await api.put("/Candidate/Submit/Problem/Save", savePayload);
+            if (saveResponse.status === 200) {
+                const responseData: {
+                    testCaseId: string;
+                    isAccepted: boolean;
+                    receivedOutput: string;
+                    errorMessage: string;
+                    exception: string;
+                    executionTime: number;
+                }[] = await saveResponse.data;
 
-                const updated = formattedTestCases.map((testCase) => {
-                    const result = data.find(
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (r: any) => r.testCaseId === testCase.testCaseId
+                const updatedTestCases = formattedTestCases.map((tc) => {
+                    const matchingResult = responseData.find(
+                        (res) => res.testCaseId === tc.testCaseId
                     );
-                    let status = "pending";
-                    if (result?.isAccepted) status = "success";
-                    else if (!result?.isAccepted) status = "error";
                     return {
-                        ...testCase,
-                        receivedOutput: result?.receivedOutput ?? "",
-                        status: status,
+                        ...tc,
+                        receivedOutput: matchingResult?.receivedOutput,
+                        status: matchingResult
+                            ? matchingResult.isAccepted
+                                ? "success"
+                                : "error"
+                            : tc.status,
                     } as TestCase;
                 });
-
-                setFormattedTestCases(updated);
+                setFormattedTestCases(updatedTestCases);
+                setDisplayTestCase(true);
+                onTestCaseRunComplete(questionId, updatedTestCases); 
             } else {
-                console.error("Failed to execute code");
+                console.error("Failed to save code");
             }
-        } catch (error) {
-            console.error("Error during code execution:", error);
+        } catch (saveError) {
+            console.error("Error during code save:", saveError);
         }
     };
 
@@ -154,32 +146,13 @@ export default function CodeEditor({
             <Card className="border-none rounded-lg p-4 shadow-none bg-white dark:bg-[#18181b]">
                 <h2 className="text-xl font-bold mb-3">Problem Statement</h2>
                 <div className="space-y-4">
+                    <p dangerouslySetInnerHTML={{ __html: question.statementMarkdown }} />
                     <div>
-                        <p
-                            dangerouslySetInnerHTML={{
-                                __html: question.statementMarkdown,
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <h3 className="font-semibold">Test Cases:</h3>
+                        <h3 className="font-semibold">Example</h3>
                         {question.testCases.map((testCase) => (
-                            <div
-                                key={testCase.input}
-                                className="mt-2 p-3 rounded-lg"
-                            >
-                                <div>
-                                    <span className="font-semibold">
-                                        Input:
-                                    </span>
-                                    {testCase.input}
-                                </div>
-                                <div>
-                                    <span className="font-semibold">
-                                        Expected Output:
-                                    </span>{" "}
-                                    {testCase.output}
-                                </div>
+                            <div key={testCase.input} className="mt-2 p-3 rounded-lg">
+                                <div><span className="font-semibold">Input:</span>{testCase.input}</div>
+                                <div><span className="font-semibold">Output:</span>{testCase.output}</div>
                             </div>
                         ))}
                     </div>
@@ -194,15 +167,11 @@ export default function CodeEditor({
                             <Select
                                 aria-label="Select Language"
                                 selectedKeys={[selectedLanguage]}
-                                onChange={(e) =>
-                                    setSelectedLanguage(e.target.value)
-                                }
+                                onChange={(e) => handleLanguageChange(e.target.value)}
                                 className="w-40"
                             >
                                 {languages.map((lang) => (
-                                    <SelectItem key={lang.value}>
-                                        {lang.label}
-                                    </SelectItem>
+                                    <SelectItem key={lang.value}>{lang.label}</SelectItem>
                                 ))}
                             </Select>
                         </div>
@@ -225,50 +194,50 @@ export default function CodeEditor({
                         />
                     </div>
                 </Card>
-                <Card className="p-4 rounded-lg">
-                    <div className="flex justify-between">
-                        <p className="font-bold">Test Cases</p>
-                        <div className="flex gap-2">
-                            {formattedTestCases.map((tc, index) => {
-                                const getStatusColor = () => {
-                                    if (tc.status === "success")
-                                        return "bg-green-500";
-                                    if (tc.status === "error")
-                                        return "bg-red-500";
-                                    return "bg-gray-500";
-                                };
-                                const isSelected =
-                                    selectedTestCase === index
-                                        ? "ring-2 ring-blue-500"
-                                        : "";
-                                return (
-                                    <button
-                                        key={index}
-                                        onClick={() =>
-                                            setSelectedTestCase(index)
-                                        }
-                                        className={`w-8 h-8 rounded-lg text-white flex items-center justify-center ${getStatusColor()} ${isSelected}`}
-                                    >
-                                        {index + 1}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {displayedTestCases?.map((testCase) => (
-                        <div
-                            key={testCase?.input}
-                            className="grid grid-cols-3 gap-4 mt-3">
-                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.input ?? "No input provided"}
-                            </div>
-                            <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg">
-                                {testCase?.output ?? "No output provided"}
+                {displayTestCase && (
+                    <Card className="p-4 rounded-lg">
+                        <div className="flex justify-between">
+                            <p className="font-bold">Test Cases</p>
+                            <div className="flex gap-2">
+                                {formattedTestCases.map((tc, index) => {
+                                    const getStatusColor = () => {
+                                        if (tc.status === "success") return "bg-green-500";
+                                        if (tc.status === "error") return "bg-red-500";
+                                        return "bg-gray-500";
+                                    };
+                                    const isSelected = selectedTestCase === index ? "ring-2 ring-blue-500" : "";
+                                    return (
+                                        <button
+                                            key={index}
+                                            onClick={() => setSelectedTestCase(index)}
+                                            className={`w-8 h-8 rounded-lg text-white flex items-center justify-center ${getStatusColor()} ${isSelected}`}
+                                        >
+                                            {index + 1}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
-                    ))}
-                </Card>
+                        <div className="flex w-full justify-between mt-4">
+                            <p className="font-semibold">Input</p>
+                            <p className="font-semibold">Received Output</p>
+                            <p className="font-semibold">Expected Output</p>
+                        </div>
+                        {displayedTestCases?.map((testCase) => (
+                            <div key={testCase?.input} className="grid grid-cols-3 gap-4 mt-3 min-h-[100px]">
+                                <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
+                                    {testCase?.input ?? "No input provided"}
+                                </div>
+                                <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
+                                    {testCase?.receivedOutput ?? "No output yet"}
+                                </div>
+                                <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
+                                    {testCase?.output ?? "No expected output"}
+                                </div>
+                            </div>
+                        ))}
+                    </Card>
+                )}
             </div>
         </div>
     );

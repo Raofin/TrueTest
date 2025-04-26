@@ -27,18 +27,18 @@ const SignInFormFields = <T extends FieldValues>({
       <>
         <Input
           {...register('usernameOrEmail' as Path<T>)}
-      
+          isRequired
           label="Username or Email Address"
           type="text"
-          className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+          className=" rounded-xl"
         />
         {errors.usernameOrEmail && (
           <p className="text-sm text-red-500 mt-1">{errors.usernameOrEmail.message as string}</p>
         )}
         <Input
           {...register('password' as Path<T>)}
-          className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-
+          className=" rounded-xl"
+          isRequired
           endContent={
             <button type="button" onClick={() => setIsVisible(!isVisible)}>
               <Icon
