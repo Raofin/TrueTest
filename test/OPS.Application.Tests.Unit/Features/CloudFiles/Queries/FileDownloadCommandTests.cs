@@ -1,12 +1,9 @@
 using ErrorOr;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
 using NSubstitute;
 using OPS.Application.Dtos;
 using OPS.Application.Features.CloudFiles.Queries;
 using OPS.Application.Services.CloudService;
-using Xunit;
 
 namespace OPS.Application.Tests.Unit.Features.CloudFiles.Queries;
 
@@ -33,7 +30,7 @@ public class FileDownloadCommandTests
             FileName: "test.pdf",
             ContentType: "application/pdf",
             Size: 1024,
-            Bytes: new byte[] { 1, 2, 3 }
+            Bytes: [1, 2, 3]
         );
 
         _cloudFileService.DownloadAsync(fileId)
@@ -55,7 +52,7 @@ public class FileDownloadCommandTests
         var command = new FileDownloadCommand(fileId);
 
         _cloudFileService.DownloadAsync(fileId)
-            .Returns((FileDownloadResponse)null);
+            .Returns((FileDownloadResponse)null!);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -64,24 +61,6 @@ public class FileDownloadCommandTests
         result.IsError.Should().BeTrue();
         result.FirstError.Type.Should().Be(ErrorType.NotFound);
     }
-
-    // [Fact]
-    // public async Task Handle_DownloadFails_ReturnsError()
-    // {
-    //     // Arrange
-    //     var fileId = "test-file-id";
-    //     var command = new FileDownloadCommand(fileId);
-    //
-    //     _cloudFileService.DownloadAsync(fileId)
-    //         .Returns(Task.FromException<FileDownloadResponse>(new Exception("Download failed")));
-    //
-    //     // Act
-    //     var result = await _sut.Handle(command, CancellationToken.None);
-    //
-    //     // Assert
-    //     result.IsError.Should().BeTrue();
-    //     result.FirstError.Type.Should().Be(ErrorType.Failure);
-    // }
 
     [Fact]
     public void Validate_EmptyFileId_ReturnsError()
@@ -101,7 +80,7 @@ public class FileDownloadCommandTests
     public void Validate_NullFileId_ReturnsError()
     {
         // Arrange
-        var command = new FileDownloadCommand(null);
+        var command = new FileDownloadCommand(null!);
 
         // Act
         var result = _validator.Validate(command);

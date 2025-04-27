@@ -1,14 +1,10 @@
 using ErrorOr;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
 using NSubstitute;
-using OPS.Application.Dtos;
 using OPS.Application.Features.CloudFiles.Queries;
 using OPS.Application.Mappers;
 using OPS.Domain;
 using OPS.Domain.Entities.Core;
-using Xunit;
 
 namespace OPS.Application.Tests.Unit.Features.CloudFiles.Queries;
 
@@ -59,7 +55,7 @@ public class GetFileDetailsQueryTests
         var query = new GetFileDetailsQuery(cloudFileId);
 
         _unitOfWork.CloudFile.GetAsync(cloudFileId, Arg.Any<CancellationToken>())
-            .Returns((CloudFile)null);
+            .Returns((CloudFile)null!);
 
         // Act
         var result = await _sut.Handle(query, CancellationToken.None);
@@ -68,24 +64,6 @@ public class GetFileDetailsQueryTests
         result.IsError.Should().BeTrue();
         result.FirstError.Type.Should().Be(ErrorType.NotFound);
     }
-
-    // [Fact]
-    // public async Task Handle_GetFails_ReturnsError()
-    // {
-    //     // Arrange
-    //     var cloudFileId = Guid.NewGuid();
-    //     var query = new GetFileDetailsQuery(cloudFileId);
-    //
-    //     _unitOfWork.CloudFile.GetAsync(cloudFileId, Arg.Any<CancellationToken>())
-    //         .Returns(Task.FromException<CloudFile>(new Exception("Get failed")));
-    //
-    //     // Act
-    //     var result = await _sut.Handle(query, CancellationToken.None);
-    //
-    //     // Assert
-    //     result.IsError.Should().BeTrue();
-    //     result.FirstError.Type.Should().Be(ErrorType.Failure);
-    // }
 
     [Fact]
     public void Validate_EmptyCloudFileId_ReturnsError()

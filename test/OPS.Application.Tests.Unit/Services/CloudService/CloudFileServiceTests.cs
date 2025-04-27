@@ -1,11 +1,8 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using OPS.Application.Dtos;
 using OPS.Application.Services.CloudService;
 using OPS.Domain.Contracts.Core.GoogleCloud;
-using OPS.Domain.Entities.Core;
-using Xunit;
 
 namespace OPS.Application.Tests.Unit.Services.CloudService;
 

@@ -1,14 +1,11 @@
 using ErrorOr;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
 using NSubstitute;
 using OPS.Application.Features.CloudFiles.Commands;
 using OPS.Application.Services.CloudService;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Core;
-using Xunit;
 
 namespace OPS.Application.Tests.Unit.Features.CloudFiles.Commands;
 
@@ -21,10 +18,9 @@ public class DeleteFileCommandTests
 
     public DeleteFileCommandTests()
     {
-        var userInfoProvider = Substitute.For<IUserInfoProvider>();
         _cloudFileService = Substitute.For<ICloudFileService>();
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _sut = new DeleteFileCommandHandler(_cloudFileService, userInfoProvider, _unitOfWork);
+        _sut = new DeleteFileCommandHandler(_cloudFileService, _unitOfWork);
         _validator = new DeleteFileCommandValidator();
     }
 
@@ -47,8 +43,8 @@ public class DeleteFileCommandTests
         // Assert
         result.IsError.Should().BeFalse();
         _unitOfWork.CloudFile.Received(1).Remove(Arg.Any<CloudFile>());
-        _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
-        _cloudFileService.Received(1).DeleteAsync(cloudFile.FileId);
+        await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
+        await _cloudFileService.Received(1).DeleteAsync(cloudFile.FileId);
     }
 
     [Fact]
@@ -59,7 +55,7 @@ public class DeleteFileCommandTests
         var command = new DeleteFileCommand(cloudFileId);
 
         _unitOfWork.CloudFile.GetAsync(cloudFileId, Arg.Any<CancellationToken>())
-            .Returns((CloudFile)null);
+            .Returns((CloudFile)null!);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -88,8 +84,8 @@ public class DeleteFileCommandTests
         // Assert
         result.IsError.Should().BeFalse();
         _unitOfWork.CloudFile.Received(1).Remove(Arg.Any<CloudFile>());
-        _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
-        _cloudFileService.Received(1).DeleteAsync(cloudFile.FileId);
+        await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
+        await _cloudFileService.Received(1).DeleteAsync(cloudFile.FileId);
     }
 
     [Fact]

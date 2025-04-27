@@ -1,16 +1,10 @@
-using ErrorOr;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using OPS.Application.Dtos;
 using OPS.Application.Features.CloudFiles.Commands;
-using OPS.Application.Mappers;
 using OPS.Application.Services.CloudService;
 using OPS.Domain;
 using OPS.Domain.Entities.Core;
-using Xunit;
 
 namespace OPS.Application.Tests.Unit.Features.CloudFiles.Commands;
 
@@ -113,7 +107,7 @@ public class EditFileCommandTests
         _cloudFileService.UploadAsync(Arg.Any<IFormFile>(), Arg.Any<CancellationToken>())
             .Returns(newCloudFile);
         _unitOfWork.CloudFile.GetAsync(cloudFileId, Arg.Any<CancellationToken>())
-            .Returns((CloudFile)null);
+            .Returns((CloudFile)null!);
         _unitOfWork.CommitAsync(Arg.Any<CancellationToken>())
             .Returns(1);
 
@@ -141,18 +135,4 @@ public class EditFileCommandTests
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.PropertyName == "CloudFileId");
     }
-
-    // [Fact]
-    // public void Validate_NullFile_ReturnsError()
-    // {
-    //     // Arrange
-    //     var command = new EditFileCommand(Guid.NewGuid(), null);
-    //
-    //     // Act
-    //     var result = _validator.Validate(command);
-    //
-    //     // Assert
-    //     result.IsValid.Should().BeFalse();
-    //     result.Errors.Should().Contain(e => e.PropertyName == "File");
-    // }
 }
