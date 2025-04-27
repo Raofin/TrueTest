@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OPS.Application.CrossCutting.BackgroundServices;
 using OPS.Application.CrossCutting.Behaviors;
 using OPS.Application.Services.AuthService;
+using OPS.Application.Services.CloudService;
 
 namespace OPS.Application;
 
@@ -23,6 +24,7 @@ public static class DependencyInjection
         services.AddHostedService<OtpCleanupService>();
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ICloudFileService, CloudFileService>();
 
         return services;
     }
