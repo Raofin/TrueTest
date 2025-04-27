@@ -17,6 +17,7 @@
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" />
+    <PackageReference Include="Google.Apis.Drive.v3" />
   </ItemGroup>
 
   <ItemGroup>

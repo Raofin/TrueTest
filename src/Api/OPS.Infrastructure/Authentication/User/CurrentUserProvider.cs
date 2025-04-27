@@ -63,6 +63,12 @@ public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor) : IUs
             : throw new UnauthorizedAccessException("Account ID is missing or invalid.");
     }
 
+    public Guid? TryGetAccountId()
+    {
+        var accountIdStr = _httpContextAccessor.HttpContext?.User.FindFirst("AccountId")?.Value;
+        return Guid.TryParse(accountIdStr, out var id) ? id : null;
+    }
+
     public dynamic DecodeToken()
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims
