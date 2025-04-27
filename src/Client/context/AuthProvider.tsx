@@ -12,12 +12,7 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { getAuthToken, setAuthToken, removeAuthToken } from "@/lib/auth";
 import ROUTES from "@/constants/route";
-
-interface User {
-    username: string;
-    email: string;
-    roles: string[];
-}
+import { User } from '@/components/types/profile'
 
 interface AuthContextType {
     user: User | null;

@@ -4,8 +4,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Form, Button, Textarea, Card, Input } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
-import PaginationButtons from "@/components/ui/pagination-button";
-import MdEditor from "../katex-mermaid";
+import PaginationButtons from "@/components/ui/PaginationButton";
+import MdEditor from "../KatexMermaid";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
 
@@ -162,17 +162,17 @@ const FormFooter: React.FC<FormFooterProps> = ({
     onPrevious,
     onNext,
 }) => (
-        <div className="flex gap-2 items-center">
-            <span>
-                Page {currentPage + 1} of {totalPages}
-            </span>
-            <PaginationButtons
-                currentIndex={currentPage + 1}
-                totalItems={totalPages}
-                onPrevious={onPrevious}
-                onNext={onNext}
-            />
-        </div>
+    <div className="flex gap-2 items-center">
+        <span>
+            Page {currentPage + 1} of {totalPages}
+        </span>
+        <PaginationButtons
+            currentIndex={currentPage + 1}
+            totalItems={totalPages}
+            onPrevious={onPrevious}
+            onNext={onNext}
+        />
+    </div>
 );
 
 interface ProblemSolvingFormProps {
@@ -210,23 +210,32 @@ export default function ProblemSolvingForm({
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
     const handleDeleteProblem = async (problemIndex: number) => {
-       const problemToDelete = problems[problemIndex];
+        const problemToDelete = problems[problemIndex];
         try {
             if (problemToDelete.questionId) {
-                await api.delete(`/Questions/Problem/Delete/${problemToDelete.questionId}`);
+                await api.delete(
+                    `/Questions/Problem/Delete/${problemToDelete.questionId}`
+                );
             }
-            if(problems.length==1){
-                setProblems([{
-                    question: "",
-                    testCases: [{ input: "", output: "" }],
-                    points: 0,
-                    difficultyType: "",
-                }])
-            }else {
-            setProblems((prev) => prev.filter((_, i) => i !== problemIndex));
-            if (currentPage >=Math.ceil((problems.length - 1) / problemsPerPage)) {
-                setCurrentPage(Math.max(0, currentPage - 1));
-            }
+            if (problems.length == 1) {
+                setProblems([
+                    {
+                        question: "",
+                        testCases: [{ input: "", output: "" }],
+                        points: 0,
+                        difficultyType: "",
+                    },
+                ]);
+            } else {
+                setProblems((prev) =>
+                    prev.filter((_, i) => i !== problemIndex)
+                );
+                if (
+                    currentPage >=
+                    Math.ceil((problems.length - 1) / problemsPerPage)
+                ) {
+                    setCurrentPage(Math.max(0, currentPage - 1));
+                }
             }
             toast.success("Problem deleted successfully");
         } catch (error) {
@@ -501,7 +510,7 @@ export default function ProblemSolvingForm({
                                     }
                                 />
                                 <div className="flex w-full justify-between mt-5">
-                                <div />
+                                    <div />
                                     <FormFooter
                                         totalPages={totalPages}
                                         currentPage={currentPage}
@@ -519,33 +528,34 @@ export default function ProblemSolvingForm({
                                             )
                                         }
                                     />
-                                        <Button
-                                            color="danger"
-                                            onPress={() =>
-                                                handleDeleteProblem(
-                                                    currentProblemIndex + index
-                                                )}>
-                                            Delete
-                                        </Button>
+                                    <Button
+                                        color="danger"
+                                        onPress={() =>
+                                            handleDeleteProblem(
+                                                currentProblemIndex + index
+                                            )
+                                        }
+                                    >
+                                        Delete
+                                    </Button>
                                 </div>
-                            </div> ))}
+                            </div>
+                        ))}
                     </div>
                 </Card>
                 <div className="flex gap-3 w-full justify-center mt-5">
                     <Button onPress={handleAddProblem}>
                         Add Problem Solving Question
                     </Button>
-                  {!saveButton ?  <Button
-                        type="submit"
-                        color="primary">
-                        Save All
-                    </Button>:
-                    <Button
-                    type="submit"
-                    color="primary">
-                    Update All
-                </Button>
-                    }
+                    {!saveButton ? (
+                        <Button type="submit" color="primary">
+                            Save All
+                        </Button>
+                    ) : (
+                        <Button type="submit" color="primary">
+                            Update All
+                        </Button>
+                    )}
                 </div>
             </Form>
         </div>

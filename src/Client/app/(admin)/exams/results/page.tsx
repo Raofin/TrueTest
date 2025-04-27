@@ -13,67 +13,40 @@ import {
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import PaginationButtons from '@/components/ui/pagination-button'
+import PaginationButtons from "@/components/ui/PaginationButton";
+import { ExamData } from '@/components/types/exam'
+import { Candidate } from '@/components/types/result'
+import { calculateDuration } from '@/components/DateTimeFormat'
 
-interface Exam {
-    examId: string;
-    title: string;
-    description: string;
-    totalPoints: number;
-    durationMinutes: number;
-    opensAt: string;
-    closesAt: string;
-    status: string;
-    problemSolvingPoints: number;
-    writtenPoints: number;
-    mcqPoints: number;
-}
-
-interface Candidate {
-    account: {
-        accountId: string;
-        username: string;
-        email: string;
-    };
-    result: {
-        totalScore: number;
-        problemSolvingScore: number;
-        writtenScore: number;
-        mcqScore: number;
-        startedAt: string;
-        endedAt: string;
-    };
-}
-
- const ExamHeader = ({
+const ExamHeader = ({
     exams,
     selectedExamId,
     onSelectExam,
     candidates,
 }: {
-    exams: Exam[];
+    exams: ExamData[];
     selectedExamId: string;
     onSelectExam: (examId: string) => void;
     candidates: Candidate[];
 }) => {
     const selectedExam = exams.find((exam) => exam.examId === selectedExamId);
     const handlePrevExam = () => {
-      const currentIndex = exams.findIndex(
-          (c) => c.examId === selectedExamId
-      );
-      if (currentIndex > 0) {
-          onSelectExam(exams[currentIndex - 1].examId);
-      }
-  };
-  
-  const handleNextExam = () => {
-      const currentIndex = exams.findIndex(
-          (c) => c.examId === selectedExamId
-      );
-      if (currentIndex < exams.length - 1) {
-          onSelectExam(exams[currentIndex + 1].examId);
-      }
-  };  
+        const currentIndex = exams.findIndex(
+            (c) => c.examId === selectedExamId
+        );
+        if (currentIndex > 0) {
+            onSelectExam(exams[currentIndex - 1].examId);
+        }
+    };
+
+    const handleNextExam = () => {
+        const currentIndex = exams.findIndex(
+            (c) => c.examId === selectedExamId
+        );
+        if (currentIndex < exams.length - 1) {
+            onSelectExam(exams[currentIndex + 1].examId);
+        }
+    };
     return (
         <Card>
             <CardBody>
@@ -138,7 +111,7 @@ interface Candidate {
         </Card>
     );
 };
- const UserList = ({
+const UserList = ({
     candidates,
     examId,
 }: {
@@ -225,7 +198,7 @@ interface Candidate {
                                         {user.account.email}
                                     </td>
                                     <td className="py-3">
-                                        {user.result.totalScore}/100
+                                        {user.result?.totalScore}/100
                                     </td>
                                     <td className="py-3">
                                         <span className="px-2 py-1 rounded text-xs text-green-500">
@@ -291,7 +264,7 @@ interface Candidate {
 };
 
 const Component: React.FC = () => {
-    const [exams, setExams] = useState<Exam[]>([]);
+    const [exams, setExams] = useState<ExamData[]>([]);
     const [selectedExamId, setSelectedExamId] = useState<string>("");
     const [candidates, setCandidates] = useState<Candidate[]>([]);
 
@@ -350,14 +323,3 @@ const Component: React.FC = () => {
 
 export default Component;
 
-function calculateDuration(start: string, end: string): string {
-    const startTime = new Date(start).getTime();
-    const endTime = new Date(end).getTime();
-    const durationMs = endTime - startTime;
-
-    const hours = Math.floor(durationMs / (1000 * 60 * 60));
-    const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((durationMs % (1000 * 60)) / 1000);
-
-    return `${hours}h ${minutes}m ${seconds}s`;
-}

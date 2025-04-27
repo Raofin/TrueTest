@@ -10,45 +10,12 @@ import {
     Checkbox,
     Input,
 } from "@heroui/react";
-import PaginationButtons from "@/components/ui/pagination-button";
+import PaginationButtons from "@/components/ui/PaginationButton";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import { MCQFormProps, MCQQuestion } from '../types/mcqQues'
 
-interface MCQOption {
-    id: number;
-    text: string;
-}
-
-interface MCQQuestion {
-    questionId?: string;
-    question: string;
-    points: number;
-    options: MCQOption[];
-    correctOptions: number[];
-    difficultyType: string;
-}
-interface ExistingQuestion {
-    questionId?: string;
-    statementMarkdown: string;
-    score: number;
-    difficultyType: string;
-    mcqOption: {
-        option1: string;
-        option2: string;
-        option3: string;
-        option4: string;
-        isMultiSelect: boolean;
-        answerOptions: string;
-    };
-}
-
-interface MCQFormProps {
-    readonly examId: string;
-    readonly existingQuestions: ExistingQuestion[];
-    readonly onSaved: () => void;
-    readonly mcqPoints: (points: number) => void;
-}
 export default function App({
     examId,
     existingQuestions,
@@ -91,9 +58,11 @@ export default function App({
     const handleDeleteQuestion = async (index: number) => {
         const questionToDelete = questions[index];
         try {
-            if (questionToDelete.questionId) 
-                await api.delete(`/Questions/Mcq/Delete/${questionToDelete.questionId}`);
-            if(questions.length===1){
+            if (questionToDelete.questionId)
+                await api.delete(
+                    `/Questions/Mcq/Delete/${questionToDelete.questionId}`
+                );
+            if (questions.length === 1) {
                 setQuestions([
                     {
                         questionId: "",
@@ -108,12 +77,12 @@ export default function App({
                         points: 0,
                         difficultyType: "Easy",
                     },
-                ])
-            }else{
-            setQuestions((prev) => prev.filter((_, i) => i !== index));
-            if (currentPage >= questions.length - 1) {
-                setCurrentPage(Math.max(0, currentPage - 1));
-            }
+                ]);
+            } else {
+                setQuestions((prev) => prev.filter((_, i) => i !== index));
+                if (currentPage >= questions.length - 1) {
+                    setCurrentPage(Math.max(0, currentPage - 1));
+                }
             }
             toast.success("Question deleted successfully");
         } catch (error) {
@@ -265,124 +234,147 @@ export default function App({
     return (
         <div className="flex justify-center ">
             <div className="w-full flex flex-col">
-                {questions.length > 0 && (<>
-                    <Card
-                        key={currentPage}
-                        className="w-full shadow-none bg-white dark:bg-[#18181b]"
-                    >
-                        <CardHeader className="flex flex-col gap-2 ">
-                            <h2 className="text-2xl my-3">
-                                MCQ Question : {currentPage + 1}
-                            </h2>
-                        </CardHeader>
-                        <CardBody className="flex flex-col gap-4 p-8">
-                            <Textarea
-                                label="mcq question"
-                                minRows={5}
-                                value={questions[currentPage].question}
-                                className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-                                onChange={(e: { target: { value: string } }) =>
-                                    handleQuestionChange(
-                                        currentPage,
-                                        e.target.value
-                                    )
-                                }
-                            />
-                            <div className="grid grid-cols-2 gap-4">
-                                {questions[currentPage].options.map(
-                                    (option) => (
-                                        <div
-                                            key={option.id}
-                                            className="flex items-center gap-2"
-                                        >
-                                            <Checkbox
-                                                isSelected={questions[
-                                                    currentPage
-                                                ].correctOptions.includes(
-                                                    option.id
-                                                )}
-                                                onChange={() =>
-                                                    handleCorrectOptionChange(
-                                                        currentPage,
-                                                        option.id
-                                                    )
-                                                }
-                                                name={`option-${option.id}`}
-                                                size="sm"
-                                            />
-                                            <Textarea
-                                                className="bg-[#eeeef0] dark:[#71717a] rounded-2xl flex-grow"
-                                                label={`Option ${option.id}`}
-                                                value={option.text}
-                                                isRequired={
-                                                    option.id === 1 ||
-                                                    option.id === 2
-                                                }
-                                                onChange={(e: {
-                                                    target: { value: string };
-                                                }) =>
-                                                    handleOptionChange(
-                                                        currentPage,
-                                                        option.id,
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                    )
-                                )}
-                            </div>
-                        </CardBody>
-                        <div className="w-full flex justify-between px-8 py-5">
-                            <Input
-                                className="w-32"
-                                type="number"
-                                label="Points"
-                                value={questions[currentPage].points.toString() ??"0"}
-                                onChange={(e) => handlePoints(currentPage, e.target.value) }
-                                min="0"
-                            />
-                            <div className="flex gap-3 ">
-                                <span> Page {currentPage + 1} of {questions.length}</span>
-                                <PaginationButtons
-                                    currentIndex={currentPage + 1}
-                                    totalItems={questions.length}
-                                    onPrevious={() =>
-                                        setCurrentPage((prev) =>
-                                            Math.max(prev - 1, 0)
-                                        )
-                                    }
-                                    onNext={() =>
-                                        setCurrentPage((prev) =>
-                                            Math.min(
-                                                prev + 1,
-                                                questions.length - 1
-                                            )
+                {questions.length > 0 && (
+                    <>
+                        <Card
+                            key={currentPage}
+                            className="w-full shadow-none bg-white dark:bg-[#18181b]"
+                        >
+                            <CardHeader className="flex flex-col gap-2 ">
+                                <h2 className="text-2xl my-3">
+                                    MCQ Question : {currentPage + 1}
+                                </h2>
+                            </CardHeader>
+                            <CardBody className="flex flex-col gap-4 p-8">
+                                <Textarea
+                                    label="mcq question"
+                                    minRows={5}
+                                    value={questions[currentPage].question}
+                                    className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+                                    onChange={(e: {
+                                        target: { value: string };
+                                    }) =>
+                                        handleQuestionChange(
+                                            currentPage,
+                                            e.target.value
                                         )
                                     }
                                 />
+                                <div className="grid grid-cols-2 gap-4">
+                                    {questions[currentPage].options.map(
+                                        (option) => (
+                                            <div
+                                                key={option.id}
+                                                className="flex items-center gap-2"
+                                            >
+                                                <Checkbox
+                                                    isSelected={questions[
+                                                        currentPage
+                                                    ].correctOptions.includes(
+                                                        option.id
+                                                    )}
+                                                    onChange={() =>
+                                                        handleCorrectOptionChange(
+                                                            currentPage,
+                                                            option.id
+                                                        )
+                                                    }
+                                                    name={`option-${option.id}`}
+                                                    size="sm"
+                                                />
+                                                <Textarea
+                                                    className="bg-[#eeeef0] dark:[#71717a] rounded-2xl flex-grow"
+                                                    label={`Option ${option.id}`}
+                                                    value={option.text}
+                                                    isRequired={
+                                                        option.id === 1 ||
+                                                        option.id === 2
+                                                    }
+                                                    onChange={(e: {
+                                                        target: {
+                                                            value: string;
+                                                        };
+                                                    }) =>
+                                                        handleOptionChange(
+                                                            currentPage,
+                                                            option.id,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            </CardBody>
+                            <div className="w-full flex justify-between px-8 py-5">
+                                <Input
+                                    className="w-32"
+                                    type="number"
+                                    label="Points"
+                                    value={
+                                        questions[
+                                            currentPage
+                                        ].points.toString() ?? "0"
+                                    }
+                                    onChange={(e) =>
+                                        handlePoints(
+                                            currentPage,
+                                            e.target.value
+                                        )
+                                    }
+                                    min="0"
+                                />
+                                <div className="flex gap-3 ">
+                                    <span>
+                                        {" "}
+                                        Page {currentPage + 1} of{" "}
+                                        {questions.length}
+                                    </span>
+                                    <PaginationButtons
+                                        currentIndex={currentPage + 1}
+                                        totalItems={questions.length}
+                                        onPrevious={() =>
+                                            setCurrentPage((prev) =>
+                                                Math.max(prev - 1, 0)
+                                            )
+                                        }
+                                        onNext={() =>
+                                            setCurrentPage((prev) =>
+                                                Math.min(
+                                                    prev + 1,
+                                                    questions.length - 1
+                                                )
+                                            )
+                                        }
+                                    />
+                                </div>
+                                <Button
+                                    color="danger"
+                                    onPress={() =>
+                                        handleDeleteQuestion(currentPage)
+                                    }
+                                    className="mb-4"
+                                >
+                                    Delete{" "}
+                                </Button>
                             </div>
-                           
-                                <Button color="danger"
-                                    onPress={() =>handleDeleteQuestion(currentPage)}
-                                    className="mb-4">
-                                    Delete </Button>
-                           
+                        </Card>
+                        <div className="w-full flex gap-3 my-3 text-center justify-center">
+                            <Button onPress={addNewQuestion}>
+                                Add MCQ Question
+                            </Button>
+                            {!saveButton ? (
+                                <Button color="primary" onPress={handleSubmit}>
+                                    Save All
+                                </Button>
+                            ) : (
+                                <Button color="primary" onPress={handleSubmit}>
+                                    Update All
+                                </Button>
+                            )}
                         </div>
-                    </Card>
-                <div className="w-full flex gap-3 my-3 text-center justify-center">
-                    <Button onPress={addNewQuestion}>Add MCQ Question</Button>
-                   {!saveButton ? <Button
-                        color="primary"
-                        onPress={handleSubmit}>
-                        Save All
-                    </Button>: <Button
-                        color="primary"
-                        onPress={handleSubmit}>
-                        Update All
-                    </Button>
-                    }
-                </div></>
+                    </>
                 )}
             </div>
         </div>

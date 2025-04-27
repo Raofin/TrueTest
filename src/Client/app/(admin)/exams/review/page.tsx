@@ -6,79 +6,8 @@ import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
-
-interface TestCase {
-    input: string;
-    expectedOutput: string;
-    receivedOutput: string;
-}
-interface CandidateData {
-    account: {
-        accountId: string;
-        username: string;
-        email: string;
-    };
-    result: {
-        totalScore: number;
-        problemSolvingScore: number;
-        writtenScore: number;
-        mcqScore: number;
-        startedAt: string;
-        submittedAt: string;
-        hasCheated: boolean;
-        isReviewed: boolean;
-    };
-}
-
-interface ProblemSubmission {
-    questionId: string;
-    problemSubmissionId: string;
-    code: string;
-    language: string;
-    attempts: number;
-    score: number;
-    isFlagged: boolean;
-    flagReason: string | null;
-    testCaseOutputs: TestCase[];
-}
-interface CandidatesResponse {
-    exam: ExamData;
-    candidates: CandidateData[];
-  }
-interface WrittenSubmission {
-    questionId: string;
-    writtenSubmissionId: string;
-    answer: string;
-    score: number;
-    isFlagged: boolean;
-    flagReason: string | null;
-}
-interface CandidateSubmission {
-    problem: ProblemSubmission[];
-    written: WrittenSubmission[];
-}
-interface ExamData {
-    examId: string;
-    title: string;
-    description: string;
-    totalPoints: number;
-    problemSolvingPoints: number;
-    writtenPoints: number;
-    mcqPoints: number;
-    durationMinutes: number;
-    isPublished: boolean;
-    status: string;
-    opensAt: string;
-    closesAt: string;
-}
-
-interface ExamResponse {
-    exam: ExamData;
-    questions: {
-        problem: ProblemSubmission[];
-        written: WrittenSubmission[];
-    };
-}
+import { CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
+import { ExamData } from '@/components/types/exam'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
@@ -128,7 +57,6 @@ export default function Component() {
         };
         fetchExamData();
     }, [examId]);
-
     useEffect(() => {
         const fetchCandidateData = async () => {
             try {
