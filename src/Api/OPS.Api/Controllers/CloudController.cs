@@ -19,7 +19,7 @@ public class CloudController(IMediator mediator) : BaseApiController
     private readonly IMediator _mediator = mediator;
 
     /// <summary>Uploads a file to Google Cloud.</summary>
-    /// <param name="file">File to upload.</param>
+    /// <param name="file">File to upload (Max file size: 100 KB).</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
     /// <returns>Uploaded file information.</returns>
     [AllowAnonymous]

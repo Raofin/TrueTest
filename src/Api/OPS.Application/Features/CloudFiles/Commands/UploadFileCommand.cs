@@ -7,7 +7,6 @@ using OPS.Application.Mappers;
 using OPS.Application.Services.CloudService;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Entities.Core;
 
 namespace OPS.Application.Features.CloudFiles.Commands;
 
@@ -24,7 +23,7 @@ public class UploadFileCommandHandler(
 
     public async Task<ErrorOr<CloudFileResponse>> Handle(UploadFileCommand request, CancellationToken cancellationToken)
     {
-        CloudFile? cloudFile = await _cloudFileService.UploadAsync(request.File, cancellationToken);
+        var cloudFile = await _cloudFileService.UploadAsync(request.File, cancellationToken);
 
         if (cloudFile is null)
         {
@@ -48,6 +47,9 @@ public class UploadFileCommandValidator : AbstractValidator<UploadFileCommand>
     {
         RuleFor(x => x.File)
             .NotNull()
-            .Must(file => file.Length > 0);
+            .Must(file => file.Length > 0)
+            .WithMessage("No file uploaded.")
+            .Must(file => file.Length <= 102400) // 100 KB limit
+            .WithMessage("File size exceeds the 100 KB limit.");
     }
 }
