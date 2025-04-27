@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Questions;
 using OPS.Persistence.Repositories.Common;
 using OPS.Domain.Entities.Exam;
+using OPS.Domain.Interfaces.Questions;
 using QuestionType = OPS.Domain.Enums.QuestionType;
 
 namespace OPS.Persistence.Repositories.Questions;

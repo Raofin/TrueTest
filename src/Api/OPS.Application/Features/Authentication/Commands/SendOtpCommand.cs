@@ -1,10 +1,10 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Constants;
+using OPS.Application.Interfaces;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Contracts.Core.EmailSender;
+using OPS.Domain.Constents;
 using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Features.Authentication.Commands;
@@ -12,11 +12,11 @@ namespace OPS.Application.Features.Authentication.Commands;
 public record SendOtpCommand(string Email) : IRequest<ErrorOr<Unit>>;
 
 public class SendOtpCommandHandler(
-    IAccountEmails accountEmails,
+    IEmailSender emailSender,
     IOtpGenerator otpGenerator,
     IUnitOfWork unitOfWork) : IRequestHandler<SendOtpCommand, ErrorOr<Unit>>
 {
-    private readonly IAccountEmails _accountEmails = accountEmails;
+    private readonly IEmailSender _emailSender = emailSender;
     private readonly IOtpGenerator _otpGenerator = otpGenerator;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
@@ -37,7 +37,7 @@ public class SendOtpCommandHandler(
         );
 
         await _unitOfWork.CommitAsync(cancellationToken);
-        _accountEmails.SendOtp(request.Email, code, cancellationToken);
+        _emailSender.SendOtp(request.Email, code, cancellationToken);
 
         return Unit.Value;
     }

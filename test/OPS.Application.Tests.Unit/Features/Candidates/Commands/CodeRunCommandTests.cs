@@ -1,22 +1,23 @@
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Candidates.Commands;
-using OPS.Domain.Contracts.Core.OneCompiler;
+using OPS.Application.Interfaces;
 using OPS.Domain.Enums;
 
 namespace OPS.Application.Tests.Unit.Features.Candidates.Commands;
 
 public class CodeRunCommandTests
 {
-    private readonly IOneCompilerApiService _oneCompilerApi;
+    private readonly IOneCompilerService _oneCompiler;
     private readonly CodeRunCommandHandler _sut;
     private readonly CodeRunCommandValidator _validator = new();
 
     public CodeRunCommandTests()
     {
-        _oneCompilerApi = Substitute.For<IOneCompilerApiService>();
-        _sut = new CodeRunCommandHandler(_oneCompilerApi);
+        _oneCompiler = Substitute.For<IOneCompilerService>();
+        _sut = new CodeRunCommandHandler(_oneCompiler);
     }
 
     [Fact]
@@ -28,7 +29,7 @@ public class CodeRunCommandTests
         var languageId = LanguageId.python;
         var expectedResponse = new CodeRunResponse("Hello, World!", null, null, null, null, null);
 
-        _oneCompilerApi.CodeRunAsync(languageId, code, input)
+        _oneCompiler.CodeRunAsync(languageId, code, input)
             .Returns(expectedResponse);
 
         var command = new CodeRunCommand(code, input, languageId);
@@ -38,7 +39,7 @@ public class CodeRunCommandTests
 
         // Assert
         result.Should().BeEquivalentTo(expectedResponse);
-        await _oneCompilerApi.Received(1).CodeRunAsync(languageId, code, input);
+        await _oneCompiler.Received(1).CodeRunAsync(languageId, code, input);
     }
 
     [Fact]
@@ -49,7 +50,7 @@ public class CodeRunCommandTests
         var languageId = LanguageId.python;
         var expectedResponse = new CodeRunResponse("Hello, World!", null, null, null, null, null);
 
-        _oneCompilerApi.CodeRunAsync(languageId, code, null)
+        _oneCompiler.CodeRunAsync(languageId, code, null)
             .Returns(expectedResponse);
 
         var command = new CodeRunCommand(code, null, languageId);
@@ -59,7 +60,7 @@ public class CodeRunCommandTests
 
         // Assert
         result.Should().BeEquivalentTo(expectedResponse);
-        await _oneCompilerApi.Received(1).CodeRunAsync(languageId, code, null);
+        await _oneCompiler.Received(1).CodeRunAsync(languageId, code, null);
     }
 
     [Fact]

@@ -1,20 +1,20 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
+using OPS.Application.Interfaces;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.Exam;
 
 namespace OPS.Application.Features.Exams.Commands;
 
 public record InviteCandidatesCommand(Guid ExamId, List<string> Emails) : IRequest<ErrorOr<Success>>;
 
-public class InviteCandidatesCommandHandler(IUnitOfWork unitOfWork, IAccountEmails accountEmails)
+public class InviteCandidatesCommandHandler(IUnitOfWork unitOfWork, IEmailSender emailSender)
     : IRequestHandler<InviteCandidatesCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IAccountEmails _accountEmails = accountEmails;
+    private readonly IEmailSender _emailSender = emailSender;
 
     public async Task<ErrorOr<Success>> Handle(InviteCandidatesCommand request, CancellationToken cancellationToken)
     {
@@ -52,7 +52,7 @@ public class InviteCandidatesCommandHandler(IUnitOfWork unitOfWork, IAccountEmai
             _unitOfWork.ExamCandidate.AddRange(candidates);
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            _accountEmails.SendExamInvitation(candidates.Select(c => c.CandidateEmail).ToList(),
+            _emailSender.SendExamInvitation(candidates.Select(c => c.CandidateEmail).ToList(),
                 exam.Title, exam.OpensAt, exam.DurationMinutes, cancellationToken);
         }
 

@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
-using OPS.Application.Services.CloudService;
+using OPS.Application.Interfaces.Cloud;
 
 namespace OPS.Application.Features.CloudFiles.Queries;
 

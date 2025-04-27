@@ -3,8 +3,8 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.User.Commands;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Tests.Unit.Features.User.Commands;
@@ -12,7 +12,7 @@ namespace OPS.Application.Tests.Unit.Features.User.Commands;
 public class UpdateAccountSettingsCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IUserProvider _userProvider;
     private readonly IPasswordHasher _passwordHasher;
     private readonly UpdateAccountSettingsCommandHandler _sut;
     private readonly UpdateAccountSettingsCommandValidator _validator = new();
@@ -21,12 +21,12 @@ public class UpdateAccountSettingsCommandTests
     public UpdateAccountSettingsCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
+        _userProvider = Substitute.For<IUserProvider>();
         _passwordHasher = Substitute.For<IPasswordHasher>();
-        _sut = new UpdateAccountSettingsCommandHandler(_userInfoProvider, _passwordHasher, _unitOfWork);
+        _sut = new UpdateAccountSettingsCommandHandler(_userProvider, _passwordHasher, _unitOfWork);
         _accountId = Guid.NewGuid();
 
-        _userInfoProvider.AccountId().Returns(_accountId);
+        _userProvider.AccountId().Returns(_accountId);
     }
 
     [Fact]

@@ -1,10 +1,11 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
+using OPS.Application.Dtos;
+using OPS.Application.Interfaces;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Contracts.Core.OneCompiler;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
@@ -25,18 +26,18 @@ public record SaveProblemSubmissionsCommand(Guid ExamId, Guid QuestionId, string
 
 public class SaveProblemSubmissionsCommandHandler(
     IUnitOfWork unitOfWork,
-    IUserInfoProvider userInfoProvider,
-    IOneCompilerApiService oneCompilerApiService)
+    IUserProvider userProvider,
+    IOneCompilerService oneCompilerService)
     : IRequestHandler<SaveProblemSubmissionsCommand, ErrorOr<List<TestCodeResponse>>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
-    private readonly IOneCompilerApiService _oneCompilerApi = oneCompilerApiService;
+    private readonly IUserProvider _userProvider = userProvider;
+    private readonly IOneCompilerService _oneCompiler = oneCompilerService;
 
     public async Task<ErrorOr<List<TestCodeResponse>>> Handle(
         SaveProblemSubmissionsCommand request, CancellationToken cancellationToken)
     {
-        var userAccountId = _userInfoProvider.AccountId();
+        var userAccountId = _userProvider.AccountId();
 
         var isValidCandidate = await _unitOfWork.ExamCandidate
             .IsValidCandidate(userAccountId, request.ExamId, cancellationToken);
@@ -106,7 +107,7 @@ public class SaveProblemSubmissionsCommandHandler(
     private async Task<TestCodeResponse> ExecuteTestCaseAsync(
         SaveProblemSubmissionsCommand request, TestCase testCase)
     {
-        var result = await _oneCompilerApi.CodeRunAsync(request.Language, request.Code, testCase.Input);
+        var result = await _oneCompiler.CodeRunAsync(request.Language, request.Code, testCase.Input);
 
         return new TestCodeResponse(
             testCase.Id,

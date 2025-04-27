@@ -2,9 +2,9 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using OPS.Application.Features.CloudFiles.Commands;
-using OPS.Application.Services.CloudService;
+using OPS.Application.Interfaces.Auth;
+using OPS.Application.Interfaces.Cloud;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Core;
 
 namespace OPS.Application.Tests.Unit.Features.CloudFiles.Commands;
@@ -12,7 +12,7 @@ namespace OPS.Application.Tests.Unit.Features.CloudFiles.Commands;
 public class UploadFileCommandTests
 {
     private readonly ICloudFileService _cloudFileService;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IUserProvider _userProvider;
     private readonly IUnitOfWork _unitOfWork;
     private readonly UploadFileCommandHandler _sut;
     private readonly UploadFileCommandValidator _validator;
@@ -20,9 +20,9 @@ public class UploadFileCommandTests
     public UploadFileCommandTests()
     {
         _cloudFileService = Substitute.For<ICloudFileService>();
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
+        _userProvider = Substitute.For<IUserProvider>();
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _sut = new UploadFileCommandHandler(_cloudFileService, _userInfoProvider, _unitOfWork);
+        _sut = new UploadFileCommandHandler(_cloudFileService, _userProvider, _unitOfWork);
         _validator = new UploadFileCommandValidator();
     }
 
@@ -38,7 +38,7 @@ public class UploadFileCommandTests
 
         _cloudFileService.UploadAsync(Arg.Any<IFormFile>(), Arg.Any<CancellationToken>())
             .Returns(cloudFile);
-        _userInfoProvider.TryGetAccountId().Returns(accountId);
+        _userProvider.TryGetAccountId().Returns(accountId);
         _unitOfWork.CommitAsync(Arg.Any<CancellationToken>())
             .Returns(1);
 

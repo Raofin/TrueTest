@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Services.CloudService;
+using OPS.Application.Interfaces.Cloud;
 using OPS.Domain;
 
 namespace OPS.Application.Features.CloudFiles.Commands;

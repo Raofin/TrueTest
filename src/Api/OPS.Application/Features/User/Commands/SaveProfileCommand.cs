@@ -2,9 +2,9 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
+using OPS.Application.Interfaces.Auth;
 using OPS.Application.Mappers;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Features.User.Commands;
@@ -18,15 +18,15 @@ public record SaveProfileCommand(
     Guid? ImageFileId,
     List<ProfileLinkRequest> ProfileLinks) : IRequest<ErrorOr<ProfileResponse>>;
 
-public class SaveProfileCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
+public class SaveProfileCommandHandler(IUnitOfWork unitOfWork, IUserProvider userProvider)
     : IRequestHandler<SaveProfileCommand, ErrorOr<ProfileResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
+    private readonly IUserProvider _userProvider = userProvider;
 
     public async Task<ErrorOr<ProfileResponse>> Handle(SaveProfileCommand request, CancellationToken cancellationToken)
     {
-        var userAccountId = _userInfoProvider.AccountId();
+        var userAccountId = _userProvider.AccountId();
 
         if (!await ValidateImageFile(request.ImageFileId, cancellationToken))
             return Error.Unexpected(description: "Image file not found.");

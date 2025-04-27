@@ -1,11 +1,11 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Constants;
 using OPS.Application.Dtos;
+using OPS.Application.Interfaces.Auth;
 using OPS.Application.Mappers;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
+using OPS.Domain.Constents;
 using Throw;
 
 namespace OPS.Application.Features.User.Commands;
@@ -16,18 +16,18 @@ public record UpdateAccountSettingsCommand(
     string? CurrentPassword) : IRequest<ErrorOr<AccountWithDetailsResponse>>;
 
 public class UpdateAccountSettingsCommandHandler(
-    IUserInfoProvider userInfoProvider,
+    IUserProvider userProvider,
     IPasswordHasher passwordHasher,
     IUnitOfWork unitOfWork) : IRequestHandler<UpdateAccountSettingsCommand, ErrorOr<AccountWithDetailsResponse>>
 {
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
+    private readonly IUserProvider _userProvider = userProvider;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ErrorOr<AccountWithDetailsResponse>> Handle(UpdateAccountSettingsCommand request,
         CancellationToken cancellationToken)
     {
-        var userAccountId = _userInfoProvider.AccountId();
+        var userAccountId = _userProvider.AccountId();
 
         var account = await _unitOfWork.Account.GetWithDetails(userAccountId, cancellationToken);
         account.ThrowIfNull();

@@ -3,8 +3,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using OPS.Application.Dtos;
+using OPS.Application.Interfaces.Cloud;
 using OPS.Application.Mappers;
-using OPS.Application.Services.CloudService;
 using OPS.Domain;
 
 namespace OPS.Application.Features.CloudFiles.Commands;

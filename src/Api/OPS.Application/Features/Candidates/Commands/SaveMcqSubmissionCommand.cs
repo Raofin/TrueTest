@@ -1,9 +1,9 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
 
 namespace OPS.Application.Features.Candidates.Commands;
@@ -13,15 +13,15 @@ public record McqSubmissionRequest(Guid QuestionId, string CandidateAnswerOption
 public record SaveMcqSubmissionsCommand(Guid ExamId, List<McqSubmissionRequest> Submissions)
     : IRequest<ErrorOr<Success>>;
 
-public class SaveMcqSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
+public class SaveMcqSubmissionsCommandHandler(IUnitOfWork unitOfWork, IUserProvider userProvider)
     : IRequestHandler<SaveMcqSubmissionsCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
+    private readonly IUserProvider _userProvider = userProvider;
 
     public async Task<ErrorOr<Success>> Handle(SaveMcqSubmissionsCommand request, CancellationToken cancellationToken)
     {
-        var userAccountId = _userInfoProvider.AccountId();
+        var userAccountId = _userProvider.AccountId();
 
         var isValidCandidate = await _unitOfWork.ExamCandidate
             .IsValidCandidate(userAccountId, request.ExamId, cancellationToken);

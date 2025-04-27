@@ -4,10 +4,9 @@ using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Authentication.Queries;
+using OPS.Application.Interfaces.Auth;
 using OPS.Application.Mappers;
-using OPS.Application.Services.AuthService;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Tests.Unit.Features.Authentication.Queries;

@@ -2,9 +2,8 @@
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
-using OPS.Application.Services.AuthService;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 
 namespace OPS.Application.Features.Authentication.Queries;
 

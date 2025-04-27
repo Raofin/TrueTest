@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using OPS.Application.CrossCutting.BackgroundServices;
-using OPS.Application.CrossCutting.Behaviors;
-using OPS.Application.Services.AuthService;
-using OPS.Application.Services.CloudService;
+using OPS.Application.Behaviors;
+using OPS.Application.Interfaces.Auth;
+using OPS.Application.Interfaces.Cloud;
+using OPS.Application.Services;
 
 namespace OPS.Application;
 
@@ -20,8 +20,6 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection), includeInternalTypes: true);
-
-        services.AddHostedService<OtpCleanupService>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICloudFileService, CloudFileService>();

@@ -2,8 +2,8 @@ using ErrorOr;
 using FluentAssertions;
 using NSubstitute;
 using OPS.Application.Features.User.Queries;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Tests.Unit.Features.User.Queries;
@@ -11,18 +11,18 @@ namespace OPS.Application.Tests.Unit.Features.User.Queries;
 public class GetUserDetailsQueryTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IUserProvider _userProvider;
     private readonly GetUserDetailsQueryHandler _sut;
     private readonly Guid _accountId;
 
     public GetUserDetailsQueryTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _sut = new GetUserDetailsQueryHandler(_unitOfWork, _userInfoProvider);
+        _userProvider = Substitute.For<IUserProvider>();
+        _sut = new GetUserDetailsQueryHandler(_unitOfWork, _userProvider);
         _accountId = Guid.NewGuid();
 
-        _userInfoProvider.AccountId().Returns(_accountId);
+        _userProvider.AccountId().Returns(_accountId);
     }
 
     [Fact]
