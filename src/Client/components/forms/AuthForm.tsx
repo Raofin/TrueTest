@@ -60,8 +60,7 @@ const AuthForm = <T extends FieldValues>({
     } = useForm<{ otp: string }>();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleAuthError = useCallback(
-        (error: any, defaultMessage: string) => {
+    const handleAuthError = useCallback((error: any, defaultMessage: string) => {
             if (axios.isAxiosError(error)) {
                 toast.error(error.response?.data?.message ?? defaultMessage);
             } else {
