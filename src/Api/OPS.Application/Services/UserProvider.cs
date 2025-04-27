@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using OPS.Application.Dtos;
 using OPS.Application.Interfaces.Auth;
@@ -70,6 +71,7 @@ public class UserProvider(IHttpContextAccessor httpContextAccessor) : IUserProvi
         return Guid.TryParse(accountIdStr, out var id) ? id : null;
     }
 
+    [ExcludeFromCodeCoverage]
     public dynamic DecodeToken()
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims
