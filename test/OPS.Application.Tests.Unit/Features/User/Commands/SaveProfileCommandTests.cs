@@ -141,7 +141,7 @@ public class SaveProfileCommandTests
         result.Value.BioMarkdown.Should().Be("Test Bio");
         result.Value.InstituteName.Should().Be("Test Institute");
         result.Value.PhoneNumber.Should().Be("1234567890");
-        result.Value.ImageFileId.Should().Be(_imageFileId);
+        result.Value.ImageFile?.CloudFileId.Should().Be(_imageFileId);
         result.Value.ProfileLinks.Should().HaveCount(1);
 
         _unitOfWork.Profile.DidNotReceive().Add(Arg.Any<Profile>());
@@ -217,7 +217,7 @@ public class SaveProfileCommandTests
         result.Value.BioMarkdown.Should().Be("Bio");
         result.Value.InstituteName.Should().Be("Institute");
         result.Value.PhoneNumber.Should().Be("1234567890");
-        result.Value.ImageFileId.Should().Be(_imageFileId);
+        result.Value.ImageFile?.CloudFileId.Should().Be(_imageFileId);
 
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
     }

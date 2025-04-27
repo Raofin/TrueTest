@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using OPS.Infrastructure.AppConfiguration.Auth;
 using OPS.Infrastructure.AppConfiguration.Database;
 using OPS.Infrastructure.AppConfiguration.Email;
+using OPS.Infrastructure.AppConfiguration.GoogleCloud;
 using OPS.Infrastructure.AppConfiguration.Logging;
 using OPS.Infrastructure.AppConfiguration.OneCompiler;
 using Serilog;
@@ -25,6 +26,7 @@ public static class AppConfigurations
             .AddEmailServices(configuration)
             .AddOneCompilerServices(configuration)
             .AddMemoryCache()
+            .AddGoogleCloudServices(configuration)
             .AddDependencies()
             .AddHealthChecks();
 
