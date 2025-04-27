@@ -35,5 +35,6 @@
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="FluentEmail.Smtp" Version="3.0.2" />
     <PackageVersion Include="Refit.HttpClientFactory" Version="8.0.0" />
+    <PackageVersion Include="Google.Apis.Drive.v3" Version="1.69.0.3740" />
   </ItemGroup>
 </Project>
