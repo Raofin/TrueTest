@@ -52,7 +52,7 @@ public class CloudFileServiceTests
         formFile.ContentType.Returns("application/pdf");
 
         _googleCloudService.UploadAsync(Arg.Any<Stream>(), formFile.FileName, formFile.ContentType)
-            .Returns((GoogleFile)null);
+            .Returns((GoogleFile)null!);
 
         // Act
         var result = await _sut.UploadAsync(formFile);
@@ -79,28 +79,10 @@ public class CloudFileServiceTests
 
         // Assert
         result.Should().NotBeNull();
-        // result!.FileId.Should().Be(googleCloudFile.CloudFileId);
         result.FileName.Should().Be(googleCloudFile.Name);
         result.ContentType.Should().Be(googleCloudFile.ContentType);
         result.Size.Should().Be(googleCloudFile.Size);
-        // result.Bytes.Should().BeEquivalentTo(googleCloudFile.by);
     }
-
-    // [Fact]
-    // public async Task DownloadAsync_FileNotFound_ReturnsNull()
-    // {
-    //     // Arrange
-    //     var fileId = "non-existent-file-id";
-    //
-    //     _googleCloudService.DownloadAsync(fileId)
-    //         .Returns((GoogleCloudFile)null);
-    //
-    //     // Act
-    //     var result = await _sut.DownloadAsync(fileId);
-    //
-    //     // Assert
-    //     result.Should().BeNull();
-    // }
 
     [Fact]
     public async Task DeleteAsync_ValidFileId_DeletesFile()
@@ -112,7 +94,7 @@ public class CloudFileServiceTests
         await _sut.DeleteAsync(fileId);
 
         // Assert
-        _googleCloudService.Received(1).DeleteAsync(fileId);
+        await _googleCloudService.Received(1).DeleteAsync(fileId);
     }
 
     [Fact]
@@ -125,19 +107,6 @@ public class CloudFileServiceTests
         await _sut.DeleteAsync(fileId);
 
         // Assert
-        _googleCloudService.DidNotReceive().DeleteAsync(Arg.Any<string>());
+        await _googleCloudService.DidNotReceive().DeleteAsync(Arg.Any<string>());
     }
-
-    // [Fact]
-    // public async Task DeleteAsync_EmptyFileId_DoesNotDeleteFile()
-    // {
-    //     // Arrange
-    //     var fileId = string.Empty;
-    //
-    //     // Act
-    //     await _sut.DeleteAsync(fileId);
-    //
-    //     // Assert
-    //     _googleCloudService.DidNotReceive().DeleteAsync(Arg.Any<string>());
-    // }
 }

@@ -49,8 +49,8 @@ public class EditFileCommandTests
         result.Value.FileId.Should().Be(newCloudFile.FileId);
         _unitOfWork.CloudFile.Received(1).Add(Arg.Any<CloudFile>());
         _unitOfWork.CloudFile.Received(1).Remove(Arg.Any<CloudFile>());
-        _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
-        _cloudFileService.Received(1).DeleteAsync(oldCloudFile.FileId);
+        await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
+        await _cloudFileService.Received(1).DeleteAsync(oldCloudFile.FileId);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class EditFileCommandTests
         var command = new EditFileCommand(cloudFileId, fileMock);
 
         _cloudFileService.UploadAsync(Arg.Any<IFormFile>(), Arg.Any<CancellationToken>())
-            .Returns((CloudFile)null);
+            .Returns((CloudFile)null!);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
