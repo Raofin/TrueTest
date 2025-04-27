@@ -7,9 +7,8 @@ interface PaginationProps {
   setRowsPerPage: (val: number) => void;
 }
 
-const Paginate: React.FC<PaginationProps> = ({  rowsPerPage,setRowsPerPage }) => {
+const Pagination: React.FC<PaginationProps> = ({  rowsPerPage,setRowsPerPage }) => {
   return (
-
       <Select
         label="Rows per page"
         className="w-[150px]"
@@ -35,4 +34,4 @@ const Paginate: React.FC<PaginationProps> = ({  rowsPerPage,setRowsPerPage }) =>
       </Select>
   )
 }
-export default Paginate
+export default Pagination
