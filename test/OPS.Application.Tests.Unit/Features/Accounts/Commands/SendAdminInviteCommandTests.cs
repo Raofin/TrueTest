@@ -3,7 +3,6 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Accounts.Commands;
-using OPS.Application.Common.Constants;
 using OPS.Domain;
 using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
