@@ -4,7 +4,7 @@ import React from 'react'
 import '@/app/globals.css'
 import NavBar from '@/app/navigation-header/NavBar'
 
-import Logo from '@/components/ui/logo/page'
+import Logo from '@/components/ui/TrueTestLogo'
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Form, Button, Textarea, Card, Input } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
@@ -15,6 +15,7 @@ interface TestCase {
 }
 
 interface Problem {
+    questionId?: string;
     question: string;
     testCases: TestCase[];
     points: number;
@@ -34,6 +35,7 @@ interface ProblemItemProps {
     onPointsChange: (value: number) => void;
     onAddTestCase: () => void;
     onDifficultyChange: (value: string) => void;
+    onDeleteProblem: () => void;
 }
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
@@ -160,8 +162,6 @@ const FormFooter: React.FC<FormFooterProps> = ({
     onPrevious,
     onNext,
 }) => (
-    <div className="flex w-full justify-between items-center mt-4">
-        <div className="w-32" />
         <div className="flex gap-2 items-center">
             <span>
                 Page {currentPage + 1} of {totalPages}
@@ -173,25 +173,26 @@ const FormFooter: React.FC<FormFooterProps> = ({
                 onNext={onNext}
             />
         </div>
-        <div />
-    </div>
 );
 
 interface ProblemSolvingFormProps {
     readonly examId: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   readonly existingQuestions: any[];
-   readonly  onSaved: () => void;
+    readonly existingQuestions: any[];
+    readonly onSaved: () => void;
+    readonly problemPoints: (points: number) => void;
 }
 
 export default function ProblemSolvingForm({
     examId,
     existingQuestions,
     onSaved,
+    problemPoints,
 }: ProblemSolvingFormProps) {
     const [problems, setProblems] = useState<Problem[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
+                  questionId: q.questionId,
                   question: q.statementMarkdown,
                   testCases: q.testCases ?? [{ input: "", output: "" }],
                   points: q.points,
@@ -208,6 +209,38 @@ export default function ProblemSolvingForm({
     );
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
+    const handleDeleteProblem = async (problemIndex: number) => {
+       const problemToDelete = problems[problemIndex];
+        try {
+            if (problemToDelete.questionId) {
+                await api.delete(`/Questions/Problem/Delete/${problemToDelete.questionId}`);
+            }
+            if(problems.length==1){
+                setProblems([{
+                    question: "",
+                    testCases: [{ input: "", output: "" }],
+                    points: 0,
+                    difficultyType: "",
+                }])
+            }else {
+            setProblems((prev) => prev.filter((_, i) => i !== problemIndex));
+            if (currentPage >=Math.ceil((problems.length - 1) / problemsPerPage)) {
+                setCurrentPage(Math.max(0, currentPage - 1));
+            }
+            }
+            toast.success("Problem deleted successfully");
+        } catch (error) {
+            const err = error as AxiosError;
+            toast.error(err.message ?? "Failed to delete problem");
+        }
+    };
+    useEffect(() => {
+        const total = problems.reduce(
+            (sum, problem) => sum + (problem.points || 0),
+            0
+        );
+        problemPoints(total);
+    }, [problems, problemPoints]);
 
     const handleSaveProblem = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -215,9 +248,8 @@ export default function ProblemSolvingForm({
             (problem) =>
                 !problem.difficultyType || problem.difficultyType.trim() === ""
         );
-        const hasMissingPoints = problems.some(
-            (problem) => !problem.points 
-        );
+        const hasMissingPoints = problems.some((problem) => !problem.points);
+
         if (hasMissingDifficulty) {
             toast.error("Please select a difficulty level");
             return;
@@ -227,38 +259,65 @@ export default function ProblemSolvingForm({
             return;
         }
         try {
-            const response = await api.post("/Questions/Problem/Create", {
-                examId,
-                problemQuestions: problems.map((problem) => ({
+            const newProblems = problems.filter((p) => !p.questionId);
+            const existingProblems = problems.filter((p) => p.questionId);
+            if (newProblems.length > 0) {
+                const createResponse = await api.post(
+                    "/Questions/Problem/Create",
+                    {
+                        examId,
+                        problemQuestions: newProblems.map((problem) => ({
+                            statementMarkdown: problem.question,
+                            points: problem.points,
+                            difficultyType: problem.difficultyType,
+                            testCases: problem.testCases,
+                        })),
+                    }
+                );
+
+                if (createResponse.status === 200) {
+                    setProblems((prev) =>
+                        prev.map((p) => {
+                            if (!p.questionId) {
+                                const newProblem = createResponse.data.find(
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    (np: any) =>
+                                        np.statementMarkdown === p.question &&
+                                        np.points === p.points
+                                );
+                                return newProblem
+                                    ? {
+                                          ...p,
+                                          questionId: newProblem.questionId,
+                                      }
+                                    : p;
+                            }
+                            return p;
+                        })
+                    );
+                }
+            }
+            const updatePromises = existingProblems.map((problem) => {
+                if (!problem.questionId) return;
+
+                return api.patch("/Questions/Problem/Update", {
+                    questionId: problem.questionId,
                     statementMarkdown: problem.question,
                     points: problem.points,
                     difficultyType: problem.difficultyType,
                     testCases: problem.testCases,
-                })),
+                });
             });
 
-            if (response.status === 200) {
-                toast.success("Problems saved successfully!");
-                onSaved();
-                setProblems([
-                    {
-                        question: "",
-                        testCases: [{ input: "", output: "" }],
-                        points: 0,
-                        difficultyType: "",
-                    },
-                ]);
-                setCurrentPage(0);
-                setSaveButton(!saveButton)
-            } else {
-                toast.error("Failed to save problems");
-            }
+            await Promise.all(updatePromises);
+            toast.success("Problems saved successfully!");
+            onSaved();
+            setSaveButton(!saveButton);
         } catch (error) {
             const err = error as AxiosError;
             toast.error(err.message ?? "Failed to save problems");
         }
     };
-
     const updateProblem = (index: number, updatedProblem: Problem) => {
         setProblems((prev) => [
             ...prev.slice(0, index),
@@ -308,7 +367,6 @@ export default function ProblemSolvingForm({
         }
 
         updateProblem(problemIndex, updatedProblem);
-        toast.success("Test case deleted");
     };
 
     const handleRefreshTestCase = (
@@ -372,99 +430,124 @@ export default function ProblemSolvingForm({
         [problems, currentPage, problemsPerPage]
     );
     const currentProblemIndex = currentPage * problemsPerPage;
-    const [saveButton,setSaveButton]=useState(false)
+    const [saveButton, setSaveButton] = useState(false);
     return (
         <div>
-            <Card className="border-none shadow-none bg-white dark:bg-[#18181b]">
-                <h2 className="w-full flex justify-center text-2xl my-3">
-                    Problem Solving Question : {currentProblemIndex + 1}
-                </h2>
-                <div className="flex justify-center p-4">
-                    <Form
-                        className="w-full flex flex-col gap-4 p-5 border-none"
-                        onSubmit={handleSaveProblem}
-                    >
+            <Form
+                className="w-full flex flex-col gap-4 p-5 border-none"
+                onSubmit={handleSaveProblem}
+            >
+                <Card className="w-full border-none shadow-none bg-white dark:bg-[#18181b]">
+                    <h2 className="w-full flex justify-center text-2xl my-3">
+                        Problem Solving Question : {currentProblemIndex + 1}
+                    </h2>
+                    <div className="w-full flex flex-col justify-center p-4">
                         {currentProblems.map((problem, index) => (
-                            <ProblemItem
-                                key={index}
-                                problem={{ ...problem, points: problem.points }}
-                                onDeleteTestCase={(testCaseIndex) =>
-                                    handleDeleteTestCase(
-                                        currentProblemIndex + index,
-                                        testCaseIndex
-                                    )
-                                }
-                                onRefreshTestCase={(testCaseIndex) =>
-                                    handleRefreshTestCase(
-                                        currentProblemIndex + index,
-                                        testCaseIndex
-                                    )
-                                }
-                                onTestCaseChange={(
-                                    testCaseIndex,
-                                    field,
-                                    value
-                                ) =>
-                                    handleTestCaseChange(
-                                        currentProblemIndex + index,
+                            <div key={index}>
+                                <ProblemItem
+                                    problem={{
+                                        ...problem,
+                                        points: problem.points,
+                                    }}
+                                    onDeleteTestCase={(testCaseIndex) =>
+                                        handleDeleteTestCase(
+                                            currentProblemIndex + index,
+                                            testCaseIndex
+                                        )
+                                    }
+                                    onRefreshTestCase={(testCaseIndex) =>
+                                        handleRefreshTestCase(
+                                            currentProblemIndex + index,
+                                            testCaseIndex
+                                        )
+                                    }
+                                    onTestCaseChange={(
                                         testCaseIndex,
                                         field,
                                         value
-                                    )
-                                }
-                                onQuestionChange={(value) =>
-                                    handleQuestionChange(
-                                        currentProblemIndex + index,
-                                        value
-                                    )
-                                }
-                                onPointsChange={(value) =>
-                                    handlePointsChange(
-                                        currentProblemIndex + index,
-                                        value
-                                    )
-                                }
-                                onDifficultyChange={(value) =>
-                                    handleDifficultyChange(
-                                        currentProblemIndex + index,
-                                        value
-                                    )
-                                }
-                                onAddTestCase={() =>
-                                    addTestCase(currentProblemIndex + index)
-                                }
-                            />
-                        ))}
-
-                        <div className="flex w-full justify-end mt-5 ">
-                            <FormFooter
-                                totalPages={totalPages}
-                                currentPage={currentPage}
-                                onPrevious={() =>
-                                    setCurrentPage(Math.max(0, currentPage - 1))
-                                }
-                                onNext={() =>
-                                    setCurrentPage(
-                                        Math.min(
-                                            totalPages - 1,
-                                            currentPage + 1
+                                    ) =>
+                                        handleTestCaseChange(
+                                            currentProblemIndex + index,
+                                            testCaseIndex,
+                                            field,
+                                            value
                                         )
-                                    )
-                                }
-                            />
-                            <Button type="submit" color="primary" isDisabled={saveButton} >
-                                Save
-                            </Button>
-                        </div>
-                    </Form>
-                </div>
-            </Card>
-
-            <div className="flex w-full justify-center mt-5">
-                <Button onPress={handleAddProblem}>
-                    Add Problem Solving Question
+                                    }
+                                    onQuestionChange={(value) =>
+                                        handleQuestionChange(
+                                            currentProblemIndex + index,
+                                            value
+                                        )
+                                    }
+                                    onPointsChange={(value) =>
+                                        handlePointsChange(
+                                            currentProblemIndex + index,
+                                            value
+                                        )
+                                    }
+                                    onDifficultyChange={(value) =>
+                                        handleDifficultyChange(
+                                            currentProblemIndex + index,
+                                            value
+                                        )
+                                    }
+                                    onAddTestCase={() =>
+                                        addTestCase(currentProblemIndex + index)
+                                    }
+                                    onDeleteProblem={() =>
+                                        handleDeleteProblem(
+                                            currentProblemIndex + index
+                                        )
+                                    }
+                                />
+                                <div className="flex w-full justify-between mt-5">
+                                <div />
+                                    <FormFooter
+                                        totalPages={totalPages}
+                                        currentPage={currentPage}
+                                        onPrevious={() =>
+                                            setCurrentPage(
+                                                Math.max(0, currentPage - 1)
+                                            )
+                                        }
+                                        onNext={() =>
+                                            setCurrentPage(
+                                                Math.min(
+                                                    totalPages - 1,
+                                                    currentPage + 1
+                                                )
+                                            )
+                                        }
+                                    />
+                                        <Button
+                                            color="danger"
+                                            onPress={() =>
+                                                handleDeleteProblem(
+                                                    currentProblemIndex + index
+                                                )}>
+                                            Delete
+                                        </Button>
+                                </div>
+                            </div> ))}
+                    </div>
+                </Card>
+                <div className="flex gap-3 w-full justify-center mt-5">
+                    <Button onPress={handleAddProblem}>
+                        Add Problem Solving Question
+                    </Button>
+                  {!saveButton ?  <Button
+                        type="submit"
+                        color="primary">
+                        Save All
+                    </Button>:
+                    <Button
+                    type="submit"
+                    color="primary">
+                    Update All
                 </Button>
-            </div>
+                    }
+                </div>
+            </Form>
         </div>
     );
 }

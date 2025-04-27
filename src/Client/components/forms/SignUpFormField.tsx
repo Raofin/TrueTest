@@ -33,52 +33,45 @@ const SignUpFormFields = <T extends FieldValues>({
         <Input
           {...register('username' as Path<T>)}
           onBlur={() => handleFieldBlur('username')}
-        //  isRequired
+         isRequired
           label="Username"
           type="text"
-          className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+          className=" rounded-xl"
         />
         {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username.message as string}</p>}
         {uniqueusernameerror && <p className="text-red-500">{uniqueusernameerror}</p>}
-
         <Input
           {...register('email' as Path<T>)}
           onBlur={() => handleFieldBlur('email')}
-         // isRequired
+          isRequired
           label="Email"
           type="email"
-          className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
+          className=" rounded-xl"
         />
-        {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message as string}</p>}
         {uniqueemailerror && <p className="text-red-500">{uniqueemailerror}</p>}
-
         <Input
           {...register('password' as Path<T>)}
-          className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-        //  isRequired
+          className=" rounded-xl"
+         isRequired
           endContent={
             <button type="button" onClick={() => setIsVisible(!isVisible)}>
               <Icon
                 className="text-2xl text-default-400"
-                icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-              />
+                icon={isVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}/>
             </button>
           }
           label="Password"
-          type={isVisible ? 'text' : 'password'}
-        />
+          type={isVisible ? 'text' : 'password'}/>
         {errors.password && <p className="text-sm text-red-500">{errors.password.message as string}</p>}
-
         <Input
           {...register('confirmPassword' as Path<T>)}
-          className="bg-[#eeeef0] dark:bg-[#27272a] rounded-xl"
-        //  isRequired
+          className=" rounded-xl"
+          isRequired
           endContent={
             <button type="button" onClick={() => setIsConfirmVisible(!isConfirmVisible)}>
               <Icon
                 className="text-2xl text-default-400"
-                icon={isConfirmVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}
-              />
+                icon={isConfirmVisible ? 'solar:eye-closed-linear' : 'solar:eye-bold'}/>
             </button>
           }
           label="Confirm Password"
@@ -87,21 +80,15 @@ const SignUpFormFields = <T extends FieldValues>({
         {errors.confirmPassword && (
           <p className="text-sm text-red-500">{errors.confirmPassword.message as string}</p>
         )}
-
         <Checkbox {...register('agreeTerms' as Path<T>)} className="py-4" size="sm">
           I agree with the &nbsp;
-          <Link href="#" size="sm">
-            Terms
-          </Link>
-          &nbsp; and &nbsp;
-          <Link href="#" size="sm">
-            Privacy Policy
-          </Link>
+          <Link href="#" size="sm">Terms</Link>&nbsp; and &nbsp;
+          <Link href="#" size="sm">Privacy Policy</Link>
         </Checkbox>
         {errors.agreeTerms && <p className="text-sm text-red-500">{errors.agreeTerms.message as string}</p>}
       </>
     );
-  }, [errors.agreeTerms, errors.confirmPassword, errors.email, errors.password, errors.username, handleFieldBlur, isConfirmVisible, isVisible, register, setIsConfirmVisible, setIsVisible, uniqueemailerror, uniqueusernameerror]);
+  }, [errors.agreeTerms, errors.confirmPassword, errors.password, errors.username, handleFieldBlur, isConfirmVisible, isVisible, register, setIsConfirmVisible, setIsVisible, uniqueemailerror, uniqueusernameerror]);
 
   return renderSignUpFields();
 };

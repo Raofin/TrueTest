@@ -1,14 +1,12 @@
 'use client'
 
 import { Link, Navbar, NavbarContent, NavbarItem } from '@heroui/react'
-// import { FaCircleUser } from 'react-icons/fa6'
-// import { BiSolidLogIn } from 'react-icons/bi'
-import Logo from '@/components/ui/logo/page'
+import Logo from '@/components/ui/TrueTestLogo'
 import ThemeSwitch from '../ThemeSwitch'
 
 export default function Component() {
   return (
-    <div className=" w-full flex justify-between items-center h-16 px-2">
+    <div className=" w-full flex justify-between items-center h-16 px-14 pt-3">
       <div className="bg-[#eeeef0] dark:bg-[#000000]">
         <Logo />
       </div>

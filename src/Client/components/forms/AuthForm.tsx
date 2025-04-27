@@ -16,6 +16,7 @@ import axios from 'axios'
 import OTPModal from '@/components/ui/Modal/otp-verification'
 import SignUpFormFields from './SignUpFormField'
 import SignInFormFields from './SignInFormField'
+import LoadingModal from '../ui/Modal/LoadingModal'
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>
@@ -97,13 +98,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
   const handleFieldBlur = useCallback(
     async (field: 'username' | 'email') => {
       const value = watch(field as Path<T>)
-      if (!value) {
-        setUniqueError(field as Path<T>, {
-          type: 'manual',
-          message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
-        })
-        return
-      }
       if (field === 'username') setUniqueUsernameError('')
       if (field === 'email') setUniqueEmailError('')
 
@@ -112,11 +106,9 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         if (!errors[field]) {
           await checkUserUniqueness(field, value)
         }
-      } else {
-        setError(`${field} is required`)
       }
     },
-    [checkUserUniqueness, errors, setUniqueError, trigger, watch]
+    [checkUserUniqueness, errors, trigger, watch]
   )
 
   const handleOtpVerification = useCallback(
@@ -126,7 +118,6 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
         toast.error('OTP is required')
         return
       }
-
       try {
         const verifyResponse = await api.post(ROUTES.ISVALIDOTP, {
           email: formData?.email,
@@ -204,6 +195,7 @@ const AuthForm = <T extends FieldValues>({ schema, formType }: AuthFormProps<T>)
 
   return (
     <div>
+      <LoadingModal isOpen={loading} message="Loading..." />
       <form
         onSubmit={formType === 'SIGN_IN' ? handleSubmit(handleSignin) : handleSubmit(onSubmit)}
         className="flex w-full flex-wrap gap-4 flex-col"

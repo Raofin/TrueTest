@@ -13,11 +13,13 @@ interface OTPModalProps {
 
 export default function OTPModal({ isOpen, onOpenChange, control, handleFormSubmit, errors }: OTPModalProps) {
   return (
-    <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} placement="top-center" size="4xl" classNames={{
+      base: 'w-[600px] h-[400px]'
+    }} onOpenChange={onOpenChange}>
       <ModalContent>
         {() => (
           <ModalBody>
-            <form id="#" className="flex flex-col gap-6 ml-10 p-10" onSubmit={handleFormSubmit}>
+            <form id="#" className="flex flex-col ml-8 gap-6 p-10" onSubmit={handleFormSubmit}>
               <Controller
                 control={control}
                 name="otp"
@@ -27,8 +29,10 @@ export default function OTPModal({ isOpen, onOpenChange, control, handleFormSubm
                       segmentWrapper: 'gap-x-5',
                       segment: [
                         'relative',
-                        'h-12',
-                        'w-12',
+                        'h-24',
+                        'w-24',
+                        'text-4xl',
+                        'mt-12',
                         'border-y',
                         'border-r',
                         'first:rounded-l-md',
@@ -57,7 +61,7 @@ export default function OTPModal({ isOpen, onOpenChange, control, handleFormSubm
                   },
                 }}
               />
-              <Button color="primary" className="max-w-fit ml-20" type="submit" variant="solid">
+              <Button color="primary" className="max-w-fit ml-32 mt-12 p-8 text-xl" type="submit" variant="solid">
                 Verify OTP
               </Button>
             </form>

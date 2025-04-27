@@ -14,8 +14,7 @@ public class CloudFileConfiguration : IEntityTypeConfiguration<CloudFile>
 
         entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
         entity.Property(e => e.ContentType).HasMaxLength(255);
-        entity.Property(e => e.Link).IsRequired();
-        entity.Property(e => e.AccountId).IsRequired();
+        entity.Property(e => e.FileId).IsRequired();
 
         new BaseEntityConfig<CloudFile>().Configure(entity);
         new SoftDeletableEntityConfig<CloudFile>().Configure(entity);
