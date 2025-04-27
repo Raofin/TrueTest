@@ -35,7 +35,7 @@ public record ProfileResponse(
     string? BioMarkdown,
     string? InstituteName,
     string? PhoneNumber,
-    Guid? ImageFileId,
+    CloudFileResponse? ImageFile,
     List<ProfileLinkRequest> ProfileLinks
 );
 

@@ -56,7 +56,7 @@ public static class AccountMappers
                 profile.Bio,
                 profile.InstituteName,
                 profile.PhoneNumber,
-                profile.ImageFileId,
+                profile.ImageFile?.MapToDto(),
                 profile.ProfileLinks
                     .Select(pl => new ProfileLinkRequest(pl.Id, pl.Name, pl.Link)).ToList()
             );
