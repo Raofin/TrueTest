@@ -12,12 +12,6 @@ public record CloudFileResponse(
     DateTime CreatedAt
 );
 
-public record FileUploadRequest(
-    Stream Stream,
-    string FileName,
-    string ContentType
-);
-
 public record FileDownloadResponse(
     string FileName,
     string ContentType,

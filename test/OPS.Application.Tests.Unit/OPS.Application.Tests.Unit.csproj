@@ -25,4 +25,8 @@
     <ProjectReference Include="..\..\src\Api\OPS.Application\OPS.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\CloudFiles\Queries\" />
+  </ItemGroup>
+
 </Project>
