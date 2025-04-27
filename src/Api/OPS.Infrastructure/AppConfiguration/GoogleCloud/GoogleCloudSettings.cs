@@ -2,6 +2,6 @@
 
 public class GoogleCloudSettings
 {
-    public string FolderName { get; set; } = null!;
+    public string FolderId { get; set; } = null!;
     public string Credentials { get; set; } = null!;
 }

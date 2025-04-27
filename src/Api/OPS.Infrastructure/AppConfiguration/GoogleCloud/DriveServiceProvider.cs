@@ -1,22 +1,26 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
-using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 
 namespace OPS.Infrastructure.AppConfiguration.GoogleCloud;
 
-public class DriveServiceProvider(IMemoryCache memoryCache, GoogleCloudSettings googleCloudOptions, ILogger logger)
+public class DriveServiceProvider
 {
-    private readonly IMemoryCache _memoryCache = memoryCache;
-    private readonly GoogleCloudSettings _settings = googleCloudOptions;
-    private readonly ILogger _logger = logger;
+    public static string FolderId { get; private set; } = null!;
+    private readonly GoogleCloudSettings _settings;
+
+    public DriveServiceProvider(GoogleCloudSettings settings)
+    {
+        _settings = settings;
+        FolderId = settings.FolderId;
+    }
 
     public DriveService GetDriveService()
     {
         if (!File.Exists(_settings.Credentials) || File.ReadAllLines(_settings.Credentials).Length < 10)
         {
-            _logger.Error("Google credentials file not found or invalid.");
+            Log.Error("Google credentials file not found or invalid.");
             return new DriveService();
         }
 
@@ -31,24 +35,6 @@ public class DriveServiceProvider(IMemoryCache memoryCache, GoogleCloudSettings 
             }
         );
 
-        SetFolderId(driveService);
-
         return driveService;
-    }
-
-    private void SetFolderId(DriveService driveService)
-    {
-        const string cacheKey = "TT_FolderId";
-
-        var request = driveService.Files.List();
-        request.Q = $"name='{_settings.FolderName}'";
-        request.Fields = "files(id)";
-
-        var files = request.Execute();
-
-        if (files.Files.Count <= 0) return;
-
-        var fileId = files.Files.FirstOrDefault()?.Id;
-        _memoryCache.Set(cacheKey, fileId);
     }
 }

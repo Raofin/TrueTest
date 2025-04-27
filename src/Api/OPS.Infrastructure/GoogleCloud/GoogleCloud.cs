@@ -1,17 +1,15 @@
 ﻿using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
 using Google.Apis.Upload;
-using Microsoft.Extensions.Caching.Memory;
 using OPS.Domain.Contracts.Core.GoogleCloud;
+using OPS.Infrastructure.AppConfiguration.GoogleCloud;
 using Serilog;
+using File = Google.Apis.Drive.v3.Data.File;
 
 namespace OPS.Infrastructure.GoogleCloud;
 
-using File = Google.Apis.Drive.v3.Data.File;
-
-internal class GoogleCloudService(IMemoryCache cache, DriveService driveService) : IGoogleCloudService
+internal class GoogleCloudService(DriveService driveService) : IGoogleCloudService
 {
-    private readonly IMemoryCache _cache = cache;
     private readonly DriveService _driveService = driveService;
 
     public async Task<GoogleFile?> UploadAsync(Stream stream, string fileName, string contentType)
@@ -102,7 +100,6 @@ internal class GoogleCloudService(IMemoryCache cache, DriveService driveService)
         try
         {
             await _driveService.Files.Delete(fileId).ExecuteAsync();
-
         }
         catch (Exception ex)
         {
@@ -112,15 +109,11 @@ internal class GoogleCloudService(IMemoryCache cache, DriveService driveService)
 
     private File CreateMetaData(string fileName)
     {
-        const string cacheKey = "TT_FolderId";
-        var metaData = new File { Name = fileName, };
-
-        if (_cache.TryGetValue(cacheKey, out string? fileId) && fileId is not null)
+        return new File
         {
-            metaData.Parents = new List<string> { fileId };
-        }
-
-        return metaData;
+            Name = fileName,
+            Parents = [DriveServiceProvider.FolderId]
+        };
     }
 
     private static GoogleFile MapToGoogleFile(File file)
