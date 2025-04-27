@@ -19,9 +19,9 @@ import api from "@/lib/api";
 import { FormatDatewithTime } from "@/components/DateTimeFormat";
 import isValidEmail from "@/components/EmailValidation";
 import toast from "react-hot-toast";
-import Paginate from "@/components/Pagination";
+import Paginate from "@/components/SelectPagination";
 import { AxiosError } from "axios";
-import { ApiResponse, User } from '@/components/types/apiResponse'
+import { ApiResponse, User } from "@/components/types/apiResponse";
 
 const columns = [
     { label: "Username", key: "username" },

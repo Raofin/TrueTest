@@ -22,9 +22,9 @@ import { FormatDatewithTime } from "@/components/DateTimeFormat";
 import handleDelete from "@/lib/handleDelete";
 import handleStatus from "@/lib/handleStatus";
 import RoleFilter from "@/components/RoleFilter";
-import Paginate from "@/components/Pagination";
+import Paginate from "@/components/SelectPagination";
 import toast from "react-hot-toast";
-import { ApiResponse, User } from '@/components/types/apiResponse'
+import { ApiResponse, User } from "@/components/types/apiResponse";
 
 const columns = [
     { label: "Username", key: "username" },
