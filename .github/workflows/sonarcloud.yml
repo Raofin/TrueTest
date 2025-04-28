@@ -53,7 +53,19 @@ jobs:
           dotnet sonarscanner begin \
             /k:"Learnathon-By-Geeky-Solutions_elite-programmers" \
             /o:"learnathon-by-geeky-solutions" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.sourceEncoding="UTF-8" \
+            /d:sonar.qualitygate.wait="true" \
+            /d:sonar.scm.provider="git" \
+            /d:sonar.alm.github.api.url="https://api.github.com" \
+            /d:sonar.language="cs" \
+            /d:sonar.scanner.scanAll="false" \
+            /d:sonar.inclusions="**/src/Api/**" \
+            /d:sonar.exclusions="**/Migrations/**, **/Entities/**, **/wwwroot/**" \
+            /d:sonar.test.inclusions="**/*Tests.cs" \
+            /d:sonar.coverage.exclusions="**/Dtos/**, **/OPS.Api/**, **/OPS.Domain/**, **/OPS.Infrastructure/**, **/OPS.Persistence/**" \
+            /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
 
       - name: 🛠️ Build solution
         run: dotnet build OPS.sln --no-restore --configuration Release
