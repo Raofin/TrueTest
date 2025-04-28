@@ -49,3 +49,11 @@ public record AuthenticationResponse(
     string Token,
     AccountWithDetailsResponse Account
 );
+
+public record CurrentUser(
+    Guid AccountId,
+    string Username,
+    string Email,
+    List<string> Permissions,
+    List<RoleType> Roles
+);

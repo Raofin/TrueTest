@@ -18,3 +18,20 @@ public record FileDownloadResponse(
     long Size,
     byte[] Bytes
 );
+
+public record GoogleFile(
+    string CloudFileId,
+    string Name,
+    string ContentType,
+    long Size,
+    DateTime CreatedAt
+);
+
+public record GoogleFileDownload(
+    string CloudFileId,
+    string Name,
+    string ContentType,
+    long Size,
+    byte[] Bytes,
+    DateTime CreatedAt
+);

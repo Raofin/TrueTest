@@ -4,10 +4,9 @@ using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Authentication.Commands;
+using OPS.Application.Interfaces.Auth;
 using OPS.Application.Mappers;
-using OPS.Application.Services.AuthService;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
@@ -127,7 +126,7 @@ public class RegisterCommandTests
     }
 
     [Fact]
-    public async Task Handle_WhenInvalidOtp_ShouldReturnUnauthorizedError()
+    public async Task Handle_WhenInvalidOtp_ShouldReturnForbiddenError()
     {
         // Arrange
         var command = new RegisterCommand(
@@ -148,7 +147,7 @@ public class RegisterCommandTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.FirstError.Type.Should().Be(ErrorType.Unauthorized);
+        result.FirstError.Type.Should().Be(ErrorType.Forbidden);
         result.FirstError.Description.Should().Be("Invalid OTP.");
 
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());

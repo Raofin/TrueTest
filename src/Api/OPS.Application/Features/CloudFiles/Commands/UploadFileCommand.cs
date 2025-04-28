@@ -3,10 +3,10 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using OPS.Application.Dtos;
+using OPS.Application.Interfaces.Auth;
+using OPS.Application.Interfaces.Cloud;
 using OPS.Application.Mappers;
-using OPS.Application.Services.CloudService;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 
 namespace OPS.Application.Features.CloudFiles.Commands;
 
@@ -14,11 +14,11 @@ public record UploadFileCommand(IFormFile File) : IRequest<ErrorOr<CloudFileResp
 
 public class UploadFileCommandHandler(
     ICloudFileService cloudFileService,
-    IUserInfoProvider userInfoProvider,
+    IUserProvider userProvider,
     IUnitOfWork unitOfWork) : IRequestHandler<UploadFileCommand, ErrorOr<CloudFileResponse>>
 {
     private readonly ICloudFileService _cloudFileService = cloudFileService;
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
+    private readonly IUserProvider _userProvider = userProvider;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ErrorOr<CloudFileResponse>> Handle(UploadFileCommand request, CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ public class UploadFileCommandHandler(
             return Error.Failure("Failed to upload file");
         }
 
-        cloudFile.AccountId = _userInfoProvider.TryGetAccountId();
+        cloudFile.AccountId = _userProvider.TryGetAccountId();
         _unitOfWork.CloudFile.Add(cloudFile);
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);

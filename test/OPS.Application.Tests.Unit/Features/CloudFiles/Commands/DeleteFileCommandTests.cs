@@ -2,9 +2,8 @@ using ErrorOr;
 using FluentAssertions;
 using NSubstitute;
 using OPS.Application.Features.CloudFiles.Commands;
-using OPS.Application.Services.CloudService;
+using OPS.Application.Interfaces.Cloud;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Core;
 
 namespace OPS.Application.Tests.Unit.Features.CloudFiles.Commands;

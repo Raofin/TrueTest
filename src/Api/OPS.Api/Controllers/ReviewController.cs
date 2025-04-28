@@ -5,9 +5,9 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Review.Commands;
 using OPS.Application.Features.Review.Queries;
-using OPS.Infrastructure.Authentication.Permission;
+using OPS.Infrastructure.Auth.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using static OPS.Infrastructure.Authentication.Permission.Permissions;
+using static OPS.Domain.Constants.Permissions;
 
 namespace OPS.Api.Controllers;
 

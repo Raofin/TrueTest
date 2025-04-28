@@ -2,11 +2,11 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
 using OPS.Application.Dtos;
+using OPS.Application.Interfaces.Auth;
 using OPS.Application.Mappers;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
 
@@ -14,16 +14,16 @@ namespace OPS.Application.Features.Candidates.Commands;
 
 public record StartExamCommand(Guid ExamId) : IRequest<ErrorOr<ExamStartResponse>>;
 
-public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
+public class StartExamCommandHandler(IUnitOfWork unitOfWork, IUserProvider userProvider)
     : IRequestHandler<StartExamCommand, ErrorOr<ExamStartResponse>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
+    private readonly IUserProvider _userProvider = userProvider;
 
     public async Task<ErrorOr<ExamStartResponse>> Handle(
         StartExamCommand request, CancellationToken cancellationToken)
     {
-        var userAccountId = _userInfoProvider.AccountId();
+        var userAccountId = _userProvider.AccountId();
 
         var candidate = await _unitOfWork.Exam.GetCandidateAsync(
             request.ExamId, userAccountId, cancellationToken);

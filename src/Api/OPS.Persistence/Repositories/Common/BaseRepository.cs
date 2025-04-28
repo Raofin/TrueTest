@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Common;
 using OPS.Domain.Entities.Common;
+using OPS.Domain.Interfaces.Common;
 
 namespace OPS.Persistence.Repositories.Common;
 

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Submissions;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
+using OPS.Domain.Interfaces.Submissions;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Submissions;

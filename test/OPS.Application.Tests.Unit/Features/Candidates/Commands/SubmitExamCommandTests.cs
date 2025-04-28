@@ -3,8 +3,8 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Candidates.Commands;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Exam;
 
 namespace OPS.Application.Tests.Unit.Features.Candidates.Commands;
@@ -12,7 +12,7 @@ namespace OPS.Application.Tests.Unit.Features.Candidates.Commands;
 public class SubmitExamCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IUserProvider _userProvider;
     private readonly SubmitExamCommandHandler _sut;
     private readonly SubmitExamCommandValidator _validator = new();
     private readonly Guid _validExamId;
@@ -21,13 +21,13 @@ public class SubmitExamCommandTests
     public SubmitExamCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _sut = new SubmitExamCommandHandler(_unitOfWork, _userInfoProvider);
+        _userProvider = Substitute.For<IUserProvider>();
+        _sut = new SubmitExamCommandHandler(_unitOfWork, _userProvider);
 
         _validExamId = Guid.NewGuid();
         _validAccountId = Guid.NewGuid();
 
-        _userInfoProvider.AccountId().Returns(_validAccountId);
+        _userProvider.AccountId().Returns(_validAccountId);
     }
 
     [Fact]

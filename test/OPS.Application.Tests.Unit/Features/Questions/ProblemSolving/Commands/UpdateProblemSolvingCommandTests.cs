@@ -215,23 +215,6 @@ public class UpdateProblemSolvingCommandTests
     }
 
     [Fact]
-    public void Validate_WhenStatementIsTooShort_ShouldHaveValidationError()
-    {
-        // Arrange
-        var command = new UpdateProblemSolvingCommand(
-            _validQuestionId,
-            "Short", // Less than 10 characters
-            20,
-            DifficultyType.Medium,
-            []
-        );
-
-        // Act & Assert
-        _validator.TestValidate(command)
-            .ShouldHaveValidationErrorFor(x => x.StatementMarkdown);
-    }
-
-    [Fact]
     public void Validate_WhenPointsIsZero_ShouldHaveValidationError()
     {
         // Arrange

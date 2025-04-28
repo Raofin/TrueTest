@@ -1,23 +1,23 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 
 namespace OPS.Application.Features.Candidates.Commands;
 
 public record SubmitExamCommand(Guid ExamId) : IRequest<ErrorOr<Success>>;
 
-public class SubmitExamCommandHandler(IUnitOfWork unitOfWork, IUserInfoProvider userInfoProvider)
+public class SubmitExamCommandHandler(IUnitOfWork unitOfWork, IUserProvider userProvider)
     : IRequestHandler<SubmitExamCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
+    private readonly IUserProvider _userProvider = userProvider;
 
     public async Task<ErrorOr<Success>> Handle(SubmitExamCommand request, CancellationToken cancellationToken)
     {
-        var accountId = _userInfoProvider.AccountId();
+        var accountId = _userProvider.AccountId();
         var examCandidate = await _unitOfWork.ExamCandidate.GetAsync(accountId, request.ExamId, cancellationToken);
         if (examCandidate is null) return Error.Unexpected();
 

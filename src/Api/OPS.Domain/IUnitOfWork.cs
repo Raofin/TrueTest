@@ -1,8 +1,8 @@
-﻿using OPS.Domain.Contracts.Repository.Core;
-using OPS.Domain.Contracts.Repository.Exams;
-using OPS.Domain.Contracts.Repository.Questions;
-using OPS.Domain.Contracts.Repository.Submissions;
-using OPS.Domain.Contracts.Repository.Users;
+﻿using OPS.Domain.Interfaces.Core;
+using OPS.Domain.Interfaces.Exams;
+using OPS.Domain.Interfaces.Questions;
+using OPS.Domain.Interfaces.Submissions;
+using OPS.Domain.Interfaces.Users;
 
 namespace OPS.Domain;
 

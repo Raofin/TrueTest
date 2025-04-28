@@ -1,9 +1,9 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Constants;
+using OPS.Application.Interfaces;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.EmailSender;
+using OPS.Domain.Constants;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
@@ -11,11 +11,11 @@ namespace OPS.Application.Features.Accounts.Commands;
 
 public record SendAdminInviteCommand(List<string> Email) : IRequest<ErrorOr<Success>>;
 
-public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork, IAccountEmails accountEmails)
+public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork, IEmailSender emailSender)
     : IRequestHandler<SendAdminInviteCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IAccountEmails _accountEmails = accountEmails;
+    private readonly IEmailSender _emailSender = emailSender;
 
     public async Task<ErrorOr<Success>> Handle(SendAdminInviteCommand request, CancellationToken cancellationToken)
     {
@@ -49,8 +49,8 @@ public class SendAdminInviteCommandHandler(IUnitOfWork unitOfWork, IAccountEmail
 
         await _unitOfWork.CommitAsync(cancellationToken);
 
-        _accountEmails.SendAdminInvitation(emails, cancellationToken);
-        _accountEmails.SendAdminGranted(updatedAccountEmails, cancellationToken);
+        _emailSender.SendAdminInvitation(emails, cancellationToken);
+        _emailSender.SendAdminGranted(updatedAccountEmails, cancellationToken);
 
         return Result.Success;
     }
