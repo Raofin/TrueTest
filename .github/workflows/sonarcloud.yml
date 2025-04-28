@@ -51,7 +51,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner begin \
-            /k:"learnathon-by-geeky-solutions_elite-programmers" \
+            /k:"Learnathon-By-Geeky-Solutions_elite-programmers" \
             /o:"learnathon-by-geeky-solutions" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
