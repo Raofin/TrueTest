@@ -48,31 +48,9 @@ jobs:
       - name: 🚀 Start SonarCloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_INCLUSIONS: ${{ secrets.SONAR_INCLUSIONS }}
-          SONAR_EXCLUSIONS: ${{ secrets.SONAR_EXCLUSIONS }}
-          SONAR_TEST_INCLUSIONS: ${{ secrets.SONAR_TEST_INCLUSIONS }}
-          SONAR_COVERAGE_EXCLUSIONS: ${{ secrets.SONAR_COVERAGE_EXCLUSIONS }}
         run: |
-          dotnet sonarscanner begin \
-            /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
-            /o:"${{ secrets.SONAR_ORGANIZATION }}" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
-            /d:sonar.language="cs" \
-            /d:sonar.sourceEncoding="UTF-8" \
-            /d:sonar.qualitygate.wait=true \
-            /d:sonar.scanner.scanAll=false \
-            /d:sonar.scm.provider="git" \
-            /d:sonar.alm.github.api.url="https://api.github.com" \
-            /d:sonar.inclusions="${{ secrets.SONAR_INCLUSIONS }}" \
-            /d:sonar.exclusions="${{ secrets.SONAR_EXCLUSIONS }}" \
-            /d:sonar.test.inclusions="${{ secrets.SONAR_TEST_INCLUSIONS }}" \
-            /d:sonar.coverage.exclusions="${{ secrets.SONAR_COVERAGE_EXCLUSIONS }}" \
-            /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
+          dotnet sonarscanner begin /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: 🛠️ Build solution
         run: dotnet build OPS.sln --no-restore --configuration Release
@@ -86,4 +64,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run:
+          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
