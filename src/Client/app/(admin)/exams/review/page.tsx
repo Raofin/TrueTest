@@ -65,15 +65,17 @@ export default function Component() {
                     setCandidateList(response.data.candidates);
                     console.log(response.data)
                     if (response.data.candidates.length > 0) {
-                        setSelectedCandidateId(response.data.candidates[0].account.accountId);
-                    }
-                }
+                        const candidateExists = response.data.candidates.some(
+                            (c) => c.account.accountId === selectedCandidateId );
+                        if (!candidateExists) {
+                            setSelectedCandidateId(response.data.candidates[0].account.accountId);
+                        }
+                    } }
             } catch (error) {
                 console.error("Error fetching candidate data:", error);
-            }
-        };
+            }};
         if (examId) fetchCandidateData();
-    }, [examId]);
+    }, [examId, selectedCandidateId]);
 
     useEffect(() => {
         const fetchSubmissionData = async () => {

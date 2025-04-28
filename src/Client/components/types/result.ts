@@ -10,6 +10,8 @@ export interface Candidate {
         writtenScore: number;
         mcqScore: number;
         startedAt: string;
-        endedAt: string;
+        submittedAt: string;
+        hasCheated: boolean,
+        isReviewed: boolean
     };
 }

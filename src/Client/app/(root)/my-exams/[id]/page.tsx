@@ -25,16 +25,41 @@ export default function Component() {
     const [timeLeft, setTimeLeft] = useState<number | undefined>();
     const [totalPage, setTotalPage] = useState(1);
     const [loading, setLoading] = useState(false);
-    const [answers, setAnswers] = useState<{
-        [key: string]: string | string[];
-    }>({});
+    const [answers, setAnswers] = useState<{[key: string]: string | string[]}>({});
     const [regularQues, setRegularQues] = useState(0);
     const [codingQues, setCodingQues] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [questionsLeft, setQuestionsLeft] = useState(0);
     const [questions, setQuestions] = useState<QuestionData | null>(null);
     const [testCaseResults, setTestCaseResults] = useState<TestCaseResults>({});
-
+    const [examActive, setExamActive] = useState(true);
+    const allowedKeys = new Set([
+    'Backspace', 'Tab', 'Enter', 'Shift', 'CapsLock',
+    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+    'Home', 'End', 'Delete',
+    'a','b','c','d','e','f','g','h','i','j','k','l','m',
+    'n','o','p','q','r','s','t','u','v','w','x','y','z',
+    '0','1','2','3','4','5','6','7','8','9',
+    '(', ')', '{', '}', '[', ']', ';', ':', ',', '.', '=', '+', '-', '*', '/', '<', '>', '?', '!', '@', '#', '$', '%', '^', '&', '_', '|', '~', '`', '"', "'", '\\', ' '
+    ]);
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+          if (!examActive) return;
+          const target = e.target as HTMLElement;
+          if (target.tagName === 'INPUT' || 
+              target.tagName === 'TEXTAREA' ||
+              target.tagName === 'BUTTON') {
+            return;
+          }
+          if (!allowedKeys.has(e.key)) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+      }, [examActive]);
+      
     useEffect(() => {
         const FetchExamData = async () => {
             setLoading(true);
@@ -166,18 +191,18 @@ export default function Component() {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setTimeLeft((prev) => {
-                if (prev !== undefined && prev <= 1) {
-                    clearInterval(timer);
-                    router.push("/my-exams");
-                    return 0;
-                }
-                return prev !== undefined ? prev - 1 : undefined;
-            });
+          setTimeLeft((prev) => {
+            if (prev !== undefined && prev <= 1) {
+              setExamActive(false);
+              clearInterval(timer);
+              router.push("/my-exams");
+              return 0;
+            }
+            return prev !== undefined ? prev - 1 : undefined;
+          });
         }, 1000);
         return () => clearInterval(timer);
-    }, [id, router, timeLeft]);
-
+      }, [id, router, timeLeft]);
     const getOptionNumbers = (
         question: McqQuestion,
         selectedOptions: string[]
@@ -258,12 +283,13 @@ export default function Component() {
     };
 
     const handleSubmitAndExit = async () => {
+        setExamActive(false);
         const success = await submitAllAnswers();
         if (success) {
-            exitFullscreen();
-            router.push("/my-exams");
+          exitFullscreen();
+          router.push("/my-exams");
         }
-    };
+      };
 
     useEffect(() => {
         let count = 0;
@@ -305,6 +331,7 @@ export default function Component() {
     }, [isFullscreen]);
 
     const exitFullscreen = () => {
+        setExamActive(false);
         if (document.exitFullscreen) {
             setIsFullscreen(true);
             document.exitFullscreen().catch((err) => {

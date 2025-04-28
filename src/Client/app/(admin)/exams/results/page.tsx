@@ -14,9 +14,9 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import PaginationButtons from "@/components/ui/PaginationButton";
-import { ExamData } from '@/components/types/exam'
-import { Candidate } from '@/components/types/result'
-import { calculateDuration } from '@/components/DateTimeFormat'
+import { ExamData } from "@/components/types/exam";
+import { Candidate } from "@/components/types/result";
+import { calculateDuration } from "@/components/DateTimeFormat";
 
 const ExamHeader = ({
     exams,
@@ -48,9 +48,9 @@ const ExamHeader = ({
         }
     };
     return (
-        <Card>
+        <Card className='shadow-none'>
             <CardBody>
-                <div className="flex w-full items-center justify-between mb-4">
+                <div className="flex w-full items-center justify-between mb-4 px-3">
                     <div className="flex items-center gap-2">
                         <h2 className="text-lg font-medium">Exam</h2>
                         <Select
@@ -85,7 +85,7 @@ const ExamHeader = ({
                         </Button>
                     </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mt-4">
+                <div className="w-full flex justify-between mt-4 px-3">
                     <div className="flex items-center">
                         <p className="text-sm text-gray-500">Date :</p>
                         <p className="font-medium">
@@ -100,12 +100,6 @@ const ExamHeader = ({
                         <p className="text-sm text-gray-500">Attended :</p>
                         <p className="font-medium">{candidates.length}</p>
                     </div>
-                    <div className="flex items-center">
-                        <p className="text-sm text-gray-500">
-                            Invited Candidates :
-                        </p>
-                        <p className="font-medium">3068</p>
-                    </div>
                 </div>
             </CardBody>
         </Card>
@@ -114,9 +108,13 @@ const ExamHeader = ({
 const UserList = ({
     candidates,
     examId,
+    exams,
+    selectedExamTitle,
 }: {
     candidates: Candidate[];
     examId: string;
+    exams:ExamData[]
+    selectedExamTitle: string;
 }) => {
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -142,9 +140,16 @@ const UserList = ({
             `/exams/review?examId=${examId}&candidateId=${selectedCandidate}`
         );
     };
+    const [examTitleDate,setExamTitleDate]=useState<ExamData>()
+    useEffect(()=>{
+        setExamTitleDate(exams.find((e:ExamData)=>e.examId===examId))
+    },[examId,exams])
     return (
         <div className="h-[70vh] flex flex-col justify-between">
             <div>
+                <h1 className="w-full flex justify-center text-xl font-semibold">
+                    Exam: {selectedExamTitle || "No Exam Selected"}
+                </h1>
                 <div className="flex w-full items-center justify-between p-3 mb-4">
                     <h3 className="text-lg font-medium">User List</h3>
                     <Input
@@ -158,7 +163,7 @@ const UserList = ({
                         }
                     />
                 </div>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto p-3">
                     <table className="w-full">
                         <thead>
                             <tr className="text-left">
@@ -198,19 +203,19 @@ const UserList = ({
                                         {user.account.email}
                                     </td>
                                     <td className="py-3">
-                                        {user.result?.totalScore}/100
+                                        {user.result?.totalScore || 0}/{examTitleDate?.totalPoints}
                                     </td>
                                     <td className="py-3">
                                         <span className="px-2 py-1 rounded text-xs text-green-500">
-                                            Reviewed
+                                            {user.result?.totalScore ? "Reviewed":"Pending"}
                                         </span>
                                     </td>
                                     <td className="py-3">
-                                        {user.result.startedAt &&
-                                        user.result.endedAt
+                                        {user.result?.startedAt &&
+                                        user.result?.submittedAt
                                             ? calculateDuration(
-                                                  user.result.startedAt,
-                                                  user.result.endedAt
+                                                  user.result?.startedAt,
+                                                  user.result?.submittedAt
                                               )
                                             : "N/A"}
                                     </td>
@@ -234,11 +239,11 @@ const UserList = ({
                     </table>
                 </div>
             </div>
-            <div className="flex items-center justify-between mt-6">
+            <div className="flex items-center justify-between mt-6 px-3">
                 <div className="text-sm text-gray-400">
                     Page {currentPage} of {Math.ceil(candidates.length / 10)}
                 </div>
-                <div className="flex gap-2 items-center">
+                <div className="flex gap-2 items-center pb-2">
                     <PaginationButtons
                         currentIndex={currentPage}
                         totalItems={Math.ceil(candidates.length / 10)}
@@ -267,6 +272,14 @@ const Component: React.FC = () => {
     const [exams, setExams] = useState<ExamData[]>([]);
     const [selectedExamId, setSelectedExamId] = useState<string>("");
     const [candidates, setCandidates] = useState<Candidate[]>([]);
+    const [selectedExamTitle, setSelectedExamTitle] = useState<string>("");
+    const handleExamChange = (examId: string) => {
+        const selectedExam = exams.find((exam) => exam.examId === examId);
+        if (selectedExam) {
+            setSelectedExamId(examId);
+            setSelectedExamTitle(selectedExam.title);
+        }
+    };
 
     useEffect(() => {
         const fetchExams = async () => {
@@ -275,18 +288,16 @@ const Component: React.FC = () => {
                 setExams(response.data);
                 if (response.data.length > 0) {
                     setSelectedExamId(response.data[0].examId);
+                    setSelectedExamTitle(response.data[0].title);
                 }
             }
         };
         fetchExams();
     }, []);
-
     useEffect(() => {
         const fetchCandidates = async () => {
             if (!selectedExamId) return;
-            const response = await api.get(
-                `/Review/Candidates/${selectedExamId}`
-            );
+            const response = await api.get(`/Review/Candidates/${selectedExamId}`);
             if (response.status === 200) {
                 setCandidates(response.data.candidates || []);
             }
@@ -304,14 +315,16 @@ const Component: React.FC = () => {
                     <ExamHeader
                         exams={exams}
                         selectedExamId={selectedExamId}
-                        onSelectExam={setSelectedExamId}
+                        onSelectExam={handleExamChange}
                         candidates={candidates}
                     />
-                    <Card className="mt-6">
+                    <Card className="mt-6 shadow-none">
                         <CardBody>
                             <UserList
                                 candidates={candidates}
                                 examId={selectedExamId}
+                                selectedExamTitle={selectedExamTitle}
+                                exams={exams}
                             />
                         </CardBody>
                     </Card>
@@ -322,4 +335,3 @@ const Component: React.FC = () => {
 };
 
 export default Component;
-
