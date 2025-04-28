@@ -19,7 +19,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
 
 export default function Component() {
-    const { user, logout } = useAuth();
+    const { user, logout ,profileImage} = useAuth();
     const router = useRouter();
     return (
         <div>
@@ -52,7 +52,7 @@ export default function Component() {
                                         >
                                             <Avatar
                                                 size="sm"
-                                                src=""
+                                                src={profileImage || ""}
                                                 alt="User Avatar"
                                             />
                                         </Badge>
@@ -69,7 +69,7 @@ export default function Component() {
                                         <div className="flex gap-2 my-4">
                                             <Avatar
                                                 size="md"
-                                                src=""
+                                                src={profileImage ||""}
                                                 alt="User Avatar"
                                             />
                                             <div>

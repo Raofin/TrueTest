@@ -18,6 +18,8 @@ interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
+    profileImage: string;
+  setProfileImage: (url: string) => void;
     login: (
         usernameOrEmail: string,
         password: string,
@@ -32,6 +34,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [profileImage, setProfileImage] = useState('');
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
@@ -61,6 +64,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (userData) {
                 setUser(userData);
+                if (userData.profile?.imageFileId) {
+                    const imgResponse = await api.get(`/CloudFile/Details/${userData.profile.imageFileId}`);
+                    setProfileImage(imgResponse.data.directLink);
+                  }
             } else {
                 removeAuthToken();
                 setUser(null);
@@ -146,9 +153,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             isLoading,
             login,
             logout,
+            profileImage,
+            setProfileImage,
             refreshAuth,
         }),
-        [user, isLoading, login, logout, refreshAuth]
+        [user, isLoading, login, logout, profileImage, refreshAuth]
     );
 
     return (

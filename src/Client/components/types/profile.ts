@@ -24,12 +24,12 @@ export interface User {
   roles: string[]
 }
 
-export interface FormData {
+export interface ProfileFormData {
   firstName: string
   lastName: string
   bio: string
   instituteName: string
   phoneNumber: string
-  imageFileId: null
+  imageFileId: string
   profileLinks: { name: string; link: string }[];
 }
