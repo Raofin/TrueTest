@@ -1,4 +1,4 @@
-﻿namespace OPS.Domain.Constents;
+﻿namespace OPS.Domain.Constants;
 
 public static class ProjectConstants
 {

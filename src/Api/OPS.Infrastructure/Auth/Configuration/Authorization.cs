@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 using OPS.Domain.Enums;
 
 namespace OPS.Infrastructure.Auth.Configuration;

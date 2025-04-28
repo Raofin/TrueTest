@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 using OPS.Application.Interfaces;
 using OPS.Domain;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 

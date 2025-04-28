@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OPS.Application.Interfaces.Auth;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 

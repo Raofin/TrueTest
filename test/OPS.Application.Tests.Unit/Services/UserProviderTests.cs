@@ -11,6 +11,7 @@ public class UserProviderTests
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserProvider _sut;
+    private static readonly string[] s_expectation = ["Permission1", "Permission2"];
 
     public UserProviderTests()
     {
@@ -201,6 +202,6 @@ public class UserProviderTests
         result["AccountId"].Should().Be(claims[0].Value);
         result["Username"].Should().Be(claims[1].Value);
         result["Email"].Should().Be(claims[2].Value);
-        result["Permission"].Should().BeEquivalentTo(new[] { "Permission1", "Permission2" });
+        result["Permission"].Should().BeEquivalentTo(s_expectation);
     }
 }

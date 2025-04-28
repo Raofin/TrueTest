@@ -4,7 +4,7 @@ using MediatR;
 using OPS.Application.Dtos;
 using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 
 namespace OPS.Application.Features.Authentication.Commands;
 

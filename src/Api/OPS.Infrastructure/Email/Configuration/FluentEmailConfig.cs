@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OPS.Application.Interfaces;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 
 namespace OPS.Infrastructure.Email.Configuration;
 

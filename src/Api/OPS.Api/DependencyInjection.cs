@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 using OPS.Api.Middlewares;
 using Scalar.AspNetCore;
 using OPS.Api.Transformers;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace OPS.Api;

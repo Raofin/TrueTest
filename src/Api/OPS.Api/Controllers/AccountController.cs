@@ -8,7 +8,7 @@ using OPS.Application.Features.Accounts.Queries;
 using OPS.Domain.Enums;
 using OPS.Infrastructure.Auth.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using static OPS.Domain.Constents.Permissions;
+using static OPS.Domain.Constants.Permissions;
 
 namespace OPS.Api.Controllers;
 

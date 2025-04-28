@@ -1,7 +1,7 @@
 ﻿using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using OPS.Application.Interfaces;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 using Serilog;
 
 namespace OPS.Infrastructure.Email;

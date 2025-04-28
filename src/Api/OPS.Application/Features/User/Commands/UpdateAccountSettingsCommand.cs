@@ -5,7 +5,7 @@ using OPS.Application.Dtos;
 using OPS.Application.Interfaces.Auth;
 using OPS.Application.Mappers;
 using OPS.Domain;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 using Throw;
 
 namespace OPS.Application.Features.User.Commands;

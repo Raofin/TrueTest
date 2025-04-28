@@ -7,7 +7,7 @@ using OPS.Application.Features.Questions.Written.Command;
 using OPS.Application.Features.Questions.Written.Queries;
 using OPS.Infrastructure.Auth.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using static OPS.Domain.Constents.Permissions;
+using static OPS.Domain.Constants.Permissions;
 
 namespace OPS.Api.Controllers;
 

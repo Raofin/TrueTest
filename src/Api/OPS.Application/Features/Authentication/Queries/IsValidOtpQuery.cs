@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 using OPS.Domain;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 
 namespace OPS.Application.Features.Authentication.Queries;
 

@@ -5,7 +5,7 @@ using OPS.Application.Common;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
-using OPS.Domain.Constents;
+using OPS.Domain.Constants;
 
 namespace OPS.Application.Features.Accounts.Commands;
 

@@ -1,6 +1,6 @@
 ﻿using OPS.Domain.Enums;
 
-namespace OPS.Domain.Constents;
+namespace OPS.Domain.Constants;
 
 public static class Permissions
 {

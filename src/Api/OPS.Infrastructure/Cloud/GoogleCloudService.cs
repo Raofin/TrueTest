@@ -108,7 +108,7 @@ internal class GoogleCloudService(DriveService driveService) : IGoogleCloudServi
         }
     }
 
-    private File CreateMetaData(string fileName)
+    private static File CreateMetaData(string fileName)
     {
         return new File
         {
