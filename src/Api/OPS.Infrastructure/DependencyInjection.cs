@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using OPS.Application.Interfaces;
 using OPS.Application.Interfaces.Auth;
 using OPS.Application.Services;
 using OPS.Infrastructure.Auth;
 using OPS.Infrastructure.Auth.Permission;
 using OPS.Infrastructure.BackgroundServices;
+using OPS.Infrastructure.Gemini;
 
 namespace OPS.Infrastructure;
 
@@ -18,6 +20,7 @@ internal static class DependencyInjection
         services.AddSingleton<IOtpGenerator, OtpGenerator>();
 
         services.AddScoped<IUserProvider, UserProvider>();
+        services.AddScoped<IAiService, GeminiService>();
 
         services.AddHostedService<OtpCleanupService>();
 
