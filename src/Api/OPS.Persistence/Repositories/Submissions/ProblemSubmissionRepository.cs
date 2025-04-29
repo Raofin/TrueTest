@@ -20,6 +20,14 @@ internal class ProblemSubmissionRepository(AppDbContext dbContext)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<ProblemSubmission?> GetWithQuestionAsync(Guid problemSubmissionId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ProblemSubmissions
+            .Include(ps => ps.Question)
+            .Where(ps => ps.Id == problemSubmissionId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<ProblemSubmission?> GetWithOutputsAsync(
         Guid questionId, Guid accountId, CancellationToken cancellationToken)
     {
