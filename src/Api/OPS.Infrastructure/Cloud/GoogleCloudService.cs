@@ -29,7 +29,7 @@ internal class GoogleCloudService(DriveService driveService) : IGoogleCloudServi
                 return null;
             }
 
-            SetPermissions(request.ResponseBody.Id);
+            _ = SetPermissionAsync(request.ResponseBody.Id);
 
             return MapToGoogleFile(request.ResponseBody);
         }
@@ -40,7 +40,7 @@ internal class GoogleCloudService(DriveService driveService) : IGoogleCloudServi
         }
     }
 
-    private void SetPermissions(string fileId)
+    private async Task SetPermissionAsync(string fileId)
     {
         var permission = new Permission
         {
@@ -48,7 +48,7 @@ internal class GoogleCloudService(DriveService driveService) : IGoogleCloudServi
             Role = "reader"
         };
 
-        _driveService.Permissions
+        await _driveService.Permissions
             .Create(permission, fileId)
             .ExecuteAsync();
     }

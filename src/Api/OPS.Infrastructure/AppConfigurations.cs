@@ -6,6 +6,7 @@ using OPS.Infrastructure.Auth.Configuration;
 using OPS.Infrastructure.Cloud.Configuration;
 using OPS.Infrastructure.Database;
 using OPS.Infrastructure.Email.Configuration;
+using OPS.Infrastructure.Gemini.Configuration;
 using OPS.Infrastructure.Logging;
 using OPS.Infrastructure.OneCompiler.Configuration;
 using Serilog;
@@ -27,6 +28,7 @@ public static class AppConfigurations
             .AddOneCompilerServices(configuration)
             .AddMemoryCache()
             .AddGoogleCloudServices(configuration)
+            .AddGeminiServices(configuration)
             .AddDependencies()
             .AddHealthChecks();
 

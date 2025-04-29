@@ -12,6 +12,15 @@ internal class WrittenSubmissionRepository(AppDbContext dbContext)
 {
     private readonly AppDbContext _dbContext = dbContext;
 
+    public async Task<WrittenSubmission?> GetWithQuestionAsync(Guid questionId,
+        CancellationToken cancellationToken)
+    {
+        return await _dbContext.WrittenSubmissions
+            .AsNoTracking()
+            .Include(s => s.Question)
+            .SingleOrDefaultAsync(s => s.QuestionId == questionId, cancellationToken);
+    }
+
     public async Task<List<WrittenSubmission>> GetByQuestionIdAsync(Guid questionId,
         CancellationToken cancellationToken)
     {

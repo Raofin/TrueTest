@@ -7,9 +7,9 @@ using Throw;
 
 namespace OPS.Infrastructure.OneCompiler;
 
-internal class OneCompilerService(IOneCompilerApi api) : IOneCompilerService
+internal class OneCompilerService(IOneCompilerClient oneCompilerClient) : IOneCompilerService
 {
-    private readonly IOneCompilerApi _api = api;
+    private readonly IOneCompilerClient _oneCompiler = oneCompilerClient;
 
     public async Task<CodeRunResponse> CodeRunAsync(LanguageId languageId, string code, string? input)
     {
@@ -21,7 +21,7 @@ internal class OneCompilerService(IOneCompilerApi api) : IOneCompilerService
             input
         );
 
-        var responseStr = await _api.CodeRunAsync(request);
+        var responseStr = await _oneCompiler.CodeRunAsync(request);
         var response = JsonConvert.DeserializeObject<CodeRunResponse>(responseStr);
         response.ThrowIfNull("Invalid response from OneCompiler API");
         return response;

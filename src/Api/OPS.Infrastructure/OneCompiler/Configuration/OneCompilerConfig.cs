@@ -16,7 +16,7 @@ internal static class OneCompiler
 
         services.AddSingleton(oneCompilerSettings);
 
-        services.AddRefitClient<IOneCompilerApi>()
+        services.AddRefitClient<IOneCompilerClient>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(oneCompilerSettings.BaseUrl);
