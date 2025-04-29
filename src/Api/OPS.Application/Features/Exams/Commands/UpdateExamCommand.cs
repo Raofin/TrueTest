@@ -49,11 +49,11 @@ public class UpdateExamCommandValidator : AbstractValidator<UpdateExamCommand>
             .IsValidGuid();
 
         RuleFor(x => x.Title)
-            .MaximumLength(10)
+            .NotEmpty()
             .When(x => !string.IsNullOrEmpty(x.Title));
 
         RuleFor(x => x.Description)
-            .MaximumLength(100)
+            .NotEmpty()
             .When(x => !string.IsNullOrEmpty(x.Description));
 
         RuleFor(x => x.DurationMinutes)
