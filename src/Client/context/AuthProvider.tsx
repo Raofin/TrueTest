@@ -43,8 +43,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const response = await api.get(ROUTES.USER_INFO);
             if (response.status === 200) {
-                if(response.data.profile.imageFile.directLink.length>0)
-                setProfileImage(response.data.profile.imageFile.directLink??"");
+                if (response.data?.profile?.imageFile?.directLink) {
+                    setProfileImage(response.data.profile.imageFile.directLink);
+                  } else {
+                    setProfileImage(""); 
+                  }
                 return response.data;
             }
             return null;
