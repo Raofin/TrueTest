@@ -15,7 +15,6 @@ export default function ProfilePage() {
     const [userInfo, setUserInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const {profileImage}=useAuth()
-    console.log(profileImage)
     useEffect(() => {
         setRoute(path.startsWith("/profile") ? "profile" : "myprofile");
     }, [path]);
@@ -41,7 +40,6 @@ export default function ProfilePage() {
                             : null,
                     };
                     setUserInfo(normalizedData);
-                    console.log(normalizedData)
                 }
             } catch (error) {
                 console.error("Error fetching profile:", error);

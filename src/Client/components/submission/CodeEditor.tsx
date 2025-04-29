@@ -6,6 +6,7 @@ import Editor from "@monaco-editor/react";
 import api from "@/lib/api";
 import { languages } from "@/lib/language-selector";
 import { ProblemQuestion, TestCase } from '@/components/types/problemQues'
+import ReactMarkdown from "react-markdown";
 
 interface PageProps {
     readonly question: ProblemQuestion;
@@ -59,7 +60,6 @@ export default function CodeEditor({
             }));
             setFormattedTestCases(initializedTestCases);
         }
-        console.log(formattedTestCases);
     }, [question.testCases, questionId, answers, persistedTestCaseResults, formattedTestCases, selectedLanguage]);
 
     const handleCodeChange = (value: string | undefined) => {
@@ -129,7 +129,7 @@ export default function CodeEditor({
             <Card className="border-none rounded-lg p-4 shadow-none bg-white dark:bg-[#18181b]">
                 <h2 className="text-xl font-bold mb-3">Problem Statement</h2>
                 <div className="space-y-4">
-                    <p dangerouslySetInnerHTML={{ __html: question.statementMarkdown }} />
+                    <ReactMarkdown>{question.statementMarkdown}</ReactMarkdown>
                     <div>
                         <h3 className="font-semibold">Example</h3>
                         {question.testCases.map((testCase) => (

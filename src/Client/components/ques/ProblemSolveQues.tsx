@@ -8,6 +8,7 @@ import PaginationButtons from "@/components/ui/PaginationButton";
 import MdEditor from "../KatexMermaid";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
+import { AiButton } from '@/components/ui/AiButton'
 
 interface TestCase {
     input: string;
@@ -209,6 +210,29 @@ export default function ProblemSolvingForm({
     );
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
+      const handleAiResponse=()=>{
+           const FetchData=async()=>{
+           try{
+             const response=await api.post('/Ai/Generate/ProblemSolvingQuestion',{
+                userPrompt: problems[currentPage].question
+             })
+             if(response.status===200){
+                 console.log(response.data.statementMarkdown)
+                const newProblem = {
+                    question: response.data.statementMarkdown,
+                    testCases: response.data.testCases || [{ input: "", output: "" }],
+                    points: 0,
+                    difficultyType:  "Easy"
+                  };
+          
+                  setProblems((prev) =>
+                    prev.map((p, idx) => (idx === currentPage ? { ...p, ...newProblem } : p))
+                  );
+             }
+           }catch{}
+           }
+           FetchData();
+       }
     const handleDeleteProblem = async (problemIndex: number) => {
         const problemToDelete = problems[problemIndex];
         try {
@@ -510,7 +534,7 @@ export default function ProblemSolvingForm({
                                     }
                                 />
                                 <div className="flex w-full justify-between mt-5">
-                                    <div />
+                                    <div className=''><AiButton onPress={handleAiResponse}/></div>
                                     <FormFooter
                                         totalPages={totalPages}
                                         currentPage={currentPage}

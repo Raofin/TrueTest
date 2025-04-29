@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
 import { CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
 import { ExamData } from '@/components/types/exam'
+import { AiButton } from '@/components/ui/AiButton'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
@@ -58,13 +59,42 @@ export default function Component() {
         };
         fetchExamData();
     }, [examId]);
+    const handleAiResponse = async (submissionId: string) => {
+        try {
+            const response = await api.post<{ review: string; score: number }>(
+                `/Ai/Review/ProblemSubmission/${submissionId}`
+            );
+            if (response.status === 200) {
+                const { score } = response.data;
+                updateProblemSubmission(submissionId, { score: score });
+            } else {
+                toast.error("Failed to get AI review.");
+            }
+        } catch  {
+            toast.error("Error communicating with AI service.");
+        }
+    };
+    const handleAiWrittenResponse = async (submissionId: string) => {
+        try {
+            const response = await api.post<{ review: string; score: number }>(
+                `/Ai/Review/WrittenSubmission/${submissionId}`
+            );
+            if (response.status === 200) {
+                const { score } = response.data;
+                updateWrittenSubmission(submissionId, { score: score });
+            } else {
+                toast.error("Failed to get AI review.");
+            }
+        } catch  {
+            toast.error("Error communicating with AI service.");
+        }
+    };
     useEffect(() => {
         const fetchCandidateData = async () => {
             try {
                 const response = await api.get<CandidatesResponse>(`/Review/Candidates/${examId}`);
                 if (response.status === 200) {
                     setCandidateList(response.data.candidates);
-                    console.log(response.data)
                     if (response.data.candidates.length > 0) {
                         const candidateExists = response.data.candidates.some(
                             (c) => c.account.accountId === selectedCandidateId );
@@ -285,21 +315,21 @@ const updateProblemSubmission = (
                                 <div className="flex items-center justify-between">
                                 <div>
                                     <span className="text-default-500">Score:</span>
-                                        {selectedCandidate.result.totalScore}/{totalPoints}
+                                        {selectedCandidate.result?.totalScore??0}/{totalPoints}
                                 </div>
                                 <div>
                                     <span className="text-default-500">Submitted At:</span>
-                                    {new Date(selectedCandidate.result.submittedAt).toLocaleString()}
+                                    {new Date(selectedCandidate.result?.submittedAt??"").toLocaleString()}
                                 </div>
                             </div>
                             <div className='flex w-full justify-between'>
                                  <div>
                                     <span className="text-default-500">Problem Solving:</span>
-                                        {selectedCandidate.result.problemSolvingScore}/{problemPoints}
+                                        {selectedCandidate.result?.problemSolvingScore??0}/{problemPoints}
                                 </div>
                                  <div>
                                     <span className="text-default-500">Written Question:</span>
-                                        {selectedCandidate.result.writtenScore}/{writtenPoints}
+                                        {selectedCandidate.result?.writtenScore??0}/{writtenPoints}
                                 </div>
                                  <div>
                                     <span className="text-default-500">MCQ:</span>
@@ -311,7 +341,7 @@ const updateProblemSubmission = (
                     </div>
                 </Card>
                 {selectedCandidateId && editedSubmission && (
-                    <div className="bg-white dark:bg-[#18181b] p-5 rounded-xl">
+                    <div className=" p-5 rounded-xl">
                         <h2 className="w-full text-center">
                             {selectedCandidate?.account.username ??
                                 selectedCandidate?.account.email ??
@@ -319,13 +349,13 @@ const updateProblemSubmission = (
                         </h2>
                         {editedSubmission.problem.length > 0 && (
                             <div className="mb-8">
-                                <h2 className="text-lg font-semibold mb-4">
+                                <h2 className="text-lg font-semibold my-4">
                                     Problem Solving Submissions
                                 </h2>
                                 {editedSubmission.problem.map((submission) => (
                                     <div key={submission.questionId}
-                                        className="space-y-4 mb-6 p-4   rounded-lg">
-                                        <h3 className="font-medium"> Problem Statement :</h3>
+                                        className="space-y-4 mb-6 p-4 bg-white dark:bg-[#18181b]  rounded-lg">
+                                        <h3 className="font-medium "> Problem Statement :</h3>
                                         <div className="font-medium">
                                             {questionsData[
                                                 submission.questionId
@@ -343,7 +373,7 @@ const updateProblemSubmission = (
                                                 </div>
                                             </Card>
                                         </div>
-                                       
+                                        <AiButton onPress={()=>handleAiResponse(submission.problemSubmissionId)}/>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Result</h4>
                                             <div className="flex items-center gap-5">
@@ -351,7 +381,7 @@ const updateProblemSubmission = (
                                                     <span>Points</span>
                                                     <input
                                                         type="number"
-                                                        className="w-16"
+                                                        className="w-12"
                                                         value={submission.score}
                                                         onChange={(e) =>
                                                             updateProblemSubmission(
@@ -401,7 +431,7 @@ const updateProblemSubmission = (
                                 </h2>
                                 {editedSubmission.written.map((submission) => (
                                     <div key={submission.questionId}
-                                        className="space-y-4 p-4  rounded-lg">
+                                        className="space-y-4 p-4 flex flex-col gap-3 mb-6 bg-white dark:bg-[#18181b] rounded-lg">
                                         <div  className="space-y-4  p-4  rounded-lg">
                                             <div className="font-medium">
                                                 {questionsData[submission.questionId] ? (
@@ -410,12 +440,13 @@ const updateProblemSubmission = (
                                                     'Loading question...'
                                                 )}
                                             </div>
-                                            <div>
-                                                <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
+                                            <div className='mb-4'>
+                                                <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none mb-4">
                                                     <div className="whitespace-pre-wrap p-2">
                                                     {submission.answer}
                                                 </div>
                                             </Card>
+                                            <AiButton onPress={()=>handleAiWrittenResponse(submission.writtenSubmissionId)}/>
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2">Result</h4>
@@ -424,7 +455,7 @@ const updateProblemSubmission = (
                                                     <span>Points</span>
                                                     <input
                                                         type="number"
-                                                        className="w-16"
+                                                        className="w-12"
                                                         value={submission.score}
                                                         onChange={(e) =>
                                                             updateWrittenSubmission(

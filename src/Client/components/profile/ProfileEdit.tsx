@@ -67,7 +67,6 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
     if (fileId) {
       try {
         const response = await api.get(`/CloudFile/Details/${fileId}`);
-        console.log('CloudFile Details Response:', response.data);
         setImageUrl(response.data.directLink);
         setProfileImage(response.data.directLink);
       } catch (error) {
@@ -138,7 +137,6 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
             profileLinks: response.data.profile?.profileLinks ?? [{ name: '', link: '' }],
           };
           updateFormData(() => profileData);
-          console.log(profileData)
           fetchImageUrl(profileData.imageFileId); 
         }
       } catch (error) {

@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
+import { AiButton } from '../ui/AiButton'
 
 interface WrittenQuestion {
     id: string;
@@ -233,6 +234,25 @@ export default function Component({
             ),
         [writtenQuestions, currentPage, questionsPerPage]
     );
+    const handleAiResponse=()=>{
+               const FetchData=async()=>{
+               try{
+                 const response=await api.post('/Ai/Generate/WrittenQuestion',{
+                    userPrompt: writtenQuestions[currentPage].question
+                 })
+                 if(response.status===200){
+                    const { questionStatement } = response.data;
+
+                setWrittenQuestions((prev) =>
+                    prev.map((q, idx) =>
+                        idx === currentPage ? { ...q, question: questionStatement } : q
+                    )
+                );
+                 }
+               }catch{}
+               }
+               FetchData();
+           }
     return (
         <div>
             <Card
@@ -242,7 +262,7 @@ export default function Component({
                     {" "}
                     Written Question : {currentPage + 1}{" "}
                 </h2>
-                {currentQuestions.map((question) => (
+                {currentQuestions.map((question) => (<>
                     <div key={question.id} className="w-full">
                         <div className="p-4 mx-5 rounded-lg mt-4">
                             <Textarea
@@ -329,8 +349,9 @@ export default function Component({
                             </div>
                         </div>
                     </div>
-                ))}
-                <div className="flex w-full justify-center items-center my-3 p-5">
+               
+                <div className="w-full grid grid-cols-3 my-3 p-5">
+                       <div className=''><AiButton onPress={handleAiResponse}/></div> 
                     <div className="flex items-center gap-2 ml-12">
                         <span>
                             Page {currentPage + 1} of {totalPages}
@@ -349,6 +370,7 @@ export default function Component({
                         />
                     </div>
                 </div>
+                </> ))}
             </Card>
             <div className="flex justify-center my-8 gap-3">
                 <Button onPress={handleAddWrittenQuestion}>

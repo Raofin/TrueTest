@@ -50,9 +50,8 @@ export default function ProfileSetUp() {
                 (role: string) => role.toLowerCase() === "admin"
             );
             router.push(isAdmin ? "/overview" : "/home");
-        } catch (error) {
+        } catch  {
             alert("Failed to fetch user info. Please try again.");
-            console.log(error);
         }
     };
 

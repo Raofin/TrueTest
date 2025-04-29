@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { convertUtcToLocalTime, parseTime } from "@/components/DateTimeFormat";
+import { AiButton } from '@/components/ui/AiButton'
 
 interface FormData {
     title: string;
@@ -60,7 +61,20 @@ export default function ExamFormPage() {
     const handleComponentSaved = (type: keyof typeof saveStatus) => {
         setSaveStatus((prev) => ({ ...prev, [type]: true }));
     };
-
+    const handleAiResponse=()=>{
+        const FetchData=async()=>{
+        try{
+          const response=await api.post('/Ai/Generate/ExamDescription',{
+            title:formData.title,
+            userPrompt:formData.description
+          })
+          if(response.status===200){
+            setFormData({ ...formData, description: response.data.description });
+          }
+        }catch{}
+        }
+        FetchData();
+    }
     const handleAddComponent = (componentType: string) => {
         setActiveComponents([
             ...activeComponents,
@@ -110,7 +124,6 @@ export default function ExamFormPage() {
             }
             let resp;
             if (examId) {
-                console.log(examData);
                 const payload = {
                     examId: examId,
                     title: formData.title,
@@ -123,7 +136,6 @@ export default function ExamFormPage() {
                 resp = await api.patch(`/Exam/Update`, payload);
                 if (resp.status === 200) {
                     toast.success(`Exam updated successfully.`);
-                    console.log(resp.data);
                     route.push("/view-exams");
                 }
             } else {
@@ -161,7 +173,6 @@ export default function ExamFormPage() {
                 ]);
                 if (examResponse.status === 200) {
                     const exam = examResponse.data.exam;
-                    console.log(exam);
                     setFormData({
                         title: exam.title,
                         description: exam.description,
@@ -216,7 +227,6 @@ export default function ExamFormPage() {
             MCQ: ${mcqQuesPoint}
             Total Calculated: ${calculatedTotal}
             Exam Total Points: ${formData.totalPoints}`;
-
                 toast(message, {
                     duration: 4000,
                     position: "bottom-right",
@@ -311,8 +321,7 @@ export default function ExamFormPage() {
                 <Card className="flex shadow-none flex-col justify-between p-8 items-center">
                     <form
                         className="flex gap-4 flex-wrap flex-col w-full"
-                        onSubmit={handleSaveExam}
-                    >
+                        onSubmit={handleSaveExam}>
                         <Input
                             className="rounded-2xl"
                             isRequired
@@ -324,10 +333,10 @@ export default function ExamFormPage() {
                                 setFormData({
                                     ...formData,
                                     title: e.target.value,
-                                })
-                            }
-                        />
-                        <Textarea
+                                })}/>
+                        <div className='relative'>
+                       <div>
+                       <Textarea
                             className="rounded-2xl"
                             isRequired
                             label="Description"
@@ -340,6 +349,9 @@ export default function ExamFormPage() {
                                 })
                             }
                         />
+                       </div>
+                        <div className='absolute top-2 right-2'><AiButton onPress={handleAiResponse}/></div>
+                        </div>
                         <div className="flex gap-5">
                             <DatePicker
                                 className="flex-1 rounded-2xl"
