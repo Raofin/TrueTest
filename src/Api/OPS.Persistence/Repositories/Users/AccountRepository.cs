@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Users;
 using OPS.Domain.Entities.Common;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
+using OPS.Domain.Interfaces.Users;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Users;
@@ -94,6 +94,8 @@ internal class AccountRepository(AppDbContext dbContext) : Repository<Account>(d
             .AsSplitQuery()
             .Include(a => a.AccountRoles)
             .ThenInclude(ar => ar.Role)
+            .Include(a => a.Profile)
+            .ThenInclude(a => a!.ImageFile)
             .Include(a => a.Profile)
             .ThenInclude(p => p!.ProfileLinks);
     }

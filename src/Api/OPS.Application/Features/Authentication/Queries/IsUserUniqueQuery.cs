@@ -1,8 +1,8 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Constants;
 using OPS.Domain;
+using OPS.Domain.Constants;
 
 namespace OPS.Application.Features.Authentication.Queries;
 

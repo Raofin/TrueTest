@@ -3,8 +3,8 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Exams.Commands;
+using OPS.Application.Interfaces;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.User;
 
@@ -13,7 +13,7 @@ namespace OPS.Application.Tests.Unit.Features.Exams.Commands;
 public class InviteCandidatesCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IAccountEmails _accountEmails;
+    private readonly IEmailSender _emailSender;
     private readonly InviteCandidatesCommandHandler _sut;
     private readonly InviteCandidatesCommandValidator _validator = new();
     private readonly Examination _existingExam;
@@ -22,8 +22,8 @@ public class InviteCandidatesCommandTests
     public InviteCandidatesCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _accountEmails = Substitute.For<IAccountEmails>();
-        _sut = new InviteCandidatesCommandHandler(_unitOfWork, _accountEmails);
+        _emailSender = Substitute.For<IEmailSender>();
+        _sut = new InviteCandidatesCommandHandler(_unitOfWork, _emailSender);
 
         _existingExam = new Examination()
         {
@@ -73,7 +73,7 @@ public class InviteCandidatesCommandTests
             candidates.All(c => c.ExaminationId == command.ExamId)));
 
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
-        _accountEmails.Received(1).SendExamInvitation(
+        _emailSender.Received(1).SendExamInvitation(
             Arg.Is<List<string>>(emails => emails.Count == 2),
             _existingExam.Title,
             _existingExam.OpensAt,
@@ -136,7 +136,7 @@ public class InviteCandidatesCommandTests
             candidates[0].CandidateEmail == "new@example.com"));
 
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
-        _accountEmails.Received(1).SendExamInvitation(
+        _emailSender.Received(1).SendExamInvitation(
             Arg.Is<List<string>>(emails => emails.Count == 1 && emails[0] == "new@example.com"),
             _existingExam.Title,
             _existingExam.OpensAt,
@@ -168,7 +168,7 @@ public class InviteCandidatesCommandTests
 
         _unitOfWork.ExamCandidate.DidNotReceive().AddRange(Arg.Any<List<ExamCandidate>>());
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
-        _accountEmails.DidNotReceive().SendExamInvitation(
+        _emailSender.DidNotReceive().SendExamInvitation(
             Arg.Any<List<string>>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
@@ -289,7 +289,7 @@ public class InviteCandidatesCommandTests
             candidates[0].CandidateEmail == "existing1@example.com"));
 
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
-        _accountEmails.Received(1).SendExamInvitation(
+        _emailSender.Received(1).SendExamInvitation(
             Arg.Is<List<string>>(emails => emails.Count == 1 && emails[0] == "existing1@example.com"),
             _existingExam.Title,
             _existingExam.OpensAt,
@@ -321,7 +321,7 @@ public class InviteCandidatesCommandTests
 
         _unitOfWork.ExamCandidate.DidNotReceive().AddRange(Arg.Any<List<ExamCandidate>>());
         await _unitOfWork.DidNotReceive().CommitAsync(Arg.Any<CancellationToken>());
-        _accountEmails.DidNotReceive().SendExamInvitation(
+        _emailSender.DidNotReceive().SendExamInvitation(
             Arg.Any<List<string>>(),
             Arg.Any<string>(),
             Arg.Any<DateTime>(),

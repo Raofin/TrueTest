@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Contracts.Core.GoogleCloud;
-using OPS.Infrastructure.Authentication.Otp;
-using OPS.Infrastructure.Authentication.Permission;
-using OPS.Infrastructure.Authentication.User;
-using OPS.Infrastructure.GoogleCloud;
+using OPS.Application.Interfaces;
+using OPS.Application.Interfaces.Auth;
+using OPS.Application.Services;
+using OPS.Infrastructure.Auth;
+using OPS.Infrastructure.Auth.Permission;
+using OPS.Infrastructure.BackgroundServices;
+using OPS.Infrastructure.Gemini;
 
 namespace OPS.Infrastructure;
 
@@ -15,11 +16,13 @@ internal static class DependencyInjection
     {
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
-
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IOtpGenerator, OtpGenerator>();
-        services.AddScoped<IUserInfoProvider, CurrentUserProvider>();
 
-        services.AddScoped<IGoogleCloudService, GoogleCloudService>();
+        services.AddScoped<IUserProvider, UserProvider>();
+        services.AddScoped<IAiService, GeminiService>();
+
+        services.AddHostedService<OtpCleanupService>();
 
         return services;
     }

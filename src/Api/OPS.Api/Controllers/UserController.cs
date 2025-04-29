@@ -6,7 +6,7 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.User.Commands;
 using OPS.Application.Features.User.Queries;
-using OPS.Domain.Contracts.Core.Authentication;
+using OPS.Application.Interfaces.Auth;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
@@ -14,10 +14,10 @@ namespace OPS.Api.Controllers;
 [Route("User")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 [ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
-public class UserController(IMediator mediator, IUserInfoProvider userInfoProvider) : BaseApiController
+public class UserController(IMediator mediator, IUserProvider userProvider) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
-    private readonly IUserInfoProvider _userInfoProvider = userInfoProvider;
+    private readonly IUserProvider _userProvider = userProvider;
 
     /// <summary>Gets decoded token values.</summary>
     /// <returns>Authenticated user details.</returns>
@@ -27,7 +27,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     [ProducesResponseType(Status200OK)]
     public IActionResult DecodeToken()
     {
-        return Ok(_userInfoProvider.DecodeToken());
+        return Ok(_userProvider.DecodeToken());
     }
 
     /// <summary>Retrieves account details of the authenticated user.</summary>
@@ -53,6 +53,7 @@ public class UserController(IMediator mediator, IUserInfoProvider userInfoProvid
     [EndpointDescription("Updates account settings of the authenticated user.")]
     [ProducesResponseType<AccountWithDetailsResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
+    [ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> UpdateAccountSettingsAsync(UpdateAccountSettingsCommand command,
         CancellationToken cancellationToken = default)

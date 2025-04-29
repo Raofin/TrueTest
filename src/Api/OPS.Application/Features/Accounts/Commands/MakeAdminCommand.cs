@@ -1,9 +1,9 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
+using OPS.Application.Interfaces;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
@@ -11,11 +11,11 @@ namespace OPS.Application.Features.Accounts.Commands;
 
 public record MakeAdminCommand(List<Guid> AccountIds) : IRequest<ErrorOr<Success>>;
 
-public class MakeAdminCommandHandler(IUnitOfWork unitOfWork, IAccountEmails accountEmails)
+public class MakeAdminCommandHandler(IUnitOfWork unitOfWork, IEmailSender emailSender)
     : IRequestHandler<MakeAdminCommand, ErrorOr<Success>>
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IAccountEmails _accountEmails = accountEmails;
+    private readonly IEmailSender _emailSender = emailSender;
 
     public async Task<ErrorOr<Success>> Handle(
         MakeAdminCommand request, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ public class MakeAdminCommandHandler(IUnitOfWork unitOfWork, IAccountEmails acco
         }
 
         var emails = accounts.Select(a => a.Email).ToList();
-        _accountEmails.SendAdminGranted(emails, cancellationToken);
+        _emailSender.SendAdminGranted(emails, cancellationToken);
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
 

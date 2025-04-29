@@ -2,7 +2,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;

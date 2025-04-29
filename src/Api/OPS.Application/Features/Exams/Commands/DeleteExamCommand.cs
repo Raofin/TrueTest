@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
 using OPS.Domain;
 
 namespace OPS.Application.Features.Exams.Commands;

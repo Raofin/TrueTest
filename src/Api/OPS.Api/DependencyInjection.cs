@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 using OPS.Api.Middlewares;
 using Scalar.AspNetCore;
 using OPS.Api.Transformers;
-using OPS.Application.Common.Constants;
+using OPS.Domain.Constants;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace OPS.Api;
@@ -99,8 +99,8 @@ internal static class DependencyInjection
         {
             options
                 .WithTitle("Online Proctoring System")
-                // .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios)
                 .WithDefaultOpenAllTags(true)
+                // .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios)
                 /*.WithLayout(ScalarLayout.Classic)*/;
         });
     }

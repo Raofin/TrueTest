@@ -6,7 +6,6 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.CloudFiles.Commands;
 using OPS.Application.Features.CloudFiles.Queries;
-using OPS.Domain.Contracts.Core.GoogleCloud;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;

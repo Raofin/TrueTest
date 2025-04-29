@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Core;
 using OPS.Domain.Entities.Core;
+using OPS.Domain.Interfaces.Core;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Cores;

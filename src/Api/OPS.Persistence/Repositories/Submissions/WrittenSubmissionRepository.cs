@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Submissions;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
+using OPS.Domain.Interfaces.Submissions;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Submissions;
@@ -11,6 +11,15 @@ internal class WrittenSubmissionRepository(AppDbContext dbContext)
     : Repository<WrittenSubmission>(dbContext), IWrittenSubmissionRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
+
+    public async Task<WrittenSubmission?> GetWithQuestionAsync(Guid questionId,
+        CancellationToken cancellationToken)
+    {
+        return await _dbContext.WrittenSubmissions
+            .AsNoTracking()
+            .Include(s => s.Question)
+            .SingleOrDefaultAsync(s => s.QuestionId == questionId, cancellationToken);
+    }
 
     public async Task<List<WrittenSubmission>> GetByQuestionIdAsync(Guid questionId,
         CancellationToken cancellationToken)

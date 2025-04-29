@@ -1,7 +1,7 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -58,7 +58,7 @@ public class UpdateWrittenCommandValidator : AbstractValidator<UpdateWrittenComm
             .IsValidGuid();
 
         RuleFor(x => x.StatementMarkdown)
-            .MinimumLength(10)
+            .MinimumLength(1)
             .When(x => !string.IsNullOrEmpty(x.StatementMarkdown));
 
         RuleFor(x => x.Points)

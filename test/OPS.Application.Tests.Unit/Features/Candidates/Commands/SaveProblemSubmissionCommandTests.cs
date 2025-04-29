@@ -2,10 +2,11 @@ using ErrorOr;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
+using OPS.Application.Dtos;
 using OPS.Application.Features.Candidates.Commands;
+using OPS.Application.Interfaces;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Contracts.Core.OneCompiler;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
@@ -15,8 +16,8 @@ namespace OPS.Application.Tests.Unit.Features.Candidates.Commands;
 public class SaveProblemSubmissionCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider;
-    private readonly IOneCompilerApiService _oneCompilerApi;
+    private readonly IUserProvider _userProvider;
+    private readonly IOneCompilerService _oneCompiler;
     private readonly SaveProblemSubmissionsCommandHandler _sut;
     private readonly SaveProblemSubmissionsCommandValidator _validator = new();
     private readonly Guid _validExamId;
@@ -27,16 +28,16 @@ public class SaveProblemSubmissionCommandTests
     public SaveProblemSubmissionCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _oneCompilerApi = Substitute.For<IOneCompilerApiService>();
-        _sut = new SaveProblemSubmissionsCommandHandler(_unitOfWork, _userInfoProvider, _oneCompilerApi);
+        _userProvider = Substitute.For<IUserProvider>();
+        _oneCompiler = Substitute.For<IOneCompilerService>();
+        _sut = new SaveProblemSubmissionsCommandHandler(_unitOfWork, _userProvider, _oneCompiler);
 
         _validExamId = Guid.NewGuid();
         _validQuestionId = Guid.NewGuid();
         _validAccountId = Guid.NewGuid();
         _validTestCaseId = Guid.NewGuid();
 
-        _userInfoProvider.AccountId().Returns(_validAccountId);
+        _userProvider.AccountId().Returns(_validAccountId);
     }
 
     [Fact]
@@ -66,7 +67,7 @@ public class SaveProblemSubmissionCommandTests
         _unitOfWork.Question.GetPointsAsync(_validQuestionId, Arg.Any<CancellationToken>())
             .Returns(10);
 
-        _oneCompilerApi.CodeRunAsync(
+        _oneCompiler.CodeRunAsync(
             Arg.Is<LanguageId>(l => l == LanguageId.python),
             Arg.Is<string>(c => c == "print('Hello')"),
             Arg.Is<string>(i => i == "test input")
@@ -153,7 +154,7 @@ public class SaveProblemSubmissionCommandTests
         _unitOfWork.Question.GetPointsAsync(_validQuestionId, Arg.Any<CancellationToken>())
             .Returns(10);
 
-        _oneCompilerApi.CodeRunAsync(
+        _oneCompiler.CodeRunAsync(
             Arg.Is<LanguageId>(l => l == LanguageId.python),
             Arg.Is<string>(c => c == "print('Hello')"),
             Arg.Is<string>(i => i == "test input")
@@ -224,7 +225,7 @@ public class SaveProblemSubmissionCommandTests
         _unitOfWork.Question.GetPointsAsync(_validQuestionId, Arg.Any<CancellationToken>())
             .Returns(10);
 
-        _oneCompilerApi.CodeRunAsync(
+        _oneCompiler.CodeRunAsync(
             Arg.Is<LanguageId>(l => l == LanguageId.python),
             Arg.Is<string>(c => c == "print('Wrong')"),
             Arg.Is<string>(i => i == "test input")

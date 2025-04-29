@@ -25,7 +25,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     [EndpointDescription("User login with provided credentials.")]
     [ProducesResponseType<AuthenticationResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+    [ProducesResponseType<UnauthorizedResponse>(Status403Forbidden)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> LoginAsync(LoginQuery query, CancellationToken cancellationToken = default)
     {
@@ -42,7 +42,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     [EndpointDescription("Registers a new user.")]
     [ProducesResponseType<AuthenticationResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+    [ProducesResponseType<UnauthorizedResponse>(Status403Forbidden)]
     [ProducesResponseType<ConflictResponse>(Status409Conflict)]
     public async Task<IActionResult> RegisterAsync(RegisterCommand command,
         CancellationToken cancellationToken = default)
@@ -60,7 +60,7 @@ public class AuthController(IMediator mediator) : BaseApiController
     [EndpointDescription("Recovers password for a user.")]
     [ProducesResponseType<AuthenticationResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
-    [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
+    [ProducesResponseType<UnauthorizedResponse>(Status403Forbidden)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     public async Task<IActionResult> PasswordRecoveryAsync(PasswordRecoveryCommand command,
         CancellationToken cancellationToken = default)

@@ -1,7 +1,7 @@
 using OPS.Api;
 using OPS.Application;
-using OPS.Infrastructure.AppConfiguration;
-using OPS.Infrastructure.AppConfiguration.Database;
+using OPS.Infrastructure;
+using OPS.Infrastructure.Database;
 using OPS.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

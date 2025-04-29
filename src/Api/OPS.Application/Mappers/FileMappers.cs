@@ -1,5 +1,4 @@
 ﻿using OPS.Application.Dtos;
-using OPS.Domain.Contracts.Core.GoogleCloud;
 using OPS.Domain.Entities.Core;
 
 namespace OPS.Application.Mappers;

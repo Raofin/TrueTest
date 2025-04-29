@@ -3,8 +3,8 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Candidates.Commands;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Submit;
 
 namespace OPS.Application.Tests.Unit.Features.Candidates.Commands;
@@ -21,7 +21,7 @@ public class SaveWrittenSubmissionCommandTests
     public SaveWrittenSubmissionCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        var userInfoProvider = Substitute.For<IUserInfoProvider>();
+        var userInfoProvider = Substitute.For<IUserProvider>();
         _sut = new SaveWrittenSubmissionsCommandHandler(_unitOfWork, userInfoProvider);
 
         _validExamId = Guid.NewGuid();
