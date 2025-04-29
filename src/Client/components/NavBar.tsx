@@ -58,7 +58,7 @@ export default function Component() {
                                     aria-label="Profile Actions"
                                     variant="flat" >
                                     <DropdownItem
-                                        key="user"
+                                        key="user" textValue="User Profile"
                                         className="h-14 gap-2"  >
                                         <div className="flex gap-2 my-4">
                                             <Avatar
@@ -72,7 +72,7 @@ export default function Component() {
                                         </div>
                                         <Divider className="mb-5" />
                                     </DropdownItem>
-                                    <DropdownItem key="profile">
+                                    <DropdownItem key="profile" textValue="My Profile">
                                         <button
                                             onClick={() =>
                                                 router.push("/myprofile")  }
@@ -86,7 +86,7 @@ export default function Component() {
                                             My Profile
                                         </button>
                                     </DropdownItem>
-                                    <DropdownItem key="settings">
+                                    <DropdownItem key="settings" textValue="Account Settings">
                                         <button
                                             onClick={() =>
                                                 router.push("/mysettings")
@@ -102,7 +102,7 @@ export default function Component() {
                                         </button>
                                     </DropdownItem>
 
-                                    <DropdownItem key="logout" onPress={logout}>
+                                    <DropdownItem key="logout" onPress={logout} textValue="Logout">
                                         <div className="flex gap-2">
                                             <Icon
                                                 icon="lucide:log-out"

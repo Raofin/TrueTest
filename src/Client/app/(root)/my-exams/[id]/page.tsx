@@ -33,41 +33,67 @@ export default function Component() {
     const [questions, setQuestions] = useState<QuestionData | null>(null);
     const [testCaseResults, setTestCaseResults] = useState<TestCaseResults>({});
     const [examActive, setExamActive] = useState(true);
-    const allowedKeys =useMemo(()=> new Set([
-    'Backspace', 'Tab', 'Enter', 'Shift', 'CapsLock',
-    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-    'Home', 'End', 'Delete',
-    'a','b','c','d','e','f','g','h','i','j','k','l','m',
-    'n','o','p','q','r','s','t','u','v','w','x','y','z',
-    '0','1','2','3','4','5','6','7','8','9',
-    '(', ')', '{', '}', '[', ']', ';', ':', ',', '.', '=', '+', '-', '*', '/', '<', '>', '?', '!', '@', '#', '$', '%', '^', '&', '_', '|', '~', '`', '"', "'", '\\', ' '
-    ]),[]);
-   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (!examActive) return;
-        const target = e.target as HTMLElement;
-        if (target.tagName === 'INPUT' || 
-            target.tagName === 'TEXTAREA' ||
-            target.tagName === 'BUTTON') {
+    const allowedKeys = useMemo(() => new Set([
+        'Backspace', 'Tab', 'Enter', 'Shift', 'CapsLock',
+        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+        'Home', 'End', 'Delete',
+        'a','b','c','d','e','f','g','h','i','j','k','l','m',
+        'n','o','p','q','r','s','t','u','v','w','x','y','z',
+        '0','1','2','3','4','5','6','7','8','9',
+        '(', ')', '{', '}', '[', ']', ';', ':', ',', '.', '=', '+', '-', '*', '/', '<', '>', '?', '!', '@', '#', '$', '%', '^', '&', '_', '|', '~', '`', '"', "'", '\\', ' '
+      ]), []);
+      useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+          if (!examActive) return;
+          const target = e.target as HTMLElement;
+          const isInputOrTextarea = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+          const isButton = target.tagName === 'BUTTON';
+      
+          if (isInputOrTextarea || isButton) {
             return;
-        }
-        if (e.ctrlKey || e.altKey || e.metaKey) {
+          }
+          if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
             e.preventDefault();
             e.stopPropagation();
             return;
-        }
-        let key = e.key;
-        if (key.length === 1 && /^[A-Za-z]$/.test(key)) {
+          }
+          if (e.key.startsWith('F') && parseInt(e.key.substring(1)) >= 1 && parseInt(e.key.substring(1)) <= 12) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+          let key = e.key;
+          if (key.length === 1 && /^[A-Za-z]$/.test(key)) {
             key = key.toLowerCase();
-        }
-        if (!allowedKeys.has(key)) {
+          }
+          if (!allowedKeys.has(key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.preventDefault();
             e.stopPropagation();
-        }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-}, [examActive, allowedKeys]);
+          }
+        };
+        const handleClipboardEvent = (e: ClipboardEvent) => {
+          if (!examActive) return;
+          e.preventDefault();
+          e.stopPropagation();
+        };
+        const handleContextMenu = (e: MouseEvent) => {
+          if (!examActive) return;
+          e.preventDefault();
+          e.stopPropagation();
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('copy', handleClipboardEvent);
+        document.addEventListener('paste', handleClipboardEvent);
+        document.addEventListener('cut', handleClipboardEvent);
+        document.addEventListener('contextmenu', handleContextMenu);
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown);
+          document.removeEventListener('copy', handleClipboardEvent);
+          document.removeEventListener('paste', handleClipboardEvent);
+          document.removeEventListener('cut', handleClipboardEvent);
+          document.removeEventListener('contextmenu', handleContextMenu);
+        };
+      }, [examActive, allowedKeys]);
       
     useEffect(() => {
         const FetchExamData = async () => {
