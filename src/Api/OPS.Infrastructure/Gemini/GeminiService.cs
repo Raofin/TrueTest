@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OPS.Application.Dtos;
 using OPS.Application.Interfaces;
 using OPS.Infrastructure.Gemini.Configuration;
 using OPS.Infrastructure.Gemini.Refit;
@@ -15,7 +16,7 @@ internal class GeminiService(IGeminiClient geminiClient, IOptions<GeminiSettings
     private readonly string _apiKey = settings.Value.ApiKey;
     private readonly string _model = settings.Value.Model;
 
-    public async Task<string?> PromptAsync(string instructionText, List<string> contentParts)
+    public async Task<T?> PromptAsync<T>(PromptRequest prompt)
     {
         try
         {
@@ -23,14 +24,14 @@ internal class GeminiService(IGeminiClient geminiClient, IOptions<GeminiSettings
             {
                 systemInstruction = new
                 {
-                    parts = new[] { new { text = instructionText } }
+                    parts = new[] { new { text = prompt.Instruction } }
                 },
                 contents = new[]
                 {
                     new
                     {
                         role = "user",
-                        parts = contentParts.Select(part => new { text = part }).ToArray()
+                        parts = prompt.Contents.Select(part => new { text = part }).ToArray()
                     }
                 }
             };
@@ -42,7 +43,7 @@ internal class GeminiService(IGeminiClient geminiClient, IOptions<GeminiSettings
             if (string.IsNullOrEmpty(response))
             {
                 Log.Error("Received empty response from Gemini API.");
-                return null;
+                return default;
             }
 
             var parsedResponse = JObject.Parse(response);
@@ -52,7 +53,7 @@ internal class GeminiService(IGeminiClient geminiClient, IOptions<GeminiSettings
             {
                 var errorMessage = error["message"]?.ToString();
                 Log.Error("Gemini API returned an error: {ErrorMessage}", errorMessage);
-                return null;
+                return default;
             }
 
             var reviewText = parsedResponse["candidates"]?
@@ -61,17 +62,18 @@ internal class GeminiService(IGeminiClient geminiClient, IOptions<GeminiSettings
 
             if (!string.IsNullOrEmpty(reviewText))
             {
-                return new Regex(@"```json\n|\n```").Replace(reviewText, string.Empty);
+                var cleanJson = new Regex(@"```json\n|\n```").Replace(reviewText, string.Empty);
+
+                return JsonConvert.DeserializeObject<T>(cleanJson);
             }
 
             Log.Error("Review text not found in the response.");
-            return null;
-
+            return default;
         }
         catch (Exception ex)
         {
             Log.Error("An error occurred while processing the Gemini request: {Message}", ex.Message);
-            return null;
+            return default;
         }
     }
 }

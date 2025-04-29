@@ -1,6 +1,8 @@
-﻿namespace OPS.Application.Interfaces;
+﻿using OPS.Application.Dtos;
+
+namespace OPS.Application.Interfaces;
 
 public interface IAiService
 {
-    Task<string?> PromptAsync(string instructionText, List<string> contentParts);
+    Task<T?> PromptAsync<T>(PromptRequest prompt);
 }
