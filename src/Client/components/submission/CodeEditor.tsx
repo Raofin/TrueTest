@@ -16,27 +16,30 @@ interface PageProps {
     readonly answers: { [key: string]: string | string[] };
     readonly questionId: string;
     readonly examId: string;
-    readonly persistedTestCaseResults?: TestCase[]; 
+    readonly persistedTestCaseResults?: TestCase[];
     readonly onTestCaseRunComplete: (questionId: string, results: TestCase[]) => void;
-    }
+}
+
 interface CodeState {
     [key: string]: string;
 }
+
 export default function CodeEditor({
     question,
     setAnswers,
     questionId,
     answers,
     examId,
-    persistedTestCaseResults, 
-    onTestCaseRunComplete, 
+    persistedTestCaseResults,
+    onTestCaseRunComplete,
 }: PageProps) {
     const [selectedLanguage, setSelectedLanguage] = useState("cpp");
     const [codeStates, setCodeStates] = React.useState<CodeState>({});
     const [selectedTestCase, setSelectedTestCase] = useState<number>(0);
     const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>([]);
-    const [displayTestCase, setDisplayTestCase] = useState<boolean>(false);
-    const displayedTestCases = [formattedTestCases[selectedTestCase]];
+    const [displayTestCaseResults, setDisplayTestCaseResults] = useState<boolean>(false);
+    const displayedTestCasesResults = [formattedTestCases[selectedTestCase]];
+    const displayedTestCasesBeforeRun = question.testCases;
 
     useEffect(() => {
         const initialStates: CodeState = {};
@@ -49,8 +52,10 @@ export default function CodeEditor({
         } else {
             setCodeStates(initialStates);
         }
+
         if (persistedTestCaseResults) {
             setFormattedTestCases(persistedTestCaseResults);
+            setDisplayTestCaseResults(true);
         } else {
             const initializedTestCases = question.testCases.map((tc) => ({
                 ...tc,
@@ -60,7 +65,7 @@ export default function CodeEditor({
             }));
             setFormattedTestCases(initializedTestCases);
         }
-    }, [question.testCases, questionId, answers, persistedTestCaseResults, formattedTestCases, selectedLanguage]);
+    }, [question.testCases, questionId, answers, persistedTestCaseResults, selectedLanguage]);
 
     const handleCodeChange = (value: string | undefined) => {
         if (value !== undefined) {
@@ -114,8 +119,8 @@ export default function CodeEditor({
                     } as TestCase;
                 });
                 setFormattedTestCases(updatedTestCases);
-                setDisplayTestCase(true);
-                onTestCaseRunComplete(questionId, updatedTestCases); 
+                setDisplayTestCaseResults(true);
+                onTestCaseRunComplete(questionId, updatedTestCases);
             } else {
                 console.error("Failed to save code");
             }
@@ -132,7 +137,7 @@ export default function CodeEditor({
                     <ReactMarkdown>{question.statementMarkdown}</ReactMarkdown>
                     <div>
                         <h3 className="font-semibold">Example</h3>
-                        {question.testCases.map((testCase) => (
+                        {displayedTestCasesBeforeRun.map((testCase) => (
                             <div key={testCase.input} className="mt-2 p-3 rounded-lg">
                                 <div><span className="font-semibold">Input:</span>{testCase.input}</div>
                                 <div><span className="font-semibold">Output:</span>{testCase.output}</div>
@@ -177,7 +182,7 @@ export default function CodeEditor({
                         />
                     </div>
                 </Card>
-                {displayTestCase && (
+                {displayTestCaseResults && (
                     <Card className="p-4 rounded-lg">
                         <div className="flex justify-between">
                             <p className="font-bold">Test Cases</p>
@@ -206,7 +211,7 @@ export default function CodeEditor({
                             <p className="font-semibold">Received Output</p>
                             <p className="font-semibold">Expected Output</p>
                         </div>
-                        {displayedTestCases?.map((testCase) => (
+                        {displayedTestCasesResults?.map((testCase) => (
                             <div key={testCase?.input} className="grid grid-cols-3 gap-4 mt-3 min-h-[100px]">
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                     {testCase?.input ?? "No input provided"}
