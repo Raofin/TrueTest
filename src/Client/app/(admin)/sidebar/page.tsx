@@ -74,8 +74,7 @@ const Sidebar = () => {
                             {!isCollapsed && <Logo />}
                             <button
                                 onClick={() => setIsCollapsed(!isCollapsed)}
-                                className="p-2 rounded-lg"
-                            >
+                                className="p-2 rounded-lg">
                                 <Icon
                                     icon={
                                         isCollapsed
