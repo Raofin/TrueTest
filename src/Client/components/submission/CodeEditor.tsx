@@ -5,24 +5,7 @@ import { Button, Card, Select, SelectItem } from "@heroui/react";
 import Editor from "@monaco-editor/react";
 import api from "@/lib/api";
 import { languages } from "@/lib/language-selector";
-
-export interface TestCase {
-    testCaseId?: string;
-    input: string;
-    output: string;
-    receivedOutput?: string;
-    status?: "success" | "error" | "pending";
-}
-
-export interface ProblemQuestion {
-    questionId: string;
-    examId: string;
-    questionType: string;
-    statementMarkdown: string;
-    points: number;
-    difficultyType: string;
-    testCases: TestCase[];
-}
+import { ProblemQuestion, TestCase } from '@/components/types/problemQues'
 
 interface PageProps {
     readonly question: ProblemQuestion;

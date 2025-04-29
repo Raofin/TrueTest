@@ -24,24 +24,22 @@ import {
     Select,
     Spinner,
 } from "@heroui/react";
-import SearchIcon from "@/components/ui/search-icon";
+import SearchIcon from "@/components/ui/SearchIcon";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import CommonModal from "@/components/ui/Modal/EditDeleteModal";
-import PaginationButtons from "@/components/ui/pagination-button";
+import PaginationButtons from "@/components/ui/PaginationButton";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { useEmailParser } from "@/hooks/useEmailParser";
-import isValidEmail from "@/components/check-valid-email";
+import isValidEmail from "@/components/EmailValidation";
 
 interface Exam {
     examId: string;
     title: string;
 }
-
 interface User {
     email: string;
 }
-
 const columns = [
     { label: "Email", key: "email" },
     { label: "Action", key: "action" },
@@ -73,7 +71,6 @@ export default function Component() {
                     console.log(exams);
                 }
             } catch {
-                
             } finally {
                 setIsLoading(false);
             }

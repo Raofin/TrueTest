@@ -7,21 +7,10 @@ import {
     convertUtcToLocalTime,
     FormattedDateWeekday,
     formatTimeHourMinutes,
-} from "@/components/format-date-time";
+} from "@/components/DateTimeFormat";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ExamData } from '@/components/types/exam'
 
-interface ExamData {
-    examId: string;
-    title: string;
-    totalPoints: number;
-    durationMinutes: string;
-    problemSolvingPoints: number;
-    status: string;
-    writtenPoints: number;
-    mcqPoints: number;
-    opensAt: string;
-    closesAt: string;
-}
 export default function StartExam() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -37,7 +26,7 @@ export default function StartExam() {
         clipboard: false,
     });
 
-    if (!currentExam?.closesAt) return null; 
+    if (!currentExam?.closesAt) return null;
     const handleStartExam = () => {
         if (currentExam?.examId) {
             router.push(`/my-exams/${currentExam.examId}`);
@@ -137,7 +126,7 @@ export default function StartExam() {
                                     <span className="text-[#71717a] dark:text-white">
                                         Duration:
                                     </span>
-                                    {formatTimeHourMinutes(parseInt(currentExam?.durationMinutes))} hr
+                                    {formatTimeHourMinutes(currentExam?.durationMinutes )}hr
                                 </div>
                                 <div className="text-right">
                                     <span className="text-[#71717a] dark:text-white">

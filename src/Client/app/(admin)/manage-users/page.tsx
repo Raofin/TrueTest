@@ -13,17 +13,18 @@ import {
     Button,
     Pagination,
 } from "@heroui/react";
-import SearchIcon from "@/components/ui/search-icon";
-import PaginationButtons from "@/components/ui/pagination-button";
+import SearchIcon from "@/components/ui/SearchIcon";
+import PaginationButtons from "@/components/ui/PaginationButton";
 import CommonModal from "@/components/ui/Modal/EditDeleteModal";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
-import { FormatDatewithTime } from "@/components/format-date-time";
-import handleDelete from "@/components/handleDelete";
-import handleStatus from "@/components/handleStatus";
-import RoleFilter from "@/components/role-filter";
-import Paginate from "@/components/pagination";
+import { FormatDatewithTime } from "@/components/DateTimeFormat";
+import handleDelete from "@/lib/handleDelete";
+import handleStatus from "@/lib/handleStatus";
+import RoleFilter from "@/components/RoleFilter";
+import Paginate from "@/components/SelectPagination";
 import toast from "react-hot-toast";
+import { ApiResponse, User } from "@/components/types/apiResponse";
 
 const columns = [
     { label: "Username", key: "username" },
@@ -33,25 +34,6 @@ const columns = [
     { label: "Action", key: "action" },
 ];
 
-type User = {
-    username: string;
-    email: string;
-    roles: string[];
-    createdAt: string;
-    isActive: boolean;
-    accountId: string;
-};
-type ApiResponse = {
-    page: {
-        index: number;
-        size: number;
-        totalCount: number;
-        totalPages: number;
-        hasNext: boolean;
-        hasPrevious: boolean;
-    };
-    accounts: User[];
-};
 export default function Component() {
     const [filterValue, setFilterValue] = useState("");
     const [rowsPerPage, setRowsPerPage] = useState(10);

@@ -6,84 +6,14 @@ import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
-
-interface TestCase {
-    input: string;
-    expectedOutput: string;
-    receivedOutput: string;
-}
-interface CandidateData {
-    account: {
-        accountId: string;
-        username: string;
-        email: string;
-    };
-    result: {
-        totalScore: number;
-        problemSolvingScore: number;
-        writtenScore: number;
-        mcqScore: number;
-        startedAt: string;
-        submittedAt: string;
-        hasCheated: boolean;
-        isReviewed: boolean;
-    };
-}
-
-interface ProblemSubmission {
-    questionId: string;
-    problemSubmissionId: string;
-    code: string;
-    language: string;
-    attempts: number;
-    score: number;
-    isFlagged: boolean;
-    flagReason: string | null;
-    testCaseOutputs: TestCase[];
-}
-interface CandidatesResponse {
-    exam: ExamData;
-    candidates: CandidateData[];
-  }
-interface WrittenSubmission {
-    questionId: string;
-    writtenSubmissionId: string;
-    answer: string;
-    score: number;
-    isFlagged: boolean;
-    flagReason: string | null;
-}
-interface CandidateSubmission {
-    problem: ProblemSubmission[];
-    written: WrittenSubmission[];
-}
-interface ExamData {
-    examId: string;
-    title: string;
-    description: string;
-    totalPoints: number;
-    problemSolvingPoints: number;
-    writtenPoints: number;
-    mcqPoints: number;
-    durationMinutes: number;
-    isPublished: boolean;
-    status: string;
-    opensAt: string;
-    closesAt: string;
-}
-
-interface ExamResponse {
-    exam: ExamData;
-    questions: {
-        problem: ProblemSubmission[];
-        written: WrittenSubmission[];
-    };
-}
+import { CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
+import { ExamData } from '@/components/types/exam'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
+    const [mcqScore, setMcqScore] = useState(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
     const [totalPoints, setTotalPoints] = useState<number | undefined>();
@@ -128,7 +58,6 @@ export default function Component() {
         };
         fetchExamData();
     }, [examId]);
-
     useEffect(() => {
         const fetchCandidateData = async () => {
             try {
@@ -137,15 +66,17 @@ export default function Component() {
                     setCandidateList(response.data.candidates);
                     console.log(response.data)
                     if (response.data.candidates.length > 0) {
-                        setSelectedCandidateId(response.data.candidates[0].account.accountId);
-                    }
-                }
+                        const candidateExists = response.data.candidates.some(
+                            (c) => c.account.accountId === selectedCandidateId );
+                        if (!candidateExists) {
+                            setSelectedCandidateId(response.data.candidates[0].account.accountId);
+                        }
+                    } }
             } catch (error) {
                 console.error("Error fetching candidate data:", error);
-            }
-        };
+            }};
         if (examId) fetchCandidateData();
-    }, [examId]);
+    }, [examId, selectedCandidateId]);
 
     useEffect(() => {
         const fetchSubmissionData = async () => {
@@ -177,6 +108,7 @@ export default function Component() {
 
     const handleCandidateChange = (value: string) => {
         setSelectedCandidateId(value);
+        setMcqScore(0)
     };
     const handlePrevCandidate = () => {
         const currentIndex = candidateList.findIndex(
@@ -187,6 +119,7 @@ export default function Component() {
                 candidateList[currentIndex - 1].account.accountId
             );
         }
+        setMcqScore(0)
     };
     const handleNextCandidate = () => {
         const currentIndex = candidateList.findIndex(
@@ -197,6 +130,7 @@ export default function Component() {
                 candidateList[currentIndex + 1].account.accountId
             );
         }
+        setMcqScore(0)
     };
 const updateProblemSubmission = (
     questionId: string,
@@ -217,8 +151,7 @@ const updateProblemSubmission = (
               ...candidate.result,
               problemSolvingScore: newProblemScore,
               totalScore: newProblemScore + 
-                         candidate.result.writtenScore + 
-                         candidate.result.mcqScore
+                         candidate.result.writtenScore + mcqScore 
             }
           };
         }
@@ -248,8 +181,7 @@ const updateProblemSubmission = (
               ...candidate.result,
               writtenScore: newWrittenScore,
               totalScore: candidate.result.problemSolvingScore + 
-                         newWrittenScore + 
-                         candidate.result.mcqScore
+                         newWrittenScore + mcqScore
             }
           };
         }
@@ -286,9 +218,10 @@ const updateProblemSubmission = (
             const result = await api.get(
                 `/Review/Candidates/${examId}/${selectedCandidateId}`
             );
+            setMcqScore(result.data.submission.mcq.reduce((total:number, e:{score: number}) => total + e.score, 0));
             setEditedSubmission({
                 problem: result.data.submission.problem,
-                written: result.data.submission.written
+                written: result.data.submission.written,
             });
         } catch (error) {
             console.error("Error saving submissions:", error);
@@ -370,7 +303,7 @@ const updateProblemSubmission = (
                                 </div>
                                  <div>
                                     <span className="text-default-500">MCQ:</span>
-                                        {selectedCandidate.result.mcqScore}/{mcqPoints}
+                                        {mcqScore??0}/{mcqPoints}
                                 </div>
                             </div>
                             </div>
@@ -424,7 +357,7 @@ const updateProblemSubmission = (
                                                             updateProblemSubmission(
                                                                 submission.questionId,
                                                                 { score: parseInt( e.target.value )} ) }
-                                                    /> /{problemPoints}
+                                                    /> /{questionsData[submission.questionId].points}
                                                 </div>
                                                 <Button
                                                     size="sm"
@@ -500,7 +433,7 @@ const updateProblemSubmission = (
                                                             )
                                                         }
                                                     />
-                                                    /{writtenPoints}
+                                                    /{questionsData[submission.questionId].score}
                                                 </div>
                                                 <Button
                                                     size="sm"

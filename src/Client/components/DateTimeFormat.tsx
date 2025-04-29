@@ -1,3 +1,5 @@
+import { Time } from '@internationalized/date'
+
 export function FormattedDateWeekday({ date }: {readonly date: string }) {
   const openDate = new Date(date);
 
@@ -54,3 +56,19 @@ export  function FormatDatewithTime (dateTime:string) {
     hour12: true,
   }).format(date);
 };
+export function calculateDuration(start: string, end: string): string {
+  const startTime = new Date(start).getTime();
+  const endTime = new Date(end).getTime();
+  const durationMs = endTime - startTime;
+
+  const hours = Math.floor(durationMs / (1000 * 60 * 60));
+  const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((durationMs % (1000 * 60)) / 1000);
+
+  return `${hours}h ${minutes}m ${seconds}s`;
+}
+export function parseTime(time: string): Time | null {
+    if (!time) return null;
+    const [hour, minute] = time.split(":").map(Number);
+    return new Time(hour, minute);
+}
