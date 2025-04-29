@@ -39,7 +39,6 @@ export default function CodeEditor({
     const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>([]);
     const [displayTestCaseResults, setDisplayTestCaseResults] = useState<boolean>(false);
     const displayedTestCasesResults = [formattedTestCases[selectedTestCase]];
-    const displayedTestCasesBeforeRun = question.testCases;
 
     useEffect(() => {
         const initialStates: CodeState = {};
@@ -135,15 +134,6 @@ export default function CodeEditor({
                 <h2 className="text-xl font-bold mb-3">Problem Statement</h2>
                 <div className="space-y-4">
                     <ReactMarkdown>{question.statementMarkdown}</ReactMarkdown>
-                    <div>
-                        <h3 className="font-semibold">Example</h3>
-                        {displayedTestCasesBeforeRun.map((testCase) => (
-                            <div key={testCase.input} className="mt-2 p-3 rounded-lg">
-                                <div><span className="font-semibold">Input:</span>{testCase.input}</div>
-                                <div><span className="font-semibold">Output:</span>{testCase.output}</div>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </Card>
             <div>
