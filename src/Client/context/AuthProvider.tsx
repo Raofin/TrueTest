@@ -12,17 +12,14 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { getAuthToken, setAuthToken, removeAuthToken } from "@/lib/auth";
 import ROUTES from "@/constants/route";
-
-interface User {
-    username: string;
-    email: string;
-    roles: string[];
-}
+import { User } from '@/components/types/profile'
 
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
+    profileImage: string;
+   setProfileImage: (url: string) => void;
     login: (
         usernameOrEmail: string,
         password: string,
@@ -32,11 +29,13 @@ interface AuthContextType {
     ) => Promise<void>;
     logout: () => void;
     refreshAuth: () => Promise<void>;
+    setUser:(user:User)=>void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [profileImage, setProfileImage] = useState('');
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
@@ -44,6 +43,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const response = await api.get(ROUTES.USER_INFO);
             if (response.status === 200) {
+                if (response.data?.profile?.imageFile?.directLink) {
+                    setProfileImage(response.data.profile.imageFile.directLink);
+                  } else {
+                    setProfileImage(""); 
+                  }
                 return response.data;
             }
             return null;
@@ -63,7 +67,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             const userData = await fetchUser();
-
             if (userData) {
                 setUser(userData);
             } else {
@@ -104,6 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     const userData = await fetchUser();
                     if (userData) {
                         setUser(userData);
+                        setProfileImage(userData.profile?.imageFile?.directLink ?? "");
                         const redirectPath = userData.roles.includes("Admin")
                             ? ROUTES.OVERVIEW
                             : ROUTES.HOME;
@@ -151,9 +155,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             isLoading,
             login,
             logout,
+            setUser,
+            profileImage,
+            setProfileImage,
             refreshAuth,
         }),
-        [user, isLoading, login, logout, refreshAuth]
+        [user, isLoading, login, logout, profileImage,setUser, refreshAuth]
     );
 
     return (

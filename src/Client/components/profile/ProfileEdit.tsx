@@ -1,105 +1,168 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
-import { Avatar, Input, Textarea } from '@heroui/react'
-import { Icon } from '@iconify/react'
-import api from '@/lib/api'
-import { FormData } from '@/components/types/profile'
+import React, { useCallback, useEffect, useState } from 'react';
+import { Avatar, Input, Textarea } from '@heroui/react';
+import { Icon } from '@iconify/react';
+import api from '@/lib/api';
+import { ProfileFormData } from '@/components/types/profile';
+import toast from 'react-hot-toast';
+import { useAuth } from '@/context/AuthProvider'
 
 interface ProfileDetailsProps {
-  readonly formData?: FormData
-  readonly setFormData?: React.Dispatch<React.SetStateAction<FormData>>
+  readonly formData?: ProfileFormData;
+  readonly setFormData?: React.Dispatch<React.SetStateAction<ProfileFormData>>;
 }
 
 export default function ProfileEdit({ formData, setFormData }: ProfileDetailsProps) {
-  const [localFormData, setLocalFormData] = useState<FormData>({
+  const [localFormData, setLocalFormData] = useState<ProfileFormData>({
     firstName: '',
     lastName: '',
     bio: '',
     instituteName: '',
     phoneNumber: '',
-    imageFileId: null,
+    imageFileId: '', 
     profileLinks: [{ name: '', link: '' }],
-  })
-
-  const isControlled = formData && setFormData
+  });
+  const { setProfileImage, profileImage } = useAuth();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const isControlled = formData && setFormData;
+  const currentFormData = isControlled ? formData : localFormData;
   const updateFormData = useCallback(
-    (updateFn: (prev: FormData) => FormData) => {
+    (updateFn: (prev: ProfileFormData) => ProfileFormData) => {
       if (isControlled) {
-        setFormData!(updateFn)
+        setFormData!(updateFn);
       } else {
-        setLocalFormData(updateFn)
+        setLocalFormData(updateFn);
       }
     },
     [isControlled, setFormData]
-  )
-
-  const handleAddSocialLink = () => {
+  );
+  const handleAddSocialLink = useCallback(() => {
     updateFormData((prev) => ({
       ...prev,
       profileLinks: [...prev.profileLinks, { name: '', link: '' }],
-    }))
-  }
+    }));
+  }, [updateFormData]);
+  const handleSocialLinkChange = useCallback(
+    (index: number, field: 'name' | 'link', value: string) => {
+      updateFormData((prev) => {
+        const updatedLinks = [...prev.profileLinks];
+        updatedLinks[index] = { ...updatedLinks[index], [field]: value };
+        return { ...prev, profileLinks: updatedLinks };
+      });
+    },
+    [updateFormData]
+  );
+  const handleRemoveSocialLink = useCallback(
+    (index: number) => {
+      updateFormData((prev) => ({
+        ...prev,
+        profileLinks: prev.profileLinks.filter((_, i) => i !== index),
+      }));
+    },
+    [updateFormData]
+  );
+  const fetchImageUrl = useCallback(async (fileId: string | null) => {
+    if (fileId) {
+      try {
+        const response = await api.get(`/CloudFile/Details/${fileId}`);
+        console.log('CloudFile Details Response:', response.data);
+        setImageUrl(response.data.directLink);
+        setProfileImage(response.data.directLink);
+      } catch (error) {
+        console.error('Error fetching image URL:', error);
+        setImageUrl(null);
+      }
+    } else {
+      setImageUrl(null);
+    }
+  }, [setProfileImage]);
 
-  const handleSocialLinkChange = (index: number, field: 'name' | 'link', value: string) => {
-    updateFormData((prev) => {
-      const updatedLinks = [...prev.profileLinks]
-      updatedLinks[index] = { ...updatedLinks[index], [field]: value }
-      return { ...prev, profileLinks: updatedLinks }
-    })
-  }
+  const handleImageUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
 
-  const handleRemoveSocialLink = (index: number) => {
-    updateFormData((prev) => ({
-      ...prev,
-      profileLinks: prev.profileLinks.filter((_, i) => i !== index),
-    }))
-  }
-
-  const handleImageUpload = useCallback(() => {
-    const file = null
-    updateFormData((prev) => ({ ...prev, imageFileId: file }))
-  }, [updateFormData])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    updateFormData((prev) => ({ ...prev, [name]: value }))
-  }
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        toast.error('Only image files are allowed (JPEG, PNG)');
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Image size must be less than 2MB');
+        return;
+      }
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const response = await api.post('/CloudFile/Upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        const cloudFileId = response.data.cloudFileId;
+        updateFormData((prev) => ({ ...prev, imageFileId: cloudFileId }));
+        const tempUrl = URL.createObjectURL(file);
+        setImageUrl(tempUrl);
+        setProfileImage(tempUrl);
+        fetchImageUrl(cloudFileId); 
+        toast.success('Image uploaded successfully');
+      } catch (error) {
+        toast.error('Failed to upload image');
+        console.error('Upload error:', error);
+      } finally {
+        setUploading(false);
+      }
+    },
+    [updateFormData, fetchImageUrl, setProfileImage]
+  );
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      updateFormData((prev) => ({ ...prev, [name]: value }));
+    },
+    [updateFormData]
+  );
 
   useEffect(() => {
     const checkProfileStatus = async () => {
       try {
-        const response = await api.get('/User/Details')
+        const response = await api.get('/User/Details');
         if (response.data.profile !== null) {
-          updateFormData(() => ({
+          const profileData: ProfileFormData = {
             firstName: response.data.profile?.firstName ?? '',
             lastName: response.data.profile?.lastName ?? '',
             bio: response.data.profile?.bioMarkdown ?? '',
             instituteName: response.data.profile?.instituteName ?? '',
             phoneNumber: response.data.profile?.phoneNumber ?? '',
-            imageFileId: response.data.profile?.imageFileId ?? null,
+            imageFileId: response.data.profile?.imageFile?.cloudFileId ?? '',
             profileLinks: response.data.profile?.profileLinks ?? [{ name: '', link: '' }],
-          }))
+          };
+          updateFormData(() => profileData);
+          console.log(profileData)
+          fetchImageUrl(profileData.imageFileId); 
         }
       } catch (error) {
-        console.error('Error checking profile:', error)
+        console.error('Error checking profile:', error);
       }
-    }
-
-    checkProfileStatus()
-  }, [updateFormData])
-
-  const currentFormData = isControlled ? formData : localFormData
+    };
+    checkProfileStatus();
+  }, [updateFormData, fetchImageUrl]);
 
   return (
     <div className="w-full flex justify-center">
       <div>
         <div className="flex justify-center items-end text-center my-7">
           <div className="relative">
-            <Avatar className="h-32 w-32" size="lg" radius="md" src="" />
+            <Avatar className="h-32 w-32" size="lg" radius="md" src={imageUrl || profileImage || ''} />
             <label htmlFor="image-upload" className="absolute bottom-0 right-0 rounded-full cursor-pointer">
-              <Icon icon="solar:pen-2-linear" width={20} />
-              <input id="image-upload" type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              {uploading ? <Icon icon="solar:loading" className="animate-spin" width={20} /> : <Icon icon="solar:pen-2-linear" width={20} />}
+              <input
+                id="image-upload"
+                type="file"
+                // accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
             </label>
           </div>
           <div className="flex flex-col gap-2 ml-2">
@@ -171,5 +234,5 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
         </div>
       </div>
     </div>
-  )
+  );
 }

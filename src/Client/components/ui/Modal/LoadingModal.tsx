@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import styles from '../LoadingModal.module.css'; 
+import styles from '@/styles/LoadingModal.module.css'; 
 
 interface LoadingModalProps {
   isOpen: boolean;

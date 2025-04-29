@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import Papa from 'papaparse';
-import { toast } from 'react-hot-toast';
-import isValidEmail from '@/components/check-valid-email';
+import { useState } from "react";
+import Papa from "papaparse";
+import { toast } from "react-hot-toast";
+import isValidEmail from "@/components/EmailValidation";
 
 interface User {
   email: string;
@@ -25,11 +25,11 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
     const trimmedContent = content.trim();
 
     if (!trimmedContent) {
-      toast.error('Please enter or paste email addresses');
+      toast.error("Please enter or paste email addresses");
       return;
     }
 
-    if (!trimmedContent.includes(',') && !trimmedContent.includes('\n')) {
+    if (!trimmedContent.includes(",") && !trimmedContent.includes("\n")) {
       const email = trimmedContent;
       if (!isValidEmail(email)) {
         toast.error(`Invalid email: ${email}`);
@@ -42,19 +42,19 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
       }
 
       setUserEmails([{ email }]);
-      toast.success('Email successfully added');
+      toast.success("Email successfully added");
       return;
     }
 
     const isLikelyCSV = () => {
-      const lines = content.split('\n');
+      const lines = content.split("\n");
       if (lines.length < 2) return false;
 
       const firstLine = lines[0];
       const secondLine = lines[1];
-      const hasHeaders = firstLine.includes(',');
-      const firstLineCommas = firstLine.split(',').length;
-      const secondLineCommas = secondLine.split(',').length;
+      const hasHeaders = firstLine.includes(",");
+      const firstLineCommas = firstLine.split(",").length;
+      const secondLineCommas = secondLine.split(",").length;
 
       return hasHeaders && firstLineCommas > 1 && firstLineCommas === secondLineCommas;
     };
@@ -84,12 +84,12 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
     const duplicateEmails: string[] = [];
     const existingEmails = new Set(userEmails.map((u) => u.email.toLowerCase()));
     const rows = data as CsvRow[];
-    const startIndex = rows[0]?.email?.toLowerCase().includes('email') ? 1 : 0;
+    const startIndex = rows[0]?.email?.toLowerCase().includes("email") ? 1 : 0;
 
     for (let i = startIndex; i < rows.length; i++) {
       const row = rows[i];
-      const emailValue = row.email ;
-      const email = (emailValue ?? '').toString().trim();
+      const emailValue = row.email;
+      const email = (emailValue ?? "").toString().trim();
       if (!email) continue;
 
       const emailLower = email.toLowerCase();
@@ -146,8 +146,8 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
       const invalidCount = invalidEmails.length;
       const displayInvalid =
         invalidCount > 4
-          ? `${invalidEmails.slice(0, 4).join(', ')} and ${invalidCount - 4} more...`
-          : invalidEmails.join(', ');
+          ? `${invalidEmails.slice(0, 4).join(", ")} and ${invalidCount - 4} more...`
+          : invalidEmails.join(", ");
 
       toast.error(`Found ${invalidCount} invalid email(s): ${displayInvalid}`, {
         duration: 5000,
@@ -158,8 +158,8 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
       const duplicateCount = duplicateEmails.length;
       const displayDuplicates =
         duplicateCount > 5
-          ? `${duplicateEmails.slice(0, 5).join(', ')} and ${duplicateCount - 5} more...`
-          : duplicateEmails.join(', ');
+          ? `${duplicateEmails.slice(0, 5).join(", ")} and ${duplicateCount - 5} more...`
+          : duplicateEmails.join(", ");
 
       toast.error(`Found ${duplicateCount} duplicate email(s): ${displayDuplicates}`, {
         duration: 5000,
@@ -169,7 +169,7 @@ export const useEmailParser = (initialEmails: User[] = []): EmailParserResult =>
     if (validEmails.length > 0) {
       setUserEmails((prev) => [...prev, ...validEmails]);
     } else if (invalidEmails.length === 0 && duplicateEmails.length === 0) {
-      toast.error('No valid emails found in the input');
+      toast.error("No valid emails found in the input");
     }
   };
 
