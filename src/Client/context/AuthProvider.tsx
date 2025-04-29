@@ -19,7 +19,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     profileImage: string;
-  setProfileImage: (url: string) => void;
+   setProfileImage: (url: string) => void;
     login: (
         usernameOrEmail: string,
         password: string,
@@ -29,6 +29,7 @@ interface AuthContextType {
     ) => Promise<void>;
     logout: () => void;
     refreshAuth: () => Promise<void>;
+    setUser:(user:User)=>void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -42,8 +43,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const response = await api.get(ROUTES.USER_INFO);
             if (response.status === 200) {
-                console.log(response.data.profile.imageFile.directLink)
-                setProfileImage(response.data.profile.imageFile.directLink);
+                if(response.data.profile.imageFile.directLink.length>0)
+                setProfileImage(response.data.profile.imageFile.directLink??"");
                 return response.data;
             }
             return null;
@@ -151,11 +152,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             isLoading,
             login,
             logout,
+            setUser,
             profileImage,
             setProfileImage,
             refreshAuth,
         }),
-        [user, isLoading, login, logout, profileImage, refreshAuth]
+        [user, isLoading, login, logout, profileImage,setUser, refreshAuth]
     );
 
     return (

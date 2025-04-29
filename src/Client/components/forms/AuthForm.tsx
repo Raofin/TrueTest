@@ -28,7 +28,7 @@ const AuthForm = <T extends FieldValues>({
     formType,
 }: AuthFormProps<T>) => {
     const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
-    const { login } = useAuth();
+    const { login,setUser } = useAuth();
     const router = useRouter();
     const [error, setError] = useState("");
     const [formData, setFormData] = useState<T | null>(null);
@@ -209,6 +209,7 @@ const AuthForm = <T extends FieldValues>({
 
                     if (response.status === 200) {
                         toast.success("Signup successful!");
+                        setUser(response.data.account)
                         router.push(ROUTES.PROFILE_SETUP);
                         setAuthToken(response.data.token, false);
                     } else {
@@ -224,7 +225,7 @@ const AuthForm = <T extends FieldValues>({
                 }
             }
         },
-        [formData, handleAuthError, handleOtpVerification, onOpenChange, router]
+        [formData?.email, formData?.password, formData?.username, handleAuthError, handleOtpVerification, onOpenChange, router, setUser]
     );
 
     const handleSignin = useCallback(
