@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using System.Diagnostics.CodeAnalysis;
+using ErrorOr;
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
@@ -8,6 +9,7 @@ namespace OPS.Application.Features.AiPrompts.Queries;
 
 public record AiTestCase(string Input, string Output);
 
+[ExcludeFromCodeCoverage]
 public record AiProblemQuestionResponse(
     string StatementMarkdown,
     List<AiTestCase> TestCases
