@@ -10,7 +10,7 @@ public record AiWrittenQues(string QuestionStatement);
 
 public record AiGenerateWrittenQuesQuery(string? UserPrompt) : IRequest<ErrorOr<AiWrittenQues>>;
 
-public class AiCreateWrittenQuesQueryHandler(IAiService aiService)
+public class AiGenerateWrittenQuesQueryHandler(IAiService aiService)
     : IRequestHandler<AiGenerateWrittenQuesQuery, ErrorOr<AiWrittenQues>>
 {
     private readonly IAiService _aiService = aiService;
@@ -39,9 +39,9 @@ public class AiCreateWrittenQuesQueryHandler(IAiService aiService)
     }
 }
 
-public class AiCreateWrittenQuesQueryValidator : AbstractValidator<AiGenerateWrittenQuesQuery>
+public class AiGenerateWrittenQuesQueryValidator : AbstractValidator<AiGenerateWrittenQuesQuery>
 {
-    public AiCreateWrittenQuesQueryValidator()
+    public AiGenerateWrittenQuesQueryValidator()
     {
         RuleFor(x => x.UserPrompt)
             .MaximumLength(2000);

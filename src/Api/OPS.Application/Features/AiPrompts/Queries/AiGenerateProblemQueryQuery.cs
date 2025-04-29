@@ -15,7 +15,7 @@ public record AiProblemQuestionResponse(
 
 public record AiGenerateProblemQuery(string? UserPrompt) : IRequest<ErrorOr<AiProblemQuestionResponse>>;
 
-public class AiCreateProblemQueryHandler(IAiService aiService)
+public class AiGenerateProblemQueryHandler(IAiService aiService)
     : IRequestHandler<AiGenerateProblemQuery, ErrorOr<AiProblemQuestionResponse>>
 {
     private readonly IAiService _aiService = aiService;
@@ -57,9 +57,9 @@ public class AiCreateProblemQueryHandler(IAiService aiService)
     }
 }
 
-public class AiCreateProblemQueryValidator : AbstractValidator<AiGenerateProblemQuery>
+public class AiGenerateProblemQueryValidator : AbstractValidator<AiGenerateProblemQuery>
 {
-    public AiCreateProblemQueryValidator()
+    public AiGenerateProblemQueryValidator()
     {
         RuleFor(x => x.UserPrompt)
             .MaximumLength(2000);
