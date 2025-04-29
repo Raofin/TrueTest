@@ -28,8 +28,7 @@ export default function ProfilePage() {
                 if (response.status === 200) {
                     const normalizedData = {
                         ...response.data,
-                        profile: response.data.profile
-                            ? {
+                        profile: response.data.profile ? {
                                   ...response.data.profile,
                                   profileList:
                                       response.data.profile.profileList?.map(

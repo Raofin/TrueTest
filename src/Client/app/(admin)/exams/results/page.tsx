@@ -1,5 +1,5 @@
 "use client";
-
+import '@/app/globals.css'
 import api from "@/lib/api";
 import {
     Button,
@@ -145,7 +145,7 @@ const UserList = ({
         setExamTitleDate(exams.find((e:ExamData)=>e.examId===examId))
     },[examId,exams])
     return (
-        <div className="h-[70vh] flex flex-col justify-between">
+        <div className="h-[70vh] flex flex-col justify-between ">
             <div>
                 <h1 className="w-full flex justify-center text-xl font-semibold">
                     Exam: {selectedExamTitle || "No Exam Selected"}
@@ -313,7 +313,7 @@ const Component: React.FC = () => {
     }, [selectedExamId]);
 
     return (
-        <div className="h-full w-full bg-gray-100 dark:bg-gray-900">
+        <div className=" w-full ">
             <h1 className="w-full text-center text-xl font-semibold mt-3">
                 Results
             </h1>

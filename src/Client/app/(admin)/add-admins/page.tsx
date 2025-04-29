@@ -130,7 +130,6 @@ export default function Component() {
         const selectedUsers = allUsers.filter((e) =>
             selectedEmail.includes(e.email)
         );
-
         try {
             const response = await api.patch("/Account/MakeAdmin", {
                 accountIds: selectedUsers.map((e) => e.accountId),
@@ -178,7 +177,6 @@ export default function Component() {
             alert("Please enter at least one valid email address");
             return;
         }
-
         try {
             const response = await api.post("/Account/SendAdminInvite", {
                 email: emailsToSend,
