@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using ErrorOr;
+﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
 using OPS.Application.Dtos;
@@ -14,14 +13,14 @@ public record AiProblemQuestionResponse(
     List<AiTestCase> TestCases
 );
 
-public record AiCreateProblemQuery(string? UserPrompt) : IRequest<ErrorOr<AiProblemQuestionResponse>>;
+public record AiGenerateProblemQuery(string? UserPrompt) : IRequest<ErrorOr<AiProblemQuestionResponse>>;
 
 public class AiCreateProblemQueryHandler(IAiService aiService)
-    : IRequestHandler<AiCreateProblemQuery, ErrorOr<AiProblemQuestionResponse>>
+    : IRequestHandler<AiGenerateProblemQuery, ErrorOr<AiProblemQuestionResponse>>
 {
     private readonly IAiService _aiService = aiService;
 
-    public async Task<ErrorOr<AiProblemQuestionResponse>> Handle(AiCreateProblemQuery request,
+    public async Task<ErrorOr<AiProblemQuestionResponse>> Handle(AiGenerateProblemQuery request,
         CancellationToken cancellationToken)
     {
         var prompt = new PromptRequest(
@@ -58,7 +57,7 @@ public class AiCreateProblemQueryHandler(IAiService aiService)
     }
 }
 
-public class AiCreateProblemQueryValidator : AbstractValidator<AiCreateProblemQuery>
+public class AiCreateProblemQueryValidator : AbstractValidator<AiGenerateProblemQuery>
 {
     public AiCreateProblemQueryValidator()
     {

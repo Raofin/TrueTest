@@ -16,16 +16,35 @@ public class AiPromptController(IMediator mediator) : BaseApiController
     private readonly IMediator _mediator = mediator;
 
     [HttpPost("Prompt")]
-    [ProducesResponseType<string>(Status200OK)]
+    [ProducesResponseType(Status200OK)]
     public async Task<IActionResult> GetPrompt(AiPromptCommand command)
     {
         var response = await _mediator.Send(command);
+
+        return !response.IsError
+            ? Ok(new { response = response.Value })
+            : ToResult(response);
+    }
+
+    [HttpPost("Generate/ExamDescription")]
+    [ProducesResponseType<AiExamDescriptionResponse>(Status200OK)]
+    public async Task<IActionResult> GenerateExamDescription(AiExamDescriptionQuery query)
+    {
+        var response = await _mediator.Send(query);
         return ToResult(response);
     }
 
-    [HttpPost("Create/ExamDescription")]
-    [ProducesResponseType<AiExamDescriptionResponse>(Status200OK)]
-    public async Task<IActionResult> CreateExamDescription(AiExamDescriptionQuery query)
+    [HttpPost("Generate/ProblemSolvingQuestion")]
+    [ProducesResponseType<AiProblemQuestionResponse>(Status200OK)]
+    public async Task<IActionResult> GenerateProblemSolvingQuestion(AiGenerateProblemQuery query)
+    {
+        var response = await _mediator.Send(query);
+        return ToResult(response);
+    }
+
+    [HttpPost("Generate/WrittenQuestion")]
+    [ProducesResponseType<AiWrittenQues>(Status200OK)]
+    public async Task<IActionResult> GenerateWrittenQuestion(AiGenerateWrittenQuesQuery query)
     {
         var response = await _mediator.Send(query);
         return ToResult(response);
@@ -40,26 +59,10 @@ public class AiPromptController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    [HttpPost("Review/ExamSubmission/{examSubmissionId}")]
+    [HttpPost("Review/WrittenSubmission/{examSubmissionId}")]
     [ProducesResponseType<AiSubmissionReview>(Status200OK)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
-    public async Task<IActionResult> ReviewExamSubmission(Guid writtenSubmissionId)
-    {
-        var response = await _mediator.Send(new AiReviewWrittenQuery(writtenSubmissionId));
-        return ToResult(response);
-    }
-
-    [HttpPost("Create/ProblemSolvingQuestion")]
-    [ProducesResponseType<AiProblemQuestionResponse>(Status200OK)]
-    public async Task<IActionResult> CreateProblemSolvingQuestion(AiCreateProblemQuery query)
-    {
-        var response = await _mediator.Send(query);
-        return ToResult(response);
-    }
-
-    [HttpPost("Create/WrittenQuestion")]
-    [ProducesResponseType<AiWrittenQues>(Status200OK)]
-    public async Task<IActionResult> CreateWrittenQuestion(AiCreateWrittenQuesQuery query)
+    public async Task<IActionResult> ReviewWrittenSubmission(AiReviewWrittenQuery query)
     {
         var response = await _mediator.Send(query);
         return ToResult(response);

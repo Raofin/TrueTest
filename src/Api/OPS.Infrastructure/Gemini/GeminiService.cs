@@ -64,7 +64,9 @@ internal class GeminiService(IGeminiClient geminiClient, IOptions<GeminiSettings
             {
                 var cleanJson = new Regex(@"```json\n|\n```").Replace(reviewText, string.Empty);
 
-                return JsonConvert.DeserializeObject<T>(cleanJson);
+                return typeof(T) == typeof(string)
+                    ? (T)(object)cleanJson
+                    : JsonConvert.DeserializeObject<T>(cleanJson);
             }
 
             Log.Error("Review text not found in the response.");

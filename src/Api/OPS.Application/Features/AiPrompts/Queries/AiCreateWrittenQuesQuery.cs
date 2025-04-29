@@ -8,14 +8,14 @@ namespace OPS.Application.Features.AiPrompts.Queries;
 
 public record AiWrittenQues(string QuestionStatement);
 
-public record AiCreateWrittenQuesQuery(string? UserPrompt) : IRequest<ErrorOr<AiWrittenQues>>;
+public record AiGenerateWrittenQuesQuery(string? UserPrompt) : IRequest<ErrorOr<AiWrittenQues>>;
 
 public class AiCreateWrittenQuesQueryHandler(IAiService aiService)
-    : IRequestHandler<AiCreateWrittenQuesQuery, ErrorOr<AiWrittenQues>>
+    : IRequestHandler<AiGenerateWrittenQuesQuery, ErrorOr<AiWrittenQues>>
 {
     private readonly IAiService _aiService = aiService;
 
-    public async Task<ErrorOr<AiWrittenQues>> Handle(AiCreateWrittenQuesQuery request,
+    public async Task<ErrorOr<AiWrittenQues>> Handle(AiGenerateWrittenQuesQuery request,
         CancellationToken cancellationToken)
     {
         var prompt = new PromptRequest(
@@ -39,9 +39,7 @@ public class AiCreateWrittenQuesQueryHandler(IAiService aiService)
     }
 }
 
-// validtor
-
-public class AiCreateWrittenQuesQueryValidator : AbstractValidator<AiCreateWrittenQuesQuery>
+public class AiCreateWrittenQuesQueryValidator : AbstractValidator<AiGenerateWrittenQuesQuery>
 {
     public AiCreateWrittenQuesQueryValidator()
     {
