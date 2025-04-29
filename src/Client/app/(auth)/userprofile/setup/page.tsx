@@ -5,20 +5,20 @@ import { Button, Form } from "@heroui/react";
 import ProfileEdit from "@/components/profile/ProfileEdit";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
-import { FormData } from "@/components/types/profile";
+import { ProfileFormData } from "@/components/types/profile";
 import ROUTES from "@/constants/route";
 import LoadingModal from "@/components/ui/Modal/LoadingModal";
 
 export default function ProfileSetUp() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState<ProfileFormData>({
         firstName: "",
         lastName: "",
         bio: "",
         instituteName: "",
         phoneNumber: "",
-        imageFileId: null,
+        imageFileId: "",
         profileLinks: [{ name: "", link: "" }],
     });
 

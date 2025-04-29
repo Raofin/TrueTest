@@ -10,7 +10,17 @@ export interface UserProfile {
   bioMarkdown?: string
   instituteName?: string
   phoneNumber?: string
-  imageFileId: string | null
+ imageFile: {
+      cloudFileId: string,
+      fileId: string,
+      name: string,
+      contentType: string,
+      size: number,
+      webContentLink: string,
+      webViewLink: string,
+      directLink: string,
+      createdAt: string
+    },
   profileLinks: ProfileLink[]
 }
 
@@ -24,12 +34,12 @@ export interface User {
   roles: string[]
 }
 
-export interface FormData {
+export interface ProfileFormData {
   firstName: string
   lastName: string
   bio: string
   instituteName: string
   phoneNumber: string
-  imageFileId: null
+  imageFileId: string
   profileLinks: { name: string; link: string }[];
 }

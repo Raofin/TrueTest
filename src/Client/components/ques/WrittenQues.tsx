@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { Button, Textarea, Checkbox, Card, Input } from "@heroui/react";
-import PaginationButtons from "@/components/ui/pagination-button";
+import PaginationButtons from "@/components/ui/PaginationButton";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
@@ -36,12 +36,12 @@ export default function Component({
     existingQuestions,
     onSaved,
     writtenPoints,
-}: WrittenQuestionFormProps) { 
+}: WrittenQuestionFormProps) {
     const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestion[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   id: uuidv4(),
-                  questionId: q.questionId, 
+                  questionId: q.questionId,
                   question: q.statementMarkdown,
                   points: q.score || 0,
                   difficultyType: q.difficultyType || "Easy",
@@ -99,7 +99,7 @@ export default function Component({
             if (backendId) {
                 await api.delete(`/Questions/Written/Delete/${backendId}`);
             }
-           
+
             if (writtenQuestions.length === 1) {
                 setWrittenQuestions([
                     {
@@ -111,11 +111,15 @@ export default function Component({
                         isShortAnswer: false,
                         isLongAnswer: false,
                     },
-                ]);}
-                setWrittenQuestions((prev) =>
-                    prev.filter((q) => q.id !== questionId)
-                );
-            if (currentPage >= Math.ceil((writtenQuestions.length - 1) / questionsPerPage)) {
+                ]);
+            }
+            setWrittenQuestions((prev) =>
+                prev.filter((q) => q.id !== questionId)
+            );
+            if (
+                currentPage >=
+                Math.ceil((writtenQuestions.length - 1) / questionsPerPage)
+            ) {
                 setCurrentPage(Math.max(0, currentPage - 1));
             }
 
@@ -152,9 +156,10 @@ export default function Component({
         });
     };
     const handlePoints = (questionId: string, value: string) => {
-        const pointsValue = value === "" ? 0 : Math.max(0, parseInt(value, 10) || 0);
-        setWrittenQuestions(prev => 
-            prev.map(q => 
+        const pointsValue =
+            value === "" ? 0 : Math.max(0, parseInt(value, 10) || 0);
+        setWrittenQuestions((prev) =>
+            prev.map((q) =>
                 q.id === questionId ? { ...q, points: pointsValue } : q
             )
         );
@@ -162,9 +167,13 @@ export default function Component({
     const handleSaveWrittenQuestions = async () => {
         try {
             const newQuestions = writtenQuestions.filter((q) => !q.questionId);
-            const existingQuestions = writtenQuestions.filter((q) => q.questionId);
+            const existingQuestions = writtenQuestions.filter(
+                (q) => q.questionId
+            );
             if (newQuestions.length > 0) {
-                const createResponse = await api.post("/Questions/Written/Create",{
+                const createResponse = await api.post(
+                    "/Questions/Written/Create",
+                    {
                         examId: examId,
                         writtenQuestions: newQuestions.map((q) => ({
                             statementMarkdown: q.question,
@@ -175,17 +184,19 @@ export default function Component({
                     }
                 );
                 if (createResponse.status === 200) {
-                        setWrittenQuestions((prev) =>
+                    setWrittenQuestions((prev) =>
                         prev.map((q) => {
                             if (!q.questionId) {
                                 const newQ = createResponse.data.find(
                                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     (newQuestion: any) =>
-                                        newQuestion.statementMarkdown ===q.question &&
+                                        newQuestion.statementMarkdown ===
+                                            q.question &&
                                         newQuestion.points === q.points
                                 );
                                 return newQ
-                                    ? { ...q, questionId: newQ.questionId }: q;
+                                    ? { ...q, questionId: newQ.questionId }
+                                    : q;
                             }
                             return q;
                         })
@@ -214,17 +225,23 @@ export default function Component({
         () => Math.ceil(writtenQuestions.length / questionsPerPage),
         [writtenQuestions, questionsPerPage]
     );
-    const currentQuestions = useMemo(() =>
+    const currentQuestions = useMemo(
+        () =>
             writtenQuestions.slice(
                 currentPage * questionsPerPage,
-                (currentPage + 1) * questionsPerPage ),
+                (currentPage + 1) * questionsPerPage
+            ),
         [writtenQuestions, currentPage, questionsPerPage]
     );
     return (
         <div>
             <Card
-                className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`}>
-                <h2 className="text-2xl mt-3"> Written Question : {currentPage + 1} </h2>
+                className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`}
+            >
+                <h2 className="text-2xl mt-3">
+                    {" "}
+                    Written Question : {currentPage + 1}{" "}
+                </h2>
                 {currentQuestions.map((question) => (
                     <div key={question.id} className="w-full">
                         <div className="p-4 mx-5 rounded-lg mt-4">
@@ -239,63 +256,73 @@ export default function Component({
                                         question.id,
                                         e.target.value
                                     )
-                                }/>
+                                }
+                            />
                             <div className="w-full flex justify-between gap-4 mt-5">
-                                 <div className="flex  gap-3">
-                                 <Input
-                                    className="w-32"
-                                    type="number"
-                                    label="Points"
-                                    value={question.points.toString()} 
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        if (value === "" || !isNaN(Number(value))) {
-                                            handlePoints(question.id, value);
-                                        }
-                                    }}/>
-                                <label>
-                                    <Checkbox
-                                        isSelected={question.isShortAnswer}
-                                        onChange={(e) =>
-                                            handleShortLongAnswer(
-                                                question.id,
-                                                e.target.checked,
-                                                e.target.checked
-                                                    ? false
-                                                    : question.isLongAnswer
-                                            )
-                                        }
-                                        isDisabled={question.isLongAnswer}
-                                    >
-                                        Short Answer
-                                    </Checkbox>
-                                </label>
-                                <label>
-                                    <Checkbox
-                                        isSelected={question.isLongAnswer}
-                                        onChange={(e) =>
-                                            handleShortLongAnswer(
-                                                question.id,
-                                                e.target.checked
-                                                    ? false
-                                                    : question.isShortAnswer,
-                                                e.target.checked
-                                            )
-                                        }
-                                        isDisabled={question.isShortAnswer}
-                                    >
-                                        Long Answer
-                                    </Checkbox>
-                                </label>
-                                 </div>
+                                <div className="flex  gap-3">
+                                    <Input
+                                        className="w-32"
+                                        type="number"
+                                        label="Points"
+                                        value={question.points.toString()}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (
+                                                value === "" ||
+                                                !isNaN(Number(value))
+                                            ) {
+                                                handlePoints(
+                                                    question.id,
+                                                    value
+                                                );
+                                            }
+                                        }}
+                                    />
+                                    <label>
+                                        <Checkbox
+                                            isSelected={question.isShortAnswer}
+                                            onChange={(e) =>
+                                                handleShortLongAnswer(
+                                                    question.id,
+                                                    e.target.checked,
+                                                    e.target.checked
+                                                        ? false
+                                                        : question.isLongAnswer
+                                                )
+                                            }
+                                            isDisabled={question.isLongAnswer}
+                                        >
+                                            Short Answer
+                                        </Checkbox>
+                                    </label>
+                                    <label>
+                                        <Checkbox
+                                            isSelected={question.isLongAnswer}
+                                            onChange={(e) =>
+                                                handleShortLongAnswer(
+                                                    question.id,
+                                                    e.target.checked
+                                                        ? false
+                                                        : question.isShortAnswer,
+                                                    e.target.checked
+                                                )
+                                            }
+                                            isDisabled={question.isShortAnswer}
+                                        >
+                                            Long Answer
+                                        </Checkbox>
+                                    </label>
+                                </div>
                                 <div className="flex  gap-3">
                                     <Button
                                         color="danger"
-                                         onPress={() =>
+                                        onPress={() =>
                                             handleDeleteQuestion(
                                                 question.id,
                                                 question.questionId
-                                            ) }>
+                                            )
+                                        }
+                                    >
                                         Delete
                                     </Button>
                                 </div>
@@ -327,13 +354,21 @@ export default function Component({
                 <Button onPress={handleAddWrittenQuestion}>
                     Add Written Question
                 </Button>
-                {!saveButton ? <Button color="primary"
-                    onPress={handleSaveWrittenQuestions} >
-                    Save All
-                </Button>: <Button color="primary"
-                    onPress={handleSaveWrittenQuestions} >
-                    Update All
-                </Button> }
+                {!saveButton ? (
+                    <Button
+                        color="primary"
+                        onPress={handleSaveWrittenQuestions}
+                    >
+                        Save All
+                    </Button>
+                ) : (
+                    <Button
+                        color="primary"
+                        onPress={handleSaveWrittenQuestions}
+                    >
+                        Update All
+                    </Button>
+                )}
             </div>
         </div>
     );

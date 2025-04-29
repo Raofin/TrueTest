@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardHeader } from "@heroui/react";
-import PaginationButtons from "@/components/ui/pagination-button";
+import PaginationButtons from "@/components/ui/PaginationButton";
 import CommonModal from "@/components/ui/Modal/EditDeleteModal";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
@@ -10,34 +10,15 @@ import {
     FormattedDateWeekday,
     convertUtcToLocalTime,
     formatTimeHourMinutes,
-} from "@/components/format-date-time";
+} from "@/components/DateTimeFormat";
 import { useRouter } from "next/navigation";
-
-interface Exam {
-    examId: string;
-    title: string;
-    description: string;
-    durationMinutes: number;
-    opensAt: string;
-    createdAt: string;
-    closesAt: string;
-    totalPoints: number;
-    problemSolvingPoints: number;
-    writtenPoints: number;
-    mcqPoints: number;
-    status: "Running" | "Scheduled" | "Ended";
-    acceptedCandidates: number;
-    problemSolving: number;
-    written: number;
-    mcq: number;
-    isPublished: boolean;
-}
+import { viewExam } from '@/components/types/exam'
 
 const ITEMS_PER_PAGE = 3;
 
 export default function ViewExam() {
     const [currentPage, setCurrentPage] = useState(1);
-    const [allExam, setAllExam] = useState<Exam[]>([]);
+    const [allExam, setAllExam] = useState<viewExam[]>([]);
     const router = useRouter();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const totalPages = Math.max(1, Math.ceil(allExam.length / ITEMS_PER_PAGE));
@@ -54,7 +35,7 @@ export default function ViewExam() {
         };
         handleViewExam();
     }, []);
-    const handlePublishExam = async (exam: Exam) => {
+    const handlePublishExam = async (exam: viewExam) => {
         if (exam.examId) {
             try {
                 const response = await api.post(
@@ -88,10 +69,10 @@ export default function ViewExam() {
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
-    const handleEdit = (exam: Exam) => {
+    const handleEdit = (exam: viewExam) => {
         router.push(`/exams/create?id=${exam.examId}&isEdit=true`);
     };
-    const handleReview = (exam: Exam) => {
+    const handleReview = (exam: viewExam) => {
         router.push(`/exams/review?examId=${exam.examId}`);
     };
 

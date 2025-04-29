@@ -6,27 +6,26 @@ import ProfileEdit from "@/components/profile/ProfileEdit";
 import RootNavBar from "@/app/(root)/root-navbar";
 import api from "@/lib/api";
 import { usePathname, useRouter } from "next/navigation";
-import { FormData } from "@/components/types/profile";
+import { ProfileFormData } from "@/components/types/profile";
 import ROUTES from "@/constants/route";
 
 export default function MyProfileEdit() {
     const router = useRouter();
     const pathname = usePathname();
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState<ProfileFormData>({
         firstName: "",
         lastName: "",
         bio: "",
         instituteName: "",
         phoneNumber: "",
-        imageFileId: null,
+        imageFileId: '',
         profileLinks: [{ name: "", link: "" }],
     });
-
     const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const response = await api.put(ROUTES.PROFILE_SAVE, formData);
-
+            console.log(response.data)
             if (response.status === 200) {
                 const response = await api.get(ROUTES.USER_INFO);
                 const isAdmin = response.data.roles.some(
