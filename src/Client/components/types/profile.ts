@@ -10,7 +10,17 @@ export interface UserProfile {
   bioMarkdown?: string
   instituteName?: string
   phoneNumber?: string
-  imageFileId: string | null
+ imageFile: {
+      cloudFileId: string,
+      fileId: string,
+      name: string,
+      contentType: string,
+      size: number,
+      webContentLink: string,
+      webViewLink: string,
+      directLink: string,
+      createdAt: string
+    },
   profileLinks: ProfileLink[]
 }
 

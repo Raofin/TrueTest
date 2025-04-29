@@ -42,6 +42,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const response = await api.get(ROUTES.USER_INFO);
             if (response.status === 200) {
+                console.log(response.data.profile.imageFile.directLink)
+                setProfileImage(response.data.profile.imageFile.directLink);
                 return response.data;
             }
             return null;
@@ -61,13 +63,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             const userData = await fetchUser();
-
             if (userData) {
                 setUser(userData);
-                if (userData.profile?.imageFileId) {
-                    const imgResponse = await api.get(`/CloudFile/Details/${userData.profile.imageFileId}`);
-                    setProfileImage(imgResponse.data.directLink);
-                  }
             } else {
                 removeAuthToken();
                 setUser(null);
@@ -106,6 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     const userData = await fetchUser();
                     if (userData) {
                         setUser(userData);
+                        setProfileImage(userData.profile?.imageFile?.directLink ?? "");
                         const redirectPath = userData.roles.includes("Admin")
                             ? ROUTES.OVERVIEW
                             : ROUTES.HOME;
