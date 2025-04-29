@@ -13,6 +13,7 @@ export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
+    const [mcqScore, setMcqScore] = useState(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
     const [totalPoints, setTotalPoints] = useState<number | undefined>();
@@ -107,6 +108,7 @@ export default function Component() {
 
     const handleCandidateChange = (value: string) => {
         setSelectedCandidateId(value);
+        setMcqScore(0)
     };
     const handlePrevCandidate = () => {
         const currentIndex = candidateList.findIndex(
@@ -117,6 +119,7 @@ export default function Component() {
                 candidateList[currentIndex - 1].account.accountId
             );
         }
+        setMcqScore(0)
     };
     const handleNextCandidate = () => {
         const currentIndex = candidateList.findIndex(
@@ -127,6 +130,7 @@ export default function Component() {
                 candidateList[currentIndex + 1].account.accountId
             );
         }
+        setMcqScore(0)
     };
 const updateProblemSubmission = (
     questionId: string,
@@ -147,8 +151,7 @@ const updateProblemSubmission = (
               ...candidate.result,
               problemSolvingScore: newProblemScore,
               totalScore: newProblemScore + 
-                         candidate.result.writtenScore + 
-                         candidate.result.mcqScore
+                         candidate.result.writtenScore + mcqScore 
             }
           };
         }
@@ -178,8 +181,7 @@ const updateProblemSubmission = (
               ...candidate.result,
               writtenScore: newWrittenScore,
               totalScore: candidate.result.problemSolvingScore + 
-                         newWrittenScore + 
-                         candidate.result.mcqScore
+                         newWrittenScore + mcqScore
             }
           };
         }
@@ -216,9 +218,10 @@ const updateProblemSubmission = (
             const result = await api.get(
                 `/Review/Candidates/${examId}/${selectedCandidateId}`
             );
+            setMcqScore(result.data.submission.mcq.reduce((total:number, e:{score: number}) => total + e.score, 0));
             setEditedSubmission({
                 problem: result.data.submission.problem,
-                written: result.data.submission.written
+                written: result.data.submission.written,
             });
         } catch (error) {
             console.error("Error saving submissions:", error);
@@ -300,7 +303,7 @@ const updateProblemSubmission = (
                                 </div>
                                  <div>
                                     <span className="text-default-500">MCQ:</span>
-                                        {selectedCandidate.result.mcqScore}/{mcqPoints}
+                                        {mcqScore??0}/{mcqPoints}
                                 </div>
                             </div>
                             </div>
@@ -354,7 +357,7 @@ const updateProblemSubmission = (
                                                             updateProblemSubmission(
                                                                 submission.questionId,
                                                                 { score: parseInt( e.target.value )} ) }
-                                                    /> /{problemPoints}
+                                                    /> /{questionsData[submission.questionId].points}
                                                 </div>
                                                 <Button
                                                     size="sm"
@@ -430,7 +433,7 @@ const updateProblemSubmission = (
                                                             )
                                                         }
                                                     />
-                                                    /{writtenPoints}
+                                                    /{questionsData[submission.questionId].score}
                                                 </div>
                                                 <Button
                                                     size="sm"

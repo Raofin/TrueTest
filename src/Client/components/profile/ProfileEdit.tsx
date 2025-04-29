@@ -20,10 +20,10 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
     bio: '',
     instituteName: '',
     phoneNumber: '',
-    imageFileId: '',
+    imageFileId: '', 
     profileLinks: [{ name: '', link: '' }],
   });
-  const { setProfileImage } = useAuth();
+  const { setProfileImage, profileImage } = useAuth();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const isControlled = formData && setFormData;
@@ -67,26 +67,28 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
     if (fileId) {
       try {
         const response = await api.get(`/CloudFile/Details/${fileId}`);
+        console.log('CloudFile Details Response:', response.data);
         setImageUrl(response.data.directLink);
-        setProfileImage(response.data.directLink); 
+        setProfileImage(response.data.directLink);
       } catch (error) {
         console.error('Error fetching image URL:', error);
-        setImageUrl(null); 
+        setImageUrl(null);
       }
     } else {
-      setImageUrl(null); 
+      setImageUrl(null);
     }
-  }, []);
+  }, [setProfileImage]);
 
   const handleImageUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
+
       if (!file) return;
       if (!file.type.startsWith('image/')) {
         toast.error('Only image files are allowed (JPEG, PNG)');
         return;
       }
-      if (file.size > 2*1024*1024) {
+      if (file.size > 2 * 1024 * 1024) {
         toast.error('Image size must be less than 2MB');
         return;
       }
@@ -99,6 +101,9 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
         });
         const cloudFileId = response.data.cloudFileId;
         updateFormData((prev) => ({ ...prev, imageFileId: cloudFileId }));
+        const tempUrl = URL.createObjectURL(file);
+        setImageUrl(tempUrl);
+        setProfileImage(tempUrl);
         fetchImageUrl(cloudFileId); 
         toast.success('Image uploaded successfully');
       } catch (error) {
@@ -108,9 +113,8 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
         setUploading(false);
       }
     },
-    [updateFormData, fetchImageUrl]
+    [updateFormData, fetchImageUrl, setProfileImage]
   );
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
@@ -130,17 +134,17 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
             bio: response.data.profile?.bioMarkdown ?? '',
             instituteName: response.data.profile?.instituteName ?? '',
             phoneNumber: response.data.profile?.phoneNumber ?? '',
-            imageFileId: response.data.profile?.imageFileId ?? '',
+            imageFileId: response.data.profile?.imageFile?.cloudFileId ?? '',
             profileLinks: response.data.profile?.profileLinks ?? [{ name: '', link: '' }],
           };
           updateFormData(() => profileData);
+          console.log(profileData)
           fetchImageUrl(profileData.imageFileId); 
         }
       } catch (error) {
         console.error('Error checking profile:', error);
       }
     };
-
     checkProfileStatus();
   }, [updateFormData, fetchImageUrl]);
 
@@ -149,13 +153,13 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
       <div>
         <div className="flex justify-center items-end text-center my-7">
           <div className="relative">
-            <Avatar className="h-32 w-32" size="lg" radius="md" src={imageUrl || ''} />
+            <Avatar className="h-32 w-32" size="lg" radius="md" src={imageUrl || profileImage || ''} />
             <label htmlFor="image-upload" className="absolute bottom-0 right-0 rounded-full cursor-pointer">
-              {uploading?  <Icon icon="solar:loading-2-linear" className="animate-spin" width={20} />:<Icon icon="solar:pen-2-linear" width={20} />}
+              {uploading ? <Icon icon="solar:loading" className="animate-spin" width={20} /> : <Icon icon="solar:pen-2-linear" width={20} />}
               <input
                 id="image-upload"
                 type="file"
-                accept="image/*"
+                // accept="image/*"
                 className="hidden"
                 onChange={handleImageUpload}
               />

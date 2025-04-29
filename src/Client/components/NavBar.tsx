@@ -27,13 +27,10 @@ export default function Component() {
                 classNames={{
                     wrapper:
                         "w-full justify-end bg-[#eeeef0] dark:bg-[#000000]",
-                    item: "hidden md:flex",
-                }}
-            >
+                    item: "hidden md:flex",  }} >
                 <NavbarContent
                     className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]"
-                    justify="end"
-                >
+                    justify="end">
                     <NavbarItem>
                         <ThemeSwitch />
                     </NavbarItem>
@@ -48,8 +45,7 @@ export default function Component() {
                                             content=""
                                             placement="bottom-right"
                                             shape="circle"
-                                            size="sm"
-                                        >
+                                            size="sm" >
                                             <Avatar
                                                 size="sm"
                                                 src={profileImage || ""}
@@ -60,18 +56,15 @@ export default function Component() {
                                 </DropdownTrigger>
                                 <DropdownMenu
                                     aria-label="Profile Actions"
-                                    variant="flat"
-                                >
+                                    variant="flat" >
                                     <DropdownItem
                                         key="user"
-                                        className="h-14 gap-2"
-                                    >
+                                        className="h-14 gap-2"  >
                                         <div className="flex gap-2 my-4">
                                             <Avatar
                                                 size="md"
                                                 src={profileImage ||""}
-                                                alt="User Avatar"
-                                            />
+                                                alt="User Avatar" />
                                             <div>
                                                 <p>{user?.username}</p>
                                                 <p>{user?.email}</p>
@@ -82,22 +75,17 @@ export default function Component() {
                                     <DropdownItem key="profile">
                                         <button
                                             onClick={() =>
-                                                router.push("/myprofile")
-                                            }
+                                                router.push("/myprofile")  }
                                             className="flex items-center gap-2"
                                             style={{
                                                 color: "inherit",
-                                                textDecoration: "none",
-                                            }}
-                                        >
+                                                textDecoration: "none", }}>
                                             <Icon
                                                 icon="lucide:user"
-                                                className="w-5 h-5"
-                                            />
+                                                className="w-5 h-5" />
                                             My Profile
                                         </button>
                                     </DropdownItem>
-
                                     <DropdownItem key="settings">
                                         <button
                                             onClick={() =>
@@ -106,13 +94,10 @@ export default function Component() {
                                             className={`flex items-center gap-2`}
                                             style={{
                                                 color: "inherit",
-                                                textDecoration: "none",
-                                            }}
-                                        >
+                                                textDecoration: "none",  }}  >
                                             <Icon
                                                 icon="lucide:settings"
-                                                className="w-5 h-5"
-                                            />
+                                                className="w-5 h-5" />
                                             Account Settings
                                         </button>
                                     </DropdownItem>
@@ -121,8 +106,7 @@ export default function Component() {
                                         <div className="flex gap-2">
                                             <Icon
                                                 icon="lucide:log-out"
-                                                className="w-5 h-5"
-                                            />
+                                                className="w-5 h-5"  />
                                             <p>Logout</p>
                                         </div>
                                     </DropdownItem>

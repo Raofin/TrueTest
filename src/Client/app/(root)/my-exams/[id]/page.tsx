@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, Pagination } from "@heroui/react";
 import CodeEditor from "@/components/submission/CodeEditor";
 import "@/app/globals.css";
@@ -33,7 +33,7 @@ export default function Component() {
     const [questions, setQuestions] = useState<QuestionData | null>(null);
     const [testCaseResults, setTestCaseResults] = useState<TestCaseResults>({});
     const [examActive, setExamActive] = useState(true);
-    const allowedKeys = new Set([
+    const allowedKeys =useMemo(()=> new Set([
     'Backspace', 'Tab', 'Enter', 'Shift', 'CapsLock',
     'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
     'Home', 'End', 'Delete',
@@ -41,24 +41,33 @@ export default function Component() {
     'n','o','p','q','r','s','t','u','v','w','x','y','z',
     '0','1','2','3','4','5','6','7','8','9',
     '(', ')', '{', '}', '[', ']', ';', ':', ',', '.', '=', '+', '-', '*', '/', '<', '>', '?', '!', '@', '#', '$', '%', '^', '&', '_', '|', '~', '`', '"', "'", '\\', ' '
-    ]);
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-          if (!examActive) return;
-          const target = e.target as HTMLElement;
-          if (target.tagName === 'INPUT' || 
-              target.tagName === 'TEXTAREA' ||
-              target.tagName === 'BUTTON') {
+    ]),[]);
+   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (!examActive) return;
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'INPUT' || 
+            target.tagName === 'TEXTAREA' ||
+            target.tagName === 'BUTTON') {
             return;
-          }
-          if (!allowedKeys.has(e.key)) {
+        }
+        if (e.ctrlKey || e.altKey || e.metaKey) {
             e.preventDefault();
             e.stopPropagation();
-          }
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-      }, [examActive]);
+            return;
+        }
+        let key = e.key;
+        if (key.length === 1 && /^[A-Za-z]$/.test(key)) {
+            key = key.toLowerCase();
+        }
+        if (!allowedKeys.has(key)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+}, [examActive, allowedKeys]);
       
     useEffect(() => {
         const FetchExamData = async () => {
@@ -264,12 +273,10 @@ export default function Component() {
                     })
                 );
             }
-
             if (promises.length === 0) {
                 toast.error("No answers to submit");
                 return;
             }
-
             await Promise.all(promises);
             toast.success("All answers submitted successfully!");
             return true;

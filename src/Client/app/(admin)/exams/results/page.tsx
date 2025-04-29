@@ -206,7 +206,7 @@ const UserList = ({
                                         {user.result?.totalScore || 0}/{examTitleDate?.totalPoints}
                                     </td>
                                     <td className="py-3">
-                                        <span className="px-2 py-1 rounded text-xs text-green-500">
+                                        <span className="px-2 py-1 rounded text-md text-green-500">
                                             {user.result?.totalScore ? "Reviewed":"Pending"}
                                         </span>
                                     </td>
@@ -273,6 +273,7 @@ const Component: React.FC = () => {
     const [selectedExamId, setSelectedExamId] = useState<string>("");
     const [candidates, setCandidates] = useState<Candidate[]>([]);
     const [selectedExamTitle, setSelectedExamTitle] = useState<string>("");
+    const [loading,setLoading]=useState(false);
     const handleExamChange = (examId: string) => {
         const selectedExam = exams.find((exam) => exam.examId === examId);
         if (selectedExam) {
@@ -296,11 +297,17 @@ const Component: React.FC = () => {
     }, []);
     useEffect(() => {
         const fetchCandidates = async () => {
+            setLoading(true)
+            try{
             if (!selectedExamId) return;
             const response = await api.get(`/Review/Candidates/${selectedExamId}`);
             if (response.status === 200) {
                 setCandidates(response.data.candidates || []);
             }
+        }catch{}
+        finally{
+            setLoading(false)
+        }
         };
         fetchCandidates();
     }, [selectedExamId]);
@@ -319,14 +326,14 @@ const Component: React.FC = () => {
                         candidates={candidates}
                     />
                     <Card className="mt-6 shadow-none">
-                        <CardBody>
+                       {loading?<p className="text-lg w-full flex justify-center h-full items-center">Loading...</p>: <CardBody>
                             <UserList
                                 candidates={candidates}
                                 examId={selectedExamId}
                                 selectedExamTitle={selectedExamTitle}
                                 exams={exams}
                             />
-                        </CardBody>
+                        </CardBody>}
                     </Card>
                 </div>
             </div>

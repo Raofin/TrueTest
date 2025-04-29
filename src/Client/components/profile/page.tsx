@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { FormatDatewithTime } from "../DateTimeFormat";
 import { ProfileLink, User } from "../types/profile";
+import { useAuth } from '@/context/AuthProvider'
 
 export default function ProfilePage() {
     const path = usePathname();
@@ -13,7 +14,8 @@ export default function ProfilePage() {
     const router = useRouter();
     const [userInfo, setUserInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-
+    const {profileImage}=useAuth()
+    console.log(profileImage)
     useEffect(() => {
         setRoute(path.startsWith("/profile") ? "profile" : "myprofile");
     }, [path]);
@@ -40,6 +42,7 @@ export default function ProfilePage() {
                             : null,
                     };
                     setUserInfo(normalizedData);
+                    console.log(normalizedData)
                 }
             } catch (error) {
                 console.error("Error fetching profile:", error);
@@ -76,7 +79,7 @@ export default function ProfilePage() {
             <Card className="relative rounded-2xl p-8 w-[600px] overflow-visible shadow-none bg-white dark:bg-[#18181b]">
                 <div className="flex items-center mb-8">
                     <Avatar
-                        src={userInfo?.profile?.imageFileId ?? ""}
+                        src={profileImage ?? ""}
                         alt="Profile"
                         radius="md"
                         className="absolute w-36 h-36 -mt-20 ml-24"

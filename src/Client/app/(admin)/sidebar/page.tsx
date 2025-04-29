@@ -62,8 +62,7 @@ const menuItems = [
 const Sidebar = () => {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
-
-    const { user, logout } = useAuth();
+    const { user, logout,profileImage} = useAuth();
     return (
         <div
             className={`h-screen fixed left-0 top-0 flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b] px-2 rounded-lg `}
@@ -90,7 +89,7 @@ const Sidebar = () => {
                     </div>
                     <div className="flex items-center gap-2 ml-3 my-3">
                         <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                            <Avatar size="sm" src="" alt="User Avatar" />
+                            <Avatar size="sm" src={profileImage||""} alt="User Avatar" />
                         </div>
                         {!isCollapsed && (
                             <Link

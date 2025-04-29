@@ -14,7 +14,6 @@ import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { convertUtcToLocalTime, parseTime } from "@/components/DateTimeFormat";
-import LoadingModal from "@/components/ui/Modal/LoadingModal";
 
 interface FormData {
     title: string;
@@ -57,7 +56,6 @@ export default function ExamFormPage() {
         writtenQues: [],
         mcq: [],
     });
-    const [isLoading, setIsLoading] = useState(true);
     const calculatedTotal = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
     const handleComponentSaved = (type: keyof typeof saveStatus) => {
         setSaveStatus((prev) => ({ ...prev, [type]: true }));
@@ -75,7 +73,6 @@ export default function ExamFormPage() {
             toast.error("Please select a date");
             return;
         }
-        setIsLoading(true);
         try {
             const formatDateTimeToUTC = (
                 timeString: string | undefined,
@@ -139,16 +136,12 @@ export default function ExamFormPage() {
         } catch (err) {
             const error = err as AxiosError;
             toast.error(error?.message);
-        } finally {
-            setIsLoading(false);
         }
     };
     useEffect(() => {
         const fetchExamDetails = async () => {
-            setIsLoading(true);
             try {
                 if (!isEdit) {
-                    setIsLoading(false);
                     return;
                 }
                 if (!examId) {
@@ -207,8 +200,6 @@ export default function ExamFormPage() {
                 console.error("Error fetching exam data:", error);
                 toast.error("Failed to load exam data");
                 route.push("/view-exams");
-            } finally {
-                setIsLoading(false);
             }
         };
 
@@ -236,11 +227,9 @@ export default function ExamFormPage() {
             }
         }, 1000);
         return () => clearTimeout(debounceTimer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mcqQuesPoint, problemQuesPoint, writtenQuesPoint]);
+    }, [formData.totalPoints, mcqQuesPoint, problemQuesPoint, writtenQuesPoint]);
     const handlePublishExam = async () => {
         if (examId) {
-            setIsLoading(true);
             try {
                 const response = await api.post(
                     `/Exam/Publish?examId=${examId}`
@@ -254,8 +243,6 @@ export default function ExamFormPage() {
                 toast.error(
                     `Failed to publish exam.Please make sure total points (${formData.totalPoints}) match sum of all questions (${calculatedTotal})`
                 );
-            } finally {
-                setIsLoading(false);
             }
         } else {
             toast.error("Please save the exam first.");
@@ -317,7 +304,6 @@ export default function ExamFormPage() {
     };
     return (
         <>
-            <LoadingModal isOpen={isLoading} message="Loading..." />
             <div className="mx-44 flex flex-col gap-8">
                 <h1 className="w-full text-center text-3xl font-bold my-3">
                     {isEdit ? "Edit Exam" : "Create Exam"}
