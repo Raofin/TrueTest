@@ -9,6 +9,12 @@ public class PermissionAuthorizationHandler(IServiceScopeFactory serviceScopeFac
 {
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
 
+    /// <summary>
+    /// Handles the authorization requirement asynchronously.
+    /// </summary>
+    /// <param name="context">The authorization handler context.</param>
+    /// <param name="requirement">The permission requirement to evaluate.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context, PermissionRequirement requirement)
     {

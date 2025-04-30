@@ -63,7 +63,7 @@ public class AiReviewWrittenQueryTests
         var query = new AiReviewWrittenQuery(submissionId);
 
         _unitOfWork.WrittenSubmission.GetWithQuestionAsync(submissionId, Arg.Any<CancellationToken>())
-            .Returns((WrittenSubmission)null);
+            .Returns((WrittenSubmission)null!);
 
         // Act
         var result = await _sut.Handle(query, CancellationToken.None);

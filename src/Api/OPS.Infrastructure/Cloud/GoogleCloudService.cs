@@ -9,10 +9,14 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace OPS.Infrastructure.Cloud;
 
+/// <summary>
+/// Implementation of the <see cref="IGoogleCloudService"/> interface for interacting with Google Drive.
+/// </summary>
 internal class GoogleCloudService(DriveService driveService) : IGoogleCloudService
 {
     private readonly DriveService _driveService = driveService;
 
+    /// <inheritdoc />
     public async Task<GoogleFile?> UploadAsync(Stream stream, string fileName, string contentType)
     {
         try
@@ -53,6 +57,7 @@ internal class GoogleCloudService(DriveService driveService) : IGoogleCloudServi
             .ExecuteAsync();
     }
 
+    /// <inheritdoc />
     public async Task<GoogleFile?> InfoAsync(string fileId)
     {
         try
@@ -69,6 +74,7 @@ internal class GoogleCloudService(DriveService driveService) : IGoogleCloudServi
         }
     }
 
+    /// <inheritdoc />
     public async Task<GoogleFileDownload?> DownloadAsync(string fileId)
     {
         try
@@ -96,6 +102,7 @@ internal class GoogleCloudService(DriveService driveService) : IGoogleCloudServi
         }
     }
 
+    /// <inheritdoc />
     public async Task DeleteAsync(string fileId)
     {
         try

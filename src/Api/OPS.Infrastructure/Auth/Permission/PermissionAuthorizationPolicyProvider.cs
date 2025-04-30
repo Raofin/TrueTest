@@ -6,6 +6,7 @@ namespace OPS.Infrastructure.Auth.Permission;
 public class PermissionAuthorizationPolicyProvider(IOptions<AuthorizationOptions> options)
     : DefaultAuthorizationPolicyProvider(options)
 {
+    /// <inheritdoc />
     public override async Task<AuthorizationPolicy?> GetPolicyAsync(
         string policyName)
     {

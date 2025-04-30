@@ -8,16 +8,21 @@ using Throw;
 
 namespace OPS.Application.Services;
 
+/// <summary>
+/// Implementation of the <see cref="IUserProvider"/> interface for accessing information about the current user.
+/// </summary>
 public class UserProvider(IHttpContextAccessor httpContextAccessor) : IUserProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
+    /// <inheritdoc />
     public bool IsAuthenticated()
     {
         var user = _httpContextAccessor.HttpContext?.User;
         return user?.Identity?.IsAuthenticated ?? false;
     }
 
+    /// <inheritdoc />
     public CurrentUser GetCurrentUser()
     {
         _httpContextAccessor.HttpContext.ThrowIfNull();
@@ -46,6 +51,7 @@ public class UserProvider(IHttpContextAccessor httpContextAccessor) : IUserProvi
         );
     }
 
+    /// <inheritdoc />
     public List<string> GetPermissions()
     {
         _httpContextAccessor.HttpContext.ThrowIfNull();
@@ -56,6 +62,7 @@ public class UserProvider(IHttpContextAccessor httpContextAccessor) : IUserProvi
             .ToList();
     }
 
+    /// <inheritdoc />
     public Guid AccountId()
     {
         var accountIdStr = _httpContextAccessor.HttpContext?.User.FindFirst("AccountId")?.Value;
@@ -65,12 +72,14 @@ public class UserProvider(IHttpContextAccessor httpContextAccessor) : IUserProvi
             : throw new UnauthorizedAccessException("Account ID is missing or invalid.");
     }
 
+    /// <inheritdoc />
     public Guid? TryGetAccountId()
     {
         var accountIdStr = _httpContextAccessor.HttpContext?.User.FindFirst("AccountId")?.Value;
         return Guid.TryParse(accountIdStr, out var id) ? id : null;
     }
 
+    /// <inheritdoc />
     [ExcludeFromCodeCoverage]
     public dynamic DecodeToken()
     {

@@ -25,11 +25,10 @@ public class AiGenerateProblemQueryQueryTests
         var query = new AiGenerateProblemQuery("Test Prompt");
         var expectedResponse = new AiProblemQuestionResponse(
             "Test Statement Markdown",
-            new List<AiTestCase>
-            {
+            [
                 new("Test Input 1", "Test Output 1"),
                 new("Test Input 2", "Test Output 2")
-            }
+            ]
         );
 
         _aiService.PromptAsync<AiProblemQuestionResponse>(Arg.Any<PromptRequest>())
@@ -50,7 +49,7 @@ public class AiGenerateProblemQueryQueryTests
         var query = new AiGenerateProblemQuery("Test Prompt");
 
         _aiService.PromptAsync<AiProblemQuestionResponse>(Arg.Any<PromptRequest>())
-            .Returns((AiProblemQuestionResponse)null);
+            .Returns((AiProblemQuestionResponse)null!);
 
         // Act
         var result = await _sut.Handle(query, CancellationToken.None);
@@ -62,17 +61,16 @@ public class AiGenerateProblemQueryQueryTests
     [Theory]
     [InlineData(null)]
     [InlineData("Test Prompt")]
-    public async Task Handle_WithValidInput_ShouldNotThrowException(string userPrompt)
+    public async Task Handle_WithValidInput_ShouldNotThrowException(string? userPrompt)
     {
         // Arrange
         var query = new AiGenerateProblemQuery(userPrompt);
         var expectedResponse = new AiProblemQuestionResponse(
             "Test Statement Markdown",
-            new List<AiTestCase>
-            {
+            [
                 new("Test Input 1", "Test Output 1"),
                 new("Test Input 2", "Test Output 2")
-            }
+            ]
         );
 
         _aiService.PromptAsync<AiProblemQuestionResponse>(Arg.Any<PromptRequest>())
