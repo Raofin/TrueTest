@@ -10,8 +10,8 @@ import {
     TableRow,
     TableCell,
     Input,
-    Button,
     Pagination,
+    Button,
 } from "@heroui/react";
 import SearchIcon from "@/components/ui/SearchIcon";
 import PaginationButtons from "@/components/ui/PaginationButton";
@@ -105,17 +105,18 @@ export default function Component() {
         }
         if (columnKey === "action") {
             return (
-                <div className="flex w-[100px] justify-between ml-6">
-                    <button
+                <div className="flex gap-3 w-[100px] justify-between ml-6">
+                    <Button
                         type="button"
+                        variant='solid'
                         aria-label="Change Status"
-                        onClick={() => {
+                        onPress={() => {
                             setSelectedUser(user.accountId);
                             setIsActiveModalOpen(true);
                         }}
                     >
                         {user.isActive ? "Disable" : "Enable"}
-                    </button>
+                    </Button>
                     <button
                         type="button"
                         aria-label="Delete User"
@@ -124,7 +125,7 @@ export default function Component() {
                             setIsDeleteModalOpen(true);
                         }}
                     >
-                        <MdDelete className={"text-xl"} />
+                        <MdDelete className={"text-2xl"} />
                     </button>
                 </div>
             );

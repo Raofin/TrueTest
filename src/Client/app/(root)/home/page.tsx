@@ -14,7 +14,6 @@ const states = [
 
 export default function Component() {
   const [permit, setPermit] = useState(false);
-  const [clipboardContent, setClipboardContent] = useState<string | null>(null);
 
   const requestPermissions = async () => {
     try {
@@ -24,9 +23,6 @@ export default function Component() {
       }
       await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       await navigator.mediaDevices.getDisplayMedia({ video: true });
-      const clipText = await navigator.clipboard.readText();
-      setClipboardContent(clipText);
-
       setPermit(true);
     } catch (err) {
       console.error('Permission denied or failed:', err);
@@ -34,12 +30,11 @@ export default function Component() {
       setPermit(false);
     }
   };
-
   return (
     <>
       <RootNavBar />
       <div className="flex flex-col gap-6 items-center justify-center text-center h-full w-full">
-        <div className="gap-5 flex flex-wrap justify-center">
+        <div className="gap-5 flex">
           {states.map((stat) => (
             <Card
               key={stat.id}
@@ -54,20 +49,9 @@ export default function Component() {
             </Card>
           ))}
         </div>
-
         <p className="w-[800px] text-center mt-5 text-gray-700 dark:text-gray-300">
-          To ensure a fair and secure exam environment, we need to access your camera,
-          microphone, screen, and clipboard. These permissions help us proctor the exam and
-          prevent cheating. Your privacy is important to us, and all data will be handled
-          securely.
-        </p>
-
-        {clipboardContent && (
-          <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-            Clipboard contains: {clipboardContent}
-          </p>
-        )}
-
+  To ensure a fair and secure exam environment, we need to access your camera, microphone, and screen. These permissions help us proctor the exam and prevent any cheating or suspicious activity. Rest assured, your privacy is important to us, and all data will be handled securely.
+</p>
         <div>
           <Button
             color="primary"
