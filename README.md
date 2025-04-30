@@ -27,7 +27,6 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
 [![Analyzed Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
-[![Total Lines of Code](https://img.shields.io/badge/Total%20Lines-12345-blue)](https://github.com/Learnathon-By-Geeky-Solutions/elite-programmers)
 
 ## 🏆 Team Elite Programmers
 
