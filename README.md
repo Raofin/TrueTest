@@ -14,12 +14,17 @@
 🗂️ **Project Management**: [ClickUp Board](https://sharing.clickup.com/9018748645/b/h/6-901804967032-2/87cfea55e909e2c) and [WBS Document](https://docs.google.com/spreadsheets/d/1W8B64OiUsHmxep4WSxsuw9yIJhcLsX7WFnyozvuyhJo/edit?usp=sharing) <br>
 💻 **GitHub Repository**: [Learnathon-By-Geeky-Solutions/elite-programmers](https://github.com/Learnathon-By-Geeky-Solutions/elite-programmers) <br>
 
-## Mentor
+## 🩺 Project Status
 
--   Mahbubur Rahman [@mahbub23](https://github.com/mahbub23)
-
-## Team Members
-
--   Zaid Amin Rawfin [@raofin](https://github.com/raofin)
--   Md Nahid Chowdhury [@mdnahid20](https://github.com/mdnahid20)
--   Kohinoor Akther Akhi [@akhi005](https://github.com/Akhi005)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Analyzed Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
+[![Total Lines of Code](https://img.shields.io/badge/Total%20Lines-12345-blue)](https://github.com/Learnathon-By-Geeky-Solutions/elite-programmers)
