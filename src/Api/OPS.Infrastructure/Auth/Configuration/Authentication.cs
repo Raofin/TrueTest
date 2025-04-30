@@ -10,6 +10,12 @@ namespace OPS.Infrastructure.Auth.Configuration;
 
 internal static class Authentication
 {
+    /// <summary>
+    /// Configures JWT-based authentication for the application.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <param name="configuration">The <see cref="IConfiguration"/> containing application settings, including JWT configuration.</param>
+    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
     public static IServiceCollection AddAuthenticationServices(
         this IServiceCollection services, IConfiguration configuration)
     {

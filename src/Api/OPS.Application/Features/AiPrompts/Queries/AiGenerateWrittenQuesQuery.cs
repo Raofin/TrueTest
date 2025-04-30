@@ -20,7 +20,7 @@ public class AiGenerateWrittenQuesQueryHandler(IAiService aiService)
     {
         var prompt = new PromptRequest(
             """
-            - Create a computer science interview question.
+            - Create a computer science theoretical question for interviews.
             - If a user prompt is provided, use it as a reference.
             - If the user prompt already includes a question, improve it.
             - Use prompts like "Explain" or "Describe" only if the user prompt suggests a topic that needs a long, detailed answer.

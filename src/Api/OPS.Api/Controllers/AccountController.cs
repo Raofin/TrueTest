@@ -12,6 +12,9 @@ using static OPS.Domain.Constants.Permissions;
 
 namespace OPS.Api.Controllers;
 
+/// <summary>
+/// API endpoints for managing user accounts.
+/// </summary>
 [Route("Account")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 [ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]

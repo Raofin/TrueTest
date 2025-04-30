@@ -10,6 +10,11 @@ internal class OtpCleanupService(IServiceScopeFactory serviceScopeFactory) : Bac
 {
     private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
 
+    /// <summary>
+    /// Executes the background service, periodically cleaning up expired One-Time Passwords (OTPs) from the database.
+    /// </summary>
+    /// <param name="stoppingToken">A token to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)

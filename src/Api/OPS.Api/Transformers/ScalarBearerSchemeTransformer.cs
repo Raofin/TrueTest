@@ -4,11 +4,16 @@ using Microsoft.OpenApi.Models;
 
 namespace OPS.Api.Transformers;
 
+/// <summary>
+/// An <see cref="IOpenApiDocumentTransformer"/> that adds a Bearer security scheme to the OpenAPI document
+/// if the "Bearer" authentication scheme is configured. It also adds a security requirement to all operations.
+/// </summary>
 internal sealed class BearerSecuritySchemeTransformer(
     IAuthenticationSchemeProvider authenticationSchemeProvider) : IOpenApiDocumentTransformer
 {
     private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider = authenticationSchemeProvider;
 
+    /// <inheritdoc />
     public async Task TransformAsync(
         OpenApiDocument document,
         OpenApiDocumentTransformerContext context,

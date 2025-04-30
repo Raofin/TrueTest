@@ -6,6 +6,11 @@ namespace OPS.Infrastructure.Auth.Configuration;
 
 internal static class Authorization
 {
+    /// <summary>
+    /// Configures authorization policies based on roles and permissions.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
     public static IServiceCollection AddAuthorizationServices(this IServiceCollection services)
     {
         var builder = services.AddAuthorizationBuilder();
@@ -13,7 +18,6 @@ internal static class Authorization
         foreach (var role in Enum.GetValues<RoleType>())
         {
             var roleName = Enum.GetName(role)!;
-
             builder.AddPolicy(roleName, policy => policy.RequireRole(roleName));
         }
 

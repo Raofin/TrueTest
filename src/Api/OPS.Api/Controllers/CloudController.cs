@@ -10,6 +10,9 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace OPS.Api.Controllers;
 
+/// <summary>
+/// API endpoints for managing files in the cloud storage.
+/// </summary>
 [Route("CloudFile")]
 [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
 [ProducesResponseType<ExceptionResponse>(Status500InternalServerError)]
@@ -18,9 +21,9 @@ public class CloudController(IMediator mediator) : BaseApiController
     private readonly IMediator _mediator = mediator;
 
     /// <summary>Uploads a file to Google Cloud.</summary>
-    /// <param name="file">File to upload (Max file size: 100 KB).</param>
+    /// <param name="file">The file to upload (Max file size: 100 KB).</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Uploaded file information.</returns>
+    /// <returns>Information about the uploaded file.</returns>
     [AllowAnonymous]
     [HttpPost("Upload")]
     [Consumes("multipart/form-data")]
@@ -34,14 +37,15 @@ public class CloudController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Gets file details from Google Cloud.</summary>
-    /// <param name="cloudFileId">Cloud File ID.</param>
+    /// <summary>Gets detailed information about a specific file from Google Cloud.</summary>
+    /// <param name="cloudFileId">The unique identifier of the cloud file.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>File details.</returns>
+    /// <returns>Detailed information about the requested file.</returns>
     [AllowAnonymous]
     [HttpGet("Details/{cloudFileId:guid}")]
     [ProducesResponseType<CloudFileResponse>(Status200OK)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [EndpointDescription("Gets detailed information about a specific file from Google Cloud.")]
     public async Task<IActionResult> GetFileDetailsAsync(Guid cloudFileId, CancellationToken cancellationToken)
     {
         var query = new GetFileDetailsQuery(cloudFileId);
@@ -49,15 +53,15 @@ public class CloudController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Edits a file from Google Cloud.</summary>
-    /// <param name="cloudFileId">Cloud File ID.</param>
-    /// <param name="file">File to edit.</param>
+    /// <summary>Edits an existing file in Google Cloud.</summary>
+    /// <param name="cloudFileId">The unique identifier of the cloud file to edit.</param>
+    /// <param name="file">The new file content to replace the existing one.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Edited file information.</returns>
+    /// <returns>Information about the edited file.</returns>
     [Authorize]
     [HttpPut("Edit/{cloudFileId}")]
     [Consumes("multipart/form-data")]
-    [EndpointDescription("Edits a file in Google Cloud.")]
+    [EndpointDescription("Edits an existing file in Google Cloud.")]
     [ProducesResponseType<CloudFileResponse>(Status200OK)]
     [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -69,14 +73,15 @@ public class CloudController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Downloads a file from Google Cloud.</summary>
-    /// <param name="fileId">File ID.</param>
+    /// <summary>Downloads a file with the specified ID from Google Cloud.</summary>
+    /// <param name="fileId">The identifier of the file to download.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>File download information.</returns>
+    /// <returns>The requested file as a downloadable response.</returns>
     [AllowAnonymous]
     [HttpGet("Download/{fileId}")]
     [ProducesResponseType<GoogleFileDownload>(Status200OK)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [EndpointDescription("Downloads a file with the specified ID from Google Cloud.")]
     public async Task<IActionResult> DownloadFileAsync(string fileId, CancellationToken cancellationToken)
     {
         var command = new FileDownloadCommand(fileId);
@@ -91,15 +96,16 @@ public class CloudController(IMediator mediator) : BaseApiController
         return File(file.Bytes, file.ContentType, file.FileName);
     }
 
-    /// <summary>Deletes a file from Google Cloud.</summary>
-    /// <param name="cloudFileId">Cloud File ID.</param>
+    /// <summary>Deletes a file with the specified ID from Google Cloud.</summary>
+    /// <param name="cloudFileId">The unique identifier of the cloud file to delete.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Deletion result.</returns>
+    /// <returns>Result indicating the success or failure of the deletion.</returns>
     [Authorize]
     [HttpDelete("Delete/{cloudFileId}")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
+    [EndpointDescription("Deletes a file with the specified ID from Google Cloud.")]
     public async Task<IActionResult> DeleteFileAsync(Guid cloudFileId, CancellationToken cancellationToken)
     {
         var command = new DeleteFileCommand(cloudFileId);

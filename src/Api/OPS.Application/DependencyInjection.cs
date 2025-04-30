@@ -8,9 +8,17 @@ using OPS.Application.Services;
 
 namespace OPS.Application;
 
+/// <summary>
+/// Extension methods for <see cref="IServiceCollection"/> to register application layer dependencies.
+/// </summary>
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Adds application layer services and MediatR pipeline behaviors to the service collection.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddMediatR(config =>

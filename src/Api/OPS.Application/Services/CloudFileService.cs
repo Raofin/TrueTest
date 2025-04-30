@@ -6,10 +6,14 @@ using OPS.Domain.Entities.Core;
 
 namespace OPS.Application.Services;
 
+/// <summary>
+/// Implementation of the <see cref="ICloudFileService"/> interface for managing cloud file operations.
+/// </summary>
 internal class CloudFileService(IGoogleCloudService googleCloudService) : ICloudFileService
 {
     private readonly IGoogleCloudService _googleCloudService = googleCloudService;
 
+    /// <inheritdoc />
     public async Task<CloudFile?> UploadAsync(IFormFile formFile, CancellationToken cancellationToken = default)
     {
         using var stream = new MemoryStream();
@@ -24,12 +28,14 @@ internal class CloudFileService(IGoogleCloudService googleCloudService) : ICloud
         return uploadedFile.MapToCloudFile();
     }
 
+    /// <inheritdoc />
     public async Task<FileDownloadResponse?> DownloadAsync(string fileId)
     {
         var file = await _googleCloudService.DownloadAsync(fileId);
         return file?.MapToDto();
     }
 
+    /// <inheritdoc />
     public async Task DeleteAsync(string? fileId)
     {
         if (fileId is not null)

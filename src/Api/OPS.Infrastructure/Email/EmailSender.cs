@@ -6,6 +6,9 @@ using Serilog;
 
 namespace OPS.Infrastructure.Email;
 
+/// <summary>
+/// Implementation of the <see cref="IEmailSender"/> interface using FluentEmail.
+/// </summary>
 public class EmailSender(IFluentEmail fluentEmail) : IEmailSender
 {
     private readonly IFluentEmail _fluentEmail = fluentEmail;

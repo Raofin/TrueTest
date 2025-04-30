@@ -10,8 +10,16 @@ using OPS.Infrastructure.Gemini;
 
 namespace OPS.Infrastructure;
 
+/// <summary>
+/// Extension methods for <see cref="IServiceCollection"/> to register application dependencies.
+/// </summary>
 internal static class DependencyInjection
 {
+    /// <summary>
+    /// Adds application-specific dependencies to the service collection.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
     public static IServiceCollection AddDependencies(this IServiceCollection services)
     {
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
