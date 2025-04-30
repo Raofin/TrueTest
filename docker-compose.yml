@@ -32,6 +32,10 @@ services:
       - EmailSettings__Password=
       # 🔧 OneCompiler
       - OneCompilerSettings__ApiKey=
+      # 🔧 Google Cloud
+      - GoogleCloudSettings__FolderId=
+      # 🔧 Gemini
+      - GeminiSettings__ApiKey=
     restart: unless-stopped
     networks:
       - backend
