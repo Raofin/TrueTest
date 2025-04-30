@@ -25,7 +25,6 @@ export default function MyProfileEdit() {
         e.preventDefault();
         try {
             const response = await api.put(ROUTES.PROFILE_SAVE, formData);
-            console.log(response.data)
             if (response.status === 200) {
                 const response = await api.get(ROUTES.USER_INFO);
                 const isAdmin = response.data.roles.some(

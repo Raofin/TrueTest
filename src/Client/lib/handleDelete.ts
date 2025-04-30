@@ -6,7 +6,6 @@ export default async function handleDelete(accountId: string): Promise<boolean> 
   try {
     const response = await api.delete(`/Account/Delete/${accountId}`)
     if (response.status === 200) {
-      console.log('Record deleted successfully:', accountId)
       return true
     } else {
       console.error('Failed to delete record:', response.status)

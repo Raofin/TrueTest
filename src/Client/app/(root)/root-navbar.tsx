@@ -3,18 +3,19 @@
 import React from "react";
 import "@/app/globals.css";
 import NavBar from "@/components/NavBar";
-
 import Logo from "@/components/ui/TrueTestLogo";
-import { Navbar, NavbarContent, NavbarItem } from "@heroui/react";
+import { Link, Navbar, NavbarContent, NavbarItem } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { useAuth } from '@/context/AuthProvider'
 
 export default function RootNavBar() {
     const router = useRouter();
+    const {user}=useAuth()
     return (
-        <div className="flex w-full justify-between items-center bg-[#eeeef0] dark:bg-[#000000]">
-            <div className="bg-[#eeeef0] dark:bg-[#000000] mt-2">
+        <div className="flex w-full justify-between items-center bg-[#eeeef0] dark:bg-[#000000] h-16 px-14 pt-3">
+           <Link href="/home"> <div className="bg-[#eeeef0] dark:bg-[#000000] ">
                 <Logo />
-            </div>
+            </div></Link>
             <div className="flex">
                 <Navbar
                     classNames={{
@@ -38,6 +39,13 @@ export default function RootNavBar() {
                         >
                             My Exams
                         </NavbarItem>
+                        {
+                            user?.roles.includes("Admin") && <NavbarItem
+                            style={{ cursor: "pointer" }}
+                            onClick={() => router.push("/overview")} >
+                            Admin Panel
+                        </NavbarItem>
+                        }
                     </NavbarContent>
                 </Navbar>
                 <NavBar />

@@ -6,13 +6,14 @@ import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
-import { CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
+import { AiApiResponse, CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
 import { ExamData } from '@/components/types/exam'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
+    const [aiReviewResponse,setAiReviewResponse]=useState<AiApiResponse[]>([])
     const [mcqScore, setMcqScore] = useState(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
@@ -58,13 +59,40 @@ export default function Component() {
         };
         fetchExamData();
     }, [examId]);
+    const handleAiResponse = async (submissionId: string) => {
+        try {
+            const response = await api.post<{ review: string; score: number }>(
+                `/Ai/Review/ProblemSubmission/${submissionId}`
+            );
+            if (response.status === 200) {
+                setAiReviewResponse(prev => [...prev, response.data]);
+            } else {
+                toast.error("Failed to get AI review.");
+            }
+        } catch  {
+            toast.error("Error communicating with AI service.");
+        }
+    };
+    const handleAiWrittenResponse = async (submissionId: string) => {
+        try {
+            const response = await api.post<{ review: string; score: number }>(
+                `/Ai/Review/WrittenSubmission/${submissionId}`
+            );
+            if (response.status === 200) {
+                setAiReviewResponse(prev => [...prev, response.data]);
+            } else {
+                toast.error("Failed to get AI review.");
+            }
+        } catch  {
+            toast.error("Error communicating with AI service.");
+        }
+    };
     useEffect(() => {
         const fetchCandidateData = async () => {
             try {
                 const response = await api.get<CandidatesResponse>(`/Review/Candidates/${examId}`);
                 if (response.status === 200) {
                     setCandidateList(response.data.candidates);
-                    console.log(response.data)
                     if (response.data.candidates.length > 0) {
                         const candidateExists = response.data.candidates.some(
                             (c) => c.account.accountId === selectedCandidateId );
@@ -161,7 +189,20 @@ const updateProblemSubmission = (
       return {...prev, problem: updatedProblem};
     });
   };
-  
+  const ReviewWithAi=()=>{
+    return(
+        <>
+        {aiReviewResponse.length > 0 && (<>
+                      <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
+                        <p className="text-sm italic text-gray-600 dark:text-gray-400">AI Review:</p>
+                        <p className='w-full'>{aiReviewResponse.find(res => res.review)?.review || 'No review available'}</p>
+                      </div>
+                      <p className='w-full'>AI Score: {aiReviewResponse.find(res => res.score)?.score??0}</p>
+                      </>
+                    )}
+        </>
+    )
+  }
   const updateWrittenSubmission = (
     questionId: string,
     updates: Partial<WrittenSubmission>
@@ -285,21 +326,21 @@ const updateProblemSubmission = (
                                 <div className="flex items-center justify-between">
                                 <div>
                                     <span className="text-default-500">Score:</span>
-                                        {selectedCandidate.result.totalScore}/{totalPoints}
+                                        {selectedCandidate.result?.totalScore??0}/{totalPoints}
                                 </div>
                                 <div>
                                     <span className="text-default-500">Submitted At:</span>
-                                    {new Date(selectedCandidate.result.submittedAt).toLocaleString()}
+                                    {new Date(selectedCandidate.result?.submittedAt??"").toLocaleString()}
                                 </div>
                             </div>
                             <div className='flex w-full justify-between'>
                                  <div>
                                     <span className="text-default-500">Problem Solving:</span>
-                                        {selectedCandidate.result.problemSolvingScore}/{problemPoints}
+                                        {selectedCandidate.result?.problemSolvingScore??0}/{problemPoints}
                                 </div>
                                  <div>
                                     <span className="text-default-500">Written Question:</span>
-                                        {selectedCandidate.result.writtenScore}/{writtenPoints}
+                                        {selectedCandidate.result?.writtenScore??0}/{writtenPoints}
                                 </div>
                                  <div>
                                     <span className="text-default-500">MCQ:</span>
@@ -311,7 +352,7 @@ const updateProblemSubmission = (
                     </div>
                 </Card>
                 {selectedCandidateId && editedSubmission && (
-                    <div className="bg-white dark:bg-[#18181b] p-5 rounded-xl">
+                    <div className=" p-5 rounded-xl">
                         <h2 className="w-full text-center">
                             {selectedCandidate?.account.username ??
                                 selectedCandidate?.account.email ??
@@ -319,19 +360,19 @@ const updateProblemSubmission = (
                         </h2>
                         {editedSubmission.problem.length > 0 && (
                             <div className="mb-8">
-                                <h2 className="text-lg font-semibold mb-4">
+                                <h2 className="text-lg font-semibold my-4">
                                     Problem Solving Submissions
                                 </h2>
                                 {editedSubmission.problem.map((submission) => (
                                     <div key={submission.questionId}
-                                        className="space-y-4 mb-6 p-4   rounded-lg">
-                                        <h3 className="font-medium"> Problem Statement :</h3>
+                                        className="space-y-4 mb-6 p-4 bg-white dark:bg-[#18181b]  rounded-lg">
+                                        <h3 className="font-medium "> Problem Statement :</h3>
                                         <div className="font-medium">
                                             {questionsData[
                                                 submission.questionId
                                             ] ? (
                                                 <ReactMarkdown>
-                                                { questionsData[ submission.questionId].statementMarkdown}
+                                                { questionsData[submission.questionId].statementMarkdown}
                                                 </ReactMarkdown>
                                             ) : ("Loading question...")}
                                         </div>
@@ -343,7 +384,12 @@ const updateProblemSubmission = (
                                                 </div>
                                             </Card>
                                         </div>
-                                       
+                                        <ReviewWithAi/>
+                                        <div className='w-full flex justify-end'>
+                                        <Button onPress={()=>handleAiResponse( submission.questionId)}
+      className=" gap-2 py-2 px-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-semibold shadow-md hover:opacity-90 transition">
+          Review With AI
+    </Button></div>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Result</h4>
                                             <div className="flex items-center gap-5">
@@ -351,7 +397,7 @@ const updateProblemSubmission = (
                                                     <span>Points</span>
                                                     <input
                                                         type="number"
-                                                        className="w-16"
+                                                        className="w-12"
                                                         value={submission.score}
                                                         onChange={(e) =>
                                                             updateProblemSubmission(
@@ -401,7 +447,7 @@ const updateProblemSubmission = (
                                 </h2>
                                 {editedSubmission.written.map((submission) => (
                                     <div key={submission.questionId}
-                                        className="space-y-4 p-4  rounded-lg">
+                                        className="space-y-4 p-4 flex flex-col gap-3 mb-6 bg-white dark:bg-[#18181b] rounded-lg">
                                         <div  className="space-y-4  p-4  rounded-lg">
                                             <div className="font-medium">
                                                 {questionsData[submission.questionId] ? (
@@ -410,12 +456,19 @@ const updateProblemSubmission = (
                                                     'Loading question...'
                                                 )}
                                             </div>
-                                            <div>
-                                                <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
+                                            <div className='mb-4'>
+                                                <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none mb-4">
                                                     <div className="whitespace-pre-wrap p-2">
                                                     {submission.answer}
                                                 </div>
                                             </Card>
+                                            <ReviewWithAi/>
+                                            <div className='w-full flex justify-end'>
+                                            <Button onPress={()=>handleAiWrittenResponse(submission.questionId)}
+      className=" gap-2 py-2 px-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-semibold shadow-md hover:opacity-90 transition">
+          Review With AI
+    </Button>
+    </div>
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2">Result</h4>
@@ -424,21 +477,17 @@ const updateProblemSubmission = (
                                                     <span>Points</span>
                                                     <input
                                                         type="number"
-                                                        className="w-16"
+                                                        className="w-12"
                                                         value={submission.score}
                                                         onChange={(e) =>
                                                             updateWrittenSubmission(
                                                                 submission.questionId,
-                                                                {score: parseInt(e.target.value)}
-                                                            )
-                                                        }
-                                                    />
-                                                    /{questionsData[submission.questionId].score}
+                                                                {score: parseInt(e.target.value)})
+                                                        }/>/{questionsData[submission.questionId].score}
                                                 </div>
                                                 <Button
                                                     size="sm"
-                                                    variant="flat"
-                                                >
+                                                    variant="flat">
                                                     <input
                                                         type="checkbox"
                                                         checked={

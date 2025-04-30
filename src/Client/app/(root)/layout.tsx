@@ -9,7 +9,7 @@ interface RootLayoutProps {
 
 const RootLayout = ({ children }: RootLayoutProps) => {
     return (
-        <div className="flex min-h-screen ">
+        <div className="flex h-[90vh]">
             <main suppressHydrationWarning className="flex-grow w-full ">
                 {children}
             </main>
