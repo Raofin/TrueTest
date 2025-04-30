@@ -273,9 +273,9 @@ export default function Component() {
                 }}
                 title="Status Confirmation"
                 content={`Do you want to ${
-                    status ? "deactivate" : "activate"
+                    status ? "disable" : "enable"
                 } this record`}
-                confirmButtonText={`${status ? "Deactivate" : "Activate"}`}
+                confirmButtonText={`${status ? "Disable" : "Enable"}`}
                 onConfirm={async () => {
                     const resp = await handleStatus(selectedUser, setStatus);
                     if (resp) {
