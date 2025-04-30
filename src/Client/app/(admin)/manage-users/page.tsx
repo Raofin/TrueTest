@@ -301,17 +301,34 @@ export default function Component() {
                 content={`Do you want to delete this record?`}
                 confirmButtonText="Delete"
                 onConfirm={async () => {
-                    const success = await handleDelete(selectedUser);
-                    if (success) {
-                        setUserData((prevUsers) =>
-                            prevUsers.filter(
-                                (user) => user.accountId !== selectedUser
-                            )
-                        );
-                    }
-                    setIsDeleteModalOpen(false);
-                    setSelectedUser("");
-                }}
+                 
+                     const success = await handleDelete(selectedUser);
+                     if (success) {
+                      setUserData((prevUsers) =>
+                     prevUsers.filter((user) => user.accountId !== selectedUser));
+                      setIsDeleteModalOpen(false);
+                      setSelectedUser("");
+                      const remainingUsersOnCurrentPage = filteredItems.filter(
+                     (user) => user.accountId !== selectedUser).slice((page - 1) * rowsPerPage, page * rowsPerPage).length;
+                      if (remainingUsersOnCurrentPage === 0 && page > 1)  setPage(page - 1);
+                      else {
+                       const ManageUser = async () => {
+                    try {
+                     const response = await api.get<ApiResponse>(
+                        `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${
+                            roleFilter ? `&role=${roleFilter}` : ""
+                        }${searchTerm ? `&searchTerm=${searchTerm}` : ""}`
+                     );
+                     if (response.status === 200) {
+                      setUserData(response.data.accounts);
+                      setTotalPages(response.data.page.totalPages ?? 1);
+                     }
+                    } catch  {}
+                     };
+                      ManageUser();
+                      }
+                     }
+                    }}
             />
         </div>
     );
