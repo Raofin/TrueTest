@@ -9,12 +9,12 @@ import ThemeSwitch from "@/app/ThemeSwitch";
 import { Avatar } from "@heroui/react";
 import { PiNotepadFill } from "react-icons/pi";
 import { BiSolidPlusSquare, BiSolidUserRectangle } from "react-icons/bi";
-import { MdEmail } from "react-icons/md";
 import { RiAdminFill, RiDashboardFill } from "react-icons/ri";
 import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
 import { useAuth } from "@/context/AuthProvider";
-import { MdRateReview } from "react-icons/md";
+import { MdRateReview,MdEmail } from "react-icons/md";
 import LoadingModal from '@/components/ui/Modal/LoadingModal'
+import { FaUserCheck } from "react-icons/fa";
 
 const menuItems = [
     {
@@ -58,6 +58,12 @@ const menuItems = [
         icon: <RiAdminFill size={30} />,
         label: "Add Admins",
         path: "/add-admins",
+    },
+    {
+        key: "candidate",
+        icon: <FaUserCheck size={30} />,
+        label: "Candidate View",
+        path: "/home",
     }
 ];
 const Sidebar = () => {

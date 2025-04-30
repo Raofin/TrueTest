@@ -14,6 +14,7 @@ const states = [
 
 export default function Component() {
   const [permit, setPermit] = useState(false);
+  const [clipboardContent, setClipboardContent] = useState<string | null>(null);
 
   const requestPermissions = async () => {
     try {
@@ -23,6 +24,9 @@ export default function Component() {
       }
       await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const clipText = await navigator.clipboard.readText();
+      setClipboardContent(clipText);
+
       setPermit(true);
     } catch (err) {
       console.error('Permission denied or failed:', err);
@@ -30,11 +34,12 @@ export default function Component() {
       setPermit(false);
     }
   };
+
   return (
     <>
       <RootNavBar />
       <div className="flex flex-col gap-6 items-center justify-center text-center h-full w-full">
-        <div className="gap-5 flex">
+        <div className="gap-5 flex flex-wrap justify-center">
           {states.map((stat) => (
             <Card
               key={stat.id}
@@ -49,13 +54,20 @@ export default function Component() {
             </Card>
           ))}
         </div>
+
         <p className="w-[800px] text-center mt-5 text-gray-700 dark:text-gray-300">
-  To provide you with an immersive and interactive experience, our application 
-  requires access to key system features. Granting camera and microphone permissions
-   allows us to enable real-time video and voice communication, making virtual interactions 
-   feel more engaging. Screen recording permission is essential for capturing on-screen activities. Clipboard access is requested to enhance productivity by enabling quick copy-paste actions, especially when working
-     with shared data or text inputs.
-</p>
+          To ensure a fair and secure exam environment, we need to access your camera,
+          microphone, screen, and clipboard. These permissions help us proctor the exam and
+          prevent cheating. Your privacy is important to us, and all data will be handled
+          securely.
+        </p>
+
+        {clipboardContent && (
+          <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+            Clipboard contains: {clipboardContent}
+          </p>
+        )}
+
         <div>
           <Button
             color="primary"

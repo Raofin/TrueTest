@@ -105,7 +105,7 @@ export default function Component() {
         }
         if (columnKey === "action") {
             return (
-                <div className="flex w-[100px] gap-5 justify-between ml-6">
+                <div className="flex w-[100px] justify-between ml-6">
                     <button
                         type="button"
                         aria-label="Change Status"
@@ -114,7 +114,7 @@ export default function Component() {
                             setIsActiveModalOpen(true);
                         }}
                     >
-                        {user.isActive ? "Deactivate" : "Activate"}
+                        {user.isActive ? "Disable" : "Enable"}
                     </button>
                     <button
                         type="button"

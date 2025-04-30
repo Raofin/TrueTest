@@ -6,18 +6,17 @@ import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
-import { CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
+import { AiApiResponse, CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
 import { ExamData } from '@/components/types/exam'
-import { AiButton } from '@/components/ui/AiButton'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
+    const [aiReviewResponse,setAiReviewResponse]=useState<AiApiResponse[]>([])
     const [mcqScore, setMcqScore] = useState(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
-    const [isGenerating, setIsGenerating] = useState(false);
     const [totalPoints, setTotalPoints] = useState<number | undefined>();
     const [candidateList, setCandidateList] = useState<CandidateData[]>([]);
     const [editedSubmission, setEditedSubmission] = useState<CandidateSubmission | null>(null);
@@ -61,39 +60,31 @@ export default function Component() {
         fetchExamData();
     }, [examId]);
     const handleAiResponse = async (submissionId: string) => {
-        setIsGenerating(true);
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/ProblemSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                const { score } = response.data;
-                updateProblemSubmission(submissionId, { score: score });
+                setAiReviewResponse(prev => [...prev, response.data]);
             } else {
                 toast.error("Failed to get AI review.");
             }
         } catch  {
             toast.error("Error communicating with AI service.");
-        }finally{
-            setIsGenerating(false)
         }
     };
     const handleAiWrittenResponse = async (submissionId: string) => {
-        setIsGenerating(true)
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/WrittenSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                const { score } = response.data;
-                updateWrittenSubmission(submissionId, { score: score });
+                setAiReviewResponse(prev => [...prev, response.data]);
             } else {
                 toast.error("Failed to get AI review.");
             }
         } catch  {
             toast.error("Error communicating with AI service.");
-        }finally{
-            setIsGenerating(false)
         }
     };
     useEffect(() => {
@@ -198,7 +189,20 @@ const updateProblemSubmission = (
       return {...prev, problem: updatedProblem};
     });
   };
-  
+  const ReviewWithAi=()=>{
+    return(
+        <>
+        {aiReviewResponse.length > 0 && (<>
+                      <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
+                        <p className="text-sm italic text-gray-600 dark:text-gray-400">AI Review:</p>
+                        <p className='w-full'>{aiReviewResponse.find(res => res.review)?.review || 'No review available'}</p>
+                      </div>
+                      <p className='w-full'>AI Score: {aiReviewResponse.find(res => res.score)?.score??0}</p>
+                      </>
+                    )}
+        </>
+    )
+  }
   const updateWrittenSubmission = (
     questionId: string,
     updates: Partial<WrittenSubmission>
@@ -368,7 +372,7 @@ const updateProblemSubmission = (
                                                 submission.questionId
                                             ] ? (
                                                 <ReactMarkdown>
-                                                { questionsData[ submission.questionId].statementMarkdown}
+                                                { questionsData[submission.questionId].statementMarkdown}
                                                 </ReactMarkdown>
                                             ) : ("Loading question...")}
                                         </div>
@@ -380,7 +384,12 @@ const updateProblemSubmission = (
                                                 </div>
                                             </Card>
                                         </div>
-                                        <AiButton onPress={()=>handleAiResponse(submission.problemSubmissionId)} loading={isGenerating}/>
+                                        <ReviewWithAi/>
+                                        <div className='w-full flex justify-end'>
+                                        <Button onPress={()=>handleAiResponse( submission.questionId)}
+      className=" gap-2 py-2 px-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-semibold shadow-md hover:opacity-90 transition">
+          Review With AI
+    </Button></div>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Result</h4>
                                             <div className="flex items-center gap-5">
@@ -453,7 +462,13 @@ const updateProblemSubmission = (
                                                     {submission.answer}
                                                 </div>
                                             </Card>
-                                            <AiButton onPress={()=>handleAiWrittenResponse(submission.writtenSubmissionId)} loading={isGenerating}/>
+                                            <ReviewWithAi/>
+                                            <div className='w-full flex justify-end'>
+                                            <Button onPress={()=>handleAiWrittenResponse(submission.questionId)}
+      className=" gap-2 py-2 px-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-semibold shadow-md hover:opacity-90 transition">
+          Review With AI
+    </Button>
+    </div>
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2">Result</h4>
@@ -467,16 +482,12 @@ const updateProblemSubmission = (
                                                         onChange={(e) =>
                                                             updateWrittenSubmission(
                                                                 submission.questionId,
-                                                                {score: parseInt(e.target.value)}
-                                                            )
-                                                        }
-                                                    />
-                                                    /{questionsData[submission.questionId].score}
+                                                                {score: parseInt(e.target.value)})
+                                                        }/>/{questionsData[submission.questionId].score}
                                                 </div>
                                                 <Button
                                                     size="sm"
-                                                    variant="flat"
-                                                >
+                                                    variant="flat">
                                                     <input
                                                         type="checkbox"
                                                         checked={
