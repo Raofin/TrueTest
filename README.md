@@ -14,6 +14,11 @@
 🗂️ **Project Management**: [ClickUp Board](https://sharing.clickup.com/9018748645/b/h/6-901804967032-2/87cfea55e909e2c) and [WBS Document](https://docs.google.com/spreadsheets/d/1W8B64OiUsHmxep4WSxsuw9yIJhcLsX7WFnyozvuyhJo/edit?usp=sharing) <br>
 💻 **GitHub Repository**: [Learnathon-By-Geeky-Solutions/elite-programmers](https://github.com/Learnathon-By-Geeky-Solutions/elite-programmers) <br>
 
+## 🔑 **Admin Account Credentials**
+
+**Username**: `admin` <br>
+**Password**: `P@ss9999`
+
 ## 🩺 Project Status
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
@@ -30,13 +35,13 @@
 
 ## 🏆 Team Elite Programmers
 
-| Name                 | GitHub Username                            | Role(s)                                           |
+### 👨‍🏫 Mentor: Mahbubur Rahman [@mahbub23](https://github.com/mahbub23)
+
+| Team Member          | GitHub Username                            | Role(s)                                           |
 | -------------------- | ------------------------------------------ | ------------------------------------------------- |
 | Zaid Amin Rawfin     | [@raofin](https://github.com/raofin)       | Backend Development, UI/UX Design, PM, **Leader** |
 | Kohinoor Akther Akhi | [@akhi005](https://github.com/Akhi005)     | Frontend                                          |
 | Md Nahid Chowdhury   | [@mdnahid20](https://github.com/mdnahid20) | Backend                                           |
-
-### 👨‍🏫 Mentor: Mahbubur Rahman [@mahbub23](https://github.com/mahbub23)
 
 ## 🪪 License
 
