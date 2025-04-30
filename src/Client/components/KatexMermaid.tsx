@@ -7,6 +7,7 @@ import mermaid from 'mermaid'
 import katex from 'katex'
 import 'katex/dist/katex.css'
 import rehypeSanitize from 'rehype-sanitize'
+import useTheme from '@/hooks/useTheme'
 
 mermaid.initialize({
   startOnLoad: false,
@@ -91,8 +92,11 @@ const Code: React.FC<CodeProps> = ({ children = [], className, node }) => {
 }
 
 export default function MdEditor({ value, onChange }: MdEditorProps) {
+  const Mode=useTheme();let theme="dark";
+  if(Mode==='light')  theme="light"
+  else theme="dark"
   return (
-   <div data-color-mode="dark">
+   <div data-color-mode={theme}>
      <MDEditor
       className="w-full "
       onChange={(newValue = '') => onChange(newValue)}
