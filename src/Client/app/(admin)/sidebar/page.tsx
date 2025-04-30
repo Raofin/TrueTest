@@ -9,11 +9,12 @@ import ThemeSwitch from "@/app/ThemeSwitch";
 import { Avatar } from "@heroui/react";
 import { PiNotepadFill } from "react-icons/pi";
 import { BiSolidPlusSquare, BiSolidUserRectangle } from "react-icons/bi";
-import { MdEmail } from "react-icons/md";
 import { RiAdminFill, RiDashboardFill } from "react-icons/ri";
 import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
 import { useAuth } from "@/context/AuthProvider";
-import { MdRateReview } from "react-icons/md";
+import { MdRateReview,MdEmail } from "react-icons/md";
+import LoadingModal from '@/components/ui/Modal/LoadingModal'
+import { FaUserCheck } from "react-icons/fa";
 
 const menuItems = [
     {
@@ -41,6 +42,12 @@ const menuItems = [
         path: "/invite-candidates",
     },
     {
+        key: "review",
+        icon: <MdRateReview size={30} />,
+        label: "Review Results",
+        path: "/exams/results",
+    },
+    {
         key: "users",
         icon: <BiSolidUserRectangle size={30} />,
         label: " Manage Users",
@@ -53,25 +60,26 @@ const menuItems = [
         path: "/add-admins",
     },
     {
-        key: "review",
-        icon: <MdRateReview size={30} />,
-        label: "Review Results",
-        path: "/exams/results",
+        key: "candidate",
+        icon: <FaUserCheck size={30} />,
+        label: "Candidate View",
+        path: "/home",
     }
 ];
 const Sidebar = () => {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const { user, logout,profileImage} = useAuth();
+    const [loading,setLoading]=useState(false)
     return (
-        <div
-            className={`h-screen fixed left-0 top-0 flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b] px-2 rounded-lg `}
-        >
+       <>
+       <LoadingModal isOpen={loading} message="Loading..."/>
+        <div  className={`h-screen fixed left-0 top-0 flex flex-col flex-grow  justify-between bg-white dark:bg-[#18181b] px-2 rounded-lg `}>
             <div className={` h-full  flex flex-col justify-between ${isCollapsed ? "w-16" : "w-56"}`}>
                 <div>
                     <div className="flex flex-col pt-3 pl-2">
                         <div className="flex w-full justify-between ">
-                            {!isCollapsed && <Logo />}
+                            <Link href='/overview'>{!isCollapsed && <Logo />}</Link>
                             <button
                                 onClick={() => setIsCollapsed(!isCollapsed)}
                                 className="p-2 rounded-lg">
@@ -88,7 +96,7 @@ const Sidebar = () => {
                     </div>
                     <div className="flex items-center gap-2 ml-3 my-3">
                         <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                            <Avatar size="sm" src={profileImage||""} alt="User Avatar" />
+                           <Link href='/overview'> <Avatar size="sm" src={profileImage||""} alt="User Avatar" /></Link>
                         </div>
                         {!isCollapsed && (
                             <Link
@@ -155,7 +163,9 @@ const Sidebar = () => {
                             </div>
                             {!isCollapsed && (
                                 <Link href="/">
-                                    <button onClick={logout}> Log Out </button>
+                                    <button onClick={()=>{logout();
+                                        setLoading(true);
+                                    }}> Log Out </button>
                                 </Link>
                             )}
                         </div>
@@ -163,6 +173,7 @@ const Sidebar = () => {
                 </div>
             </div>
         </div>
+       </>
     );
 };
 

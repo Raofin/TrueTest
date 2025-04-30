@@ -10,8 +10,8 @@ import {
     TableRow,
     TableCell,
     Input,
-    Button,
     Pagination,
+    Button,
 } from "@heroui/react";
 import SearchIcon from "@/components/ui/SearchIcon";
 import PaginationButtons from "@/components/ui/PaginationButton";
@@ -105,17 +105,18 @@ export default function Component() {
         }
         if (columnKey === "action") {
             return (
-                <div className="flex w-[100px] gap-5 justify-between ml-6">
-                    <button
+                <div className="flex gap-3 w-[100px] justify-between ml-6">
+                    <Button
                         type="button"
+                        variant='solid'
                         aria-label="Change Status"
-                        onClick={() => {
+                        onPress={() => {
                             setSelectedUser(user.accountId);
                             setIsActiveModalOpen(true);
                         }}
                     >
-                        {user.isActive ? "Deactivate" : "Activate"}
-                    </button>
+                        {user.isActive ? "Disable" : "Enable"}
+                    </Button>
                     <button
                         type="button"
                         aria-label="Delete User"
@@ -124,7 +125,7 @@ export default function Component() {
                             setIsDeleteModalOpen(true);
                         }}
                     >
-                        <MdDelete className={"text-xl"} />
+                        <MdDelete className={"text-2xl"} />
                     </button>
                 </div>
             );
@@ -272,9 +273,9 @@ export default function Component() {
                 }}
                 title="Status Confirmation"
                 content={`Do you want to ${
-                    status ? "deactivate" : "activate"
+                    status ? "disable" : "enable"
                 } this record`}
-                confirmButtonText={`${status ? "Deactivate" : "Activate"}`}
+                confirmButtonText={`${status ? "Disable" : "Enable"}`}
                 onConfirm={async () => {
                     const resp = await handleStatus(selectedUser, setStatus);
                     if (resp) {
@@ -300,17 +301,34 @@ export default function Component() {
                 content={`Do you want to delete this record?`}
                 confirmButtonText="Delete"
                 onConfirm={async () => {
-                    const success = await handleDelete(selectedUser);
-                    if (success) {
-                        setUserData((prevUsers) =>
-                            prevUsers.filter(
-                                (user) => user.accountId !== selectedUser
-                            )
-                        );
-                    }
-                    setIsDeleteModalOpen(false);
-                    setSelectedUser("");
-                }}
+                 
+                     const success = await handleDelete(selectedUser);
+                     if (success) {
+                      setUserData((prevUsers) =>
+                     prevUsers.filter((user) => user.accountId !== selectedUser));
+                      setIsDeleteModalOpen(false);
+                      setSelectedUser("");
+                      const remainingUsersOnCurrentPage = filteredItems.filter(
+                     (user) => user.accountId !== selectedUser).slice((page - 1) * rowsPerPage, page * rowsPerPage).length;
+                      if (remainingUsersOnCurrentPage === 0 && page > 1)  setPage(page - 1);
+                      else {
+                       const ManageUser = async () => {
+                    try {
+                     const response = await api.get<ApiResponse>(
+                        `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${
+                            roleFilter ? `&role=${roleFilter}` : ""
+                        }${searchTerm ? `&searchTerm=${searchTerm}` : ""}`
+                     );
+                     if (response.status === 200) {
+                      setUserData(response.data.accounts);
+                      setTotalPages(response.data.page.totalPages ?? 1);
+                     }
+                    } catch  {}
+                     };
+                      ManageUser();
+                      }
+                     }
+                    }}
             />
         </div>
     );

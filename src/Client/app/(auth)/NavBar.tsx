@@ -7,9 +7,9 @@ import ThemeSwitch from '../ThemeSwitch'
 export default function Component() {
   return (
     <div className=" w-full flex justify-between items-center h-16 px-14 pt-3">
-      <div className="bg-[#eeeef0] dark:bg-[#000000]">
+      <Link href="/"><div className="bg-[#eeeef0] dark:bg-[#000000]">
         <Logo />
-      </div>
+      </div></Link>
       <div className="flex">
         <Navbar
           classNames={{

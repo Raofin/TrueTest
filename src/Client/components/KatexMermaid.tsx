@@ -2,60 +2,66 @@
 
 import React, { useState, useRef, useEffect, Fragment, useCallback } from 'react'
 import MDEditor from '@uiw/react-md-editor'
+import { getCodeString } from 'rehype-rewrite'
 import mermaid from 'mermaid'
 import katex from 'katex'
 import 'katex/dist/katex.css'
 import rehypeSanitize from 'rehype-sanitize'
+import useTheme from '@/hooks/useTheme'
 
-const randomid = () => {
-  const array = new Uint32Array(10)
-  window.crypto.getRandomValues(array)
-  return Array.from(array)
-    .map((n) => n.toString(36))
-    .join('')
-    .substring(0, 15)
-}
-
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'default',
+  securityLevel: 'loose',
+})
+const randomid = () => parseInt(String(Math.random() * 1e15), 10).toString(36)
 interface CodeProps {
+  inline?: boolean
   children?: React.ReactNode
   className?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  node?: any
 }
 interface MdEditorProps {
-  readonly value: string;
-  readonly onChange: (newValue: string) => void;
+  readonly value: string
+  readonly onChange: (newValue: string) => void
 }
-const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
+
+const Code: React.FC<CodeProps> = ({ children = [], className, node }) => {
   const demoid = useRef(`dome${randomid()}`)
   const [container, setContainer] = useState<HTMLElement | null>(null)
-  let code = ''
-  if (Array.isArray(children)) {
-    code = children.map((child) => (typeof child === 'string' ? child : '')).join('')
-  } else if (typeof children === 'string') {
-    code = children
-  }
-
+  
+  const isMermaid = className && /^language-mermaid/.test(className.toLowerCase())
+  const isKaTeX = className && /^language-katex/.test(className.toLowerCase())
+  
+  const code = React.useMemo(() => {
+    if (node?.children) {
+      return getCodeString(node.children)
+    }
+    if (Array.isArray(children)) {
+      return children.filter(child => typeof child === 'string').join('')
+    }
+    if (typeof children === 'string') {
+      return children
+    }
+    return ''
+  }, [node, children])
 
   useEffect(() => {
-    if (container && code) {
-      const isMermaid = className?.toLowerCase().startsWith('language-mermaid')
-      const isKaTeX = className?.toLowerCase().startsWith('language-katex')
-      if (isMermaid) {
-        mermaid
-          .render(demoid.current, code)
-          .then(({ svg, bindFunctions }) => {
+    if (container && isMermaid && demoid.current && code) {
+      mermaid
+        .render(demoid.current, code)
+        .then(({ svg, bindFunctions }) => {
+          if (container) {
             container.innerHTML = svg
             if (bindFunctions) {
               bindFunctions(container)
             }
-          })
-          .catch((error) => console.log('mermaid error:', error))
-      } else if (isKaTeX) {
-        const html = katex.renderToString(code, { throwOnError: false })
-        container.innerHTML = html
-      }
+          }
+        })
+        .catch((error) => console.log('Mermaid error:', error))
     }
-  }, [container, className, code])
-
+  }, [container, isMermaid, code])
 
   const refElement = useCallback((node: HTMLElement | null) => {
     if (node !== null) {
@@ -63,8 +69,7 @@ const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
     }
   }, [])
 
-
-  if (className?.toLowerCase().startsWith('language-mermaid')) {
+  if (isMermaid) {
     return (
       <Fragment>
         <code id={demoid.current} style={{ display: 'none' }} />
@@ -73,42 +78,40 @@ const Code: React.FC<CodeProps> = ({ children = [], className = '' }) => {
     )
   }
 
-
-  if ( className?.toLowerCase().startsWith('language-katex')) {
-    return <code className={className} ref={refElement} />
+  if (isKaTeX) {
+    const html = katex.renderToString(code, { throwOnError: false })
+    return <code dangerouslySetInnerHTML={{ __html: html }} />
   }
-
 
   if (typeof children === 'string' && /^\$\$(.*)\$\$/.test(children)) {
     const html = katex.renderToString(children.replace(/^\$\$(.*)\$\$/, '$1'), { throwOnError: false })
     return <code dangerouslySetInnerHTML={{ __html: html }} style={{ background: 'transparent' }} />
   }
 
-
   return <code className={className}>{children}</code>
 }
 
-
-const MarkdownCode: React.FC<CodeProps> = (props) => <Code {...props} />
 export default function MdEditor({ value, onChange }: MdEditorProps) {
- 
+  const Mode=useTheme();let theme="dark";
+  if(Mode==='light')  theme="light"
+  else theme="dark"
   return (
-    <MDEditor
-      className="w-full dark:bg-[#18181b] dark:text-white"
+   <div data-color-mode={theme}>
+     <MDEditor
+      className="w-full "
       onChange={(newValue = '') => onChange(newValue)}
       textareaProps={{
         placeholder: 'Please enter Markdown text',
       }}
-      height={300}
+      height={350}
       value={value}
       previewOptions={{
         rehypePlugins: [[rehypeSanitize]],
         components: {
-          code: MarkdownCode
+          code: Code
         },
       }}
     />
+   </div>
   )
 }
-
-

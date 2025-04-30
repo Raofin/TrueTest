@@ -57,3 +57,7 @@ export interface ExamResponse {
         written: WrittenSubmission[];
     };
 }
+export interface AiApiResponse{
+     review:string;
+     score:number
+}

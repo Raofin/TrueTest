@@ -7,29 +7,8 @@ import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
-
-interface WrittenQuestion {
-    id: string;
-    questionId: string;
-    question: string;
-    points: number;
-    difficultyType: string;
-    isShortAnswer: boolean;
-    isLongAnswer: boolean;
-}
-interface ExistingQuestion {
-    questionId: string;
-    statementMarkdown: string;
-    score: number;
-    difficultyType: string;
-    hasLongAnswer: boolean;
-}
-interface WrittenQuestionFormProps {
-    readonly examId: string;
-    readonly existingQuestions: ExistingQuestion[];
-    readonly onSaved: () => void;
-    readonly writtenPoints: (points: number) => void;
-}
+import { AiButton } from '../ui/AiButton'
+import { WrittenQuestionForm, WrittenQuestionFormProps } from '../types/writtenQues'
 
 export default function Component({
     examId,
@@ -37,7 +16,7 @@ export default function Component({
     onSaved,
     writtenPoints,
 }: WrittenQuestionFormProps) {
-    const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestion[]>(
+    const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestionForm[]>(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   id: uuidv4(),
@@ -48,8 +27,7 @@ export default function Component({
                   isShortAnswer: !q.hasLongAnswer,
                   isLongAnswer: q.hasLongAnswer,
               }))
-            : [
-                  {
+            : [ {
                       id: uuidv4(),
                       questionId: "",
                       question: "",
@@ -60,19 +38,18 @@ export default function Component({
                   },
               ]
     );
+    const [isGenerating,setIsGenerating]=useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [saveButton, setSaveButton] = useState(false);
     const questionsPerPage = 1;
     useEffect(() => {
         const total = writtenQuestions.reduce(
-            (sum, problem) => sum + (problem.points || 0),
-            0
-        );
+            (sum, problem) => sum + (problem.points || 0), 0);
         writtenPoints(total);
     }, [writtenQuestions, writtenPoints]);
     const handleAddWrittenQuestion = () => {
         setWrittenQuestions((prevQuestions) => {
-            const newQuestions: WrittenQuestion[] = [
+            const newQuestions: WrittenQuestionForm[] = [
                 ...prevQuestions,
                 {
                     id: uuidv4(),
@@ -233,6 +210,27 @@ export default function Component({
             ),
         [writtenQuestions, currentPage, questionsPerPage]
     );
+    const handleAiResponse=()=>{
+               const FetchData=async()=>{
+                setIsGenerating(true)
+               try{
+                 const response=await api.post('/Ai/Generate/WrittenQuestion',{
+                    userPrompt: writtenQuestions[currentPage].question
+                 })
+                 if(response.status===200){
+                    const { questionStatement } = response.data;
+
+                setWrittenQuestions((prev) =>
+                    prev.map((q, idx) =>
+                        idx === currentPage ? { ...q, question: questionStatement } : q
+                    )
+                );
+                 }
+               }catch{}
+               finally{setIsGenerating(false)}
+               }
+               FetchData();
+           }
     return (
         <div>
             <Card
@@ -242,7 +240,7 @@ export default function Component({
                     {" "}
                     Written Question : {currentPage + 1}{" "}
                 </h2>
-                {currentQuestions.map((question) => (
+                {currentQuestions.map((question) => (<>
                     <div key={question.id} className="w-full">
                         <div className="p-4 mx-5 rounded-lg mt-4">
                             <Textarea
@@ -329,8 +327,9 @@ export default function Component({
                             </div>
                         </div>
                     </div>
-                ))}
-                <div className="flex w-full justify-center items-center my-3 p-5">
+               
+                <div className="w-full grid grid-cols-3 my-3 p-5">
+                       <div className=''><AiButton onPress={handleAiResponse} loading={isGenerating}/></div> 
                     <div className="flex items-center gap-2 ml-12">
                         <span>
                             Page {currentPage + 1} of {totalPages}
@@ -349,6 +348,7 @@ export default function Component({
                         />
                     </div>
                 </div>
+                </> ))}
             </Card>
             <div className="flex justify-center my-8 gap-3">
                 <Button onPress={handleAddWrittenQuestion}>
