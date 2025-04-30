@@ -13,8 +13,16 @@ using OPS.Persistence.Repositories.Users;
 
 namespace OPS.Persistence;
 
+/// <summary>
+/// Extension methods for <see cref="IServiceCollection"/> to register persistence layer dependencies.
+/// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Adds persistence layer services and repositories to the service collection.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
     public static IServiceCollection AddPersistence(this IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();

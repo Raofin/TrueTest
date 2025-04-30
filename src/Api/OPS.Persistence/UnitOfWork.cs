@@ -47,6 +47,7 @@ internal class UnitOfWork(
     public ICloudFileRepository CloudFile { get; } = cloudFileRepository;
     public IAdminInviteRepository AdminInvite { get; } = adminInviteRepository;
 
+    /// <inheritdoc />
     public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
     {
         _dbContext.ChangeTracker
@@ -69,6 +70,7 @@ internal class UnitOfWork(
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         _dbContext.Dispose();

@@ -8,8 +8,15 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace OPS.Api;
 
+/// <summary>
+/// Extension methods for <see cref="WebApplication"/> and <see cref="IServiceCollection"/> to configure API-related services.
+/// </summary>
 internal static class DependencyInjection
 {
+    /// <summary>
+    /// Configures middleware pipeline for controllers, including routing, CORS, authentication, authorization, and exception handling.
+    /// </summary>
+    /// <param name="app">The <see cref="WebApplication"/> instance.</param>
     public static void UseControllers(this WebApplication app)
     {
         app.UseMiddleware<GlobalRoutePrefixMiddleware>("/api");
@@ -29,6 +36,10 @@ internal static class DependencyInjection
             app.UseMiddleware<ExceptionHandleMiddleware>();
     }
 
+    /// <summary>
+    /// Configures and enables API documentation using Swagger UI and Scalar.
+    /// </summary>
+    /// <param name="app">The <see cref="WebApplication"/> instance.</param>
     public static void UseApiDocumentation(this WebApplication app)
     {
         app.UseScalar();
@@ -50,6 +61,11 @@ internal static class DependencyInjection
         });
     }
 
+    /// <summary>
+    /// Adds API-related services to the service collection, including controllers, HTTP context accessor, problem details, CORS, and OpenAPI/Swagger.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> instance.</param>
+    /// <param name="configuration">The <see cref="IConfiguration"/> instance.</param>
     public static void AddApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
@@ -61,6 +77,11 @@ internal static class DependencyInjection
         services.AddSwagger();
     }
 
+    /// <summary>
+    /// Configures Cross-Origin Resource Sharing (CORS) based on the provided configuration.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> instance.</param>
+    /// <param name="configuration">The <see cref="IConfiguration"/> instance.</param>
     private static void AddCorsWithOrigins(this IServiceCollection services, IConfiguration configuration)
     {
         var corsConfig = configuration.GetSection("Cors");
@@ -92,6 +113,10 @@ internal static class DependencyInjection
         });
     }
 
+    /// <summary>
+    /// Configures Scalar UI for OpenAPI documentation.
+    /// </summary>
+    /// <param name="app">The <see cref="WebApplication"/> instance.</param>
     private static void UseScalar(this WebApplication app)
     {
         app.MapOpenApi();
@@ -105,6 +130,10 @@ internal static class DependencyInjection
         });
     }
 
+    /// <summary>
+    /// Adds Swagger services to the service collection, including OpenAPI documentation generation and security configuration.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> instance.</param>
     private static void AddSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(options =>

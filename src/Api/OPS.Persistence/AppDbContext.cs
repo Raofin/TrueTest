@@ -8,6 +8,9 @@ using OPS.Persistence.Seeding;
 
 namespace OPS.Persistence;
 
+/// <summary>
+/// Represents the application's database context, providing access to entities and managing database interactions.
+/// </summary>
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Account> Accounts { get; set; } = null!;
@@ -31,6 +34,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<CloudFile> CloudFiles { get; set; } = null!;
     public DbSet<LogEvent> LogEvents { get; set; } = null!;
 
+    /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);

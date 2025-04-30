@@ -11,6 +11,9 @@ using static OPS.Domain.Constants.Permissions;
 
 namespace OPS.Api.Controllers;
 
+/// <summary>
+/// API endpoints for managing Multiple Choice Questions (MCQ).
+/// </summary>
 [Route("Questions/Mcq")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 [ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
@@ -19,13 +22,13 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    /// <summary>Creates an MCQ Question.</summary>
-    /// <param name="command">A new MCQ question with details.</param>
+    /// <summary>Creates a new MCQ Question.</summary>
+    /// <param name="command">Details of the MCQ question to be created, including options and correct answer.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Newly created MCQ question.</returns>
+    /// <returns>Details of the newly created MCQ question.</returns>
     [HttpPost("Create")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Creates an MCQ Question.")]
+    [EndpointDescription("Creates a new MCQ Question.")]
     [ProducesResponseType<List<McqQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -36,13 +39,13 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Retrieves an MCQ question.</summary>
-    /// <param name="questionId">MCQ question Id.</param>
+    /// <summary>Retrieves a specific MCQ question by its unique identifier.</summary>
+    /// <param name="questionId">The unique identifier of the MCQ question to retrieve.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>MCQ question with details.</returns>
+    /// <returns>Details of the requested MCQ question.</returns>
     [HttpGet("{questionId:guid}")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Retrieves an MCQ question.")]
+    [EndpointDescription("Retrieves a specific MCQ question by its unique identifier.")]
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -53,13 +56,13 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Retrieves MCQ questions of an exam.</summary>
-    /// <param name="examId">Exam Id.</param>
+    /// <summary>Retrieves all MCQ questions associated with a specific exam.</summary>
+    /// <param name="examId">The unique identifier of the exam.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>List of all MCQ questions of an exam.</returns>
+    /// <returns>A list of all MCQ questions belonging to the specified exam.</returns>
     [HttpGet("ByExam/{examId:guid}")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Retrieves MCQ questions of an exam.")]
+    [EndpointDescription("Retrieves all MCQ questions associated with a specific exam.")]
     [ProducesResponseType<List<McqQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> GetMcqByExamAsync(Guid examId, CancellationToken cancellationToken = default)
@@ -69,13 +72,13 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Updates an MCQ question.</summary>
-    /// <param name="command">MCQ question Id and updated details.</param>
+    /// <summary>Updates an existing MCQ question with new details.</summary>
+    /// <param name="command">The unique identifier of the MCQ question to update and the new details, including options and correct answer.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>The updated MCQ question.</returns>
+    /// <returns>Details of the updated MCQ question.</returns>
     [HttpPatch("Update")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Updates an MCQ question.")]
+    [EndpointDescription("Updates an existing MCQ question with new details.")]
     [ProducesResponseType<McqQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -87,13 +90,13 @@ public class QuestionMcqController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Deletes an MCQ question.</summary>
-    /// <param name="questionId">MCQ question Id.</param>
+    /// <summary>Deletes a specific MCQ question by its unique identifier.</summary>
+    /// <param name="questionId">The unique identifier of the MCQ question to delete.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Success response.</returns>
+    /// <returns>A success response indicating that the MCQ question has been deleted.</returns>
     [HttpDelete("Delete/{questionId:guid}")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Deletes an MCQ question.")]
+    [EndpointDescription("Deletes a specific MCQ question by its unique identifier.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]

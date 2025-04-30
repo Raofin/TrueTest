@@ -3,8 +3,12 @@ using OPS.Application.Interfaces.Auth;
 
 namespace OPS.Application.Services;
 
+/// <summary>
+/// Implementation of the <see cref="IOtpGenerator"/> interface for generating One-Time Passwords (OTPs).
+/// </summary>
 public class OtpGenerator : IOtpGenerator
 {
+    /// <inheritdoc />
     public string Generate(int length = 4)
     {
         if (length is < 4 or > 10)

@@ -10,12 +10,16 @@ using Serilog;
 
 namespace OPS.Infrastructure.Gemini;
 
+/// <summary>
+/// Implementation of the <see cref="IAiService"/> interface for interacting with the Gemini AI model.
+/// </summary>
 internal class GeminiService(IGeminiClient geminiClient, IOptions<GeminiSettings> settings) : IAiService
 {
     private readonly IGeminiClient _geminiClient = geminiClient;
     private readonly string _apiKey = settings.Value.ApiKey;
     private readonly string _model = settings.Value.Model;
 
+    /// <inheritdoc />
     public async Task<T?> PromptAsync<T>(PromptRequest prompt)
     {
         try
