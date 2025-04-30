@@ -34,7 +34,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                 <option value="hard">Hard</option>
             </select>
         </div>
-        <div className="dark:bg-[#18181b] dark:text-white w-full">
+        <div className=" w-full">
             <MdEditor value={problem.question} onChange={onQuestionChange} />
         </div>
         {problem.testCases.map((testCase, index) => (
