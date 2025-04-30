@@ -68,7 +68,6 @@ export default function Component() {
                 const response = await api.get("/Exam");
                 if (response.status === 200) {
                     setExams(response.data);
-                    console.log(exams);
                 }
             } catch {
             } finally {

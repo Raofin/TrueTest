@@ -23,3 +23,14 @@ body {
     margin: 0;
     padding: 0;
 }
+.mermaid-container {
+    background-color: white;
+    padding: 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  
+  .mermaid-container svg {
+    max-width: 100%;
+    height: auto;
+  }

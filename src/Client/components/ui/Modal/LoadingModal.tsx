@@ -2,6 +2,7 @@
 
 import React from 'react';
 import styles from '@/styles/LoadingModal.module.css'; 
+import { Spinner } from '@heroui/spinner'
 
 interface LoadingModalProps {
   isOpen: boolean;
@@ -15,7 +16,7 @@ const LoadingModal: React.FC<LoadingModalProps> = ({ isOpen, message = 'Loading.
   return (
     <div className={styles.modalOverlay}>
       <div className={`${styles.modalContent} dark:bg-[#18181b] dark:text-white`}>
-        <div className={styles.spinner}></div>
+        <Spinner/>
         <p className={styles.message}>{message}</p>
       </div>
     </div>

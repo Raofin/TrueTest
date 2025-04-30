@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
     Dropdown,
     DropdownTrigger,
@@ -17,25 +17,25 @@ import { Icon } from "@iconify/react";
 import ThemeSwitch from "../app/ThemeSwitch";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
+import LoadingModal from './ui/Modal/LoadingModal'
 
 export default function Component() {
     const { user, logout ,profileImage} = useAuth();
     const router = useRouter();
+    const [loading,setLoading]=useState(false)
     return (
         <div>
-            <Navbar
-                classNames={{
-                    wrapper:
-                        "w-full justify-end bg-[#eeeef0] dark:bg-[#000000]",
+            <LoadingModal isOpen={loading} message="Loading..."/> 
+            <Navbar  classNames={{  wrapper: "w-full justify-end bg-[#eeeef0] dark:bg-[#000000]",
                     item: "hidden md:flex",  }} >
                 <NavbarContent
-                    className="h-11 gap-3 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]"
+                    className="h-11 gap-1 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]"
                     justify="end">
                     <NavbarItem>
                         <ThemeSwitch />
                     </NavbarItem>
                     <NavbarItem>
-                        <button type="button">
+                        <button type="button" className='p-4'>
                             <Dropdown placement="bottom-end">
                                 <DropdownTrigger>
                                     <div className="mt-1 h-8 w-8 outline-none transition-transform">
@@ -101,8 +101,7 @@ export default function Component() {
                                             Account Settings
                                         </button>
                                     </DropdownItem>
-
-                                    <DropdownItem key="logout" onPress={logout} textValue="Logout">
+                                    <DropdownItem key="logout" onPress={()=>{logout();setLoading(true)}} textValue="Logout">
                                         <div className="flex gap-2">
                                             <Icon
                                                 icon="lucide:log-out"

@@ -48,7 +48,10 @@ export default function Component() {
           const target = e.target as HTMLElement;
           const isInputOrTextarea = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
           const isButton = target.tagName === 'BUTTON';
-      
+          if (e.key === 'Escape') {
+             e.preventDefault();
+             e.stopPropagation();
+             return;}
           if (isInputOrTextarea || isButton) {
             return;
           }
