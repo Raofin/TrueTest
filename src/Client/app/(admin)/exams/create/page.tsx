@@ -33,6 +33,7 @@ export default function ExamFormPage() {
     const [activeComponents, setActiveComponents] = useState<
         { id: string; type: string }[]
     >([]);
+    const [isGenerating, setIsGenerating] = useState(false);
     const searchParams = useSearchParams();
     const route = useRouter();
     const [examId, setExamId] = useState(searchParams.get("id") || "");
@@ -63,6 +64,7 @@ export default function ExamFormPage() {
     };
     const handleAiResponse=()=>{
         const FetchData=async()=>{
+         setIsGenerating(true);
         try{
           const response=await api.post('/Ai/Generate/ExamDescription',{
             title:formData.title,
@@ -72,6 +74,9 @@ export default function ExamFormPage() {
             setFormData({ ...formData, description: response.data.description });
           }
         }catch{}
+        finally {
+            setIsGenerating(false);
+          }
         }
         FetchData();
     }
@@ -350,7 +355,7 @@ export default function ExamFormPage() {
                             }
                         />
                        </div>
-                        <div className='absolute top-2 right-2'><AiButton onPress={handleAiResponse}/></div>
+                        <div className='absolute top-2 right-2'><AiButton onPress={handleAiResponse} loading={isGenerating}/></div>
                         </div>
                         <div className="flex gap-5">
                             <DatePicker

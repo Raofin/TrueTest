@@ -17,6 +17,7 @@ export default function Component() {
     const [mcqScore, setMcqScore] = useState(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
+    const [isGenerating, setIsGenerating] = useState(false);
     const [totalPoints, setTotalPoints] = useState<number | undefined>();
     const [candidateList, setCandidateList] = useState<CandidateData[]>([]);
     const [editedSubmission, setEditedSubmission] = useState<CandidateSubmission | null>(null);
@@ -60,6 +61,7 @@ export default function Component() {
         fetchExamData();
     }, [examId]);
     const handleAiResponse = async (submissionId: string) => {
+        setIsGenerating(true);
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/ProblemSubmission/${submissionId}`
@@ -72,9 +74,12 @@ export default function Component() {
             }
         } catch  {
             toast.error("Error communicating with AI service.");
+        }finally{
+            setIsGenerating(false)
         }
     };
     const handleAiWrittenResponse = async (submissionId: string) => {
+        setIsGenerating(true)
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/WrittenSubmission/${submissionId}`
@@ -87,6 +92,8 @@ export default function Component() {
             }
         } catch  {
             toast.error("Error communicating with AI service.");
+        }finally{
+            setIsGenerating(false)
         }
     };
     useEffect(() => {
@@ -373,7 +380,7 @@ const updateProblemSubmission = (
                                                 </div>
                                             </Card>
                                         </div>
-                                        <AiButton onPress={()=>handleAiResponse(submission.problemSubmissionId)}/>
+                                        <AiButton onPress={()=>handleAiResponse(submission.problemSubmissionId)} loading={isGenerating}/>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Result</h4>
                                             <div className="flex items-center gap-5">
@@ -446,7 +453,7 @@ const updateProblemSubmission = (
                                                     {submission.answer}
                                                 </div>
                                             </Card>
-                                            <AiButton onPress={()=>handleAiWrittenResponse(submission.writtenSubmissionId)}/>
+                                            <AiButton onPress={()=>handleAiWrittenResponse(submission.writtenSubmissionId)} loading={isGenerating}/>
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2">Result</h4>

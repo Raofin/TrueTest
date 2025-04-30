@@ -9,35 +9,7 @@ import MdEditor from "../KatexMermaid";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
 import { AiButton } from '@/components/ui/AiButton'
-
-interface TestCase {
-    input: string;
-    output: string;
-}
-
-interface Problem {
-    questionId?: string;
-    question: string;
-    testCases: TestCase[];
-    points: number;
-    difficultyType?: string;
-}
-
-interface ProblemItemProps {
-    problem: Problem;
-    onDeleteTestCase: (testCaseIndex: number) => void;
-    onRefreshTestCase: (testCaseIndex: number) => void;
-    onTestCaseChange: (
-        testCaseIndex: number,
-        field: "input" | "output",
-        value: string
-    ) => void;
-    onQuestionChange: (value: string) => void;
-    onPointsChange: (value: number) => void;
-    onAddTestCase: () => void;
-    onDifficultyChange: (value: string) => void;
-    onDeleteProblem: () => void;
-}
+import { FormFooterProps, Problem, ProblemItemProps, ProblemSolvingFormProps, TestCaseItemProps } from '../types/problemQues'
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
     problem,
@@ -100,15 +72,6 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
         </div>
     </div>
 );
-
-interface TestCaseItemProps {
-    testCaseIndex: number;
-    testCase: TestCase;
-    onDelete: (testCaseIndex: number) => void;
-    onRefresh: (testCaseIndex: number) => void;
-    onInputChange: (field: "input" | "output", value: string) => void;
-}
-
 const TestCaseItem: React.FC<TestCaseItemProps> = ({
     testCaseIndex,
     testCase,
@@ -150,13 +113,6 @@ const TestCaseItem: React.FC<TestCaseItemProps> = ({
     </div>
 );
 
-interface FormFooterProps {
-    totalPages: number;
-    currentPage: number;
-    onPrevious: () => void;
-    onNext: () => void;
-}
-
 const FormFooter: React.FC<FormFooterProps> = ({
     totalPages,
     currentPage,
@@ -175,14 +131,6 @@ const FormFooter: React.FC<FormFooterProps> = ({
         />
     </div>
 );
-
-interface ProblemSolvingFormProps {
-    readonly examId: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly existingQuestions: any[];
-    readonly onSaved: () => void;
-    readonly problemPoints: (points: number) => void;
-}
 
 export default function ProblemSolvingForm({
     examId,
@@ -210,8 +158,10 @@ export default function ProblemSolvingForm({
     );
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
+        const [isGenerating, setIsGenerating] = useState(false);
       const handleAiResponse=()=>{
            const FetchData=async()=>{
+            setIsGenerating(true)
            try{
              const response=await api.post('/Ai/Generate/ProblemSolvingQuestion',{
                 userPrompt: problems[currentPage].question
@@ -230,7 +180,10 @@ export default function ProblemSolvingForm({
                   );
              }
            }catch{}
+           finally{
+            setIsGenerating(false)
            }
+         }
            FetchData();
        }
     const handleDeleteProblem = async (problemIndex: number) => {
@@ -534,7 +487,7 @@ export default function ProblemSolvingForm({
                                     }
                                 />
                                 <div className="flex w-full justify-between mt-5">
-                                    <div className=''><AiButton onPress={handleAiResponse}/></div>
+                                    <div className=''><AiButton onPress={handleAiResponse} loading={isGenerating}/></div>
                                     <FormFooter
                                         totalPages={totalPages}
                                         currentPage={currentPage}
