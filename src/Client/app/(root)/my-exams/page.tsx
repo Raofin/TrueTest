@@ -115,8 +115,8 @@ export default function ExamList() {
                                             <div className="flex justify-between">
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        {" "}
-                                                        Date :{" "}
+                                                        
+                                                        Date :
                                                     </span>
                                                     {new Date(
                                                         exam.opensAt
@@ -132,7 +132,7 @@ export default function ExamList() {
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        Start Time :{" "}
+                                                        Start Time :
                                                     </span>
                                                     {convertUtcToLocalTime(
                                                         exam.opensAt
@@ -140,15 +140,15 @@ export default function ExamList() {
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        End Time :{" "}
+                                                        End Time :
                                                     </span>
                                                     {convertUtcToLocalTime(
                                                         exam.closesAt
                                                     )}
                                                 </p>
-                                                <p>
+                                                <p className='text-black dark:text-white'>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        Score :{" "}
+                                                        Score :
                                                     </span>
                                                     {exam.totalPoints}
                                                 </p>
@@ -165,8 +165,8 @@ export default function ExamList() {
                                             <div className="flex flex-col flex-1">
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        {" "}
-                                                        Date :{" "}
+                                                        
+                                                        Date :
                                                     </span>
                                                     {new Date(
                                                         exam.opensAt
@@ -183,15 +183,15 @@ export default function ExamList() {
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
                                                         Duration :
-                                                    </span>{" "}
+                                                    </span>
                                                     {formatTimeHourMinutes(
                                                         exam.durationMinutes
-                                                    )}{" "}
+                                                    )}
                                                     hr
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        {" "}
+                                                        
                                                         Starts at :
                                                     </span>
                                                     {convertUtcToLocalTime(
@@ -212,24 +212,24 @@ export default function ExamList() {
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
                                                         Problem Solving:
-                                                    </span>{" "}
+                                                    </span>
                                                     {exam.problemSolvingPoints}
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
                                                         Written :
-                                                    </span>{" "}
+                                                    </span>
                                                     {exam.writtenPoints}
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
                                                         MCQ :
-                                                    </span>{" "}
+                                                    </span>
                                                     {exam.mcqPoints}
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        Score :{" "}
+                                                        Score :
                                                         {exam.totalPoints}
                                                     </span>
                                                 </p>
