@@ -28,3 +28,17 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
 [![Analyzed Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_elite-programmers&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_elite-programmers)
 [![Total Lines of Code](https://img.shields.io/badge/Total%20Lines-12345-blue)](https://github.com/Learnathon-By-Geeky-Solutions/elite-programmers)
+
+## 🏆 Team Elite Programmers
+
+| Name                 | GitHub Username                            | Role(s)                                           |
+| -------------------- | ------------------------------------------ | ------------------------------------------------- |
+| Zaid Amin Rawfin     | [@raofin](https://github.com/raofin)       | Backend Development, UI/UX Design, PM, **Leader** |
+| Kohinoor Akther Akhi | [@akhi005](https://github.com/Akhi005)     | Frontend                                          |
+| Md Nahid Chowdhury   | [@mdnahid20](https://github.com/mdnahid20) | Backend                                           |
+
+### 👨‍🏫 Mentor: Mahbubur Rahman [@mahbub23](https://github.com/mahbub23)
+
+## 🪪 License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
