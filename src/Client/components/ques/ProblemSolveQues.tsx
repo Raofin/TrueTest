@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Form, Button, Textarea, Card, Input, Select } from "@heroui/react";
+import { Form, Button, Textarea, Card, Input, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import PaginationButtons from "@/components/ui/PaginationButton";
@@ -47,16 +47,18 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     onChange={(e) => onPointsChange(parseInt(e.target.value))}
                 />
                 <div>
-            <Select
-                className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
-                value={problem.difficultyType}
-                label="Select difficulty"
-                onChange={(e) => onDifficultyChange(e.target.value)}
-            >
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </Select>
+                <Select
+        label="Select difficulty"
+        className="max-w-xs"
+        onSelectionChange={(keys) => {
+          const selectedKey = Array.from(keys)[0] as string;
+          onDifficultyChange(selectedKey);
+        }}
+      >
+        <SelectItem key="easy">Easy</SelectItem>
+        <SelectItem key="medium">Medium</SelectItem>
+        <SelectItem key="hard">Hard</SelectItem>
+      </Select>
                </div>
             </div>
             <div>

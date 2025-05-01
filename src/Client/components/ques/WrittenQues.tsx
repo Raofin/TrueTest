@@ -240,7 +240,8 @@ export default function Component({
                 <h2 className="text-2xl mt-3">
                     Written Question : {currentPage + 1}
                 </h2>
-                {currentQuestions.map((question) => (<>
+                {currentQuestions.map((question) => (
+                    <div>
                     <div key={question.id} className="w-full">
                         <div className="p-4 mx-5 rounded-lg mt-4">
                             <Textarea
@@ -355,7 +356,7 @@ export default function Component({
                         />
                     </div>
                 </div>
-                </> ))}
+                </div> ))}
             </Card>
             <div className="flex justify-center my-8 gap-3">
                 <Button onPress={handleAddWrittenQuestion}>
