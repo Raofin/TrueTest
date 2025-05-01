@@ -97,7 +97,7 @@ public class AiPromptController(IMediator mediator) : BaseApiController
     /// </summary>
     /// <param name="query">The query containing the ID of the written submission to review.</param>
     /// <returns>An IActionResult representing the AI review of the written submission.</returns>
-    [HttpPost("Review/WrittenSubmission/{examSubmissionId}")]
+    [HttpPost("Review/WrittenSubmission/{submissionId}")]
     [ProducesResponseType<AiSubmissionReview>(Status200OK)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
     [EndpointDescription("Reviews a written submission using AI.")]
