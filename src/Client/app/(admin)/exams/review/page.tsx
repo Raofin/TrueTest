@@ -396,14 +396,12 @@ const updateProblemSubmission = (
                                                variant = "solid"
                                                onPress={()=>handleAiResponse( submission.questionId)}
                                                startContent={
-                                                 !isGenerating && (
                                                    <Icon
                                                      icon="lucide:sparkles"
                                                      className="text-lg"
-                                                   /> ) }
+                                                   /> }
                                                className="min-w-[160px] font-medium">
-                                               <>{ isGenerating ? "Reviewing..." : "Review With AI"}</>
-                                               
+                                               Review With AI
                                              </Button>
                                           </div>
                                         <div>
@@ -486,14 +484,12 @@ const updateProblemSubmission = (
                                                variant = "solid"
                                                onPress={()=>handleAiWrittenResponse(submission.questionId)}
                                                startContent={
-                                                 !isGenerating && (
                                                    <Icon
                                                      icon="lucide:sparkles"
                                                      className="text-lg"
-                                                   /> ) }
+                                                   />  }
                                                className="min-w-[160px] font-medium">
-                                               <>{ isGenerating ? "Reviewing..." : "Review With AI"}</>
-                                               
+                                             Review With AI
                                              </Button>
     </div>
                                         </div>
