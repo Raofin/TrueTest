@@ -114,7 +114,9 @@ export default function CodeEditor({
                                 ? "success"
                                 : "error"
                             : tc.status,
+                        errorMessage: matchingResult?.errorMessage
                     } as TestCase;
+
                 });
                 setFormattedTestCases(updatedTestCases);
                 setDisplayTestCaseResults(true);
@@ -207,7 +209,7 @@ export default function CodeEditor({
                                     {testCase?.input ?? "No input provided"}
                                 </div>
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
-                                    {testCase?.errorMessage ??testCase?.receivedOutput }
+                                    { testCase?.receivedOutput ?? testCase?.errorMessage}
                                 </div>
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                     {testCase?.output ?? "No expected output"}
