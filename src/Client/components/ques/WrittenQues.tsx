@@ -241,8 +241,8 @@ export default function Component({
                     Written Question : {currentPage + 1}
                 </h2>
                 {currentQuestions.map((question) => (
-                    <div>
-                    <div key={question.id} className="w-full">
+                    <div  key={question.id}>
+                    <div className="w-full">
                         <div className="p-4 mx-5 rounded-lg mt-4">
                             <Textarea
                                 label="Written Question"
