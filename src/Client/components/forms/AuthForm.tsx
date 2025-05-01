@@ -3,14 +3,13 @@
 import { setAuthToken } from "@/lib/auth";
 import ROUTES from "@/constants/route";
 import { useAuth } from "@/context/AuthProvider";
-import { Button, Divider, Link, useDisclosure } from "@heroui/react";
+import { Button, Link, useDisclosure } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useState, useCallback } from "react";
 import { FieldValues, Path, useForm } from "react-hook-form";
 import { ZodType } from "zod";
 import api from "@/lib/api";
-import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import OTPModal from "@/components/ui/Modal/OtpVerification";
