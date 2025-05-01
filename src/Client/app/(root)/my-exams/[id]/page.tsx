@@ -447,9 +447,9 @@ export default function Component() {
                 </div>
             </div>
 
-            <div className="mx-5 mt-3  border-none px-8 h-full flex flex-col justify-between">
+            <div className="mx-5 mt-3  border-none px-8 h-[90vh] flex flex-col justify-between">
                 <div className={`space-y-8 rounded-lg `}>
-                    {currentQuestions.map((question) => (
+                    {currentQuestions.map((question,index) => (
                         <div key={question.questionId} className="space-y-4">
                             {question.questionType === "MCQ" &&
                                 (() => {
@@ -464,15 +464,9 @@ export default function Component() {
                                         <>
                                             <div className="w-full flex justify-between">
                                                 <h2 className="text-lg font-semibold">
-                                                    #Question :
+                                                    #Question : {index}
                                                 </h2>
-                                                <p>
-                                                    points:{" "}
-                                                    {
-                                                        (
-                                                            question as McqQuestion
-                                                        ).score
-                                                    }
+                                                <p> points: {( question as McqQuestion).score }
                                                 </p>
                                             </div>
                                             <MCQSubmission
@@ -513,7 +507,7 @@ export default function Component() {
                                             #Question :
                                         </h2>
                                         <p>
-                                            points:{" "}
+                                            points:
                                             {
                                                 (question as ProblemQuestion)
                                                     .points

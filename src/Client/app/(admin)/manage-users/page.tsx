@@ -155,20 +155,8 @@ export default function Component() {
 
     const topContent = useMemo(
         () => (
-            <div className="flex gap-5 p-3 w-full flex-col items-center mt-5">
-                <div className="w-full flex justify-end gap-3">
-                    <RoleFilter
-                        roleFilter={roleFilter}
-                        onRoleChange={onRoleChange}
-                    />
-                    <Paginate
-                        rowsPerPage={rowsPerPage}
-                        setRowsPerPage={setRowsPerPage}
-                    />
-                </div>
-                <div className="w-full flex justify-between items-center gap-4">
-                    <h2 className="ml-3">Users List</h2>
-                    <Input
+            <div className="flex gap-5 p-3 w-full items-center justify-between mt-5">
+                 <Input
                         isClearable
                         className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
                         placeholder="Search"
@@ -176,6 +164,15 @@ export default function Component() {
                         value={searchTerm}
                         onClear={onClear}
                         onValueChange={onSearchChange}
+                    />
+                <div className="flex gap-3">
+                    <RoleFilter
+                        roleFilter={roleFilter}
+                        onRoleChange={onRoleChange}
+                    />
+                    <Paginate
+                        rowsPerPage={rowsPerPage}
+                        setRowsPerPage={setRowsPerPage}
                     />
                 </div>
             </div>
@@ -193,7 +190,6 @@ export default function Component() {
     return (
         <div className="h-full flex flex-col justify-between">
             <h2 className="text-2xl font-bold my-5 text-center flex justify-center">
-                {" "}
                 Manage Users
             </h2>
             <div className="h-full mx-40 px-5 mb-8 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b]">

@@ -234,11 +234,9 @@ export default function Component({
     return (
         <div>
             <Card
-                className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`}
-            >
+                className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`} >
                 <h2 className="text-2xl mt-3">
-                    {" "}
-                    Written Question : {currentPage + 1}{" "}
+                    Written Question : {currentPage + 1}
                 </h2>
                 {currentQuestions.map((question) => (<>
                     <div key={question.id} className="w-full">
@@ -256,8 +254,8 @@ export default function Component({
                                     )
                                 }
                             />
-                            <div className="w-full flex justify-between gap-4 mt-5">
-                                <div className="flex  gap-3">
+                            <div className="w-full flex justify-between items-center gap-4 mt-5">
+                                <div className="flex items-center  gap-3">
                                     <Input
                                         className="w-32"
                                         type="number"
@@ -327,7 +325,6 @@ export default function Component({
                             </div>
                         </div>
                     </div>
-               
                 <div className="w-full grid grid-cols-3 my-3 p-5">
                        <div className=''><AiButton onPress={handleAiResponse} loading={isGenerating}/></div> 
                     <div className="flex items-center gap-2 ml-12">

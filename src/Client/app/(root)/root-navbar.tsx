@@ -20,9 +20,8 @@ export default function RootNavBar() {
                 <Navbar
                     classNames={{
                         wrapper: " justify-end bg-[#eeeef0] dark:bg-[#000000]",
-                        item: "hidden md:flex",
-                    }}
-                >
+                        item: "hidden",
+                    }} >
                     <NavbarContent
                         className="h-11 gap-5 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]"
                         justify="end"

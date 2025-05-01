@@ -22,18 +22,6 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
     onAddTestCase,
 }) => (
     <div className="rounded-lg w-full flex flex-col justify-center items-center gap-4">
-        <div className="w-full flex justify-end">
-            <select
-                className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
-                value={problem.difficultyType}
-                onChange={(e) => onDifficultyChange(e.target.value)}
-            >
-                <option value="">Select difficulty</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
-        </div>
         <div className=" w-full">
             <MdEditor value={problem.question} onChange={onQuestionChange} />
         </div>
@@ -50,7 +38,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
             />
         ))}
         <div className="w-full flex justify-between">
-            <div>
+            <div className="flex gap-3">
                 <Input
                     className="w-32"
                     type="number"
@@ -58,6 +46,18 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     value={problem.points.toString()}
                     onChange={(e) => onPointsChange(parseInt(e.target.value))}
                 />
+                <div>
+            <select
+                className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
+                value={problem.difficultyType}
+                onChange={(e) => onDifficultyChange(e.target.value)}
+            >
+                <option value="">Select difficulty</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+               </div>
             </div>
             <div>
                 <Button
@@ -418,11 +418,8 @@ export default function ProblemSolvingForm({
     const currentProblemIndex = currentPage * problemsPerPage;
     const [saveButton, setSaveButton] = useState(false);
     return (
-        <div>
-            <Form
-                className="w-full flex flex-col gap-4 p-5 border-none"
-                onSubmit={handleSaveProblem}
-            >
+        <div className="w-full flex flex-col gap-4 p-5 border-none">
+            <Form onSubmit={handleSaveProblem} >
                 <Card className="w-full border-none shadow-none bg-white dark:bg-[#18181b]">
                     <h2 className="w-full flex justify-center text-2xl my-3">
                         Problem Solving Question : {currentProblemIndex + 1}

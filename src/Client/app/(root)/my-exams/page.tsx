@@ -79,36 +79,28 @@ export default function ExamList() {
                         paginatedExams.map(({ exam, result }) => (
                             <Card
                                 key={exam.examId}
-                                className="relative w-full mb-3 p-2 shadow-none bg-white dark:bg-[#18181b]"
-                            >
+                                className="relative w-full mb-3 p-2 shadow-none bg-white dark:bg-[#18181b]">
                                 <CardHeader>
                                     <div className="flex w-full justify-between items-center">
                                         <h1 className="text-2xl font-bold w-full">
                                             {exam.title}
                                             <span
                                                 className={`ml-2 text-sm ${getStatusColor(
-                                                    exam.status
-                                                )}`}
-                                            >
+                                                    exam.status)}`}>
                                                 {exam.status}
                                             </span>
                                         </h1>
-
                                         {exam.status === "Running" &&
                                             !result?.submittedAt && (
                                                 <Button
                                                     color="primary"
                                                     className="ml-96"
                                                     onPress={() =>
-                                                        handleAttend(exam)
-                                                    }
-                                                >
+                                                        handleAttend(exam)}>
                                                     Attend
-                                                </Button>
-                                            )}
+                                                </Button>)}
                                     </div>
                                 </CardHeader>
-
                                 <CardBody className="px-3">
                                     {exam.status === "Ended" ? (
                                         <div className="text-center">
@@ -116,7 +108,7 @@ export default function ExamList() {
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
                                                         
-                                                        Date :
+                                                        Date:
                                                     </span>
                                                     {new Date(
                                                         exam.opensAt
@@ -132,7 +124,7 @@ export default function ExamList() {
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        Start Time :
+                                                        Start Time:
                                                     </span>
                                                     {convertUtcToLocalTime(
                                                         exam.opensAt
@@ -140,15 +132,15 @@ export default function ExamList() {
                                                 </p>
                                                 <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        End Time :
+                                                        End Time:
                                                     </span>
                                                     {convertUtcToLocalTime(
                                                         exam.closesAt
                                                     )}
                                                 </p>
-                                                <p className='text-black dark:text-white'>
+                                                <p>
                                                     <span className="text-[#71717a] dark:text-white">
-                                                        Score :
+                                                      Score :
                                                     </span>
                                                     {exam.totalPoints}
                                                 </p>
