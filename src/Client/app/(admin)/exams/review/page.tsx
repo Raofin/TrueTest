@@ -8,7 +8,7 @@ import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
 import { AiApiResponse, CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
 import { ExamData } from '@/components/types/exam'
-import { AIGenerateButton } from '@/components/ui/AiButton'
+import { Icon } from '@iconify/react/dist/iconify.js'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
@@ -19,10 +19,9 @@ export default function Component() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
     const [totalPoints, setTotalPoints] = useState<number | undefined>();
+     const [isGenerating, setIsGenerating] = useState(false);
     const [candidateList, setCandidateList] = useState<CandidateData[]>([]);
     const [editedSubmission, setEditedSubmission] = useState<CandidateSubmission | null>(null);
-    const [isGenerating,setIsGenerating]=useState(false);
-    const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
     const searchParams = useSearchParams();
     const examId = searchParams.get("examId");
     const candidateId = searchParams.get("candidateId");
@@ -64,7 +63,6 @@ export default function Component() {
     }, [examId]);
     const handleAiResponse = async (submissionId: string) => {
         setIsGenerating(true)
-        setGeneratedContent(null);
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/ProblemSubmission/${submissionId}`
@@ -80,7 +78,6 @@ export default function Component() {
     };
     const handleAiWrittenResponse = async (submissionId: string) => {
         setIsGenerating(true)
-        setGeneratedContent(null);
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/WrittenSubmission/${submissionId}`
@@ -196,6 +193,20 @@ const updateProblemSubmission = (
       return {...prev, problem: updatedProblem};
     });
   };
+  const ReviewWithAi=()=>{
+    return(
+        <>
+        {aiReviewResponse.length > 0 && (<>
+                      <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
+                        <p className="text-sm italic text-gray-600 dark:text-gray-400">AI Review:</p>
+                        <p className='w-full'>{aiReviewResponse.find(res => res.review)?.review || 'No review available'}</p>
+                      </div>
+                      <p className='w-full'>AI Score: {aiReviewResponse.find(res => res.score)?.score??0}</p>
+                      </>
+                    )}
+        </>
+    )
+  }
   const updateWrittenSubmission = (
     questionId: string,
     updates: Partial<WrittenSubmission>
@@ -377,23 +388,24 @@ const updateProblemSubmission = (
                                                 </div>
                                             </Card>
                                         </div>
-                                        {aiReviewResponse.length > 0 && (<>
-                      <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
-                        <p className="text-sm italic text-gray-600 dark:text-gray-400">AI Review:</p>
-                        <p className='w-full'>{aiReviewResponse.find(res => res.review)?.review || 'No review available'}</p>
-                      </div>
-                      <p className='w-full'>AI Score: {aiReviewResponse.find(res => res.score)?.score??0}</p>
-                      </>
-                    )}
-                                        <div>
-                                             <AIGenerateButton  isGenerating={isGenerating} 
-                                              onGenerate={()=>handleAiResponse(submission.questionId)} 
-                                              isReveiwing={true}
-                                             /> {generatedContent && (
-                                                 <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
-                                                     <p className="text-foreground">{generatedContent}</p>
-                                                 </div>)}
-                                        </div>
+                                        <ReviewWithAi/>
+                                        <div className='w-full flex justify-end'>
+                                        <Button
+                                               color="primary"
+                                               size = "md"
+                                               variant = "solid"
+                                               onPress={()=>handleAiResponse( submission.questionId)}
+                                               startContent={
+                                                 !isGenerating && (
+                                                   <Icon
+                                                     icon="lucide:sparkles"
+                                                     className="text-lg"
+                                                   /> ) }
+                                               className="min-w-[160px] font-medium">
+                                               <>{ isGenerating ? "Reviewing..." : "Review With AI"}</>
+                                               
+                                             </Button>
+                                          </div>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Result</h4>
                                             <div className="flex items-center gap-5">
@@ -466,23 +478,24 @@ const updateProblemSubmission = (
                                                     {submission.answer}
                                                 </div>
                                             </Card>
-                                            {aiReviewResponse.length > 0 && (<>
-                      <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
-                        <p className="text-sm italic text-gray-600 dark:text-gray-400">AI Review:</p>
-                        <p className='w-full'>{aiReviewResponse.find(res => res.review)?.review || 'No review available'}</p>
-                      </div>
-                      <p className='w-full'>AI Score: {aiReviewResponse.find(res => res.score)?.score??0}</p>
-                      </>
-                    )}
-                                            <div>
-                                                 <AIGenerateButton isGenerating={isGenerating} 
-                                                  onGenerate={()=>handleAiWrittenResponse(submission.questionId)} 
-                                                  isReveiwing={true}
-                                                     /> {generatedContent && ( <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
-                                                            <p className="text-foreground">{generatedContent}</p>
-                                              </div> )}
-                                            </div>
-                                          
+                                            <ReviewWithAi/>
+                                            <div className='w-full flex justify-end'>
+                                          <Button
+                                               color="primary"
+                                               size = "md"
+                                               variant = "solid"
+                                               onPress={()=>handleAiWrittenResponse(submission.questionId)}
+                                               startContent={
+                                                 !isGenerating && (
+                                                   <Icon
+                                                     icon="lucide:sparkles"
+                                                     className="text-lg"
+                                                   /> ) }
+                                               className="min-w-[160px] font-medium">
+                                               <>{ isGenerating ? "Reviewing..." : "Review With AI"}</>
+                                               
+                                             </Button>
+    </div>
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2">Result</h4>
