@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Form, Button, Textarea, Card, Input } from "@heroui/react";
+import { Form, Button, Textarea, Card, Input, Select } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import PaginationButtons from "@/components/ui/PaginationButton";
@@ -47,16 +47,16 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     onChange={(e) => onPointsChange(parseInt(e.target.value))}
                 />
                 <div>
-            <select
+            <Select
                 className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
                 value={problem.difficultyType}
+                label="Select difficulty"
                 onChange={(e) => onDifficultyChange(e.target.value)}
             >
-                <option value="">Select difficulty</option>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
-            </select>
+            </Select>
                </div>
             </div>
             <div>
@@ -490,7 +490,6 @@ export default function ProblemSolvingForm({
                                          <AIGenerateButton 
                                                     isGenerating={isGenerating} 
                                                     onGenerate={handleGenerate} 
-                                                    isReveiwing={false}
                                                   /> {generatedContent && (
                                                     <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
                                                       <p className="text-foreground">{generatedContent}</p>

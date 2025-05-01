@@ -19,7 +19,6 @@ export default function Component() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
     const [totalPoints, setTotalPoints] = useState<number | undefined>();
-     const [isGenerating, setIsGenerating] = useState(false);
     const [candidateList, setCandidateList] = useState<CandidateData[]>([]);
     const [editedSubmission, setEditedSubmission] = useState<CandidateSubmission | null>(null);
     const searchParams = useSearchParams();
@@ -62,7 +61,6 @@ export default function Component() {
         fetchExamData();
     }, [examId]);
     const handleAiResponse = async (submissionId: string) => {
-        setIsGenerating(true)
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/ProblemSubmission/${submissionId}`
@@ -74,10 +72,9 @@ export default function Component() {
             }
         } catch  {
             toast.error("Error communicating with AI service.");
-        }finally{setIsGenerating(false)}
+        }
     };
     const handleAiWrittenResponse = async (submissionId: string) => {
-        setIsGenerating(true)
         try {
             const response = await api.post<{ review: string; score: number }>(
                 `/Ai/Review/WrittenSubmission/${submissionId}`
@@ -89,7 +86,7 @@ export default function Component() {
             }
         } catch  {
             toast.error("Error communicating with AI service.");
-        }finally{setIsGenerating(false)}
+        }
     };
     useEffect(() => {
         const fetchCandidateData = async () => {

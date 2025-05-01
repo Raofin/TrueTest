@@ -52,14 +52,14 @@ export default function RootNavBar() {
                         </NavbarItem>
                         }
                     </NavbarContent>
-                                <NavbarContent
+                               <NavbarContent
                                     className="h-11 gap-4 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]">
                                     <NavbarItem>
                                         <ThemeSwitch />
                                     </NavbarItem>
                                     <NavbarItem>
                                         <button type="button" >
-                                            <Dropdown placement="bottom-end">
+                                            <Dropdown placement="bottom-end" >
                                                 <DropdownTrigger>
                                                     <div className="mt-1  outline-none transition-transform">
                                                         <Badge
@@ -77,7 +77,7 @@ export default function RootNavBar() {
                                                         </Badge>
                                                     </div>
                                                 </DropdownTrigger>
-                                                <DropdownMenu
+                                                <DropdownMenu className='p-6'
                                                     aria-label="Profile Actions"
                                                     variant="flat" >
                                                     <DropdownItem
@@ -95,7 +95,7 @@ export default function RootNavBar() {
                                                         </div>
                                                         <Divider className="mb-5" />
                                                     </DropdownItem>
-                                                    <DropdownItem key="profile" textValue="My Profile">
+                                                    <DropdownItem key="profile" textValue="My Profile" className='p-2'>
                                                         <button
                                                             onClick={() =>
                                                                 router.push("/myprofile")  }
@@ -109,7 +109,7 @@ export default function RootNavBar() {
                                                             My Profile
                                                         </button>
                                                     </DropdownItem>
-                                                    <DropdownItem key="settings" textValue="Account Settings">
+                                                    <DropdownItem key="settings" textValue="Account Settings"  className='p-2'>
                                                         <button
                                                             onClick={() =>
                                                                 router.push("/mysettings")
@@ -124,7 +124,7 @@ export default function RootNavBar() {
                                                             Account Settings
                                                         </button>
                                                     </DropdownItem>
-                                                    <DropdownItem key="logout" onPress={()=>{logout();setLoading(true)}} textValue="Logout">
+                                                    <DropdownItem key="logout" onPress={()=>{logout();setLoading(true)}}  className='p-2' textValue="Logout">
                                                         <div className="flex gap-2">
                                                             <Icon
                                                                 icon="lucide:log-out"

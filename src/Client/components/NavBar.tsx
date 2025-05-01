@@ -56,7 +56,7 @@ export default function Component() {
                                     </div>
                                 </DropdownTrigger>
                                 <DropdownMenu
-                                    aria-label="Profile Actions"
+                                    aria-label="Profile Actions" 
                                     variant="flat" >
                                     <DropdownItem
                                         key="user" textValue="User Profile"

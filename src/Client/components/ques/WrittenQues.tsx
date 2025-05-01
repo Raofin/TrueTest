@@ -332,7 +332,6 @@ export default function Component({
                          <AIGenerateButton 
                                     isGenerating={isGenerating} 
                                     onGenerate={handleGenerate} 
-                                    isReveiwing={false}
                                   /> {generatedContent && (
                                     <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
                                       <p className="text-foreground">{generatedContent}</p>
