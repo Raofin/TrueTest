@@ -75,7 +75,6 @@ export default function Component() {
             }
         };
         fetchExams();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const handleCopyEmail = useCallback((email: string) => {
         navigator.clipboard.writeText(email).then(() => {

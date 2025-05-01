@@ -4,6 +4,8 @@ export interface TestCase {
   output: string;
   receivedOutput?: string;
   status?: "success" | "error" | "pending";
+  executionTime:number,
+  errorMessage:string
 }
 export interface ProblemQuestion {
   questionId: string;

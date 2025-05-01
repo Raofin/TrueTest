@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { convertUtcToLocalTime, parseTime } from "@/components/DateTimeFormat";
-import { AiButton } from '@/components/ui/AiButton'
+import { AIGenerateButton } from '@/components/ui/AiButton'
 
 interface FormData {
     title: string;
@@ -30,10 +30,11 @@ export default function ExamFormPage() {
     const [writtenQuesPoint, setWrittenQuesPoint] = useState<number>(0);
     const [mcqQuesPoint, setMcqQuesPoint] = useState<number>(0);
     const [totalPoints, setTotalPoints] = useState<number>(0);
-    const [activeComponents, setActiveComponents] = useState<
-        { id: string; type: string }[]
-    >([]);
+    const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
+    const [publishBtn, setPublishbtn] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
     const route = useRouter();
     const [examId, setExamId] = useState(searchParams.get("id") || "");
@@ -62,8 +63,9 @@ export default function ExamFormPage() {
     const handleComponentSaved = (type: keyof typeof saveStatus) => {
         setSaveStatus((prev) => ({ ...prev, [type]: true }));
     };
-    const handleAiResponse=()=>{
+    const handleGenerate=()=>{
         const FetchData=async()=>{
+    setGeneratedContent(null);
          setIsGenerating(true);
         try{
           const response=await api.post('/Ai/Generate/ExamDescription',{
@@ -88,6 +90,7 @@ export default function ExamFormPage() {
     };
     const handleSaveExam = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true)
         if (!date) {
             toast.error("Please select a date");
             return;
@@ -150,10 +153,11 @@ export default function ExamFormPage() {
                     setExamId(resp.data.examId);
                 }
             }
+            setPublishbtn(true)
         } catch (err) {
             const error = err as AxiosError;
             toast.error(error?.message);
-        }
+        }finally{setIsLoading(false)}
     };
     useEffect(() => {
         const fetchExamDetails = async () => {
@@ -222,7 +226,6 @@ export default function ExamFormPage() {
         fetchExamDetails();
     }, [examId, isEdit, route, totalPoints]);
     useEffect(() => {
-        const debounceTimer = setTimeout(() => {
             const calculatedTotal =
                 problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
             if (calculatedTotal !== formData.totalPoints) {
@@ -240,8 +243,6 @@ export default function ExamFormPage() {
                     },
                 });
             }
-        }, 1000);
-        return () => clearTimeout(debounceTimer);
     }, [formData.totalPoints, mcqQuesPoint, problemQuesPoint, writtenQuesPoint]);
     const handlePublishExam = async () => {
         if (examId) {
@@ -355,7 +356,16 @@ export default function ExamFormPage() {
                             }
                         />
                        </div>
-                        <div className='absolute top-2 right-2'><AiButton onPress={handleAiResponse} loading={isGenerating}/></div>
+                        <div className='absolute bottom-2 right-2'>
+                        <AIGenerateButton 
+            isGenerating={isGenerating} 
+            onGenerate={handleGenerate} 
+          /> {generatedContent && (
+            <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+              <p className="text-foreground">{generatedContent}</p>
+            </div>
+          )}
+          </div>
                         </div>
                         <div className="flex gap-5">
                             <DatePicker
@@ -421,15 +431,18 @@ export default function ExamFormPage() {
                             onChange={handleTotalPointsChange}
                         />
                         <div className="flex justify-end mt-2 gap-3">
-                            <Button color="success" onPress={handlePublishExam}>
+                           {publishBtn && <Button color="success" onPress={handlePublishExam}>
                                 Publish
-                            </Button>
+                            </Button>}
                             <Button color="danger" onPress={handleDeleteExam}>
                                 Delete
                             </Button>
+                            {isLoading ?<Button color="primary" type="submit">
+                                {isEdit ? "Updating..." : "Saving..."}
+                            </Button>:
                             <Button color="primary" type="submit">
                                 {isEdit ? "Update" : "Save"}
-                            </Button>
+                            </Button>}
                         </div>
                     </form>
                 </Card>

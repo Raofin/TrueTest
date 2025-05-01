@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Card, Select, SelectItem } from "@heroui/react";
+import { Button, Card, Select, SelectItem, Spinner } from "@heroui/react";
 import Editor from "@monaco-editor/react";
 import api from "@/lib/api";
 import { languages } from "@/lib/language-selector";
@@ -19,7 +19,6 @@ interface PageProps {
     readonly persistedTestCaseResults?: TestCase[];
     readonly onTestCaseRunComplete: (questionId: string, results: TestCase[]) => void;
 }
-
 interface CodeState {
     [key: string]: string;
 }
@@ -39,7 +38,7 @@ export default function CodeEditor({
     const [formattedTestCases, setFormattedTestCases] = useState<TestCase[]>([]);
     const [displayTestCaseResults, setDisplayTestCaseResults] = useState<boolean>(false);
     const displayedTestCasesResults = [formattedTestCases[selectedTestCase]];
-
+    const [loading,setLoading]=useState(false);
     useEffect(() => {
         const initialStates: CodeState = {};
         languages.forEach((lang) => {
@@ -51,7 +50,6 @@ export default function CodeEditor({
         } else {
             setCodeStates(initialStates);
         }
-
         if (persistedTestCaseResults) {
             setFormattedTestCases(persistedTestCaseResults);
             setDisplayTestCaseResults(true);
@@ -61,6 +59,8 @@ export default function CodeEditor({
                 receivedOutput: "",
                 output: tc.output || "Error",
                 status: "pending" as const,
+                executionTime:0,
+                errorMessage:""
             }));
             setFormattedTestCases(initializedTestCases);
         }
@@ -78,12 +78,11 @@ export default function CodeEditor({
             }));
         }
     };
-
     const handleLanguageChange = (newLanguage: string) => {
         setSelectedLanguage(newLanguage);
     };
-
     const handleRun = async () => {
+        setLoading(true)
         const currentCode = codeStates[selectedLanguage];
         const savePayload = {
             examId: examId,
@@ -115,7 +114,9 @@ export default function CodeEditor({
                                 ? "success"
                                 : "error"
                             : tc.status,
+                        errorMessage: matchingResult?.errorMessage
                     } as TestCase;
+
                 });
                 setFormattedTestCases(updatedTestCases);
                 setDisplayTestCaseResults(true);
@@ -125,10 +126,11 @@ export default function CodeEditor({
             }
         } catch (saveError) {
             console.error("Error during code save:", saveError);
-        }
+        }finally{ setLoading(false)}
     };
 
     return (
+        <div>
         <div className="grid grid-cols-2 gap-4">
             <Card className="border-none rounded-lg p-4 shadow-none bg-white dark:bg-[#18181b]">
                 <h2 className="text-xl font-bold mb-3">Problem Statement</h2>
@@ -141,7 +143,7 @@ export default function CodeEditor({
                     <div className="flex justify-between pt-2">
                         <p className="font-semibold">Code Editor</p>
                         <div className="flex gap-2">
-                            <Button onPress={handleRun}>Run</Button>
+                           {loading?<Button><Spinner/></Button>: <Button onPress={handleRun}>Run</Button>}
                             <Select
                                 aria-label="Select Language"
                                 selectedKeys={[selectedLanguage]}
@@ -196,27 +198,28 @@ export default function CodeEditor({
                                 })}
                             </div>
                         </div>
+                        {displayedTestCasesResults?.map((testCase) => (<>
                         <div className="flex w-full justify-between mt-4">
                             <p className="font-semibold">Input</p>
-                            <p className="font-semibold">Received Output</p>
+                           <p className="font-semibold">Received Output <span className='text-gray-700'>{testCase.executionTime}</span></p>
                             <p className="font-semibold">Expected Output</p>
                         </div>
-                        {displayedTestCasesResults?.map((testCase) => (
                             <div key={testCase?.input} className="grid grid-cols-3 gap-4 mt-3 min-h-[100px]">
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                     {testCase?.input ?? "No input provided"}
                                 </div>
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
-                                    {testCase?.receivedOutput ?? "No output yet"}
+                                    { testCase?.receivedOutput ?? testCase?.errorMessage}
                                 </div>
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                     {testCase?.output ?? "No expected output"}
                                 </div>
                             </div>
-                        ))}
+                       </> ))}
                     </Card>
                 )}
             </div>
+        </div>
         </div>
     );
 }

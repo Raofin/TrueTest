@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
-import { AiButton } from '../ui/AiButton'
+import { AIGenerateButton } from '../ui/AiButton'
 import { WrittenQuestionForm, WrittenQuestionFormProps } from '../types/writtenQues'
 
 export default function Component({
@@ -39,6 +39,7 @@ export default function Component({
               ]
     );
     const [isGenerating,setIsGenerating]=useState(false);
+    const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [saveButton, setSaveButton] = useState(false);
     const questionsPerPage = 1;
@@ -210,9 +211,10 @@ export default function Component({
             ),
         [writtenQuestions, currentPage, questionsPerPage]
     );
-    const handleAiResponse=()=>{
+    const handleGenerate=()=>{
                const FetchData=async()=>{
                 setIsGenerating(true)
+                setGeneratedContent(null);
                try{
                  const response=await api.post('/Ai/Generate/WrittenQuestion',{
                     userPrompt: writtenQuestions[currentPage].question
@@ -234,14 +236,13 @@ export default function Component({
     return (
         <div>
             <Card
-                className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`}
-            >
+                className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`} >
                 <h2 className="text-2xl mt-3">
-                    {" "}
-                    Written Question : {currentPage + 1}{" "}
+                    Written Question : {currentPage + 1}
                 </h2>
-                {currentQuestions.map((question) => (<>
-                    <div key={question.id} className="w-full">
+                {currentQuestions.map((question) => (
+                    <div  key={question.id}>
+                    <div className="w-full">
                         <div className="p-4 mx-5 rounded-lg mt-4">
                             <Textarea
                                 label="Written Question"
@@ -256,8 +257,8 @@ export default function Component({
                                     )
                                 }
                             />
-                            <div className="w-full flex justify-between gap-4 mt-5">
-                                <div className="flex  gap-3">
+                            <div className="w-full flex justify-between items-center gap-4 mt-5">
+                                <div className="flex items-center  gap-3">
                                     <Input
                                         className="w-32"
                                         type="number"
@@ -327,9 +328,16 @@ export default function Component({
                             </div>
                         </div>
                     </div>
-               
                 <div className="w-full grid grid-cols-3 my-3 p-5">
-                       <div className=''><AiButton onPress={handleAiResponse} loading={isGenerating}/></div> 
+                       <div>
+                         <AIGenerateButton 
+                                    isGenerating={isGenerating} 
+                                    onGenerate={handleGenerate} 
+                                  /> {generatedContent && (
+                                    <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+                                      <p className="text-foreground">{generatedContent}</p>
+                                    </div>
+                                  )}</div> 
                     <div className="flex items-center gap-2 ml-12">
                         <span>
                             Page {currentPage + 1} of {totalPages}
@@ -348,7 +356,7 @@ export default function Component({
                         />
                     </div>
                 </div>
-                </> ))}
+                </div> ))}
             </Card>
             <div className="flex justify-center my-8 gap-3">
                 <Button onPress={handleAddWrittenQuestion}>

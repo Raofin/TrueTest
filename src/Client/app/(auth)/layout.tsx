@@ -38,7 +38,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <div className="flex justify-between items-center text-gray-400">
           <p>© 2025 TrueTest. All rights reserved.</p>
           <p>
-            Contact Us : <Link href="#">support@truetest.com</Link>
+            Contact Us : <Link href="#">support@truetest.tech</Link>
           </p>
         </div>
       </footer>

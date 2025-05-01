@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Form, Button, Textarea, Card, Input } from "@heroui/react";
+import { Form, Button, Textarea, Card, Input, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import PaginationButtons from "@/components/ui/PaginationButton";
 import MdEditor from "../KatexMermaid";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
-import { AiButton } from '@/components/ui/AiButton'
+import { AIGenerateButton } from '@/components/ui/AiButton'
 import { FormFooterProps, Problem, ProblemItemProps, ProblemSolvingFormProps, TestCaseItemProps } from '../types/problemQues'
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
@@ -22,18 +22,6 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
     onAddTestCase,
 }) => (
     <div className="rounded-lg w-full flex flex-col justify-center items-center gap-4">
-        <div className="w-full flex justify-end">
-            <select
-                className="rounded-md border p-2 dark:bg-[#1e293b] dark:text-gray-300"
-                value={problem.difficultyType}
-                onChange={(e) => onDifficultyChange(e.target.value)}
-            >
-                <option value="">Select difficulty</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
-        </div>
         <div className=" w-full">
             <MdEditor value={problem.question} onChange={onQuestionChange} />
         </div>
@@ -50,7 +38,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
             />
         ))}
         <div className="w-full flex justify-between">
-            <div>
+            <div className="flex gap-3">
                 <Input
                     className="w-32"
                     type="number"
@@ -58,6 +46,20 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     value={problem.points.toString()}
                     onChange={(e) => onPointsChange(parseInt(e.target.value))}
                 />
+                <div>
+                <Select
+        label="Select difficulty"
+        className="max-w-xs"
+        onSelectionChange={(keys) => {
+          const selectedKey = Array.from(keys)[0] as string;
+          onDifficultyChange(selectedKey);
+        }}
+      >
+        <SelectItem key="easy">Easy</SelectItem>
+        <SelectItem key="medium">Medium</SelectItem>
+        <SelectItem key="hard">Hard</SelectItem>
+      </Select>
+               </div>
             </div>
             <div>
                 <Button
@@ -159,9 +161,11 @@ export default function ProblemSolvingForm({
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
         const [isGenerating, setIsGenerating] = useState(false);
-      const handleAiResponse=()=>{
+        const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
+      const handleGenerate=()=>{
            const FetchData=async()=>{
             setIsGenerating(true)
+            setGeneratedContent(null);
            try{
              const response=await api.post('/Ai/Generate/ProblemSolvingQuestion',{
                 userPrompt: problems[currentPage].question
@@ -418,13 +422,10 @@ export default function ProblemSolvingForm({
     const currentProblemIndex = currentPage * problemsPerPage;
     const [saveButton, setSaveButton] = useState(false);
     return (
-        <div>
-            <Form
-                className="w-full flex flex-col gap-4 p-5 border-none"
-                onSubmit={handleSaveProblem}
-            >
-                <Card className="w-full border-none shadow-none bg-white dark:bg-[#18181b]">
-                    <h2 className="w-full flex justify-center text-2xl my-3">
+        <div className='w-full'>
+            <Form onSubmit={handleSaveProblem} >
+                <Card className="w-full flex flex-col gap-4 p-5 border-none border-none shadow-none bg-white dark:bg-[#18181b]">
+                    <h2 className="text-center text-2xl my-5">
                         Problem Solving Question : {currentProblemIndex + 1}
                     </h2>
                     <div className="w-full flex flex-col justify-center p-4">
@@ -487,7 +488,15 @@ export default function ProblemSolvingForm({
                                     }
                                 />
                                 <div className="flex w-full justify-between mt-5">
-                                    <div className=''><AiButton onPress={handleAiResponse} loading={isGenerating}/></div>
+                                    <div>
+                                         <AIGenerateButton 
+                                                    isGenerating={isGenerating} 
+                                                    onGenerate={handleGenerate} 
+                                                  /> {generatedContent && (
+                                                    <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+                                                      <p className="text-foreground">{generatedContent}</p>
+                                                    </div>
+                                                  )}</div>
                                     <FormFooter
                                         totalPages={totalPages}
                                         currentPage={currentPage}
