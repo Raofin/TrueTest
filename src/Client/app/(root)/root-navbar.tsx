@@ -2,19 +2,21 @@
 
 import React, { useState } from "react";
 import "@/app/globals.css";
-import NavBar from "@/components/NavBar";
 import Logo from "@/components/ui/TrueTestLogo";
 import { Avatar, Badge, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link, Navbar, NavbarContent, NavbarItem } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useAuth } from '@/context/AuthProvider'
 import ThemeSwitch from '../ThemeSwitch'
 import { Icon } from '@iconify/react/dist/iconify.js'
+import LoadingModal from '@/components/ui/Modal/LoadingModal'
 
 export default function RootNavBar() {
     const router = useRouter();
       const { user, logout ,profileImage} = useAuth();
          const [loading,setLoading]=useState(false)
     return (
+        <>
+        <LoadingModal isOpen={loading} message="Loading..."/> 
         <div className="flex w-full justify-between items-center bg-[#eeeef0] dark:bg-[#000000] h-16 px-14 pt-3">
            <Link href="/home"> <div className="bg-[#eeeef0] dark:bg-[#000000] ">
                 <Logo />
@@ -138,5 +140,6 @@ export default function RootNavBar() {
                             </Navbar>
             </div>
         </div>
+        </>
     );
 }

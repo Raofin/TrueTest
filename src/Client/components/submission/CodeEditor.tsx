@@ -128,6 +128,7 @@ export default function CodeEditor({
     };
 
     return (
+        <div>
         <div className="grid grid-cols-2 gap-4">
             <Card className="border-none rounded-lg p-4 shadow-none bg-white dark:bg-[#18181b]">
                 <h2 className="text-xl font-bold mb-3">Problem Statement</h2>
@@ -140,7 +141,7 @@ export default function CodeEditor({
                     <div className="flex justify-between pt-2">
                         <p className="font-semibold">Code Editor</p>
                         <div className="flex gap-2">
-                           {loading?<Spinner/>: <Button onPress={handleRun}>Run</Button>}
+                           {loading?<Button><Spinner/></Button>: <Button onPress={handleRun}>Run</Button>}
                             <Select
                                 aria-label="Select Language"
                                 selectedKeys={[selectedLanguage]}
@@ -206,7 +207,7 @@ export default function CodeEditor({
                                     {testCase?.input ?? "No input provided"}
                                 </div>
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
-                                    {testCase?.receivedOutput ?? testCase?.errorMessage}
+                                    {testCase?.errorMessage ??testCase?.receivedOutput }
                                 </div>
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                     {testCase?.output ?? "No expected output"}
@@ -216,6 +217,7 @@ export default function CodeEditor({
                     </Card>
                 )}
             </div>
+        </div>
         </div>
     );
 }
