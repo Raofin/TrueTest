@@ -106,7 +106,7 @@ export default function ExamList() {
                                         <div className="text-center">
                                             <div className="flex justify-between">
                                                 <p>
-                                                    <span className="text-[#71717a] dark:text-white">
+                                                    <span className="text-[#71717a] dark:text-white mr-1">
                                                         
                                                         Date:
                                                     </span>
@@ -123,7 +123,7 @@ export default function ExamList() {
                                                     )}
                                                 </p>
                                                 <p>
-                                                    <span className="text-[#71717a] dark:text-white">
+                                                    <span className="text-[#71717a] dark:text-white mr-1">
                                                         Start Time:
                                                     </span>
                                                     {convertUtcToLocalTime(
@@ -131,7 +131,7 @@ export default function ExamList() {
                                                     )}
                                                 </p>
                                                 <p>
-                                                    <span className="text-[#71717a] dark:text-white">
+                                                    <span className="text-[#71717a] dark:text-white mr-1">
                                                         End Time:
                                                     </span>
                                                     {convertUtcToLocalTime(
@@ -139,8 +139,8 @@ export default function ExamList() {
                                                     )}
                                                 </p>
                                                 <p>
-                                                    <span className="text-[#71717a] dark:text-white">
-                                                      Score :
+                                                    <span className="text-[#71717a] dark:text-white mr-1">
+                                                      Score:
                                                     </span>
                                                     {exam.totalPoints}
                                                 </p>

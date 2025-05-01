@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { convertUtcToLocalTime, parseTime } from "@/components/DateTimeFormat";
-import { AiButton } from '@/components/ui/AiButton'
+import { AIGenerateButton } from '@/components/ui/AiButton'
 
 interface FormData {
     title: string;
@@ -32,7 +32,9 @@ export default function ExamFormPage() {
     const [totalPoints, setTotalPoints] = useState<number>(0);
     const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
     const [publishBtn, setPublishbtn] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
     const route = useRouter();
     const [examId, setExamId] = useState(searchParams.get("id") || "");
@@ -61,8 +63,9 @@ export default function ExamFormPage() {
     const handleComponentSaved = (type: keyof typeof saveStatus) => {
         setSaveStatus((prev) => ({ ...prev, [type]: true }));
     };
-    const handleAiResponse=()=>{
+    const handleGenerate=()=>{
         const FetchData=async()=>{
+    setGeneratedContent(null);
          setIsGenerating(true);
         try{
           const response=await api.post('/Ai/Generate/ExamDescription',{
@@ -87,6 +90,7 @@ export default function ExamFormPage() {
     };
     const handleSaveExam = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true)
         if (!date) {
             toast.error("Please select a date");
             return;
@@ -153,7 +157,7 @@ export default function ExamFormPage() {
         } catch (err) {
             const error = err as AxiosError;
             toast.error(error?.message);
-        }
+        }finally{setIsLoading(false)}
     };
     useEffect(() => {
         const fetchExamDetails = async () => {
@@ -352,7 +356,17 @@ export default function ExamFormPage() {
                             }
                         />
                        </div>
-                        <div className='absolute bottom-2 right-2'><AiButton onPress={handleAiResponse} loading={isGenerating}/></div>
+                        <div className='absolute bottom-2 right-2'>
+                        <AIGenerateButton 
+            isGenerating={isGenerating} 
+            onGenerate={handleGenerate} 
+            isReveiwing={false}
+          /> {generatedContent && (
+            <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+              <p className="text-foreground">{generatedContent}</p>
+            </div>
+          )}
+          </div>
                         </div>
                         <div className="flex gap-5">
                             <DatePicker
@@ -424,9 +438,12 @@ export default function ExamFormPage() {
                             <Button color="danger" onPress={handleDeleteExam}>
                                 Delete
                             </Button>
+                            {isLoading ?<Button color="primary" type="submit">
+                                {isEdit ? "Updating..." : "Saving..."}
+                            </Button>:
                             <Button color="primary" type="submit">
                                 {isEdit ? "Update" : "Save"}
-                            </Button>
+                            </Button>}
                         </div>
                     </form>
                 </Card>

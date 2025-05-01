@@ -27,7 +27,7 @@ export default function Component() {
         <div>
             <LoadingModal isOpen={loading} message="Loading..."/> 
             <Navbar  classNames={{  wrapper: " bg-[#eeeef0] dark:bg-[#000000]",
-                    item: "hidden",  }} >
+                    item: "hidden md:flex", }} >
                 <NavbarContent
                     className="h-11 gap-1 rounded-full bg-[#ffffff] px-4 dark:bg-[#18181b]"
                     // justify="end"

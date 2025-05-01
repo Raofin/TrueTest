@@ -8,7 +8,7 @@ import PaginationButtons from "@/components/ui/PaginationButton";
 import MdEditor from "../KatexMermaid";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
-import { AiButton } from '@/components/ui/AiButton'
+import { AIGenerateButton } from '@/components/ui/AiButton'
 import { FormFooterProps, Problem, ProblemItemProps, ProblemSolvingFormProps, TestCaseItemProps } from '../types/problemQues'
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
@@ -159,9 +159,11 @@ export default function ProblemSolvingForm({
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
         const [isGenerating, setIsGenerating] = useState(false);
-      const handleAiResponse=()=>{
+        const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
+      const handleGenerate=()=>{
            const FetchData=async()=>{
             setIsGenerating(true)
+            setGeneratedContent(null);
            try{
              const response=await api.post('/Ai/Generate/ProblemSolvingQuestion',{
                 userPrompt: problems[currentPage].question
@@ -418,10 +420,10 @@ export default function ProblemSolvingForm({
     const currentProblemIndex = currentPage * problemsPerPage;
     const [saveButton, setSaveButton] = useState(false);
     return (
-        <div className="w-full flex flex-col gap-4 p-5 border-none">
+        <div className='w-full'>
             <Form onSubmit={handleSaveProblem} >
-                <Card className="w-full border-none shadow-none bg-white dark:bg-[#18181b]">
-                    <h2 className="w-full flex justify-center text-2xl my-3">
+                <Card className="w-full flex flex-col gap-4 p-5 border-none border-none shadow-none bg-white dark:bg-[#18181b]">
+                    <h2 className="text-center text-2xl my-5">
                         Problem Solving Question : {currentProblemIndex + 1}
                     </h2>
                     <div className="w-full flex flex-col justify-center p-4">
@@ -484,7 +486,16 @@ export default function ProblemSolvingForm({
                                     }
                                 />
                                 <div className="flex w-full justify-between mt-5">
-                                    <div className=''><AiButton onPress={handleAiResponse} loading={isGenerating}/></div>
+                                    <div>
+                                         <AIGenerateButton 
+                                                    isGenerating={isGenerating} 
+                                                    onGenerate={handleGenerate} 
+                                                    isReveiwing={false}
+                                                  /> {generatedContent && (
+                                                    <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+                                                      <p className="text-foreground">{generatedContent}</p>
+                                                    </div>
+                                                  )}</div>
                                     <FormFooter
                                         totalPages={totalPages}
                                         currentPage={currentPage}
