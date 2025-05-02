@@ -97,7 +97,6 @@ export default function Component() {
           document.removeEventListener('contextmenu', handleContextMenu);
         };
       }, [examActive, allowedKeys]);
-      
     useEffect(() => {
         const FetchExamData = async () => {
             setLoading(true);

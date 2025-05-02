@@ -1,14 +1,24 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Button, Textarea, Checkbox, Card, Input } from "@heroui/react";
+import {
+    Button,
+    Textarea,
+    RadioGroup,
+    Radio,
+    Card,
+    Input,
+} from "@heroui/react";
 import PaginationButtons from "@/components/ui/PaginationButton";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
-import { AIGenerateButton } from '../ui/AiButton'
-import { WrittenQuestionForm, WrittenQuestionFormProps } from '../types/writtenQues'
+import { AIGenerateButton } from "../ui/AiButton";
+import {
+    WrittenQuestionForm,
+    WrittenQuestionFormProps,
+} from "../types/writtenQues";
 
 export default function Component({
     examId,
@@ -16,7 +26,9 @@ export default function Component({
     onSaved,
     writtenPoints,
 }: WrittenQuestionFormProps) {
-    const [writtenQuestions, setWrittenQuestions] = useState<WrittenQuestionForm[]>(
+    const [writtenQuestions, setWrittenQuestions] = useState<
+        WrittenQuestionForm[]
+    >(
         existingQuestions.length > 0
             ? existingQuestions.map((q) => ({
                   id: uuidv4(),
@@ -27,7 +39,8 @@ export default function Component({
                   isShortAnswer: !q.hasLongAnswer,
                   isLongAnswer: q.hasLongAnswer,
               }))
-            : [ {
+            : [
+                  {
                       id: uuidv4(),
                       questionId: "",
                       question: "",
@@ -38,14 +51,18 @@ export default function Component({
                   },
               ]
     );
-    const [isGenerating,setIsGenerating]=useState(false);
-    const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedContent, setGeneratedContent] = React.useState<
+        string | null
+    >(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [saveButton, setSaveButton] = useState(false);
     const questionsPerPage = 1;
     useEffect(() => {
         const total = writtenQuestions.reduce(
-            (sum, problem) => sum + (problem.points || 0), 0);
+            (sum, problem) => sum + (problem.points || 0),
+            0
+        );
         writtenPoints(total);
     }, [writtenQuestions, writtenPoints]);
     const handleAddWrittenQuestion = () => {
@@ -211,44 +228,50 @@ export default function Component({
             ),
         [writtenQuestions, currentPage, questionsPerPage]
     );
-    const handleGenerate=()=>{
-               const FetchData=async()=>{
-                setIsGenerating(true)
-                setGeneratedContent(null);
-               try{
-                 const response=await api.post('/Ai/Generate/WrittenQuestion',{
-                    userPrompt: writtenQuestions[currentPage].question
-                 })
-                 if(response.status===200){
+    const handleGenerate = () => {
+        const FetchData = async () => {
+            setIsGenerating(true);
+            setGeneratedContent(null);
+            try {
+                const response = await api.post(
+                    "/Ai/Generate/WrittenQuestion",
+                    {
+                        userPrompt: writtenQuestions[currentPage].question,
+                    }
+                );
+                if (response.status === 200) {
                     const { questionStatement } = response.data;
 
-                setWrittenQuestions((prev) =>
-                    prev.map((q, idx) =>
-                        idx === currentPage ? { ...q, question: questionStatement } : q
-                    )
-                );
-                 }
-               }catch{}
-               finally{setIsGenerating(false)}
-               }
-               FetchData();
-           }
+                    setWrittenQuestions((prev) =>
+                        prev.map((q, idx) =>
+                            idx === currentPage
+                                ? { ...q, question: questionStatement }
+                                : q
+                        )
+                    );
+                }
+            } catch {
+            } finally {
+                setIsGenerating(false);
+            }
+        };
+        FetchData();
+    };
     return (
         <div>
-            <Card
-                className={`flex flex-col items-center shadow-none bg-white dark:bg-[#18181b]`} >
+            <Card className="flex flex-col items-center shadow-none bg-white dark:bg-[#18181b] w-full px-6 py-4">
                 <h2 className="text-2xl mt-3">
-                    Written Question : {currentPage + 1}
+                    Written Question: {currentPage + 1}
                 </h2>
+
                 {currentQuestions.map((question) => (
-                    <div  key={question.id}>
-                    <div className="w-full">
-                        <div className="p-4 mx-5 rounded-lg mt-4">
+                    <div key={question.id} className="w-full mt-6">
+                        <div className="bg-white dark:bg-[#18181b] p-5 rounded-lg shadow-sm">
                             <Textarea
                                 label="Written Question"
                                 name="question"
                                 minRows={5}
-                                className="bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
+                                className="w-full bg-[#eeeef0] dark:bg-[#27272a] rounded-2xl"
                                 value={question.question}
                                 onChange={(e) =>
                                     handleQuestionChange(
@@ -257,8 +280,9 @@ export default function Component({
                                     )
                                 }
                             />
-                            <div className="w-full flex justify-between items-center gap-4 mt-5">
-                                <div className="flex items-center  gap-3">
+
+                            <div className="w-full flex justify-between items-center gap-4 mt-5 flex-wrap">
+                                <div className="flex items-center gap-4 flex-wrap">
                                     <Input
                                         className="w-32"
                                         type="number"
@@ -277,42 +301,34 @@ export default function Component({
                                             }
                                         }}
                                     />
-                                    <label>
-                                        <Checkbox
-                                            isSelected={question.isShortAnswer}
-                                            onChange={(e) =>
-                                                handleShortLongAnswer(
-                                                    question.id,
-                                                    e.target.checked,
-                                                    e.target.checked
-                                                        ? false
-                                                        : question.isLongAnswer
-                                                )
-                                            }
-                                            isDisabled={question.isLongAnswer}
-                                        >
+
+                                    <RadioGroup
+                                        label="Answer Type"
+                                        orientation="horizontal"
+                                        value={
+                                            question.isShortAnswer
+                                                ? "short"
+                                                : question.isLongAnswer
+                                                ? "long"
+                                                : ""
+                                        }
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            handleShortLongAnswer(
+                                                question.id,
+                                                value === "short",
+                                                value === "long"
+                                            );
+                                        }}
+                                    >
+                                        <Radio value="short">
                                             Short Answer
-                                        </Checkbox>
-                                    </label>
-                                    <label>
-                                        <Checkbox
-                                            isSelected={question.isLongAnswer}
-                                            onChange={(e) =>
-                                                handleShortLongAnswer(
-                                                    question.id,
-                                                    e.target.checked
-                                                        ? false
-                                                        : question.isShortAnswer,
-                                                    e.target.checked
-                                                )
-                                            }
-                                            isDisabled={question.isShortAnswer}
-                                        >
-                                            Long Answer
-                                        </Checkbox>
-                                    </label>
+                                        </Radio>
+                                        <Radio value="long">Long Answer</Radio>
+                                    </RadioGroup>
                                 </div>
-                                <div className="flex  gap-3">
+
+                                <div className="flex gap-3">
                                     <Button
                                         color="danger"
                                         onPress={() =>
@@ -327,56 +343,58 @@ export default function Component({
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <div className="w-full grid grid-cols-3 my-3 p-5">
-                       <div>
-                         <AIGenerateButton 
-                                    isGenerating={isGenerating} 
-                                    onGenerate={handleGenerate} 
-                                  /> {generatedContent && (
+
+                        <hr className="my-3 border-t border-gray-100 dark:border-gray-500" />
+
+                        <div className="w-full grid grid-cols-3 gap-6 items-start my-4 px-1">
+                            <div>
+                                <AIGenerateButton
+                                    isGenerating={isGenerating}
+                                    onGenerate={handleGenerate}
+                                />
+                                {generatedContent && (
                                     <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
-                                      <p className="text-foreground">{generatedContent}</p>
+                                        <p className="text-foreground">
+                                            {generatedContent}
+                                        </p>
                                     </div>
-                                  )}</div> 
-                    <div className="flex items-center gap-2 ml-12">
-                        <span>
-                            Page {currentPage + 1} of {totalPages}
-                        </span>
-                        <PaginationButtons
-                            currentIndex={currentPage + 1}
-                            totalItems={totalPages}
-                            onPrevious={() =>
-                                setCurrentPage(Math.max(0, currentPage - 1))
-                            }
-                            onNext={() =>
-                                setCurrentPage(
-                                    Math.min(totalPages - 1, currentPage + 1)
-                                )
-                            }
-                        />
+                                )}
+                            </div>
+
+                            <div className="col-span-2 flex items-center justify-end gap-2">
+                                <span>
+                                    Page {currentPage + 1} of {totalPages}
+                                </span>
+                                <PaginationButtons
+                                    currentIndex={currentPage + 1}
+                                    totalItems={totalPages}
+                                    onPrevious={() =>
+                                        setCurrentPage(
+                                            Math.max(0, currentPage - 1)
+                                        )
+                                    }
+                                    onNext={() =>
+                                        setCurrentPage(
+                                            Math.min(
+                                                totalPages - 1,
+                                                currentPage + 1
+                                            )
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
                     </div>
-                </div>
-                </div> ))}
+                ))}
             </Card>
+
             <div className="flex justify-center my-8 gap-3">
                 <Button onPress={handleAddWrittenQuestion}>
                     Add Written Question
                 </Button>
-                {!saveButton ? (
-                    <Button
-                        color="primary"
-                        onPress={handleSaveWrittenQuestions}
-                    >
-                        Save All
-                    </Button>
-                ) : (
-                    <Button
-                        color="primary"
-                        onPress={handleSaveWrittenQuestions}
-                    >
-                        Update All
-                    </Button>
-                )}
+                <Button color="primary" onPress={handleSaveWrittenQuestions}>
+                    {saveButton ? "Update All" : "Save All"}
+                </Button>
             </div>
         </div>
     );

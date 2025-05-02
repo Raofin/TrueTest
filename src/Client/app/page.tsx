@@ -92,7 +92,7 @@ export default function Component() {
             <footer className="w-full px-5 my-2">
                 <div className="flex justify-between items-center text-gray-400">
                     <p>© 2025 TrueTest. All rights reserved.</p>
-                    <p>Contact Us: <Link href="#">support@truetest.com</Link></p>
+                    <p>Contact Us: <Link href="#">support@truetest.tech</Link></p>
                 </div>
             </footer>
         </div>

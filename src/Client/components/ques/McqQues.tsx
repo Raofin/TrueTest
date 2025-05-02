@@ -14,7 +14,7 @@ import PaginationButtons from "@/components/ui/PaginationButton";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { MCQFormProps, MCQQuestion } from '../types/mcqQues'
+import { MCQFormProps, MCQQuestion } from "../types/mcqQues";
 
 export default function App({
     examId,
@@ -242,12 +242,12 @@ export default function App({
                         >
                             <CardHeader className="flex flex-col gap-2 ">
                                 <h2 className="text-2xl my-3">
-                                    MCQ Question : {currentPage + 1}
+                                    MCQ Question: {currentPage + 1}
                                 </h2>
                             </CardHeader>
-                            <CardBody className="flex flex-col gap-4 p-8">
+                            <CardBody className="flex flex-col gap-4 px-8 pt-4">
                                 <Textarea
-                                    label="mcq question"
+                                    label="Mcq question"
                                     minRows={5}
                                     value={questions[currentPage].question}
                                     className="bg-[#eeeef0] dark:[#71717a] rounded-2xl"
@@ -306,8 +306,9 @@ export default function App({
                                         )
                                     )}
                                 </div>
+                                <hr className="my-3 border-t border-gray-100 dark:border-gray-500" />
                             </CardBody>
-                            <div className="w-full flex justify-between px-8 py-5">
+                            <div className="w-full flex justify-between px-8 pb-5">
                                 <Input
                                     className="w-32"
                                     type="number"

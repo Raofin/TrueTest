@@ -14,7 +14,7 @@ export default function RootLayout({ children }: PageProps) {
     <html className={inter.className} lang="en" suppressHydrationWarning>
       <body className="bg-[#eeeef0] dark:bg-[#000000]">
         <Providers>{children}</Providers>
-        <Toaster position="top-right" reverseOrder={false} />
+        <Toaster position="bottom-right" />
       </body>
     </html>
   )

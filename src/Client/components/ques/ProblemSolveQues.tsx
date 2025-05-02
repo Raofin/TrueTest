@@ -1,15 +1,29 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Form, Button, Textarea, Card, Input, Select, SelectItem } from "@heroui/react";
+import {
+    Form,
+    Button,
+    Textarea,
+    Card,
+    Input,
+    Select,
+    SelectItem,
+} from "@heroui/react";
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import PaginationButtons from "@/components/ui/PaginationButton";
 import MdEditor from "../KatexMermaid";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
-import { AIGenerateButton } from '@/components/ui/AiButton'
-import { FormFooterProps, Problem, ProblemItemProps, ProblemSolvingFormProps, TestCaseItemProps } from '../types/problemQues'
+import { AIGenerateButton } from "@/components/ui/AiButton";
+import {
+    FormFooterProps,
+    Problem,
+    ProblemItemProps,
+    ProblemSolvingFormProps,
+    TestCaseItemProps,
+} from "../types/problemQues";
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
     problem,
@@ -47,19 +61,19 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     onChange={(e) => onPointsChange(parseInt(e.target.value))}
                 />
                 <div>
-                <Select
-        label="Select difficulty"
-        className="max-w-xs"
-        onSelectionChange={(keys) => {
-          const selectedKey = Array.from(keys)[0] as string;
-          onDifficultyChange(selectedKey);
-        }}
-      >
-        <SelectItem key="easy">Easy</SelectItem>
-        <SelectItem key="medium">Medium</SelectItem>
-        <SelectItem key="hard">Hard</SelectItem>
-      </Select>
-               </div>
+                    <Select
+                        label="Select difficulty"
+                        className="w-52 max-w-xs"
+                        onSelectionChange={(keys) => {
+                            const selectedKey = Array.from(keys)[0] as string;
+                            onDifficultyChange(selectedKey);
+                        }}
+                    >
+                        <SelectItem key="easy">Easy</SelectItem>
+                        <SelectItem key="medium">Medium</SelectItem>
+                        <SelectItem key="hard">Hard</SelectItem>
+                    </Select>
+                </div>
             </div>
             <div>
                 <Button
@@ -160,36 +174,45 @@ export default function ProblemSolvingForm({
     );
     const [currentPage, setCurrentPage] = useState(0);
     const problemsPerPage = 1;
-        const [isGenerating, setIsGenerating] = useState(false);
-        const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
-      const handleGenerate=()=>{
-           const FetchData=async()=>{
-            setIsGenerating(true)
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedContent, setGeneratedContent] = React.useState<
+        string | null
+    >(null);
+    const handleGenerate = () => {
+        const FetchData = async () => {
+            setIsGenerating(true);
             setGeneratedContent(null);
-           try{
-             const response=await api.post('/Ai/Generate/ProblemSolvingQuestion',{
-                userPrompt: problems[currentPage].question
-             })
-             if(response.status===200){
-                 console.log(response.data.statementMarkdown)
-                const newProblem = {
-                    question: response.data.statementMarkdown,
-                    testCases: response.data.testCases || [{ input: "", output: "" }],
-                    points: 0,
-                    difficultyType:  "Easy"
-                  };
-          
-                  setProblems((prev) =>
-                    prev.map((p, idx) => (idx === currentPage ? { ...p, ...newProblem } : p))
-                  );
-             }
-           }catch{}
-           finally{
-            setIsGenerating(false)
-           }
-         }
-           FetchData();
-       }
+            try {
+                const response = await api.post(
+                    "/Ai/Generate/ProblemSolvingQuestion",
+                    {
+                        userPrompt: problems[currentPage].question,
+                    }
+                );
+                if (response.status === 200) {
+                    console.log(response.data.statementMarkdown);
+                    const newProblem = {
+                        question: response.data.statementMarkdown,
+                        testCases: response.data.testCases || [
+                            { input: "", output: "" },
+                        ],
+                        points: 0,
+                        difficultyType: "Easy",
+                    };
+
+                    setProblems((prev) =>
+                        prev.map((p, idx) =>
+                            idx === currentPage ? { ...p, ...newProblem } : p
+                        )
+                    );
+                }
+            } catch {
+            } finally {
+                setIsGenerating(false);
+            }
+        };
+        FetchData();
+    };
     const handleDeleteProblem = async (problemIndex: number) => {
         const problemToDelete = problems[problemIndex];
         try {
@@ -422,11 +445,11 @@ export default function ProblemSolvingForm({
     const currentProblemIndex = currentPage * problemsPerPage;
     const [saveButton, setSaveButton] = useState(false);
     return (
-        <div className='w-full'>
-            <Form onSubmit={handleSaveProblem} >
+        <div className="w-full">
+            <Form onSubmit={handleSaveProblem}>
                 <Card className="w-full flex flex-col gap-4 p-5 border-none border-none shadow-none bg-white dark:bg-[#18181b]">
                     <h2 className="text-center text-2xl my-5">
-                        Problem Solving Question : {currentProblemIndex + 1}
+                        Problem Solving Question: {currentProblemIndex + 1}
                     </h2>
                     <div className="w-full flex flex-col justify-center p-4">
                         {currentProblems.map((problem, index) => (
@@ -487,16 +510,23 @@ export default function ProblemSolvingForm({
                                         )
                                     }
                                 />
+
+                                <hr className="my-6 border-t border-gray-100 dark:border-gray-500" />
+
                                 <div className="flex w-full justify-between mt-5">
                                     <div>
-                                         <AIGenerateButton 
-                                                    isGenerating={isGenerating} 
-                                                    onGenerate={handleGenerate} 
-                                                  /> {generatedContent && (
-                                                    <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
-                                                      <p className="text-foreground">{generatedContent}</p>
-                                                    </div>
-                                                  )}</div>
+                                        <AIGenerateButton
+                                            isGenerating={isGenerating}
+                                            onGenerate={handleGenerate}
+                                        />{" "}
+                                        {generatedContent && (
+                                            <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+                                                <p className="text-foreground">
+                                                    {generatedContent}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
                                     <FormFooter
                                         totalPages={totalPages}
                                         currentPage={currentPage}

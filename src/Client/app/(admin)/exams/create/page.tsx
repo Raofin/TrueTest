@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AxiosError } from "axios";
 import { convertUtcToLocalTime, parseTime } from "@/components/DateTimeFormat";
-import { AIGenerateButton } from '@/components/ui/AiButton'
+import { AIGenerateButton } from "@/components/ui/AiButton";
 
 interface FormData {
     title: string;
@@ -30,9 +30,13 @@ export default function ExamFormPage() {
     const [writtenQuesPoint, setWrittenQuesPoint] = useState<number>(0);
     const [mcqQuesPoint, setMcqQuesPoint] = useState<number>(0);
     const [totalPoints, setTotalPoints] = useState<number>(0);
-    const [activeComponents, setActiveComponents] = useState<{ id: string; type: string }[]>([]);
+    const [activeComponents, setActiveComponents] = useState<
+        { id: string; type: string }[]
+    >([]);
     const [isGenerating, setIsGenerating] = useState(false);
-    const [generatedContent, setGeneratedContent] = React.useState<string | null>(null);
+    const [generatedContent, setGeneratedContent] = React.useState<
+        string | null
+    >(null);
     const [publishBtn, setPublishbtn] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
@@ -63,25 +67,31 @@ export default function ExamFormPage() {
     const handleComponentSaved = (type: keyof typeof saveStatus) => {
         setSaveStatus((prev) => ({ ...prev, [type]: true }));
     };
-    const handleGenerate=()=>{
-        const FetchData=async()=>{
-    setGeneratedContent(null);
-         setIsGenerating(true);
-        try{
-          const response=await api.post('/Ai/Generate/ExamDescription',{
-            title:formData.title,
-            userPrompt:formData.description
-          })
-          if(response.status===200){
-            setFormData({ ...formData, description: response.data.description });
-          }
-        }catch{}
-        finally {
-            setIsGenerating(false);
-          }
-        }
+    const handleGenerate = () => {
+        const FetchData = async () => {
+            setGeneratedContent(null);
+            setIsGenerating(true);
+            try {
+                const response = await api.post(
+                    "/Ai/Generate/ExamDescription",
+                    {
+                        title: formData.title,
+                        userPrompt: formData.description,
+                    }
+                );
+                if (response.status === 200) {
+                    setFormData({
+                        ...formData,
+                        description: response.data.description,
+                    });
+                }
+            } catch {
+            } finally {
+                setIsGenerating(false);
+            }
+        };
         FetchData();
-    }
+    };
     const handleAddComponent = (componentType: string) => {
         setActiveComponents([
             ...activeComponents,
@@ -90,7 +100,7 @@ export default function ExamFormPage() {
     };
     const handleSaveExam = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true)
+        setIsLoading(true);
         if (!date) {
             toast.error("Please select a date");
             return;
@@ -153,11 +163,13 @@ export default function ExamFormPage() {
                     setExamId(resp.data.examId);
                 }
             }
-            setPublishbtn(true)
+            setPublishbtn(true);
         } catch (err) {
             const error = err as AxiosError;
             toast.error(error?.message);
-        }finally{setIsLoading(false)}
+        } finally {
+            setIsLoading(false);
+        }
     };
     useEffect(() => {
         const fetchExamDetails = async () => {
@@ -226,24 +238,29 @@ export default function ExamFormPage() {
         fetchExamDetails();
     }, [examId, isEdit, route, totalPoints]);
     useEffect(() => {
-            const calculatedTotal =
-                problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
-            if (calculatedTotal !== formData.totalPoints) {
-                const message = `Points updated: 
+        const calculatedTotal =
+            problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
+        if (calculatedTotal !== formData.totalPoints) {
+            const message = `Points updated:
             Problem Solving: ${problemQuesPoint}
             Written: ${writtenQuesPoint}
             MCQ: ${mcqQuesPoint}
             Total Calculated: ${calculatedTotal}
             Exam Total Points: ${formData.totalPoints}`;
-                toast(message, {
-                    duration: 4000,
-                    position: "bottom-right",
-                    style: {
-                        whiteSpace: "pre-line",
-                    },
-                });
-            }
-    }, [formData.totalPoints, mcqQuesPoint, problemQuesPoint, writtenQuesPoint]);
+            toast(message, {
+                duration: 4000,
+                position: "bottom-right",
+                style: {
+                    whiteSpace: "pre-line",
+                },
+            });
+        }
+    }, [
+        formData.totalPoints,
+        mcqQuesPoint,
+        problemQuesPoint,
+        writtenQuesPoint,
+    ]);
     const handlePublishExam = async () => {
         if (examId) {
             try {
@@ -327,7 +344,8 @@ export default function ExamFormPage() {
                 <Card className="flex shadow-none flex-col justify-between p-8 items-center">
                     <form
                         className="flex gap-4 flex-wrap flex-col w-full"
-                        onSubmit={handleSaveExam}>
+                        onSubmit={handleSaveExam}
+                    >
                         <Input
                             className="rounded-2xl"
                             isRequired
@@ -339,33 +357,38 @@ export default function ExamFormPage() {
                                 setFormData({
                                     ...formData,
                                     title: e.target.value,
-                                })}/>
-                        <div className='relative'>
-                       <div>
-                       <Textarea
-                            className="rounded-2xl"
-                            isRequired
-                            label="Description"
-                            name="description"
-                            value={formData.description}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    description: e.target.value,
                                 })
                             }
                         />
-                       </div>
-                        <div className='absolute bottom-2 right-2'>
-                        <AIGenerateButton 
-            isGenerating={isGenerating} 
-            onGenerate={handleGenerate} 
-          /> {generatedContent && (
-            <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
-              <p className="text-foreground">{generatedContent}</p>
-            </div>
-          )}
-          </div>
+                        <div className="relative">
+                            <div>
+                                <Textarea
+                                    className="rounded-2xl"
+                                    isRequired
+                                    label="Description"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            description: e.target.value,
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div className="absolute bottom-2 right-2">
+                                <AIGenerateButton
+                                    isGenerating={isGenerating}
+                                    onGenerate={handleGenerate}
+                                />{" "}
+                                {generatedContent && (
+                                    <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+                                        <p className="text-foreground">
+                                            {generatedContent}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="flex gap-5">
                             <DatePicker
@@ -421,28 +444,48 @@ export default function ExamFormPage() {
                                 hourCycle={12}
                             />
                         </div>
-                        <Input
-                            className="rounded-2xl"
-                            isRequired
-                            label="Total Points"
-                            type="number"
-                            min="1"
-                            value={formData.totalPoints.toString()}
-                            onChange={handleTotalPointsChange}
-                        />
-                        <div className="flex justify-end mt-2 gap-3">
-                           {publishBtn && <Button color="success" onPress={handlePublishExam}>
-                                Publish
-                            </Button>}
-                            <Button color="danger" onPress={handleDeleteExam}>
-                                Delete
-                            </Button>
-                            {isLoading ?<Button color="primary" type="submit">
-                                {isEdit ? "Updating..." : "Saving..."}
-                            </Button>:
-                            <Button color="primary" type="submit">
-                                {isEdit ? "Update" : "Save"}
-                            </Button>}
+                        <div className="flex items-end justify-between">
+                            <div className="w-1/4">
+                                <Input
+                                    className="rounded-2xl"
+                                    isRequired
+                                    label="Total Points"
+                                    type="number"
+                                    min="1"
+                                    value={formData.totalPoints.toString()}
+                                    onChange={handleTotalPointsChange}
+                                />
+                            </div>
+                            <div className="flex gap-3">
+                                {publishBtn && (
+                                    <Button
+                                        color="success"
+                                        onPress={handlePublishExam}
+                                    >
+                                        Publish
+                                    </Button>
+                                )}
+                                {examId && (
+                                    <Button
+                                        color="danger"
+                                        onPress={handleDeleteExam}
+                                    >
+                                        Delete
+                                    </Button>
+                                )}
+                                {!publishBtn &&
+                                    (isLoading ? (
+                                        <Button color="primary" type="submit">
+                                            {isEdit
+                                                ? "Updating..."
+                                                : "Saving..."}
+                                        </Button>
+                                    ) : (
+                                        <Button color="primary" type="submit">
+                                            {isEdit ? "Update" : "Save"}
+                                        </Button>
+                                    ))}
+                            </div>
                         </div>
                     </form>
                 </Card>
