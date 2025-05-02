@@ -45,31 +45,28 @@ export default function Component() {
       useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
           if (!examActive) return;
+      
           const target = e.target as HTMLElement;
-          const isInputOrTextarea = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
-          const isButton = target.tagName === 'BUTTON';
+          const tag = target.tagName;
+          const isInputOrTextarea = tag === 'INPUT' || tag === 'TEXTAREA';
+          const isButton = tag === 'BUTTON';
           if (e.key === 'Escape') {
-             e.preventDefault();
-             e.stopPropagation();
-             return;}
-          if (isInputOrTextarea || isButton) {
-            return;
-          }
-          if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
             e.preventDefault();
             e.stopPropagation();
             return;
           }
-          if (e.key.startsWith('F') && parseInt(e.key.substring(1)) >= 1 && parseInt(e.key.substring(1)) <= 12) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
+          if (isInputOrTextarea || isButton) return;
+      
           let key = e.key;
           if (key.length === 1 && /^[A-Za-z]$/.test(key)) {
             key = key.toLowerCase();
           }
-          if (!allowedKeys.has(key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          const isBlockedCombination =
+            ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x'].includes(e.key.toLowerCase())) ||
+            (e.key.startsWith('F') && +e.key.slice(1) >= 1 && +e.key.slice(1) <= 12) ||
+            (!allowedKeys.has(key) && !e.ctrlKey && !e.metaKey && !e.altKey);
+      
+          if (isBlockedCombination) {
             e.preventDefault();
             e.stopPropagation();
           }
@@ -79,16 +76,19 @@ export default function Component() {
           e.preventDefault();
           e.stopPropagation();
         };
+      
         const handleContextMenu = (e: MouseEvent) => {
           if (!examActive) return;
           e.preventDefault();
           e.stopPropagation();
         };
+      
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('copy', handleClipboardEvent);
         document.addEventListener('paste', handleClipboardEvent);
         document.addEventListener('cut', handleClipboardEvent);
         document.addEventListener('contextmenu', handleContextMenu);
+      
         return () => {
           document.removeEventListener('keydown', handleKeyDown);
           document.removeEventListener('copy', handleClipboardEvent);
@@ -97,6 +97,7 @@ export default function Component() {
           document.removeEventListener('contextmenu', handleContextMenu);
         };
       }, [examActive, allowedKeys]);
+      
     useEffect(() => {
         const FetchExamData = async () => {
             setLoading(true);
@@ -481,15 +482,11 @@ export default function Component() {
                                 <>
                                     <div className="w-full flex justify-between">
                                         <h2 className="text-lg font-semibold">
-                                            #Question :
+                                            #Question: {index}
                                         </h2>
                                         <p>
-                                            {" "}
-                                            points:{" "}
-                                            {
-                                                (question as WrittenQuestion)
-                                                    .score
-                                            }{" "}
+                                            points:
+                                            { (question as WrittenQuestion).score }
                                         </p>
                                     </div>
                                     <WrittenSubmission
@@ -503,14 +500,11 @@ export default function Component() {
                                 <>
                                     <div className="w-full flex justify-between">
                                         <h2 className="text-lg font-semibold">
-                                            #Question :
+                                            #Question: {index}
                                         </h2>
                                         <p>
                                             points:
-                                            {
-                                                (question as ProblemQuestion)
-                                                    .points
-                                            }
+                                            {(question as ProblemQuestion).points}
                                         </p>
                                     </div>
                                     <CodeEditor

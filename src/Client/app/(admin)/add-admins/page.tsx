@@ -39,7 +39,7 @@ export default function Component() {
     const [totalPages, setTotalPages] = useState(1);
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
     const [invitedEmails, setInvitedEmails] = useState("");
-    
+
     useEffect(() => {
         const ManageUser = async () => {
             try {
@@ -192,20 +192,20 @@ export default function Component() {
 
     const topContent = useMemo(
         () => (
-                <div className="flex w-full justify-between mt-24">
-                    <Input
-                        isClearable
-                        className="w-[400px] dark:[#71717a] rounded-2xl "
-                        placeholder="Search"
-                        startContent={<SearchIcon />}
-                        value={searchTerm}
-                        onClear={onClear}
-                        onValueChange={onSearchChange}
-                    />
-                    <Paginate
-                        rowsPerPage={rowsPerPage}
-                        setRowsPerPage={setRowsPerPage}
-                    />
+            <div className="flex w-full justify-between mt-24">
+                <Input
+                    isClearable
+                    className="w-[400px] dark:[#71717a] rounded-2xl "
+                    placeholder="Search"
+                    startContent={<SearchIcon />}
+                    value={searchTerm}
+                    onClear={onClear}
+                    onValueChange={onSearchChange}
+                />
+                <Paginate
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
+                />
             </div>
         ),
         [onClear, onSearchChange, rowsPerPage, searchTerm]
