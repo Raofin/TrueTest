@@ -92,7 +92,7 @@ const Code: React.FC<CodeProps> = ({ children = [], className, node }) => {
 }
 
 export default function MdEditor({ value, onChange }: MdEditorProps) {
-  const Mode=useTheme();let theme="dark";
+  const Mode=useTheme();let theme;
   if(Mode==='light')  theme="light"
   else theme="dark"
   return (

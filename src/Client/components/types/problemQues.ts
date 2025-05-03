@@ -4,6 +4,8 @@ export interface TestCase {
   output: string;
   receivedOutput?: string;
   status?: "success" | "error" | "pending";
+  executionTime:number,
+  errorMessage:string
 }
 export interface ProblemQuestion {
   questionId: string;
@@ -47,7 +49,6 @@ export interface ProblemSolvingFormProps {
   readonly examId: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly existingQuestions: any[];
-  readonly onSaved: () => void;
   readonly problemPoints: (points: number) => void;
 }
 export interface ProblemItemProps {
