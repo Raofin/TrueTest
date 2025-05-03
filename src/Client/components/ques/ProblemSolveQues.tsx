@@ -62,18 +62,21 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     onChange={(e) => onPointsChange(parseInt(e.target.value))}
                 />
                 <div>
-                <Select 
+                <Select
                         label="Difficulty"
                         placeholder="Select difficulty"
-                        selectedKeys={problem.difficultyType ? [problem.difficultyType] : []}
+                        selectedKeys={
+                            problem.difficultyType
+                                ? [problem.difficultyType.toLowerCase()]
+                                : [] }
                         className="w-40"
                         onChange={(e) => {
-                            const value = e.target.value;
+                            const value = e.target.value.toLowerCase();
                             onDifficultyChange(value);
                         }} >
-                        <SelectItem key="easy" >Easy</SelectItem>
-                        <SelectItem key="medium" >Medium</SelectItem>
-                        <SelectItem key="hard" >Hard</SelectItem>
+                        <SelectItem key="easy">Easy</SelectItem>
+                        <SelectItem key="medium">Medium</SelectItem>
+                        <SelectItem key="hard">Hard</SelectItem>
                     </Select>
                 </div>
             </div>
@@ -153,7 +156,6 @@ const FormFooter: React.FC<FormFooterProps> = ({
 export default function ProblemSolvingForm({
     examId,
     existingQuestions,
-    onSaved,
     problemPoints,
 }: ProblemSolvingFormProps) {
     const [problems, setProblems] = useState<Problem[]>(
@@ -255,20 +257,27 @@ export default function ProblemSolvingForm({
         );
         problemPoints(total);
     }, [problems, problemPoints]);
-
     const handleSaveProblem = async (e: React.FormEvent) => {
         e.preventDefault();
-        const hasMissingDifficulty = problems.some(
-            (problem) =>!problem.difficultyType || problem.difficultyType.trim() === "");
-        const hasMissingPoints = problems.some((problem) => !problem.points);
-        if (hasMissingDifficulty) {
-            const index = problems.findIndex((problem) => !problem.difficultyType || problem.difficultyType.trim() === "");
-            toast.error(`Please select difficulty level for Question ${index + 1}`);
+        const indexMissingPoints = problems.findIndex(
+            (problem) => !problem.points
+        );
+        const indexMissingDifficulty = problems.findIndex(
+            (problem) => !problem.difficultyType || problem.difficultyType.trim() === ""
+        );
+        const indexMissingTestCase = problems.findIndex(
+            (problem) => problem.testCases[0].input.length === 0
+        );
+        if (indexMissingDifficulty !== -1) {
+            toast.error(`Please select difficulty level for Question ${ indexMissingDifficulty + 1 }` );
             return;
         }
-        if (hasMissingPoints) {
-            const index = problems.findIndex((problem) => !problem.points);
-            toast.error(`Please input points for Question ${index + 1}`);
+        if (indexMissingPoints !== -1) {
+            toast.error(`Please input points for Question ${indexMissingPoints + 1}` );
+            return;
+        }
+        if (indexMissingTestCase !== -1) {
+            toast.error( `Please add at least one test case for Question ${ indexMissingTestCase + 1}`);
             return;
         }
         try {
@@ -323,7 +332,6 @@ export default function ProblemSolvingForm({
 
             await Promise.all(updatePromises);
             toast.success("Problems saved successfully!");
-            onSaved();
             setSaveButton(!saveButton);
         } catch (error) {
             const err = error as AxiosError;

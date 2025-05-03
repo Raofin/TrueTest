@@ -17,7 +17,6 @@ import SearchIcon from "@/components/ui/SearchIcon";
 import PaginationButtons from "@/components/ui/PaginationButton";
 import CommonModal from "@/components/ui/Modal/EditDeleteModal";
 import api from "@/lib/api";
-import { AxiosError } from "axios";
 import { FormatDatewithTime } from "@/components/DateTimeFormat";
 import handleDelete from "@/lib/handleDelete";
 import handleStatus from "@/lib/handleStatus";
@@ -61,9 +60,8 @@ export default function Component() {
                     setUserData(response.data.accounts);
                     setTotalPages(response.data.page.totalPages ?? 1);
                 }
-            } catch (err) {
-                const axiosError = err as AxiosError;
-                toast.error(axiosError.message);
+            } catch  {
+                toast.error("Failed to load users list .Please check your network connection and try again.");
             }
         };
         ManageUser();

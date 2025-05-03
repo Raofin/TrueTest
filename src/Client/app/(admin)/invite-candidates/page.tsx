@@ -115,7 +115,6 @@ export default function Component() {
             toast.error("No candidates to invite");
             return;
         }
-
         try {
             setIsLoading(true);
             const response = await api.post("/Exam/Invite/Candidates", {
@@ -129,7 +128,7 @@ export default function Component() {
                 setFileContent("");
             }
         } catch {
-            toast.error("Failed to send invitations");
+            toast.error("Failed to send invitations.Please try again.");
         } finally {
             setIsLoading(false);
         }

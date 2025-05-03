@@ -19,7 +19,6 @@ import { MCQFormProps, McqQuestion, MCQQuestion } from "../types/mcqQues";
 export default function Component({
     examId,
     existingQuestions,
-    onSaved,
     mcqPoints,
 }: MCQFormProps) {
     const [questions, setQuestions] = useState<MCQQuestion[]>(
@@ -236,7 +235,6 @@ export default function Component({
             });
             await Promise.all(updatePromises);
             toast.success("MCQ questions saved successfully!");
-            onSaved();
             setSaveButton(!saveButton);
         } catch (error) {
             const err = error as AxiosError;

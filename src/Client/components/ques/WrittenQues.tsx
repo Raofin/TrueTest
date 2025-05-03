@@ -24,7 +24,6 @@ import {
 export default function Component({
     examId,
     existingQuestions,
-    onSaved,
     writtenPoints,
 }: WrittenQuestionFormProps) {
     const [writtenQuestions, setWrittenQuestions] = useState<
@@ -222,7 +221,6 @@ export default function Component({
             );
             await Promise.all(updatePromises);
             toast.success("All questions saved successfully!");
-            onSaved();
             setSaveButton(true);
         } catch (error) {
             const err = error as AxiosError;

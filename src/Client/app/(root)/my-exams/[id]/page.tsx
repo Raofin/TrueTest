@@ -451,6 +451,32 @@ export default function Component() {
                 <div className={`space-y-8 rounded-lg `}>
                     {currentQuestions.map((question,index) => (
                         <div key={question.questionId} className="space-y-4">
+                             {question.questionType === "ProblemSolving" && (
+                                <>
+                                    <div className="w-full flex justify-between">
+                                        <h2 className="text-lg font-semibold">
+                                            #Question: {index}
+                                        </h2>
+                                        <p>
+                                            points:
+                                            {(question as ProblemQuestion).points}
+                                        </p>
+                                    </div>
+                                    <CodeEditor
+                                        examId={id?.toString() ?? ""}
+                                        question={question as ProblemQuestion}
+                                        setAnswers={setAnswers}
+                                        answers={answers}
+                                        questionId={question.questionId}
+                                        persistedTestCaseResults={
+                                            testCaseResults[question.questionId]
+                                        }
+                                        onTestCaseRunComplete={
+                                            updateTestCaseResults
+                                        }
+                                    />
+                                </>
+                            )}
                             {question.questionType === "MCQ" &&
                                 (() => {
                                     const mcqQuestion = question as McqQuestion;
@@ -496,32 +522,7 @@ export default function Component() {
                                     />
                                 </>
                             )}
-                            {question.questionType === "ProblemSolving" && (
-                                <>
-                                    <div className="w-full flex justify-between">
-                                        <h2 className="text-lg font-semibold">
-                                            #Question: {index}
-                                        </h2>
-                                        <p>
-                                            points:
-                                            {(question as ProblemQuestion).points}
-                                        </p>
-                                    </div>
-                                    <CodeEditor
-                                        examId={id?.toString() ?? ""}
-                                        question={question as ProblemQuestion}
-                                        setAnswers={setAnswers}
-                                        answers={answers}
-                                        questionId={question.questionId}
-                                        persistedTestCaseResults={
-                                            testCaseResults[question.questionId]
-                                        }
-                                        onTestCaseRunComplete={
-                                            updateTestCaseResults
-                                        }
-                                    />
-                                </>
-                            )}
+                           
                         </div>
                     ))}
                 </div>

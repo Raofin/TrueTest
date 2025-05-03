@@ -81,6 +81,7 @@ export default function CodeEditor({
     const handleLanguageChange = (newLanguage: string) => {
         setSelectedLanguage(newLanguage);
     };
+    console.log(displayedTestCasesResults)
     const handleRun = async () => {
         setLoading(true)
         const currentCode = codeStates[selectedLanguage];

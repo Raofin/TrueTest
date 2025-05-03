@@ -43,6 +43,7 @@ export default function ExamFormPage() {
     const route = useRouter();
     const [examId, setExamId] = useState(searchParams.get("id") || "");
     const isEdit = searchParams.get("isEdit") === "true";
+    const [published ,setPublished] = useState<boolean>()
     const [formData, setFormData] = useState<FormData>({
         title: "",
         description: "",
@@ -51,22 +52,12 @@ export default function ExamFormPage() {
         opensAt: "",
         closesAt: "",
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [saveStatus, setSaveStatus] = useState({
-        exam: false,
-        problemSolve: false,
-        writtenQues: false,
-        mcq: false,
-    });
     const [questionData, setQuestionData] = useState({
         problemSolve: [],
         writtenQues: [],
         mcq: [],
     });
     const calculatedTotal = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
-    const handleComponentSaved = (type: keyof typeof saveStatus) => {
-        setSaveStatus((prev) => ({ ...prev, [type]: true }));
-    };
     const handleGenerate = () => {
         const FetchData = async () => {
             setGeneratedContent(null);
@@ -163,6 +154,7 @@ export default function ExamFormPage() {
                 resp = await api.patch(`/Exam/Update`, payload);
                 if (resp.status === 200) {
                     toast.success(`Exam updated successfully.`);
+                    setPublished(resp.data.isPublished)
                     route.push("/view-exams");
                 }
             } else {
@@ -170,6 +162,7 @@ export default function ExamFormPage() {
                 if (resp.status === 200) {
                     toast.success(`Exam created successfully.`);
                     setExamId(resp.data.examId);
+                    setPublished(resp.data.isPublished)
                 }
             }
             setPublishbtn(true);
@@ -227,7 +220,6 @@ export default function ExamFormPage() {
                     mcq: mcqQuesResponse.data ?? [],
                 });
                 const components: { id: string; type: string }[] = [];
-
                 if (problemQuesResponse.data?.length) {
                     components.push({ id: uuidv4(), type: "problemSolve" });
                 }
@@ -238,9 +230,8 @@ export default function ExamFormPage() {
                     components.push({ id: uuidv4(), type: "mcq" });
                 }
                 setActiveComponents(components);
-            } catch (error) {
-                console.error("Error fetching exam data:", error);
-                toast.error("Failed to load exam data");
+            } catch  {
+                toast.error("Failed to load exam data.Please check your network connection and try again.");
                 route.push("/view-exams");
             }
         };
@@ -272,7 +263,7 @@ export default function ExamFormPage() {
         writtenQuesPoint,
     ]);
     const handlePublishExam = async () => {
-        if (examId) {
+        if (examId && !published) {
             try {
                 const response = await api.post(
                     `/Exam/Publish?examId=${examId}`
@@ -288,7 +279,7 @@ export default function ExamFormPage() {
                 );
             }
         } else {
-            toast.error("Please save the exam first.");
+            toast.error("Exam is already published.");
         }
     };
     const handleProblemPointsChange = (points: number) => {
@@ -505,9 +496,6 @@ export default function ExamFormPage() {
                             <ProblemSolve
                                 examId={examId}
                                 existingQuestions={questionData.problemSolve}
-                                onSaved={() =>
-                                    handleComponentSaved("problemSolve")
-                                }
                                 problemPoints={handleProblemPointsChange}
                             />
                         )}
@@ -515,9 +503,6 @@ export default function ExamFormPage() {
                             <WrittenQues
                                 examId={examId}
                                 existingQuestions={questionData.writtenQues}
-                                onSaved={() =>
-                                    handleComponentSaved("writtenQues")
-                                }
                                 writtenPoints={handleWrittenPointsChange}
                             />
                         )}
@@ -525,7 +510,6 @@ export default function ExamFormPage() {
                             <McqQues
                                 examId={examId}
                                 existingQuestions={questionData.mcq}
-                                onSaved={() => handleComponentSaved("mcq")}
                                 mcqPoints={handleMcqPointsChange}
                             />
                         )}

@@ -20,7 +20,6 @@ import { FormatDatewithTime } from "@/components/DateTimeFormat";
 import isValidEmail from "@/components/EmailValidation";
 import toast from "react-hot-toast";
 import Paginate from "@/components/SelectPagination";
-import { AxiosError } from "axios";
 import { ApiResponse, User } from "@/components/types/apiResponse";
 
 const columns = [
@@ -54,16 +53,12 @@ export default function Component() {
                             user.roles.length === 1 &&
                             user.roles[0] === "Candidate"
                     );
-
                     setAllUsers(pureCandidates);
                     setTotalPages(
                         Math.ceil(pureCandidates.length / rowsPerPage)
                     );
                 }
-            } catch (err) {
-                const axiosError = err as AxiosError;
-                toast.error(axiosError.message);
-            }
+            } catch { toast.error("Failed to load candidate list.Please check your network connection and try again.") }
         };
         ManageUser();
     }, [page, rowsPerPage, searchTerm]);
