@@ -200,21 +200,23 @@ export default function CodeEditor({
                             </div>
                         </div>
                         {displayedTestCasesResults?.map((testCase) => (<>
+                        <div key={testCase?.input} >
                         <div className="flex w-full justify-between mt-4">
                             <p className="font-semibold">Input</p>
                            <p className="font-semibold">Received Output <span className='text-gray-700'>{testCase.executionTime}</span></p>
                             <p className="font-semibold">Expected Output</p>
                         </div>
-                            <div key={testCase?.input} className="grid grid-cols-3 gap-4 mt-3 min-h-[100px]">
+                            <div className="grid grid-cols-3 gap-4 mt-3 min-h-[200px]">
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                     {testCase?.input ?? "No input provided"}
                                 </div>
-                                <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
-                                    { testCase?.receivedOutput ?? testCase?.errorMessage}
+                               <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
+                                    {testCase.status==="error" ? testCase?.errorMessage : testCase?.receivedOutput}
                                 </div>
                                 <div className="font-mono p-2 bg-[#f4f4f5] dark:bg-[#27272a] rounded-lg whitespace-pre-wrap">
                                     {testCase?.output ?? "No expected output"}
                                 </div>
+                            </div>
                             </div>
                        </> ))}
                     </Card>
