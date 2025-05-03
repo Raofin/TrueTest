@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
 import { AiApiResponse, CandidateData, CandidatesResponse, CandidateSubmission, ExamResponse, ProblemSubmission, WrittenSubmission } from '@/components/types/review'
 import { ExamData } from '@/components/types/exam'
+import { Icon } from '@iconify/react/dist/iconify.js'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
@@ -386,10 +387,20 @@ const updateProblemSubmission = (
                                         </div>
                                         <ReviewWithAi/>
                                         <div className='w-full flex justify-end'>
-                                        <Button onPress={()=>handleAiResponse( submission.questionId)}
-      className=" gap-2 py-2 px-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-semibold shadow-md hover:opacity-90 transition">
-          Review With AI
-    </Button></div>
+                                        <Button
+                                               color="primary"
+                                               size = "md"
+                                               variant = "solid"
+                                               onPress={()=>handleAiResponse( submission.questionId)}
+                                               startContent={
+                                                   <Icon
+                                                     icon="lucide:sparkles"
+                                                     className="text-lg"
+                                                   /> }
+                                               className="min-w-[160px] font-medium">
+                                               Review With AI
+                                             </Button>
+                                          </div>
                                         <div>
                                             <h4 className="font-semibold mb-2"> Result</h4>
                                             <div className="flex items-center gap-5">
@@ -464,10 +475,19 @@ const updateProblemSubmission = (
                                             </Card>
                                             <ReviewWithAi/>
                                             <div className='w-full flex justify-end'>
-                                            <Button onPress={()=>handleAiWrittenResponse(submission.questionId)}
-      className=" gap-2 py-2 px-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-semibold shadow-md hover:opacity-90 transition">
-          Review With AI
-    </Button>
+                                          <Button
+                                               color="primary"
+                                               size = "md"
+                                               variant = "solid"
+                                               onPress={()=>handleAiWrittenResponse(submission.questionId)}
+                                               startContent={
+                                                   <Icon
+                                                     icon="lucide:sparkles"
+                                                     className="text-lg"
+                                                   />  }
+                                               className="min-w-[160px] font-medium">
+                                             Review With AI
+                                             </Button>
     </div>
                                         </div>
                                         <div>

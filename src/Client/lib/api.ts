@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getAuthToken, removeAuthToken } from './auth'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://localhost:9999'
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://localhost:9998'
 const api = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {

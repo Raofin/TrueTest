@@ -102,7 +102,7 @@ public class AiGenerateProblemQueryQueryTests
     public void Validate_WithInvalidInput_ShouldHaveErrors()
     {
         // Arrange
-        var query = new AiGenerateProblemQuery("a".PadRight(2001));
+        var query = new AiGenerateProblemQuery("a".PadRight(3001));
 
         // Act
         var result = _validator.Validate(query);

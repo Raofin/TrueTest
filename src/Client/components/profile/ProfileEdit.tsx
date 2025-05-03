@@ -105,9 +105,8 @@ export default function ProfileEdit({ formData, setFormData }: ProfileDetailsPro
         setProfileImage(tempUrl);
         fetchImageUrl(cloudFileId); 
         toast.success('Image uploaded successfully');
-      } catch (error) {
-        toast.error('Failed to upload image');
-        console.error('Upload error:', error);
+      } catch {
+        toast.error('Failed to upload image.Please check your network connection and try again.');
       } finally {
         setUploading(false);
       }
