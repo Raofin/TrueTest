@@ -14,9 +14,9 @@ import PaginationButtons from "@/components/ui/PaginationButton";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { MCQFormProps, MCQQuestion } from "../types/mcqQues";
+import { MCQFormProps, McqQuestion, MCQQuestion } from "../types/mcqQues";
 
-export default function App({
+export default function Component({
     examId,
     existingQuestions,
     onSaved,
@@ -116,7 +116,6 @@ export default function App({
         newQuestions[questionIndex].options[optionIndex].text = value;
         setQuestions(newQuestions);
     };
-
     const handleCorrectOptionChange = (
         questionIndex: number,
         optionId: number
@@ -133,7 +132,6 @@ export default function App({
 
         setQuestions(newQuestions);
     };
-
     const addNewQuestion = () => {
         setQuestions([
             ...questions,
@@ -159,9 +157,25 @@ export default function App({
         setQuestions(newQuestions);
     };
     const handleSubmit = async () => {
+        const invalidOptionIndex = questions.findIndex(q => {
+            const option1 = q.options.find(opt => opt.id === 1)?.text.trim();
+            const option2 = q.options.find(opt => opt.id === 2)?.text.trim();
+            return !option1 || !option2;
+        });
+        if (invalidOptionIndex !== -1) {
+            toast.error(`Option 1 and 2 are required in question ${invalidOptionIndex + 1}`);
+            return;
+        }
         const hasMissingPoints = questions.some((problem) => !problem.points);
+        const hasMissingCorrectAns = questions.some(q => q.correctOptions.length === 0);
+        const index = questions.findIndex(q=>!q.points)
+        const indexans = questions.findIndex(q=>q.correctOptions.length===0)
         if (hasMissingPoints) {
-            toast.error("Please input points of the mcq question");
+            toast.error(`Please input points of the mcq question ${index+1}`);
+            return;
+        }
+        if (hasMissingCorrectAns) {
+            toast.error(`Please select correct options of the mcq question ${indexans+1}`);
             return;
         }
         try {
@@ -190,11 +204,9 @@ export default function App({
                         prev.map((q) => {
                             if (!q.questionId) {
                                 const newQ = createResponse.data.find(
-                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                    (newQuestion: any) =>
-                                        newQuestion.statementMarkdown ===
-                                            q.question &&
-                                        newQuestion.points === q.points
+                                    (newQuestion: McqQuestion) =>
+                                        newQuestion.statementMarkdown === q.question &&
+                                        newQuestion.score === q.points
                                 );
                                 return newQ
                                     ? { ...q, questionId: newQ.questionId }
@@ -286,15 +298,8 @@ export default function App({
                                                     className="bg-[#eeeef0] dark:[#71717a] rounded-2xl flex-grow"
                                                     label={`Option ${option.id}`}
                                                     value={option.text}
-                                                    isRequired={
-                                                        option.id === 1 ||
-                                                        option.id === 2
-                                                    }
-                                                    onChange={(e: {
-                                                        target: {
-                                                            value: string;
-                                                        };
-                                                    }) =>
+                                                    isRequired={option.id===1 || option.id===2}
+                                                    onChange={(e) =>
                                                         handleOptionChange(
                                                             currentPage,
                                                             option.id,

@@ -16,6 +16,7 @@ import api from "@/lib/api";
 import { AxiosError } from "axios";
 import { AIGenerateButton } from "../ui/AiButton";
 import {
+    WrittenQuestion,
     WrittenQuestionForm,
     WrittenQuestionFormProps,
 } from "../types/writtenQues";
@@ -160,6 +161,19 @@ export default function Component({
         );
     };
     const handleSaveWrittenQuestions = async () => {
+        const hasMissingAnsType = writtenQuestions.some(
+            (ques) =>(!ques.isShortAnswer && !ques.isLongAnswer));
+        const hasMissingPoints = writtenQuestions.some((ques) => !ques.points);
+         if (hasMissingAnsType) {
+                    const index = writtenQuestions.findIndex((ques) => (!ques.isShortAnswer && !ques.isLongAnswer));
+                    toast.error(`Please select answer type for Question ${index + 1}`);
+                    return;
+                }
+                if (hasMissingPoints) {
+                    const index = writtenQuestions.findIndex((ques) => !ques.points);
+                    toast.error(`Please input points for Question ${index + 1}`);
+                    return;
+                }
         try {
             const newQuestions = writtenQuestions.filter((q) => !q.questionId);
             const existingQuestions = writtenQuestions.filter(
@@ -183,11 +197,10 @@ export default function Component({
                         prev.map((q) => {
                             if (!q.questionId) {
                                 const newQ = createResponse.data.find(
-                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                    (newQuestion: any) =>
+                                    (newQuestion: WrittenQuestion) =>
                                         newQuestion.statementMarkdown ===
                                             q.question &&
-                                        newQuestion.points === q.points
+                                        newQuestion.score === q.points
                                 );
                                 return newQ
                                     ? { ...q, questionId: newQ.questionId }

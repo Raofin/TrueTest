@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -12,7 +13,6 @@ import { v4 as uuidv4 } from "uuid";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AxiosError } from "axios";
 import { convertUtcToLocalTime, parseTime } from "@/components/DateTimeFormat";
 import { AIGenerateButton } from "@/components/ui/AiButton";
 
@@ -103,6 +103,7 @@ export default function ExamFormPage() {
         setIsLoading(true);
         if (!date) {
             toast.error("Please select a date");
+            setIsLoading(false);
             return;
         }
         try {
@@ -137,8 +138,16 @@ export default function ExamFormPage() {
                 ).toISOString(),
             };
             setTotalPoints(examData.totalPoints);
+            const now = new Date().toISOString();
+            if (examData.opensAt <= now) {
+                toast.error("Exam's start time must be in the future");
+                setIsLoading(false);
+                return;
+            }
             if (examData.opensAt >= examData.closesAt) {
-                toast.error("please input correct start and end time");
+                toast.error("Close time must be after start time");
+                setIsLoading(false);
+                return;
             }
             let resp;
             if (examId) {
@@ -164,9 +173,10 @@ export default function ExamFormPage() {
                 }
             }
             setPublishbtn(true);
-        } catch (err) {
-            const error = err as AxiosError;
-            toast.error(error?.message);
+        } 
+        catch(error:any) {
+            const {data}=error.response;
+            toast.error(data.message||"An unexpected error occurred");
         } finally {
             setIsLoading(false);
         }
@@ -529,8 +539,7 @@ export default function ExamFormPage() {
                             <Button
                                 onPress={() =>
                                     handleAddComponent("problemSolve")
-                                }
-                            >
+                                } >
                                 Add Problem Solving Question
                             </Button>
                         )}
@@ -540,8 +549,7 @@ export default function ExamFormPage() {
                             <Button
                                 onPress={() =>
                                     handleAddComponent("writtenQues")
-                                }
-                            >
+                                } >
                                 Add Written Question
                             </Button>
                         )}

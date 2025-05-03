@@ -21,6 +21,7 @@ import {
     FormFooterProps,
     Problem,
     ProblemItemProps,
+    ProblemQuestion,
     ProblemSolvingFormProps,
     TestCaseItemProps,
 } from "../types/problemQues";
@@ -61,17 +62,18 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     onChange={(e) => onPointsChange(parseInt(e.target.value))}
                 />
                 <div>
-                    <Select
-                        label="Select difficulty"
-                        className="w-52 max-w-xs"
-                        onSelectionChange={(keys) => {
-                            const selectedKey = Array.from(keys)[0] as string;
-                            onDifficultyChange(selectedKey);
-                        }}
-                    >
-                        <SelectItem key="easy">Easy</SelectItem>
-                        <SelectItem key="medium">Medium</SelectItem>
-                        <SelectItem key="hard">Hard</SelectItem>
+                <Select 
+                        label="Difficulty"
+                        placeholder="Select difficulty"
+                        selectedKeys={problem.difficultyType ? [problem.difficultyType] : []}
+                        className="w-40"
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            onDifficultyChange(value);
+                        }} >
+                        <SelectItem key="easy" >Easy</SelectItem>
+                        <SelectItem key="medium" >Medium</SelectItem>
+                        <SelectItem key="hard" >Hard</SelectItem>
                     </Select>
                 </div>
             </div>
@@ -190,7 +192,6 @@ export default function ProblemSolvingForm({
                     }
                 );
                 if (response.status === 200) {
-                    console.log(response.data.statementMarkdown);
                     const newProblem = {
                         question: response.data.statementMarkdown,
                         testCases: response.data.testCases || [
@@ -258,17 +259,16 @@ export default function ProblemSolvingForm({
     const handleSaveProblem = async (e: React.FormEvent) => {
         e.preventDefault();
         const hasMissingDifficulty = problems.some(
-            (problem) =>
-                !problem.difficultyType || problem.difficultyType.trim() === ""
-        );
+            (problem) =>!problem.difficultyType || problem.difficultyType.trim() === "");
         const hasMissingPoints = problems.some((problem) => !problem.points);
-
         if (hasMissingDifficulty) {
-            toast.error("Please select a difficulty level");
+            const index = problems.findIndex((problem) => !problem.difficultyType || problem.difficultyType.trim() === "");
+            toast.error(`Please select difficulty level for Question ${index + 1}`);
             return;
         }
         if (hasMissingPoints) {
-            toast.error("Please input points of the problem");
+            const index = problems.findIndex((problem) => !problem.points);
+            toast.error(`Please input points for Question ${index + 1}`);
             return;
         }
         try {
@@ -293,8 +293,7 @@ export default function ProblemSolvingForm({
                         prev.map((p) => {
                             if (!p.questionId) {
                                 const newProblem = createResponse.data.find(
-                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                    (np: any) =>
+                                    (np: ProblemQuestion) =>
                                         np.statementMarkdown === p.question &&
                                         np.points === p.points
                                 );
