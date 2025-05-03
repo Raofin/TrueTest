@@ -207,7 +207,7 @@ export default function Component() {
     );
 
     return (
-        <div className=" flex flex-col justify-between">
+        <div className="h-full flex flex-col justify-between">
             <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
             <div className="h-full mx-44 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b] px-12">
                 <div>
