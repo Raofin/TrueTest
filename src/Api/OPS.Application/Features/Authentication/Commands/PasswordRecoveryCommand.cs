@@ -1,11 +1,10 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Constants;
 using OPS.Application.Dtos;
-using OPS.Application.Services.AuthService;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
+using OPS.Domain.Constants;
 
 namespace OPS.Application.Features.Authentication.Commands;
 
@@ -30,7 +29,7 @@ public class ResetPasswordCommandHandler(
         if (account == null) return Error.NotFound();
 
         var isValidOtp = await _unitOfWork.Otp.IsValidOtpAsync(request.Email, request.Otp, cancellationToken);
-        if (!isValidOtp) return Error.Unauthorized(description: "Invalid OTP.");
+        if (!isValidOtp) return Error.Forbidden(description: "Invalid OTP.");
 
         var (hashedPassword, salt) = _passwordHasher.HashPassword(request.NewPassword);
         account.PasswordHash = hashedPassword;

@@ -35,7 +35,7 @@ public record ProfileResponse(
     string? BioMarkdown,
     string? InstituteName,
     string? PhoneNumber,
-    Guid? ImageFileId,
+    CloudFileResponse? ImageFile,
     List<ProfileLinkRequest> ProfileLinks
 );
 
@@ -48,4 +48,12 @@ public record ProfileLinkRequest(
 public record AuthenticationResponse(
     string Token,
     AccountWithDetailsResponse Account
+);
+
+public record CurrentUser(
+    Guid AccountId,
+    string Username,
+    string Email,
+    List<string> Permissions,
+    List<RoleType> Roles
 );

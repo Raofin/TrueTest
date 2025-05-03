@@ -5,12 +5,15 @@ using OPS.Api.Common.ErrorResponses;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Questions.Written.Command;
 using OPS.Application.Features.Questions.Written.Queries;
-using OPS.Infrastructure.Authentication.Permission;
+using OPS.Infrastructure.Auth.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using static OPS.Infrastructure.Authentication.Permission.Permissions;
+using static OPS.Domain.Constants.Permissions;
 
 namespace OPS.Api.Controllers;
 
+/// <summary>
+/// API endpoints for managing written questions.
+/// </summary>
 [Route("Questions/Written")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 [ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]
@@ -19,13 +22,13 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
 
-    /// <summary>Creates a written question.</summary>
-    /// <param name="command">A new written question with details.</param>
+    /// <summary>Creates a new written question.</summary>
+    /// <param name="command">Details of the written question to be created.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Newly created written question.</returns>
+    /// <returns>Details of the newly created written question.</returns>
     [HttpPost("Create")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Creates a written question.")]
+    [EndpointDescription("Creates a new written question.")]
     [ProducesResponseType<List<WrittenQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -36,13 +39,13 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Retrieves a written question.</summary>
-    /// <param name="questionId">Written question Id.</param>
+    /// <summary>Retrieves a specific written question by its unique identifier.</summary>
+    /// <param name="questionId">The unique identifier of the written question to retrieve.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Written question with details.</returns>
+    /// <returns>Details of the requested written question.</returns>
     [HttpGet("{questionId:guid}")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Retrieves a written question.")]
+    [EndpointDescription("Retrieves a specific written question by its unique identifier.")]
     [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -53,13 +56,13 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Retrieves written questions of an exam.</summary>
-    /// <param name="examId">Exam Id.</param>
+    /// <summary>Retrieves all written questions associated with a specific exam.</summary>
+    /// <param name="examId">The unique identifier of the exam.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>List of all written questions of an exam.</returns>
+    /// <returns>A list of all written questions belonging to the specified exam.</returns>
     [HttpGet("ByExam/{examId:guid}")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Retrieves written questions of an exam.")]
+    [EndpointDescription("Retrieves all written questions associated with a specific exam.")]
     [ProducesResponseType<List<WrittenQuestionResponse>>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     public async Task<IActionResult> GetWrittenByExamAsync(Guid examId, CancellationToken cancellationToken)
@@ -69,13 +72,13 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Updates a written question.</summary>
-    /// <param name="command">Written question Id and updated details.</param>
+    /// <summary>Updates an existing written question with new details.</summary>
+    /// <param name="command">The unique identifier of the written question to update and the new details.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>The updated written question.</returns>
+    /// <returns>Details of the updated written question.</returns>
     [HttpPatch("Update")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Updates a written question.")]
+    [EndpointDescription("Updates an existing written question with new details.")]
     [ProducesResponseType<WrittenQuestionResponse>(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]
@@ -87,13 +90,13 @@ public class QuestionWrittenController(IMediator mediator) : BaseApiController
         return ToResult(response);
     }
 
-    /// <summary>Deletes a written question.</summary>
-    /// <param name="questionId">Written question Id.</param>
+    /// <summary>Deletes a specific written question by its unique identifier.</summary>
+    /// <param name="questionId">The unique identifier of the written question to delete.</param>
     /// <param name="cancellationToken">Request cancellation token.</param>
-    /// <returns>Success response.</returns>
+    /// <returns>A success response indicating that the written question has been deleted.</returns>
     [HttpDelete("Delete/{questionId:guid}")]
     [HasPermission(ManageQuestions)]
-    [EndpointDescription("Deletes a written question.")]
+    [EndpointDescription("Deletes a specific written question by its unique identifier.")]
     [ProducesResponseType(Status200OK)]
     [ProducesResponseType<ValidationErrorResponse>(Status400BadRequest)]
     [ProducesResponseType<NotFoundResponse>(Status404NotFound)]

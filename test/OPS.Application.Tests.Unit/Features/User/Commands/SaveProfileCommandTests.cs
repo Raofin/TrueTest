@@ -4,8 +4,8 @@ using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Dtos;
 using OPS.Application.Features.User.Commands;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Tests.Unit.Features.User.Commands;
@@ -13,7 +13,7 @@ namespace OPS.Application.Tests.Unit.Features.User.Commands;
 public class SaveProfileCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IUserProvider _userProvider;
     private readonly SaveProfileCommandHandler _sut;
     private readonly SaveProfileCommandValidator _validator = new();
     private readonly Guid _accountId;
@@ -22,12 +22,12 @@ public class SaveProfileCommandTests
     public SaveProfileCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _sut = new SaveProfileCommandHandler(_unitOfWork, _userInfoProvider);
+        _userProvider = Substitute.For<IUserProvider>();
+        _sut = new SaveProfileCommandHandler(_unitOfWork, _userProvider);
         _accountId = Guid.NewGuid();
         _imageFileId = Guid.NewGuid();
 
-        _userInfoProvider.AccountId().Returns(_accountId);
+        _userProvider.AccountId().Returns(_accountId);
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class SaveProfileCommandTests
         result.Value.BioMarkdown.Should().Be("Test Bio");
         result.Value.InstituteName.Should().Be("Test Institute");
         result.Value.PhoneNumber.Should().Be("1234567890");
-        result.Value.ImageFileId.Should().Be(_imageFileId);
+        result.Value.ImageFile?.CloudFileId.Should().Be(_imageFileId);
         result.Value.ProfileLinks.Should().HaveCount(1);
 
         _unitOfWork.Profile.DidNotReceive().Add(Arg.Any<Profile>());
@@ -217,7 +217,7 @@ public class SaveProfileCommandTests
         result.Value.BioMarkdown.Should().Be("Bio");
         result.Value.InstituteName.Should().Be("Institute");
         result.Value.PhoneNumber.Should().Be("1234567890");
-        result.Value.ImageFileId.Should().Be(_imageFileId);
+        result.Value.ImageFile?.CloudFileId.Should().Be(_imageFileId);
 
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
     }

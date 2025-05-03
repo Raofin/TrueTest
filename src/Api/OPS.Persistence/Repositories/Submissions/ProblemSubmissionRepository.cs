@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Submissions;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Enums;
+using OPS.Domain.Interfaces.Submissions;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Submissions;
@@ -17,6 +17,14 @@ internal class ProblemSubmissionRepository(AppDbContext dbContext)
         return await _dbContext.ProblemSubmissions
             .Where(ps => ps.QuestionId == questionId && ps.AccountId == accountId)
             .Include(ps => ps.Question)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<ProblemSubmission?> GetWithQuestionAsync(Guid problemSubmissionId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ProblemSubmissions
+            .Include(ps => ps.Question)
+            .Where(ps => ps.Id == problemSubmissionId)
             .SingleOrDefaultAsync(cancellationToken);
     }
 

@@ -3,8 +3,8 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Accounts.Commands;
+using OPS.Application.Interfaces;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
@@ -13,7 +13,7 @@ namespace OPS.Application.Tests.Unit.Features.Accounts.Commands;
 public class MakeAdminCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IAccountEmails _accountEmails;
+    private readonly IEmailSender _emailSender;
     private readonly MakeAdminCommandHandler _sut;
     private readonly MakeAdminCommandValidator _validator = new();
     private readonly List<Guid> _validAccountIds;
@@ -21,8 +21,8 @@ public class MakeAdminCommandTests
     public MakeAdminCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _accountEmails = Substitute.For<IAccountEmails>();
-        _sut = new MakeAdminCommandHandler(_unitOfWork, _accountEmails);
+        _emailSender = Substitute.For<IEmailSender>();
+        _sut = new MakeAdminCommandHandler(_unitOfWork, _emailSender);
         _validAccountIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
     }
 
@@ -57,7 +57,7 @@ public class MakeAdminCommandTests
             (_validAccountIds.Contains(ar.AccountId))));
 
         // Verify emails were sent
-        _accountEmails.Received(1).SendAdminGranted(
+        _emailSender.Received(1).SendAdminGranted(
             Arg.Is<List<string>>(emails =>
                 emails.Count == 2 &&
                 emails.Contains("test1@example.com") &&
@@ -83,7 +83,7 @@ public class MakeAdminCommandTests
         result.FirstError.Description.Should().Be("No non-admin accounts found.");
 
         // Verify no emails were sent
-        _accountEmails.DidNotReceive().SendAdminGranted(
+        _emailSender.DidNotReceive().SendAdminGranted(
             Arg.Any<List<string>>(),
             Arg.Any<CancellationToken>());
     }

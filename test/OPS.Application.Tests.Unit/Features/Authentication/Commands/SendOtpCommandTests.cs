@@ -1,18 +1,17 @@
-using ErrorOr;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Authentication.Commands;
+using OPS.Application.Interfaces;
+using OPS.Application.Interfaces.Auth;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
-using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
 
 namespace OPS.Application.Tests.Unit.Features.Authentication.Commands;
 
 public class SendOtpCommandTests
 {
-    private readonly IAccountEmails _accountEmails;
+    private readonly IEmailSender _emailSender;
     private readonly IOtpGenerator _otpGenerator;
     private readonly IUnitOfWork _unitOfWork;
     private readonly SendOtpCommandHandler _sut;
@@ -21,10 +20,10 @@ public class SendOtpCommandTests
 
     public SendOtpCommandTests()
     {
-        _accountEmails = Substitute.For<IAccountEmails>();
+        _emailSender = Substitute.For<IEmailSender>();
         _otpGenerator = Substitute.For<IOtpGenerator>();
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _sut = new SendOtpCommandHandler(_accountEmails, _otpGenerator, _unitOfWork);
+        _sut = new SendOtpCommandHandler(_emailSender, _otpGenerator, _unitOfWork);
 
         _existingOtp = new Otp
         {
@@ -60,7 +59,7 @@ public class SendOtpCommandTests
             o.Code == newOtpCode &&
             o.ExpiresAt > DateTime.UtcNow));
 
-        _accountEmails.Received(1).SendOtp(command.Email, newOtpCode, Arg.Any<CancellationToken>());
+        _emailSender.Received(1).SendOtp(command.Email, newOtpCode, Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
     }
 
@@ -91,7 +90,7 @@ public class SendOtpCommandTests
             o.Code == newOtpCode &&
             o.ExpiresAt > DateTime.UtcNow));
 
-        _accountEmails.Received(1).SendOtp(command.Email, newOtpCode, Arg.Any<CancellationToken>());
+        _emailSender.Received(1).SendOtp(command.Email, newOtpCode, Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
     }
 

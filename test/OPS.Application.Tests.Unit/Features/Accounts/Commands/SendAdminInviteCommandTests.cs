@@ -3,9 +3,8 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using OPS.Application.Features.Accounts.Commands;
-using OPS.Application.Common.Constants;
+using OPS.Application.Interfaces;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.EmailSender;
 using OPS.Domain.Entities.User;
 using OPS.Domain.Enums;
 
@@ -14,7 +13,7 @@ namespace OPS.Application.Tests.Unit.Features.Accounts.Commands;
 public class SendAdminInviteCommandTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IAccountEmails _accountEmails;
+    private readonly IEmailSender _emailSender;
     private readonly SendAdminInviteCommandHandler _sut;
     private readonly SendAdminInviteCommandValidator _validator = new();
     private readonly List<string> _validEmails;
@@ -22,8 +21,8 @@ public class SendAdminInviteCommandTests
     public SendAdminInviteCommandTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _accountEmails = Substitute.For<IAccountEmails>();
-        _sut = new SendAdminInviteCommandHandler(_unitOfWork, _accountEmails);
+        _emailSender = Substitute.For<IEmailSender>();
+        _sut = new SendAdminInviteCommandHandler(_unitOfWork, _emailSender);
         _validEmails = new List<string> { "test1@example.com", "test2@example.com" };
     }
 
@@ -68,11 +67,11 @@ public class SendAdminInviteCommandTests
             invites.Any(i => i.Email == "test2@example.com")));
 
         // Verify emails were sent
-        _accountEmails.Received(1).SendAdminInvitation(
+        _emailSender.Received(1).SendAdminInvitation(
             Arg.Is<List<string>>(emails => emails.Contains("test2@example.com")),
             Arg.Any<CancellationToken>());
 
-        _accountEmails.Received(1).SendAdminGranted(
+        _emailSender.Received(1).SendAdminGranted(
             Arg.Is<List<string>>(emails => emails.Contains("test1@example.com")),
             Arg.Any<CancellationToken>());
     }
@@ -97,8 +96,8 @@ public class SendAdminInviteCommandTests
 
         _unitOfWork.AccountRole.DidNotReceive().AddRange(Arg.Any<IEnumerable<AccountRole>>());
         _unitOfWork.AdminInvite.DidNotReceive().AddRange(Arg.Any<IEnumerable<AdminInvite>>());
-        _accountEmails.DidNotReceive().SendAdminInvitation(Arg.Any<List<string>>(), Arg.Any<CancellationToken>());
-        _accountEmails.DidNotReceive().SendAdminGranted(Arg.Any<List<string>>(), Arg.Any<CancellationToken>());
+        _emailSender.DidNotReceive().SendAdminInvitation(Arg.Any<List<string>>(), Arg.Any<CancellationToken>());
+        _emailSender.DidNotReceive().SendAdminGranted(Arg.Any<List<string>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

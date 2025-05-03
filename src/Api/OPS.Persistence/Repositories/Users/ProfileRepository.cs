@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OPS.Domain.Contracts.Repository.Users;
 using OPS.Domain.Entities.User;
+using OPS.Domain.Interfaces.Users;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Users;
@@ -14,6 +14,7 @@ internal class ProfileRepository(AppDbContext dbContext) : Repository<Profile>(d
         return await _dbContext.Profiles
             .Where(p => p.AccountId == accountId)
             .Include(p => p.ProfileLinks)
+            .Include(p => p.ImageFile)
             .SingleOrDefaultAsync(cancellationToken);
     }
 }

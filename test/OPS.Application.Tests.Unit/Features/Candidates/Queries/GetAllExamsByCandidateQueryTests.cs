@@ -3,9 +3,9 @@ using FluentAssertions;
 using NSubstitute;
 using OPS.Application.Dtos;
 using OPS.Application.Features.Candidates.Queries;
+using OPS.Application.Interfaces.Auth;
 using OPS.Application.Mappers;
 using OPS.Domain;
-using OPS.Domain.Contracts.Core.Authentication;
 using OPS.Domain.Entities.Exam;
 using OPS.Domain.Entities.Submit;
 using OPS.Domain.Enums;
@@ -15,7 +15,7 @@ namespace OPS.Application.Tests.Unit.Features.Candidates.Queries;
 public class GetAllExamsByCandidateQueryTests
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IUserProvider _userProvider;
     private readonly GetAllExamsByCandidateQueryHandler _sut;
     private readonly Guid _validAccountId;
     private readonly Guid _validExamId1;
@@ -24,14 +24,14 @@ public class GetAllExamsByCandidateQueryTests
     public GetAllExamsByCandidateQueryTests()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _sut = new GetAllExamsByCandidateQueryHandler(_unitOfWork, _userInfoProvider);
+        _userProvider = Substitute.For<IUserProvider>();
+        _sut = new GetAllExamsByCandidateQueryHandler(_unitOfWork, _userProvider);
 
         _validAccountId = Guid.NewGuid();
         _validExamId1 = Guid.NewGuid();
         _validExamId2 = Guid.NewGuid();
 
-        _userInfoProvider.AccountId().Returns(_validAccountId);
+        _userProvider.AccountId().Returns(_validAccountId);
     }
 
     [Fact]

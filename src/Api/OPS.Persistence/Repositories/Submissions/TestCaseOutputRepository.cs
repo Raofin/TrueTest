@@ -1,5 +1,5 @@
-using OPS.Domain.Contracts.Repository.Submissions;
 using OPS.Domain.Entities.Submit;
+using OPS.Domain.Interfaces.Submissions;
 using OPS.Persistence.Repositories.Common;
 
 namespace OPS.Persistence.Repositories.Submissions;

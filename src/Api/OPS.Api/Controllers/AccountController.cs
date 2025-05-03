@@ -6,12 +6,15 @@ using OPS.Application.Dtos;
 using OPS.Application.Features.Accounts.Commands;
 using OPS.Application.Features.Accounts.Queries;
 using OPS.Domain.Enums;
-using OPS.Infrastructure.Authentication.Permission;
+using OPS.Infrastructure.Auth.Permission;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using static OPS.Infrastructure.Authentication.Permission.Permissions;
+using static OPS.Domain.Constants.Permissions;
 
 namespace OPS.Api.Controllers;
 
+/// <summary>
+/// API endpoints for managing user accounts.
+/// </summary>
 [Route("Account")]
 [ProducesResponseType<UnauthorizedResponse>(Status401Unauthorized)]
 [ProducesResponseType<ForbiddenResponse>(Status403Forbidden)]

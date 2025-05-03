@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
-using OPS.Application.Common.Extensions;
+using OPS.Application.Common;
 using OPS.Application.Dtos;
 using OPS.Application.Mappers;
 using OPS.Domain;
@@ -93,7 +93,7 @@ public class ProblemQuestionRequestValidator : AbstractValidator<CreateProblemQu
     public ProblemQuestionRequestValidator()
     {
         RuleFor(x => x.StatementMarkdown)
-            .MinimumLength(10);
+            .MinimumLength(1);
 
         RuleFor(x => x.Points)
             .GreaterThan(0)

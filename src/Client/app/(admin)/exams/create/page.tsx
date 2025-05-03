@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -12,9 +13,8 @@ import { v4 as uuidv4 } from "uuid";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AxiosError } from "axios";
 import { convertUtcToLocalTime, parseTime } from "@/components/DateTimeFormat";
-import { AiButton } from '@/components/ui/AiButton'
+import { AIGenerateButton } from "@/components/ui/AiButton";
 
 interface FormData {
     title: string;
@@ -34,10 +34,16 @@ export default function ExamFormPage() {
         { id: string; type: string }[]
     >([]);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedContent, setGeneratedContent] = React.useState<
+        string | null
+    >(null);
+    const [publishBtn, setPublishbtn] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
     const route = useRouter();
     const [examId, setExamId] = useState(searchParams.get("id") || "");
     const isEdit = searchParams.get("isEdit") === "true";
+    const [published ,setPublished] = useState<boolean>()
     const [formData, setFormData] = useState<FormData>({
         title: "",
         description: "",
@@ -46,40 +52,37 @@ export default function ExamFormPage() {
         opensAt: "",
         closesAt: "",
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [saveStatus, setSaveStatus] = useState({
-        exam: false,
-        problemSolve: false,
-        writtenQues: false,
-        mcq: false,
-    });
     const [questionData, setQuestionData] = useState({
         problemSolve: [],
         writtenQues: [],
         mcq: [],
     });
     const calculatedTotal = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
-    const handleComponentSaved = (type: keyof typeof saveStatus) => {
-        setSaveStatus((prev) => ({ ...prev, [type]: true }));
-    };
-    const handleAiResponse=()=>{
-        const FetchData=async()=>{
-         setIsGenerating(true);
-        try{
-          const response=await api.post('/Ai/Generate/ExamDescription',{
-            title:formData.title,
-            userPrompt:formData.description
-          })
-          if(response.status===200){
-            setFormData({ ...formData, description: response.data.description });
-          }
-        }catch{}
-        finally {
-            setIsGenerating(false);
-          }
-        }
+    const handleGenerate = () => {
+        const FetchData = async () => {
+            setGeneratedContent(null);
+            setIsGenerating(true);
+            try {
+                const response = await api.post(
+                    "/Ai/Generate/ExamDescription",
+                    {
+                        title: formData.title,
+                        userPrompt: formData.description,
+                    }
+                );
+                if (response.status === 200) {
+                    setFormData({
+                        ...formData,
+                        description: response.data.description,
+                    });
+                }
+            } catch {
+            } finally {
+                setIsGenerating(false);
+            }
+        };
         FetchData();
-    }
+    };
     const handleAddComponent = (componentType: string) => {
         setActiveComponents([
             ...activeComponents,
@@ -88,8 +91,10 @@ export default function ExamFormPage() {
     };
     const handleSaveExam = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         if (!date) {
             toast.error("Please select a date");
+            setIsLoading(false);
             return;
         }
         try {
@@ -124,8 +129,16 @@ export default function ExamFormPage() {
                 ).toISOString(),
             };
             setTotalPoints(examData.totalPoints);
+            const now = new Date().toISOString();
+            if (examData.opensAt <= now) {
+                toast.error("Exam's start time must be in the future");
+                setIsLoading(false);
+                return;
+            }
             if (examData.opensAt >= examData.closesAt) {
-                toast.error("please input correct start and end time");
+                toast.error("Close time must be after start time");
+                setIsLoading(false);
+                return;
             }
             let resp;
             if (examId) {
@@ -141,6 +154,7 @@ export default function ExamFormPage() {
                 resp = await api.patch(`/Exam/Update`, payload);
                 if (resp.status === 200) {
                     toast.success(`Exam updated successfully.`);
+                    setPublished(resp.data.isPublished)
                     route.push("/view-exams");
                 }
             } else {
@@ -148,11 +162,16 @@ export default function ExamFormPage() {
                 if (resp.status === 200) {
                     toast.success(`Exam created successfully.`);
                     setExamId(resp.data.examId);
+                    setPublished(resp.data.isPublished)
                 }
             }
-        } catch (err) {
-            const error = err as AxiosError;
-            toast.error(error?.message);
+            setPublishbtn(true);
+        } 
+        catch(error:any) {
+            const {data}=error.response;
+            toast.error(data.message||"An unexpected error occurred");
+        } finally {
+            setIsLoading(false);
         }
     };
     useEffect(() => {
@@ -201,7 +220,6 @@ export default function ExamFormPage() {
                     mcq: mcqQuesResponse.data ?? [],
                 });
                 const components: { id: string; type: string }[] = [];
-
                 if (problemQuesResponse.data?.length) {
                     components.push({ id: uuidv4(), type: "problemSolve" });
                 }
@@ -212,9 +230,8 @@ export default function ExamFormPage() {
                     components.push({ id: uuidv4(), type: "mcq" });
                 }
                 setActiveComponents(components);
-            } catch (error) {
-                console.error("Error fetching exam data:", error);
-                toast.error("Failed to load exam data");
+            } catch  {
+                toast.error("Failed to load exam data.Please check your network connection and try again.");
                 route.push("/view-exams");
             }
         };
@@ -222,29 +239,31 @@ export default function ExamFormPage() {
         fetchExamDetails();
     }, [examId, isEdit, route, totalPoints]);
     useEffect(() => {
-        const debounceTimer = setTimeout(() => {
-            const calculatedTotal =
-                problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
-            if (calculatedTotal !== formData.totalPoints) {
-                const message = `Points updated: 
+        const calculatedTotal =
+            problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
+        if (calculatedTotal !== formData.totalPoints) {
+            const message = `Points updated:
             Problem Solving: ${problemQuesPoint}
             Written: ${writtenQuesPoint}
             MCQ: ${mcqQuesPoint}
             Total Calculated: ${calculatedTotal}
             Exam Total Points: ${formData.totalPoints}`;
-                toast(message, {
-                    duration: 4000,
-                    position: "bottom-right",
-                    style: {
-                        whiteSpace: "pre-line",
-                    },
-                });
-            }
-        }, 1000);
-        return () => clearTimeout(debounceTimer);
-    }, [formData.totalPoints, mcqQuesPoint, problemQuesPoint, writtenQuesPoint]);
+            toast(message, {
+                duration: 4000,
+                position: "bottom-right",
+                style: {
+                    whiteSpace: "pre-line",
+                },
+            });
+        }
+    }, [
+        formData.totalPoints,
+        mcqQuesPoint,
+        problemQuesPoint,
+        writtenQuesPoint,
+    ]);
     const handlePublishExam = async () => {
-        if (examId) {
+        if (examId && !published) {
             try {
                 const response = await api.post(
                     `/Exam/Publish?examId=${examId}`
@@ -260,7 +279,7 @@ export default function ExamFormPage() {
                 );
             }
         } else {
-            toast.error("Please save the exam first.");
+            toast.error("Exam is already published.");
         }
     };
     const handleProblemPointsChange = (points: number) => {
@@ -326,7 +345,8 @@ export default function ExamFormPage() {
                 <Card className="flex shadow-none flex-col justify-between p-8 items-center">
                     <form
                         className="flex gap-4 flex-wrap flex-col w-full"
-                        onSubmit={handleSaveExam}>
+                        onSubmit={handleSaveExam}
+                    >
                         <Input
                             className="rounded-2xl"
                             isRequired
@@ -338,24 +358,38 @@ export default function ExamFormPage() {
                                 setFormData({
                                     ...formData,
                                     title: e.target.value,
-                                })}/>
-                        <div className='relative'>
-                       <div>
-                       <Textarea
-                            className="rounded-2xl"
-                            isRequired
-                            label="Description"
-                            name="description"
-                            value={formData.description}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    description: e.target.value,
                                 })
                             }
                         />
-                       </div>
-                        <div className='absolute top-2 right-2'><AiButton onPress={handleAiResponse} loading={isGenerating}/></div>
+                        <div className="relative">
+                            <div>
+                                <Textarea
+                                    className="rounded-2xl"
+                                    isRequired
+                                    label="Description"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            description: e.target.value,
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div className="absolute bottom-2 right-2">
+                                <AIGenerateButton
+                                    isGenerating={isGenerating}
+                                    onGenerate={handleGenerate}
+                                />{" "}
+                                {generatedContent && (
+                                    <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
+                                        <p className="text-foreground">
+                                            {generatedContent}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="flex gap-5">
                             <DatePicker
@@ -411,25 +445,48 @@ export default function ExamFormPage() {
                                 hourCycle={12}
                             />
                         </div>
-                        <Input
-                            className="rounded-2xl"
-                            isRequired
-                            label="Total Points"
-                            type="number"
-                            min="1"
-                            value={formData.totalPoints.toString()}
-                            onChange={handleTotalPointsChange}
-                        />
-                        <div className="flex justify-end mt-2 gap-3">
-                            <Button color="success" onPress={handlePublishExam}>
-                                Publish
-                            </Button>
-                            <Button color="danger" onPress={handleDeleteExam}>
-                                Delete
-                            </Button>
-                            <Button color="primary" type="submit">
-                                {isEdit ? "Update" : "Save"}
-                            </Button>
+                        <div className="flex items-end justify-between">
+                            <div className="w-1/4">
+                                <Input
+                                    className="rounded-2xl"
+                                    isRequired
+                                    label="Total Points"
+                                    type="number"
+                                    min="1"
+                                    value={formData.totalPoints.toString()}
+                                    onChange={handleTotalPointsChange}
+                                />
+                            </div>
+                            <div className="flex gap-3">
+                                {publishBtn && (
+                                    <Button
+                                        color="success"
+                                        onPress={handlePublishExam}
+                                    >
+                                        Publish
+                                    </Button>
+                                )}
+                                {examId && (
+                                    <Button
+                                        color="danger"
+                                        onPress={handleDeleteExam}
+                                    >
+                                        Delete
+                                    </Button>
+                                )}
+                                {!publishBtn &&
+                                    (isLoading ? (
+                                        <Button color="primary" type="submit">
+                                            {isEdit
+                                                ? "Updating..."
+                                                : "Saving..."}
+                                        </Button>
+                                    ) : (
+                                        <Button color="primary" type="submit">
+                                            {isEdit ? "Update" : "Save"}
+                                        </Button>
+                                    ))}
+                            </div>
                         </div>
                     </form>
                 </Card>
@@ -439,9 +496,6 @@ export default function ExamFormPage() {
                             <ProblemSolve
                                 examId={examId}
                                 existingQuestions={questionData.problemSolve}
-                                onSaved={() =>
-                                    handleComponentSaved("problemSolve")
-                                }
                                 problemPoints={handleProblemPointsChange}
                             />
                         )}
@@ -449,9 +503,6 @@ export default function ExamFormPage() {
                             <WrittenQues
                                 examId={examId}
                                 existingQuestions={questionData.writtenQues}
-                                onSaved={() =>
-                                    handleComponentSaved("writtenQues")
-                                }
                                 writtenPoints={handleWrittenPointsChange}
                             />
                         )}
@@ -459,7 +510,6 @@ export default function ExamFormPage() {
                             <McqQues
                                 examId={examId}
                                 existingQuestions={questionData.mcq}
-                                onSaved={() => handleComponentSaved("mcq")}
                                 mcqPoints={handleMcqPointsChange}
                             />
                         )}
@@ -473,8 +523,7 @@ export default function ExamFormPage() {
                             <Button
                                 onPress={() =>
                                     handleAddComponent("problemSolve")
-                                }
-                            >
+                                } >
                                 Add Problem Solving Question
                             </Button>
                         )}
@@ -484,8 +533,7 @@ export default function ExamFormPage() {
                             <Button
                                 onPress={() =>
                                     handleAddComponent("writtenQues")
-                                }
-                            >
+                                } >
                                 Add Written Question
                             </Button>
                         )}

@@ -27,7 +27,6 @@ export interface ExistingQuestion {
 export interface MCQFormProps {
     readonly examId: string;
     readonly existingQuestions: ExistingQuestion[];
-    readonly onSaved: () => void;
     readonly mcqPoints: (points: number) => void;
 }
 export interface MCQOptions {
