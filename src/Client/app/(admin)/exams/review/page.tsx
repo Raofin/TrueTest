@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, Button, Textarea, Select, SelectItem,Spinner } from "@heroui/react";
+import { Card, Button, Textarea, Select, SelectItem } from "@heroui/react";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -24,7 +24,9 @@ export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
-    const [loading,setLoading]=useState(false);
+    const [loadingSubmissionId, setLoadingSubmissionId] = useState<
+        string | null
+    >(null);
     const [aiReviewResponse, setAiReviewResponse] = useState<
         Record<string, AiApiResponse>
     >({});
@@ -80,13 +82,12 @@ export default function Component() {
         submissionId: string,
         questionId: string
     ) => {
-        setLoading(true);
+        setLoadingSubmissionId(submissionId);
         try {
             const response = await api.post<AiApiResponse>(
                 `/Ai/Review/ProblemSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                console.log(response.data);
                 setAiReviewResponse((prev) => ({
                     ...prev,
                     [questionId]: response.data,
@@ -94,18 +95,21 @@ export default function Component() {
             }
         } catch {
             toast.error("Error communicating with AI service.");
-        }finally{setLoading(false);}
+        } finally {
+            setLoadingSubmissionId(null);
+        }
     };
+
     const handleAiWrittenResponse = async (
         submissionId: string,
         questionId: string
     ) => {
+        setLoadingSubmissionId(submissionId);
         try {
             const response = await api.post<AiApiResponse>(
                 `/Ai/Review/WrittenSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                console.log(response.data);
                 setAiReviewResponse((prev) => ({
                     ...prev,
                     [questionId]: response.data,
@@ -113,6 +117,8 @@ export default function Component() {
             }
         } catch {
             toast.error("Error communicating with AI service.");
+        } finally {
+            setLoadingSubmissionId(null);
         }
     };
     useEffect(() => {
@@ -452,7 +458,7 @@ export default function Component() {
                         )}
                     </div>
                 </Card>
-                {(selectedCandidateId && editedSubmission) ? (
+                {selectedCandidateId && editedSubmission ? (
                     <div className=" p-5 rounded-xl">
                         <h2 className="w-full text-center">
                             {selectedCandidate?.account.username ??
@@ -572,26 +578,38 @@ export default function Component() {
                                                 </div>
                                             </div>
                                             <div>
-                                               {loading ?<Button color="primary"><Spinner/></Button>: <Button
+                                                <Button
                                                     color="primary"
-                                                    size="md"
                                                     variant="solid"
+                                                    size="md"
                                                     onPress={() =>
                                                         handleAiResponse(
                                                             submission.problemSubmissionId,
                                                             submission.questionId
                                                         )
                                                     }
+                                                    isLoading={
+                                                        loadingSubmissionId ===
+                                                        submission.problemSubmissionId
+                                                    }
                                                     startContent={
-                                                        <Icon
-                                                            icon="lucide:sparkles"
-                                                            className="text-lg"
-                                                        />
+                                                        !(
+                                                            loadingSubmissionId ===
+                                                            submission.problemSubmissionId
+                                                        ) && (
+                                                            <Icon
+                                                                icon="lucide:sparkles"
+                                                                className="text-lg"
+                                                            />
+                                                        )
                                                     }
                                                     className="min-w-[160px] font-medium"
                                                 >
-                                                    Review With AI
-                                                </Button>}
+                                                    {loadingSubmissionId ===
+                                                    submission.problemSubmissionId
+                                                        ? "Reviewing..."
+                                                        : "Review With AI"}
+                                                </Button>
                                             </div>
                                         </div>
                                         {submission.isFlagged && (
@@ -723,15 +741,27 @@ export default function Component() {
                                                                 submission.questionId
                                                             )
                                                         }
+                                                        isLoading={
+                                                            loadingSubmissionId ===
+                                                            submission.writtenSubmissionId
+                                                        }
                                                         startContent={
-                                                            <Icon
-                                                                icon="lucide:sparkles"
-                                                                className="text-lg"
-                                                            />
+                                                            !(
+                                                                loadingSubmissionId ===
+                                                                submission.writtenSubmissionId
+                                                            ) && (
+                                                                <Icon
+                                                                    icon="lucide:sparkles"
+                                                                    className="text-lg"
+                                                                />
+                                                            )
                                                         }
                                                         className="min-w-[160px] font-medium"
                                                     >
-                                                        Review With AI
+                                                        {loadingSubmissionId ===
+                                                        submission.writtenSubmissionId
+                                                            ? "Reviewing..."
+                                                            : "Review With AI"}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -770,9 +800,13 @@ export default function Component() {
                             </Button>
                         </div>
                     </div>
-                ):<Card className="h-[70vh]">
-                    <p className="h-[70vh] flex justify-center items-center">No Submission Found</p>
-                </Card>}
+                ) : (
+                    <Card className="h-[70vh]">
+                        <p className="h-[70vh] flex justify-center items-center">
+                            No Submission Found
+                        </p>
+                    </Card>
+                )}
             </div>
         </div>
     );

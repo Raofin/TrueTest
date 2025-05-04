@@ -38,7 +38,6 @@ export default function StartExam() {
         }
         toast.success("Clipboard permissions granted!");
       }
-
       if (currentExam?.examId) {
         router.push(`/my-exams/${currentExam.examId}`);
       }
