@@ -75,6 +75,9 @@ export default function Component() {
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                }
                 return;
             }
             if (isInputOrTextarea || isButton) return;
@@ -377,6 +380,7 @@ export default function Component() {
             setIsFullscreen(fullscreen);
             if (!fullscreen && examActive) {
                 alert("You cannot exit fullscreen during the exam!");
+                setIsFullscreen(true);
                 document.documentElement.requestFullscreen().catch((err) => {
                     console.error("Error re-entering fullscreen:", err);
                 });
