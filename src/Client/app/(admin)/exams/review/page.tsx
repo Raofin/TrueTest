@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, Button, Textarea, Select, SelectItem } from "@heroui/react";
+import { Card, Button, Textarea, Select, SelectItem,Spinner } from "@heroui/react";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -24,6 +24,7 @@ export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
+    const [loading,setLoading]=useState(false);
     const [aiReviewResponse, setAiReviewResponse] = useState<
         Record<string, AiApiResponse>
     >({});
@@ -79,12 +80,13 @@ export default function Component() {
         submissionId: string,
         questionId: string
     ) => {
+        setLoading(true);
         try {
             const response = await api.post<AiApiResponse>(
                 `/Ai/Review/ProblemSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                console.log(response.data)
+                console.log(response.data);
                 setAiReviewResponse((prev) => ({
                     ...prev,
                     [questionId]: response.data,
@@ -92,7 +94,7 @@ export default function Component() {
             }
         } catch {
             toast.error("Error communicating with AI service.");
-        }
+        }finally{setLoading(false);}
     };
     const handleAiWrittenResponse = async (
         submissionId: string,
@@ -103,7 +105,7 @@ export default function Component() {
                 `/Ai/Review/WrittenSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                console.log(response.data)
+                console.log(response.data);
                 setAiReviewResponse((prev) => ({
                     ...prev,
                     [questionId]: response.data,
@@ -247,13 +249,13 @@ export default function Component() {
         return response ? (
             <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
                 <p className="text-sm italic text-gray-600 dark:text-gray-400">
-                   <b> AI Review:</b>
+                    <b> AI Review:</b>
                 </p>
                 <p className="w-full">
                     {response.review || "No review available"}
                 </p>
                 <p className="w-full">
-                   <b> Score: </b> {response.score ?? 0}/{maxScore}
+                    <b> Score: </b> {response.score ?? 0}/{maxScore}
                 </p>
             </div>
         ) : null;
@@ -342,7 +344,7 @@ export default function Component() {
     return (
         <div className="h-full mx-44 flex flex-col justify-between">
             <h2 className="text-2xl font-bold text-center my-5">Review</h2>
-            <div className="w-full px-12 -none flex flex-col gap-4">
+            <div className="w-full px-12 -none flex flex-col gap-4 min-h-[90vh]">
                 <Card className="space-y-4 p-5 bg-white dark:bg-[#18181b] shadow-none -none">
                     <h1 className="text-xl font-semibold w-full text-center">
                         Exam: {exam?.title}
@@ -450,7 +452,7 @@ export default function Component() {
                         )}
                     </div>
                 </Card>
-                {selectedCandidateId && editedSubmission && (
+                {(selectedCandidateId && editedSubmission) ? (
                     <div className=" p-5 rounded-xl">
                         <h2 className="w-full text-center">
                             {selectedCandidate?.account.username ??
@@ -504,8 +506,7 @@ export default function Component() {
                                             questionId={submission.questionId}
                                             maxScore={
                                                 questionsData[
-                                                    submission
-                                                        .questionId
+                                                    submission.questionId
                                                 ].points || 0
                                             }
                                         />
@@ -521,7 +522,8 @@ export default function Component() {
                                                             type="number"
                                                             className="w-12"
                                                             value={
-                                                                submission.score || 0
+                                                                submission.score ||
+                                                                0
                                                             }
                                                             onChange={(e) =>
                                                                 updateProblemSubmission(
@@ -535,7 +537,9 @@ export default function Component() {
                                                                     }
                                                                 )
                                                             }
-                                                        /> / {
+                                                        />{" "}
+                                                        /{" "}
+                                                        {
                                                             questionsData[
                                                                 submission
                                                                     .questionId
@@ -568,7 +572,7 @@ export default function Component() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <Button
+                                               {loading ?<Button color="primary"><Spinner/></Button>: <Button
                                                     color="primary"
                                                     size="md"
                                                     variant="solid"
@@ -587,7 +591,7 @@ export default function Component() {
                                                     className="min-w-[160px] font-medium"
                                                 >
                                                     Review With AI
-                                                </Button>
+                                                </Button>}
                                             </div>
                                         </div>
                                         {submission.isFlagged && (
@@ -624,8 +628,10 @@ export default function Component() {
                                     >
                                         <div className="space-y-4  p-4  rounded-lg">
                                             <div className="font-medium">
-                                                {questionsData[submission.questionId ]?.statementMarkdown 
-                                                ?? "Loading question..." }
+                                                {questionsData[
+                                                    submission.questionId
+                                                ]?.statementMarkdown ??
+                                                    "Loading question..."}
                                             </div>
                                             <div className="mb-4">
                                                 <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none mb-4">
@@ -634,11 +640,15 @@ export default function Component() {
                                                     </div>
                                                 </Card>
                                                 <ReviewWithAi
-                                                    questionId={submission.questionId}
-                                                    maxScore={ questionsData[
-                                                        submission
-                                                            .questionId
-                                                    ].score || 0 }
+                                                    questionId={
+                                                        submission.questionId
+                                                    }
+                                                    maxScore={
+                                                        questionsData[
+                                                            submission
+                                                                .questionId
+                                                        ].score || 0
+                                                    }
                                                 />
                                             </div>
                                             <div className="w-full flex justify-between items-center">
@@ -653,7 +663,8 @@ export default function Component() {
                                                                 type="number"
                                                                 className="w-12"
                                                                 value={
-                                                                    submission.score||0
+                                                                    submission.score ||
+                                                                    0
                                                                 }
                                                                 onChange={(e) =>
                                                                     updateWrittenSubmission(
@@ -759,7 +770,9 @@ export default function Component() {
                             </Button>
                         </div>
                     </div>
-                )}
+                ):<Card className="h-[70vh]">
+                    <p className="h-[70vh] flex justify-center items-center">No Submission Found</p>
+                </Card>}
             </div>
         </div>
     );
