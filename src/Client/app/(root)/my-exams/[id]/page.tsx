@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -13,10 +14,14 @@ import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import LoadingModal from "@/components/ui/Modal/LoadingModal";
-import { ProblemQuestion, TestCase, TestCaseResults } from '@/components/types/problemQues'
-import { WrittenQuestion } from '@/components/types/writtenQues'
-import {McqQuestion } from '@/components/types/mcqQues'
-import { Exam, QuestionData } from '@/components/types/exam'
+import {
+    ProblemQuestion,
+    TestCase,
+    TestCaseResults,
+} from "@/components/types/problemQues";
+import { WrittenQuestion } from "@/components/types/writtenQues";
+import { McqQuestion } from "@/components/types/mcqQues";
+import { Exam, QuestionData } from "@/components/types/exam";
 
 export default function Component() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +30,9 @@ export default function Component() {
     const [timeLeft, setTimeLeft] = useState<number | undefined>();
     const [totalPage, setTotalPage] = useState(1);
     const [loading, setLoading] = useState(false);
-    const [answers, setAnswers] = useState<{[key: string]: string | string[]}>({});
+    const [answers, setAnswers] = useState<{
+        [key: string]: string | string[];
+    }>({});
     const [regularQues, setRegularQues] = useState(0);
     const [codingQues, setCodingQues] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -33,71 +40,155 @@ export default function Component() {
     const [questions, setQuestions] = useState<QuestionData | null>(null);
     const [testCaseResults, setTestCaseResults] = useState<TestCaseResults>({});
     const [examActive, setExamActive] = useState(true);
-    const allowedKeys = useMemo(() => new Set([
-        'Backspace', 'Tab', 'Enter', 'Shift', 'CapsLock',
-        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-        'Home', 'End', 'Delete',
-        'a','b','c','d','e','f','g','h','i','j','k','l','m',
-        'n','o','p','q','r','s','t','u','v','w','x','y','z',
-        '0','1','2','3','4','5','6','7','8','9',
-        '(', ')', '{', '}', '[', ']', ';', ':', ',', '.', '=', '+', '-', '*', '/', '<', '>', '?', '!', '@', '#', '$', '%', '^', '&', '_', '|', '~', '`', '"', "'", '\\', ' '
-      ]), []);
-      useEffect(() => {
+    const allowedKeys = useMemo(
+        () =>
+            new Set([
+                "Backspace",
+                "Tab",
+                "Enter",
+                "Shift",
+                "CapsLock",
+                "ArrowLeft",
+                "ArrowRight",
+                "ArrowUp",
+                "ArrowDown",
+                "Home",
+                "End",
+                "Delete",
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "h",
+                "i",
+                "j",
+                "k",
+                "l",
+                "m",
+                "n",
+                "o",
+                "p",
+                "q",
+                "r",
+                "s",
+                "t",
+                "u",
+                "v",
+                "w",
+                "x",
+                "y",
+                "z",
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "(",
+                ")",
+                "{",
+                "}",
+                "[",
+                "]",
+                ";",
+                ":",
+                ",",
+                ".",
+                "=",
+                "+",
+                "-",
+                "*",
+                "/",
+                "<",
+                ">",
+                "?",
+                "!",
+                "@",
+                "#",
+                "$",
+                "%",
+                "^",
+                "&",
+                "_",
+                "|",
+                "~",
+                "`",
+                '"',
+                "'",
+                "\\",
+                " ",
+            ]),
+        []
+    );
+    useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-          if (!examActive) return;
-      
-          const target = e.target as HTMLElement;
-          const tag = target.tagName;
-          const isInputOrTextarea = tag === 'INPUT' || tag === 'TEXTAREA';
-          const isButton = tag === 'BUTTON';
-          if (e.key === 'Escape') {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-          if (isInputOrTextarea || isButton) return;
-      
-          let key = e.key;
-          if (key.length === 1 && /^[A-Za-z]$/.test(key)) {
-            key = key.toLowerCase();
-          }
-          const isBlockedCombination =
-            ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x'].includes(e.key.toLowerCase())) ||
-            (e.key.startsWith('F') && +e.key.slice(1) >= 1 && +e.key.slice(1) <= 12) ||
-            (!allowedKeys.has(key) && !e.ctrlKey && !e.metaKey && !e.altKey);
-      
-          if (isBlockedCombination) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
+            if (!examActive) return;
+
+            const target = e.target as HTMLElement;
+            const tag = target.tagName;
+            const isInputOrTextarea = tag === "INPUT" || tag === "TEXTAREA";
+            const isButton = tag === "BUTTON";
+            if (e.key === "Escape") {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            if (isInputOrTextarea || isButton) return;
+
+            let key = e.key;
+            if (key.length === 1 && /^[A-Za-z]$/.test(key)) {
+                key = key.toLowerCase();
+            }
+            const isBlockedCombination =
+                ((e.ctrlKey || e.metaKey) &&
+                    ["c", "v", "x"].includes(e.key.toLowerCase())) ||
+                (e.key.startsWith("F") &&
+                    +e.key.slice(1) >= 1 &&
+                    +e.key.slice(1) <= 12) ||
+                (!allowedKeys.has(key) &&
+                    !e.ctrlKey &&
+                    !e.metaKey &&
+                    !e.altKey);
+
+            if (isBlockedCombination) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         };
         const handleClipboardEvent = (e: ClipboardEvent) => {
-          if (!examActive) return;
-          e.preventDefault();
-          e.stopPropagation();
+            if (!examActive) return;
+            e.preventDefault();
+            e.stopPropagation();
         };
-      
+
         const handleContextMenu = (e: MouseEvent) => {
-          if (!examActive) return;
-          e.preventDefault();
-          e.stopPropagation();
+            if (!examActive) return;
+            e.preventDefault();
+            e.stopPropagation();
         };
-      
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('copy', handleClipboardEvent);
-        document.addEventListener('paste', handleClipboardEvent);
-        document.addEventListener('cut', handleClipboardEvent);
-        document.addEventListener('contextmenu', handleContextMenu);
-      
+
+        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("copy", handleClipboardEvent);
+        document.addEventListener("paste", handleClipboardEvent);
+        document.addEventListener("cut", handleClipboardEvent);
+        document.addEventListener("contextmenu", handleContextMenu);
+
         return () => {
-          document.removeEventListener('keydown', handleKeyDown);
-          document.removeEventListener('copy', handleClipboardEvent);
-          document.removeEventListener('paste', handleClipboardEvent);
-          document.removeEventListener('cut', handleClipboardEvent);
-          document.removeEventListener('contextmenu', handleContextMenu);
+            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("copy", handleClipboardEvent);
+            document.removeEventListener("paste", handleClipboardEvent);
+            document.removeEventListener("cut", handleClipboardEvent);
+            document.removeEventListener("contextmenu", handleContextMenu);
         };
-      }, [examActive, allowedKeys]);
-      
+    }, [examActive, allowedKeys]);
+
     useEffect(() => {
         const FetchExamData = async () => {
             setLoading(true);
@@ -229,18 +320,18 @@ export default function Component() {
 
     useEffect(() => {
         const timer = setInterval(() => {
-          setTimeLeft((prev) => {
-            if (prev !== undefined && prev <= 1) {
-              setExamActive(false);
-              clearInterval(timer);
-              router.push("/my-exams");
-              return 0;
-            }
-            return prev !== undefined ? prev - 1 : undefined;
-          });
+            setTimeLeft((prev) => {
+                if (prev !== undefined && prev <= 1) {
+                    setExamActive(false);
+                    clearInterval(timer);
+                    router.push("/my-exams");
+                    return 0;
+                }
+                return prev !== undefined ? prev - 1 : undefined;
+            });
         }, 1000);
         return () => clearInterval(timer);
-      }, [id, router, timeLeft]);
+    }, [id, router, timeLeft]);
     const getOptionNumbers = (
         question: McqQuestion,
         selectedOptions: string[]
@@ -256,7 +347,6 @@ export default function Component() {
             .filter(Boolean)
             .join(",");
     };
-
     const submitAllAnswers = async () => {
         setLoading(true);
         try {
@@ -285,47 +375,36 @@ export default function Component() {
                     candidateAnswer: answers[q.questionId] as string,
                 }));
             const promises = [];
-            if (mcqSubmissions.length > 0) {
-                promises.push(
-                    api.put("/Candidate/Submit/Mcq/Save", {
-                        examId: id,
-                        submissions: mcqSubmissions,
-                    })
-                );
-            }
-
-            if (writtenSubmissions.length > 0) {
-                promises.push(
-                    api.put("/Candidate/Submit/Written/Save", {
-                        examId: id,
-                        submissions: writtenSubmissions,
-                    })
-                );
-            }
-            if (promises.length === 0) {
-                toast.error("No answers to submit");
-                return;
-            }
+            promises.push(
+                api.put("/Candidate/Submit/Mcq/Save", {
+                    examId: id,
+                    submissions: mcqSubmissions,
+                })
+            );
+            promises.push(
+                api.put("/Candidate/Submit/Written/Save", {
+                    examId: id,
+                    submissions: writtenSubmissions,
+                })
+            );
             await Promise.all(promises);
             toast.success("All answers submitted successfully!");
             return true;
-        } catch (error) {
-            console.error("Error submitting answers:", error);
-            toast.error("Failed to submit some answers");
+        } catch {
+            toast.error("Failed to submit answers");
             return false;
         } finally {
             setLoading(false);
         }
     };
-
     const handleSubmitAndExit = async () => {
         setExamActive(false);
         const success = await submitAllAnswers();
         if (success) {
-          exitFullscreen();
-          router.push("/my-exams");
+            exitFullscreen();
+            router.push("/my-exams");
         }
-      };
+    };
 
     useEffect(() => {
         let count = 0;
@@ -405,7 +484,7 @@ export default function Component() {
             [questionId]: newResults,
         }));
     };
-
+    
     return (
         <>
             <LoadingModal isOpen={loading} message="Loading..." />
@@ -446,22 +525,30 @@ export default function Component() {
                     </Button>
                 </div>
             </div>
-
             <div className="mx-5 mt-3  border-none px-8 h-[90vh] flex flex-col justify-between">
-                <div className={`space-y-8 rounded-lg `}>
-                    {currentQuestions.map((question,index) => (
-                        <div key={question.questionId} className="space-y-4">
-                             {question.questionType === "ProblemSolving" && (
-                                <>
-                                    <div className="w-full flex justify-between">
-                                        <h2 className="text-lg font-semibold">
-                                            #Question: {index}
-                                        </h2>
-                                        <p>
-                                            points:
-                                            {(question as ProblemQuestion).points}
-                                        </p>
-                                    </div>
+                <div className="space-y-8 rounded-lg">
+                    {currentQuestions.map((question,index) => {
+                       const problemQuestionCount = questions?.questions.problem.length || 0;
+                       const isProblemSolvingPage = currentPage <= problemQuestionCount;
+                       
+                       const displayIndex = isProblemSolvingPage 
+                           ? currentPage  
+                           : problemQuestionCount + 
+                             ((currentPage - problemQuestionCount - 1) * 5) + index + 1;
+                        return (
+                            <div
+                                key={question.questionId}
+                                className="space-y-4"
+                            >
+                                <div className="w-full flex justify-between">
+                                    <h2 className="text-lg font-semibold">
+                                        #Question: {displayIndex}
+                                    </h2>
+                                    <p>
+                                        points: {(question as any).points ??(question as any).score}
+                                    </p>
+                                </div>
+                                {question.questionType === "ProblemSolving" && (
                                     <CodeEditor
                                         examId={id?.toString() ?? ""}
                                         question={question as ProblemQuestion}
@@ -475,56 +562,36 @@ export default function Component() {
                                             updateTestCaseResults
                                         }
                                     />
-                                </>
-                            )}
-                            {question.questionType === "MCQ" &&
-                                (() => {
-                                    const mcqQuestion = question as McqQuestion;
-                                    const mcqOptions = [
-                                        mcqQuestion.mcqOption?.option1,
-                                        mcqQuestion.mcqOption?.option2,
-                                        mcqQuestion.mcqOption?.option3,
-                                        mcqQuestion.mcqOption?.option4,
-                                    ].filter(Boolean) as string[];
-                                    return (
-                                        <>
-                                            <div className="w-full flex justify-between">
-                                                <h2 className="text-lg font-semibold">
-                                                    #Question : {index}
-                                                </h2>
-                                                <p> points: {( question as McqQuestion).score }
-                                                </p>
-                                            </div>
-                                            <MCQSubmission
-                                                question={mcqQuestion}
-                                                answers={answers}
-                                                setAnswers={setAnswers}
-                                                options={mcqOptions}
-                                            />
-                                        </>
-                                    );
-                                })()}
-                            {question.questionType === "Written" && (
-                                <>
-                                    <div className="w-full flex justify-between">
-                                        <h2 className="text-lg font-semibold">
-                                            #Question: {index}
-                                        </h2>
-                                        <p>
-                                            points:
-                                            { (question as WrittenQuestion).score }
-                                        </p>
-                                    </div>
+                                )}
+                                {question.questionType === "MCQ" && (
+                                    <MCQSubmission
+                                        question={question as McqQuestion}
+                                        answers={answers}
+                                        setAnswers={setAnswers}
+                                        options={
+                                            [
+                                                (question as McqQuestion)
+                                                    .mcqOption?.option1,
+                                                (question as McqQuestion)
+                                                    .mcqOption?.option2,
+                                                (question as McqQuestion)
+                                                    .mcqOption?.option3,
+                                                (question as McqQuestion)
+                                                    .mcqOption?.option4,
+                                            ].filter(Boolean) as string[]
+                                        }
+                                    />
+                                )}
+                                {question.questionType === "Written" && (
                                     <WrittenSubmission
                                         question={question as WrittenQuestion}
                                         setAnswers={setAnswers}
                                         answers={answers}
                                     />
-                                </>
-                            )}
-                           
-                        </div>
-                    ))}
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
                 <div className="flex justify-center items-end py-6">
                     <Pagination

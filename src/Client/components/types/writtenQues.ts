@@ -28,4 +28,6 @@ export interface WrittenQuestionFormProps {
     readonly examId: string;
     readonly existingQuestions: ExistingQuestion[];
     readonly writtenPoints: (points: number) => void;
+    onFocus: () => void;
+    onBlur: () => void;
 }
