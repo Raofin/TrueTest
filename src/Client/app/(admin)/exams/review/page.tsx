@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, Button, Textarea, Select, SelectItem,Spinner } from "@heroui/react";
+import { Card, Button, Textarea, Select, SelectItem } from "@heroui/react";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -100,6 +100,7 @@ export default function Component() {
         submissionId: string,
         questionId: string
     ) => {
+        console.log(submissionId,questionId)
         try {
             const response = await api.post<AiApiResponse>(
                 `/Ai/Review/WrittenSubmission/${submissionId}`
@@ -572,26 +573,27 @@ export default function Component() {
                                                 </div>
                                             </div>
                                             <div>
-                                               {loading ?<Button color="primary"><Spinner/></Button>: <Button
-                                                    color="primary"
-                                                    size="md"
-                                                    variant="solid"
-                                                    onPress={() =>
-                                                        handleAiResponse(
-                                                            submission.problemSubmissionId,
-                                                            submission.questionId
-                                                        )
-                                                    }
-                                                    startContent={
-                                                        <Icon
-                                                            icon="lucide:sparkles"
-                                                            className="text-lg"
-                                                        />
-                                                    }
-                                                    className="min-w-[160px] font-medium"
+                                            <Button
+                                                color="primary"
+                                                variant="solid"
+                                                size="md"
+                                                onPress={() =>
+                                                    handleAiResponse(submission.problemSubmissionId, submission.questionId)
+                                                }
+                                                isLoading={loading}
+                                                startContent={
+                                                    !loading && (
+                                                    <Icon
+                                                        icon="lucide:sparkles"
+                                                        className="text-lg"
+                                                    />
+                                                    )
+                                                }
+                                                className="min-w-[160px] font-medium"
                                                 >
-                                                    Review With AI
-                                                </Button>}
+                                                {loading ? "Reviewing..." : "Review With AI"}
+                                                </Button>
+
                                             </div>
                                         </div>
                                         {submission.isFlagged && (
@@ -723,16 +725,19 @@ export default function Component() {
                                                                 submission.questionId
                                                             )
                                                         }
+                                                        isLoading={loading}
                                                         startContent={
+                                                            !loading && (
                                                             <Icon
                                                                 icon="lucide:sparkles"
                                                                 className="text-lg"
                                                             />
+                                                            )
                                                         }
                                                         className="min-w-[160px] font-medium"
-                                                    >
-                                                        Review With AI
-                                                    </Button>
+                                                        >
+                                                        {loading ? "Reviewing..." : "Review With AI"}
+                                                        </Button>
                                                 </div>
                                             </div>
                                             {submission.isFlagged && (

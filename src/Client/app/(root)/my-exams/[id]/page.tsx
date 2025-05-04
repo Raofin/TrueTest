@@ -35,7 +35,7 @@ export default function Component() {
     }>({});
     const [regularQues, setRegularQues] = useState(0);
     const [codingQues, setCodingQues] = useState(0);
-    const [isFullscreen, setIsFullscreen] = useState(false);
+    // const [isFullscreen, setIsFullscreen] = useState(false);
     const [questionsLeft, setQuestionsLeft] = useState(0);
     const [questions, setQuestions] = useState<QuestionData | null>(null);
     const [testCaseResults, setTestCaseResults] = useState<TestCaseResults>({});
@@ -428,27 +428,35 @@ export default function Component() {
     }, [answers, questions, regularQues, codingQues]);
 
     useEffect(() => {
-        const handleFullscreenChange = () => {
-            if (!document.fullscreenElement && !isFullscreen) {
-                alert("You cannot exit fullscreen during the exam!");
-                document.documentElement.requestFullscreen().catch((err) => {
-                    console.error("Error re-entering fullscreen:", err);
-                });
+        const handleFullscreen = async () => {
+          if (!document.fullscreenElement) {
+            try {
+              await document.documentElement.requestFullscreen();
+            } catch (err) {
+              console.error('Fullscreen error:', err);
             }
+          }
         };
-        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('fullscreen') === 'true') {
+          handleFullscreen();
+        }
+        const handleFullscreenChange = () => {
+          if (!document.fullscreenElement) {
+            alert('Fullscreen is required for this exam!');
+            handleFullscreen();
+          }
+        };
+      
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => {
-            document.removeEventListener(
-                "fullscreenchange",
-                handleFullscreenChange
-            );
+          document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
-    }, [isFullscreen]);
+      }, []);
 
     const exitFullscreen = () => {
         setExamActive(false);
         if (document.exitFullscreen) {
-            setIsFullscreen(true);
             document.exitFullscreen().catch((err) => {
                 console.error("Error exiting fullscreen:", err);
             });
