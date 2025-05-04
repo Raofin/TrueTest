@@ -13,7 +13,7 @@ import {
 import { Icon } from "@iconify/react";
 import toast from "react-hot-toast";
 import PaginationButtons from "@/components/ui/PaginationButton";
-import MdEditor from "../KatexMermaid";
+import MdEditor from "@/components/KatexMermaid";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
 import { AIGenerateButton } from "@/components/ui/AiButton";
@@ -34,11 +34,16 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
     onQuestionChange,
     onPointsChange,
     onDifficultyChange,
+    onFocus,
+    onBlur,
     onAddTestCase,
 }) => (
     <div className="rounded-lg w-full flex flex-col justify-center items-center gap-4">
         <div className=" w-full">
-            <MdEditor value={problem.question} onChange={onQuestionChange} />
+        <MdEditor 
+                value={problem.question} 
+                onChange={(value) => onQuestionChange(value || '')} 
+            />
         </div>
         {problem.testCases.map((testCase, index) => (
             <TestCaseItem
@@ -54,13 +59,15 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
         ))}
         <div className="w-full flex justify-between">
             <div className="flex gap-3">
-                <Input
-                    className="w-32"
-                    type="number"
-                    label="Points"
-                    value={problem.points.toString()}
-                    onChange={(e) => onPointsChange(parseInt(e.target.value))}
-                />
+                 <Input
+                        className="w-32"
+                        type="number"
+                        label="Points"
+                        value={problem.points.toString()}
+                        onChange={(e) => onPointsChange(parseInt(e.target.value))}
+                        onFocus={onFocus}   
+                        onBlur={onBlur}       
+                    />
                 <div>
                 <Select
                         label="Difficulty"
@@ -157,6 +164,7 @@ export default function ProblemSolvingForm({
     examId,
     existingQuestions,
     problemPoints,
+    onFocus,onBlur,
 }: ProblemSolvingFormProps) {
     const [problems, setProblems] = useState<Problem[]>(
         existingQuestions.length > 0
@@ -316,6 +324,8 @@ export default function ProblemSolvingForm({
                             return p;
                         })
                     );
+                }else if(createResponse.status===409){
+                   toast.error("Exam of this question is already published.")
                 }
             }
             const updatePromises = existingProblems.map((problem) => {
@@ -516,6 +526,8 @@ export default function ProblemSolvingForm({
                                             currentProblemIndex + index
                                         )
                                     }
+                                    onFocus={onFocus}
+                                    onBlur={onBlur}
                                 />
 
                                 <hr className="my-6 border-t border-gray-100 dark:border-gray-500" />
