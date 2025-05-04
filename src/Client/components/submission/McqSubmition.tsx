@@ -8,7 +8,6 @@ interface MCQOption {
   option4: string;
   isMultiSelect: boolean;
 }
-
 interface MCQQuestion {
   questionId: string;
   examId: string;
@@ -18,7 +17,6 @@ interface MCQQuestion {
   difficultyType: string;
   mcqOption: MCQOption;
 }
-
 interface PageProps {
   readonly question: MCQQuestion;
   readonly setAnswers: React.Dispatch<React.SetStateAction<{ [key: string]: string | string[] }>>;

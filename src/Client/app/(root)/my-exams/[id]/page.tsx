@@ -4,7 +4,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Button, Pagination } from "@heroui/react";
 import CodeEditor from "@/components/submission/CodeEditor";
-import "@/app/globals.css";
 import getQuestionsForCurrentPage from "@/components/CurrPageQues";
 import { FormatTimeHourMinutesSeconds } from "@/components/DateTimeFormat";
 import WrittenSubmission from "@/components/submission/WrittenSubmition";
@@ -14,7 +13,8 @@ import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import LoadingModal from "@/components/ui/Modal/LoadingModal";
-import styles from '@/styles/LoadingModal.module.css'; 
+import styles from "@/styles/LoadingModal.module.css";
+import "@/app/globals.css";
 import {
     ProblemQuestion,
     TestCase,
@@ -44,29 +44,28 @@ export default function Component() {
     const [examActive, setExamActive] = useState(true);
     useEffect(() => {
         if (!document.fullscreenElement && showFullscreenPrompt) {
-          setShowFullscreenPrompt(true);
+            setShowFullscreenPrompt(true);
         }
-      }, [showFullscreenPrompt]);
-    
-      const handleFullscreenRequest = async () => {
+    }, [showFullscreenPrompt]);
+
+    const handleFullscreenRequest = async () => {
         try {
-          await document.documentElement.requestFullscreen();
-          setShowFullscreenPrompt(false);
+            await document.documentElement.requestFullscreen();
+            setShowFullscreenPrompt(false);
         } catch (error) {
-          console.error("Fullscreen error:", error);
+            console.error("Fullscreen error:", error);
         }
-      };
+    };
     const allowedKeys = useMemo(
         () =>
             new Set([
-                "Backspace", "Tab", "Enter", "Shift","CapsLock", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "Delete", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "{", "}", "[", "]", ";", ":", ",", ".", "=", "+", "-", "*", "/", "<", ">", "?", "!", "@", "#", "$", "%", "^", "&", "_", "|", "~", "`", '"', "'", "\\", " "
+                "Backspace", "Tab", "Enter", "Shift", "CapsLock", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "Delete", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "{", "}", "[", "]", ";", ":", ",", ".", "=", "+", "-", "*", "/", "<", ">", "?", "!", "@", "#", "$", "%", "^", "&", "_", "|", "~", "`", '"', "'", "\\", " ",
             ]),
         []
     );
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!examActive) return;
-
             const target = e.target as HTMLElement;
             const tag = target.tagName;
             const isInputOrTextarea = tag === "INPUT" || tag === "TEXTAREA";
@@ -127,7 +126,7 @@ export default function Component() {
             document.removeEventListener("cut", handleClipboardEvent);
             document.removeEventListener("contextmenu", handleContextMenu);
         };
-    }, [examActive, allowedKeys,isFullscreen]);
+    }, [examActive, allowedKeys, isFullscreen]);
 
     useEffect(() => {
         const FetchExamData = async () => {
@@ -373,7 +372,7 @@ export default function Component() {
         });
         setQuestionsLeft(regularQues + codingQues - count);
     }, [answers, questions, regularQues, codingQues]);
- 
+
     useEffect(() => {
         const handleFullscreenChange = () => {
             const fullscreen = !!document.fullscreenElement;
@@ -386,7 +385,7 @@ export default function Component() {
                 });
             }
         };
-        
+
         document.addEventListener("fullscreenchange", handleFullscreenChange);
         return () => {
             document.removeEventListener(
@@ -425,22 +424,28 @@ export default function Component() {
             [questionId]: newResults,
         }));
     };
-    
+
     return (
         <>
- {showFullscreenPrompt && (
-  <div className={styles.modalOverlay}>
-        <div className={`${styles.modalContent} dark:bg-[#18181b] dark:text-white`}>
-        
-    <div className="bg-white p-6 rounded-lg text-center z-10 relative">
-      <h2 className="text-xl mb-4">Fullscreen Required</h2>
-      <Button onPress={handleFullscreenRequest} color="primary">
-        Enter Fullscreen
-      </Button>
-    </div>
-    </div>
-  </div>
-)}
+            {showFullscreenPrompt && (
+                <div className={styles.modalOverlay}>
+                    <div
+                        className={`${styles.modalContent} dark:bg-[#18181b] dark:text-white`}
+                    >
+                        <div className="bg-white p-6 rounded-lg text-center z-10 relative">
+                            <h2 className="text-xl mb-4">
+                                Fullscreen Required
+                            </h2>
+                            <Button
+                                onPress={handleFullscreenRequest}
+                                color="primary"
+                            >
+                                Enter Fullscreen
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <LoadingModal isOpen={loading} message="Loading..." />
             <div className="py-3 mx-3">
                 <div className="w-full px-2 flex items-center justify-between">
@@ -481,14 +486,18 @@ export default function Component() {
             </div>
             <div className="mx-5 mt-3  border-none px-8 h-[90vh] flex flex-col justify-between">
                 <div className="space-y-8 rounded-lg">
-                    {currentQuestions.map((question,index) => {
-                       const problemQuestionCount = questions?.questions.problem.length || 0;
-                       const isProblemSolvingPage = currentPage <= problemQuestionCount;
-                       
-                       const displayIndex = isProblemSolvingPage 
-                           ? currentPage  
-                           : problemQuestionCount + 
-                             ((currentPage - problemQuestionCount - 1) * 5) + index + 1;
+                    {currentQuestions.map((question, index) => {
+                        const problemQuestionCount =
+                            questions?.questions.problem.length || 0;
+                        const isProblemSolvingPage =
+                            currentPage <= problemQuestionCount;
+
+                        const displayIndex = isProblemSolvingPage
+                            ? currentPage
+                            : problemQuestionCount +
+                              (currentPage - problemQuestionCount - 1) * 5 +
+                              index +
+                              1;
                         return (
                             <div
                                 key={question.questionId}
@@ -499,7 +508,9 @@ export default function Component() {
                                         #Question: {displayIndex}
                                     </h2>
                                     <p>
-                                        points: {(question as any).points ??(question as any).score}
+                                        points:{" "}
+                                        {(question as any).points ??
+                                            (question as any).score}
                                     </p>
                                 </div>
                                 {question.questionType === "ProblemSolving" && (

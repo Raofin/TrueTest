@@ -1,16 +1,7 @@
 'use client'
 
 import { Card, Input } from '@heroui/react';
-
-interface WrittenQuestion {
-    questionId: string;
-    examId: string;
-    questionType: string;
-    hasLongAnswer: boolean;
-    statementMarkdown: string;
-    score: number;
-    difficultyType: string;
-}
+import { WrittenQuestion } from '../types/writtenQues'
 
 interface PageProps {
     readonly question: WrittenQuestion;
