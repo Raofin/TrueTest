@@ -256,7 +256,10 @@ export default function CodeEditor({
                                             </div>
                                             <div>
                                                 <p className="font-semibold mb-2">
-                                                    Output <span className="text-blue-500 text-sm">({testCase.executionTime}ms)</span>
+                                                    Output
+                                                    {testCase.executionTime !== null && (
+                                                        <span className="text-blue-500 text-sm">{" "}({testCase.executionTime}ms)</span>
+                                                    )}
                                                 </p>
                                                 <div
                                                     className={`font-mono p-2 rounded-lg whitespace-pre-wrap min-h-[200px] bg-[#f4f4f5] dark:bg-[#27272a]
