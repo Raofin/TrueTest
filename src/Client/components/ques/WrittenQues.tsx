@@ -25,6 +25,8 @@ export default function Component({
     examId,
     existingQuestions,
     writtenPoints,
+    onFocus,
+    onBlur
 }: WrittenQuestionFormProps) {
     const [writtenQuestions, setWrittenQuestions] = useState<
         WrittenQuestionForm[]
@@ -208,7 +210,9 @@ export default function Component({
                             return q;
                         })
                     );
-                }
+                }else if(createResponse.status===409){
+                                   toast.error("Exam of this question is already published");
+                                }
             }
             const updatePromises = existingQuestions.map((q) =>
                 api.patch("/Questions/Written/Update", {
@@ -311,6 +315,8 @@ export default function Component({
                                                 );
                                             }
                                         }}
+                                        onFocus={onFocus}
+                                        onBlur={onBlur}
                                     />
 
                                     <RadioGroup

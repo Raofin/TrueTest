@@ -20,6 +20,8 @@ export default function Component({
     examId,
     existingQuestions,
     mcqPoints,
+    onFocus,
+    onBlur
 }: MCQFormProps) {
     const [questions, setQuestions] = useState<MCQQuestion[]>(
         existingQuestions.length > 0
@@ -216,9 +218,9 @@ export default function Component({
                     );
                 }
             }
-            const updatePromises = existingQuestions.map((q) => {
+            existingQuestions.map(async(q) => {
                 if (!q.questionId) return;
-                return api.patch("/Questions/Mcq/Update", {
+                const createResponse=await api.patch("/Questions/Mcq/Update", {
                     questionId: q.questionId,
                     statementMarkdown: q.question,
                     points: q.points,
@@ -232,10 +234,11 @@ export default function Component({
                         answerOptions: q.correctOptions.join(","),
                     },
                 });
+                if(createResponse.status===200)
+                toast.success("MCQ questions saved successfully!");
+               else if(createResponse.status===409) toast.error("Exam of this question is already published"); 
+                setSaveButton(!saveButton);
             });
-            await Promise.all(updatePromises);
-            toast.success("MCQ questions saved successfully!");
-            setSaveButton(!saveButton);
         } catch (error) {
             const err = error as AxiosError;
             toast.error(err.message ?? "Failed to save questions");
@@ -327,12 +330,13 @@ export default function Component({
                                             e.target.value
                                         )
                                     }
+                                    onFocus={onFocus}
+                                     onBlur={onBlur}
                                     min="0"
                                 />
                                 <div className="flex gap-3 ">
                                     <span>
-                                        {" "}
-                                        Page {currentPage + 1} of{" "}
+                                        Page {currentPage + 1} of
                                         {questions.length}
                                     </span>
                                     <PaginationButtons
@@ -360,7 +364,7 @@ export default function Component({
                                     }
                                     className="mb-4"
                                 >
-                                    Delete{" "}
+                                    Delete
                                 </Button>
                             </div>
                         </Card>
