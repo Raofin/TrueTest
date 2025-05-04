@@ -207,9 +207,9 @@ export default function Component() {
     );
 
     return (
-        <div className=" flex flex-col justify-between">
+        <div className="flex flex-col justify-between">
             <h2 className="text-2xl font-bold text-center my-5">Add Admins</h2>
-            <div className="h-full mx-44 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b] px-12">
+            <div className=" mx-44 flex flex-col justify-between rounded-xl bg-white dark:bg-[#18181b] px-12">
                 <div>
                     <div className="flex gap-3 w-full p-3 mt-12 items-center">
                         <Textarea
@@ -237,7 +237,7 @@ export default function Component() {
                         selectionMode="multiple"
                         classNames={{
                             table: "w-full h-full",
-                            base: "min-h-[550px]",
+                            base: "min-h-[570px]",
                         }}
                         onSelectionChange={setSelectedKeys}
                     >

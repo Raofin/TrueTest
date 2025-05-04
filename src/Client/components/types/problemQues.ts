@@ -6,6 +6,8 @@ export interface TestCase {
   status?: "success" | "error" | "pending";
   executionTime:number,
   errorMessage:string
+  exception:string
+  isAccepted:boolean
 }
 export interface ProblemQuestion {
   questionId: string;
@@ -46,10 +48,11 @@ export interface FormFooterProps {
     onNext: () => void;
 }
 export interface ProblemSolvingFormProps {
-  readonly examId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly existingQuestions: any[];
-  readonly problemPoints: (points: number) => void;
+  examId: string;
+  existingQuestions: ProblemQuestion[];
+  problemPoints: (points: number) => void;
+  onFocus: () => void;
+    onBlur: () => void;
 }
 export interface ProblemItemProps {
     problem: Problem;
@@ -65,4 +68,6 @@ export interface ProblemItemProps {
     onAddTestCase: () => void;
     onDifficultyChange: (value: string) => void;
     onDeleteProblem: () => void;
+    onFocus: () => void;
+    onBlur: () => void;
 }
