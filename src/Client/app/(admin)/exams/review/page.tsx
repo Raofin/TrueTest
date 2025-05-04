@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Textarea, Select, SelectItem } from "@heroui/react";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
-import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
 import {
     AiApiResponse,
@@ -25,9 +24,9 @@ export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
     const [writtenPoints, setWrittenPoints] = useState<number | undefined>();
     const [mcqPoints, setMcqPoints] = useState<number | undefined>();
-    const [aiReviewResponse, setAiReviewResponse] = useState<AiApiResponse[]>(
-        []
-    );
+    const [aiReviewResponse, setAiReviewResponse] = useState<
+        Record<string, AiApiResponse>
+    >({});
     const [mcqScore, setMcqScore] = useState(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [questionsData, setQuestionsData] = useState<Record<string, any>>({});
@@ -76,29 +75,39 @@ export default function Component() {
         };
         fetchExamData();
     }, [examId]);
-    const handleAiResponse = async (submissionId: string) => {
+    const handleAiResponse = async (
+        submissionId: string,
+        questionId: string
+    ) => {
         try {
-            const response = await api.post<{ review: string; score: number }>(
+            const response = await api.post<AiApiResponse>(
                 `/Ai/Review/ProblemSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                setAiReviewResponse((prev) => [...prev, response.data]);
-            } else {
-                toast.error("Failed to get AI review.");
+                console.log(response.data)
+                setAiReviewResponse((prev) => ({
+                    ...prev,
+                    [questionId]: response.data,
+                }));
             }
         } catch {
             toast.error("Error communicating with AI service.");
         }
     };
-    const handleAiWrittenResponse = async (submissionId: string) => {
+    const handleAiWrittenResponse = async (
+        submissionId: string,
+        questionId: string
+    ) => {
         try {
-            const response = await api.post<{ review: string; score: number }>(
+            const response = await api.post<AiApiResponse>(
                 `/Ai/Review/WrittenSubmission/${submissionId}`
             );
             if (response.status === 200) {
-                setAiReviewResponse((prev) => [...prev, response.data]);
-            } else {
-                toast.error("Failed to get AI review.");
+                console.log(response.data)
+                setAiReviewResponse((prev) => ({
+                    ...prev,
+                    [questionId]: response.data,
+                }));
             }
         } catch {
             toast.error("Error communicating with AI service.");
@@ -163,7 +172,7 @@ export default function Component() {
         };
         fetchSubmissionData();
     }, [examId, selectedCandidateId]);
-
+    console.log(editedSubmission);
     const handleCandidateChange = (value: string) => {
         setSelectedCandidateId(value);
         setMcqScore(0);
@@ -226,29 +235,28 @@ export default function Component() {
             return { ...prev, problem: updatedProblem };
         });
     };
-    const ReviewWithAi = () => {
-        return (
-            <>
-                {aiReviewResponse.length > 0 && (
-                    <>
-                        <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
-                            <p className="text-sm italic text-gray-600 dark:text-gray-400">
-                                <b>AI Review:</b>
-                            </p>
-                            <p className="w-full">
-                                {aiReviewResponse.find((res) => res.review)
-                                    ?.review || "No review available"}
-                            </p>
-                            <p className="w-full mt-5">
-                               <b> Score:</b>
-                                {aiReviewResponse.find((res) => res.score)
-                                    ?.score ?? 0}
-                            </p>
-                        </div>
-                    </>
-                )}{" "}
-            </>
-        );
+    const ReviewWithAi = ({
+        questionId,
+        maxScore,
+    }: {
+        questionId: string;
+        maxScore: number;
+    }) => {
+        const response = aiReviewResponse[questionId];
+
+        return response ? (
+            <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
+                <p className="text-sm italic text-gray-600 dark:text-gray-400">
+                   <b> AI Review:</b>
+                </p>
+                <p className="w-full">
+                    {response.review || "No review available"}
+                </p>
+                <p className="w-full">
+                   <b> Score: </b> {response.score ?? 0}/{maxScore}
+                </p>
+            </div>
+        ) : null;
     };
     const updateWrittenSubmission = (
         questionId: string,
@@ -460,7 +468,6 @@ export default function Component() {
                                         className="space-y-4 mb-6 p-4 bg-white dark:bg-[#18181b]  rounded-lg"
                                     >
                                         <h3 className="font-medium ">
-                                            {" "}
                                             Problem Statement :
                                         </h3>
                                         <div className="font-medium">
@@ -485,8 +492,7 @@ export default function Component() {
                                         </div>
                                         <div>
                                             <h4 className="font-semibold mb-2">
-                                                {" "}
-                                                Code Submission:{" "}
+                                                Code Submission:
                                             </h4>
                                             <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none">
                                                 <div className="font-mono text-sm whitespace-pre-wrap p-2">
@@ -494,11 +500,18 @@ export default function Component() {
                                                 </div>
                                             </Card>
                                         </div>
-                                        <ReviewWithAi />
-                                        <div className="w-full flex justify-between">
+                                        <ReviewWithAi
+                                            questionId={submission.questionId}
+                                            maxScore={
+                                                questionsData[
+                                                    submission
+                                                        .questionId
+                                                ].points || 0
+                                            }
+                                        />
+                                        <div className="w-full flex justify-between items-center">
                                             <div>
                                                 <h4 className="font-semibold mb-2">
-                                                    {" "}
                                                     Result
                                                 </h4>
                                                 <div className="flex items-center gap-5">
@@ -508,7 +521,7 @@ export default function Component() {
                                                             type="number"
                                                             className="w-12"
                                                             value={
-                                                                submission.score
+                                                                submission.score || 0
                                                             }
                                                             onChange={(e) =>
                                                                 updateProblemSubmission(
@@ -522,9 +535,7 @@ export default function Component() {
                                                                     }
                                                                 )
                                                             }
-                                                        />
-                                                        /
-                                                        {
+                                                        /> / {
                                                             questionsData[
                                                                 submission
                                                                     .questionId
@@ -563,7 +574,8 @@ export default function Component() {
                                                     variant="solid"
                                                     onPress={() =>
                                                         handleAiResponse(
-                                                            submission.problemSubmissionId
+                                                            submission.problemSubmissionId,
+                                                            submission.questionId
                                                         )
                                                     }
                                                     startContent={
@@ -612,20 +624,8 @@ export default function Component() {
                                     >
                                         <div className="space-y-4  p-4  rounded-lg">
                                             <div className="font-medium">
-                                                {questionsData[
-                                                    submission.questionId
-                                                ] ? (
-                                                    <ReactMarkdown>
-                                                        {
-                                                            questionsData[
-                                                                submission
-                                                                    .questionId
-                                                            ].statementMarkdown
-                                                        }
-                                                    </ReactMarkdown>
-                                                ) : (
-                                                    "Loading question..."
-                                                )}
+                                                {questionsData[submission.questionId ]?.statementMarkdown 
+                                                ?? "Loading question..." }
                                             </div>
                                             <div className="mb-4">
                                                 <Card className="p-4 rounded-lg bg-[#eeeef0] dark:bg-[#27272a] shadow-none mb-4">
@@ -633,9 +633,15 @@ export default function Component() {
                                                         {submission.answer}
                                                     </div>
                                                 </Card>
-                                                <ReviewWithAi />
+                                                <ReviewWithAi
+                                                    questionId={submission.questionId}
+                                                    maxScore={ questionsData[
+                                                        submission
+                                                            .questionId
+                                                    ].score || 0 }
+                                                />
                                             </div>
-                                            <div className="w-full flex justify-between">
+                                            <div className="w-full flex justify-between items-center">
                                                 <div>
                                                     <h4 className="font-semibold mb-2">
                                                         Result
@@ -647,7 +653,7 @@ export default function Component() {
                                                                 type="number"
                                                                 className="w-12"
                                                                 value={
-                                                                    submission.score
+                                                                    submission.score||0
                                                                 }
                                                                 onChange={(e) =>
                                                                     updateWrittenSubmission(
@@ -702,7 +708,8 @@ export default function Component() {
                                                         variant="solid"
                                                         onPress={() =>
                                                             handleAiWrittenResponse(
-                                                                submission.writtenSubmissionId
+                                                                submission.writtenSubmissionId,
+                                                                submission.questionId
                                                             )
                                                         }
                                                         startContent={
