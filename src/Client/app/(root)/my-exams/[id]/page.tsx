@@ -14,6 +14,7 @@ import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import LoadingModal from "@/components/ui/Modal/LoadingModal";
+import styles from '@/styles/LoadingModal.module.css'; 
 import {
     ProblemQuestion,
     TestCase,
@@ -35,95 +36,30 @@ export default function Component() {
     }>({});
     const [regularQues, setRegularQues] = useState(0);
     const [codingQues, setCodingQues] = useState(0);
-    // const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const [questionsLeft, setQuestionsLeft] = useState(0);
     const [questions, setQuestions] = useState<QuestionData | null>(null);
     const [testCaseResults, setTestCaseResults] = useState<TestCaseResults>({});
+    const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(true);
     const [examActive, setExamActive] = useState(true);
+    useEffect(() => {
+        if (!document.fullscreenElement && showFullscreenPrompt) {
+          setShowFullscreenPrompt(true);
+        }
+      }, [showFullscreenPrompt]);
+    
+      const handleFullscreenRequest = async () => {
+        try {
+          await document.documentElement.requestFullscreen();
+          setShowFullscreenPrompt(false);
+        } catch (error) {
+          console.error("Fullscreen error:", error);
+        }
+      };
     const allowedKeys = useMemo(
         () =>
             new Set([
-                "Backspace",
-                "Tab",
-                "Enter",
-                "Shift",
-                "CapsLock",
-                "ArrowLeft",
-                "ArrowRight",
-                "ArrowUp",
-                "ArrowDown",
-                "Home",
-                "End",
-                "Delete",
-                "a",
-                "b",
-                "c",
-                "d",
-                "e",
-                "f",
-                "g",
-                "h",
-                "i",
-                "j",
-                "k",
-                "l",
-                "m",
-                "n",
-                "o",
-                "p",
-                "q",
-                "r",
-                "s",
-                "t",
-                "u",
-                "v",
-                "w",
-                "x",
-                "y",
-                "z",
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "(",
-                ")",
-                "{",
-                "}",
-                "[",
-                "]",
-                ";",
-                ":",
-                ",",
-                ".",
-                "=",
-                "+",
-                "-",
-                "*",
-                "/",
-                "<",
-                ">",
-                "?",
-                "!",
-                "@",
-                "#",
-                "$",
-                "%",
-                "^",
-                "&",
-                "_",
-                "|",
-                "~",
-                "`",
-                '"',
-                "'",
-                "\\",
-                " ",
+                "Backspace", "Tab", "Enter", "Shift","CapsLock", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "Delete", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "{", "}", "[", "]", ";", ":", ",", ".", "=", "+", "-", "*", "/", "<", ">", "?", "!", "@", "#", "$", "%", "^", "&", "_", "|", "~", "`", '"', "'", "\\", " "
             ]),
         []
     );
@@ -135,7 +71,7 @@ export default function Component() {
             const tag = target.tagName;
             const isInputOrTextarea = tag === "INPUT" || tag === "TEXTAREA";
             const isButton = tag === "BUTTON";
-            if (e.key === "Escape") {
+            if (e.key === "Escape" && document.fullscreenElement) {
                 e.preventDefault();
                 e.stopPropagation();
                 return;
@@ -187,7 +123,7 @@ export default function Component() {
             document.removeEventListener("cut", handleClipboardEvent);
             document.removeEventListener("contextmenu", handleContextMenu);
         };
-    }, [examActive, allowedKeys]);
+    }, [examActive, allowedKeys,isFullscreen]);
 
     useEffect(() => {
         const FetchExamData = async () => {
@@ -426,37 +362,32 @@ export default function Component() {
         });
         setQuestionsLeft(regularQues + codingQues - count);
     }, [answers, questions, regularQues, codingQues]);
-
+ 
     useEffect(() => {
-        const handleFullscreen = async () => {
-          if (!document.fullscreenElement) {
-            try {
-              await document.documentElement.requestFullscreen();
-            } catch (err) {
-              console.error('Fullscreen error:', err);
-            }
-          }
-        };
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('fullscreen') === 'true') {
-          handleFullscreen();
-        }
         const handleFullscreenChange = () => {
-          if (!document.fullscreenElement) {
-            alert('Fullscreen is required for this exam!');
-            handleFullscreen();
-          }
+            const fullscreen = !!document.fullscreenElement;
+            setIsFullscreen(fullscreen);
+            if (!fullscreen && examActive) {
+                alert("You cannot exit fullscreen during the exam!");
+                document.documentElement.requestFullscreen().catch((err) => {
+                    console.error("Error re-entering fullscreen:", err);
+                });
+            }
         };
-      
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
         return () => {
-          document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener(
+                "fullscreenchange",
+                handleFullscreenChange
+            );
         };
-      }, []);
+    }, [examActive, isFullscreen]);
 
     const exitFullscreen = () => {
         setExamActive(false);
         if (document.exitFullscreen) {
+            setIsFullscreen(true);
             document.exitFullscreen().catch((err) => {
                 console.error("Error exiting fullscreen:", err);
             });
@@ -495,6 +426,19 @@ export default function Component() {
     
     return (
         <>
+ {showFullscreenPrompt && (
+  <div className={styles.modalOverlay}>
+        <div className={`${styles.modalContent} dark:bg-[#18181b] dark:text-white`}>
+        
+    <div className="bg-white p-6 rounded-lg text-center z-10 relative">
+      <h2 className="text-xl mb-4">Fullscreen Required</h2>
+      <Button onPress={handleFullscreenRequest} color="primary">
+        Enter Fullscreen
+      </Button>
+    </div>
+    </div>
+  </div>
+)}
             <LoadingModal isOpen={loading} message="Loading..." />
             <div className="py-3 mx-3">
                 <div className="w-full px-2 flex items-center justify-between">

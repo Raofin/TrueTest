@@ -38,9 +38,7 @@ export default function StartExam() {
         }
         toast.success("Clipboard permissions granted!");
       }
-      
       if (currentExam?.examId) {
-        await document.documentElement.requestFullscreen().catch(() => {});
         router.push(`/my-exams/${currentExam.examId}`);
       }
     } catch (error) {
