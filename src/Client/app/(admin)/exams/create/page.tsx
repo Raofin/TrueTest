@@ -254,22 +254,23 @@ export default function ExamFormPage() {
             if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
             debounceTimer.current = setTimeout(() => {
-                const message = `Points updated:
-    Problem Solving: ${problemQuesPoint}
-    Written: ${writtenQuesPoint}
-    MCQ: ${mcqQuesPoint}
-    Total Calculated: ${calculatedTotal}
-    Exam Total Points: ${formTotal}`;
+                const message = `Current Points
+                                • Problem: ${problemQuesPoint}
+                                • Written: ${writtenQuesPoint}
+                                • MCQ: ${mcqQuesPoint}
+                                • Total: ${calculatedTotal} / ${formTotal}`;
 
                 if (toastIdRef.current) {
-                    toast.loading(message, {
+                    toast(message, {
                         id: toastIdRef.current,
                         position: "bottom-right",
+                        className: "bg-white dark:bg-[#18181b] text-black dark:text-white",
                         style: { whiteSpace: "pre-line" },
                     });
                 } else {
-                    toastIdRef.current = toast.loading(message, {
+                    toastIdRef.current = toast(message, {
                         position: "bottom-right",
+                        className: "bg-white dark:bg-[#18181b] text-black dark:text-white",
                         style: { whiteSpace: "pre-line" },
                     });
                 }
@@ -277,6 +278,7 @@ export default function ExamFormPage() {
         },
         []
     );
+
     useEffect(() => {
         const calculatedTotal =
             problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
@@ -300,7 +302,7 @@ export default function ExamFormPage() {
         mcqQuesPoint,
         isTotalPointsFocused,
     ]);
-    
+
 
     const handlePublishExam = async () => {
         if (examId && !published) {

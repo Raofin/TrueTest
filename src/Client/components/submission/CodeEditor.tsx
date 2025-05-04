@@ -127,19 +127,8 @@ export default function CodeEditor({
 
                     return {
                         ...tc,
-                        receivedOutput: matchingResult?.receivedOutput || "",
-                        status: matchingResult
-                            ? matchingResult.isAccepted
-                                ? "success"
-                                : "error"
-                            : "error",
-                        errorMessage:
-                            matchingResult?.errorMessage ||
-                            tc.errorMessage ||
-                            "No response from server",
-                        exception:
-                            matchingResult?.exception ||
-                            (matchingResult?.isAccepted ? "" : "Runtime Error"),
+                        receivedOutput: matchingResult?.receivedOutput,
+                        exception: matchingResult?.exception,
                         executionTime: matchingResult?.executionTime ?? 0,
                         isAccepted: matchingResult?.isAccepted ?? false,
                     } as TestCase;
@@ -160,15 +149,14 @@ export default function CodeEditor({
 
     return (
         <div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4" style={{ height: 'calc(100vh - 6rem)' }}>
                 <Card className="border-none rounded-lg p-4 shadow-none bg-white dark:bg-[#18181b]">
-                    <h2 className="text-xl font-bold mb-3">
-                        Problem Statement
-                    </h2>
-                    <div className="space-y-4">
-                        <MarkdownPreview source={question.statementMarkdown} rehypePlugins={[[rehypeSanitize]]}
-        components={{ code: Code }}
-      />
+                    <div className="space-y-4 overflow-auto p-6 bg-[#0d1117] rounded-lg">
+                        <MarkdownPreview
+                            source={question.statementMarkdown}
+                            rehypePlugins={[[rehypeSanitize]]}
+                            components={{ code: Code }}
+                        />
                     </div>
                 </Card>
                 <div>
@@ -224,10 +212,8 @@ export default function CodeEditor({
                                 <div className="flex gap-2">
                                     {formattedTestCases.map((tc, index) => {
                                         const getStatusColor = () => {
-                                            if (tc.status === "success")
-                                                return "bg-green-500";
-                                            if (tc.status === "error")
-                                                return "bg-red-500";
+                                            if (tc.isAccepted) return "bg-green-500";
+                                            else if (tc.isAccepted === false) return "bg-red-500";
                                             return "bg-gray-500";
                                         };
                                         const isSelected =
@@ -252,13 +238,8 @@ export default function CodeEditor({
                                 (testCase, index) => (
                                     <div key={index} className="space-y-4">
                                         <div className="w-full flex flex-col gap-2 mb-4">
-                                        {testCase?.executionTime && <p className="text-sm font-medium">
-                                                Execution Time:
-                                                {testCase.executionTime}ms
-                                            </p>}
                                             {testCase.exception && (
                                                 <p className="text-red-500 text-sm">
-                                                    Exception:
                                                     {testCase.exception}
                                                 </p>
                                             )}
@@ -276,21 +257,22 @@ export default function CodeEditor({
                                             <div>
                                                 <p className="font-semibold mb-2">
                                                     Output
+                                                    {testCase.executionTime !== null && (
+                                                        <span className="text-blue-500 text-sm">{" "}({testCase.executionTime}ms)</span>
+                                                    )}
                                                 </p>
-                                                <div 
+                                                <div
                                                     className={`font-mono p-2 rounded-lg whitespace-pre-wrap min-h-[200px] bg-[#f4f4f5] dark:bg-[#27272a]
                                                         ${
-                                                            testCase.status === "success" ? 
-                                                                "bg-green-100 dark:bg-green-900" : 
-                                                            testCase.status === "error" ? 
-                                                                "bg-red-100 dark:bg-red-900" : 
-                                                                ""
-                                                        }`}>
-                                                    {testCase.status === "error"
-                                                        ? testCase.errorMessage ||
-                                                          "Unknown error"
-                                                        : testCase.receivedOutput}
+                                                        testCase.isAccepted
+                                                            ? "bg-green-100 dark:bg-green-900"
+                                                            : testCase.isAccepted === false
+                                                                ? "bg-red-100 dark:bg-red-900"
+                                                                : ""
+                                                    }`
 
+                                                }>
+                                                    {testCase.receivedOutput}
                                                 </div>
                                             </div>
                                             <div>

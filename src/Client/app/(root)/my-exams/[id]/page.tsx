@@ -428,11 +428,10 @@ export default function Component() {
     return (
         <>
             {showFullscreenPrompt && (
-                <div className={styles.modalOverlay}>
+                <div className={styles.modalBackdropBlurred}>
                     <div
                         className={`${styles.modalContent} dark:bg-[#18181b] dark:text-white`}
                     >
-                        <div className="bg-white p-6 rounded-lg text-center z-10 relative">
                             <h2 className="text-xl mb-4">
                                 Fullscreen Required
                             </h2>
@@ -442,7 +441,6 @@ export default function Component() {
                             >
                                 Enter Fullscreen
                             </Button>
-                        </div>
                     </div>
                 </div>
             )}
@@ -505,12 +503,13 @@ export default function Component() {
                             >
                                 <div className="w-full flex justify-between">
                                     <h2 className="text-lg font-semibold">
-                                        #Question: {displayIndex}
+                                        Question #{displayIndex}
                                     </h2>
                                     <p>
-                                        points:{" "}
-                                        {(question as any).points ??
-                                            (question as any).score}
+                                        Points:{" "}
+                                        <span className="text-red-500">
+                                            {(question as any).points ?? (question as any).score}
+                                        </span>
                                     </p>
                                 </div>
                                 {question.questionType === "ProblemSolving" && (
