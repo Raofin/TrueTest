@@ -74,6 +74,7 @@ export default function Component() {
             if (e.key === "Escape" && document.fullscreenElement) {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 return;
             }
             if (isInputOrTextarea || isButton) return;
@@ -335,10 +336,17 @@ export default function Component() {
     };
     const handleSubmitAndExit = async () => {
         setExamActive(false);
-        const success = await submitAllAnswers();
-        if (success) {
-            exitFullscreen();
-            router.push("/my-exams");
+        try {
+            const success = await submitAllAnswers();
+            if (success) {
+                if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                }
+                router.push("/my-exams");
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            toast.error("Failed to submit exam");
         }
     };
 
@@ -383,16 +391,6 @@ export default function Component() {
             );
         };
     }, [examActive, isFullscreen]);
-
-    const exitFullscreen = () => {
-        setExamActive(false);
-        if (document.exitFullscreen) {
-            setIsFullscreen(true);
-            document.exitFullscreen().catch((err) => {
-                console.error("Error exiting fullscreen:", err);
-            });
-        }
-    };
 
     useEffect(() => {
         if (document.documentElement.requestFullscreen) {
