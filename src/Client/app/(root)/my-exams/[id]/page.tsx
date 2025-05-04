@@ -505,7 +505,7 @@ export default function Component() {
                             >
                                 <div className="w-full flex justify-between">
                                     <h2 className="text-lg font-semibold">
-                                        #Question: {displayIndex}
+                                        Question #{displayIndex}
                                     </h2>
                                     <p>
                                         points:{" "}
