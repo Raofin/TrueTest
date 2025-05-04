@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, Button, Textarea, Select, SelectItem } from "@heroui/react";
+import {Card, Button, Textarea, Select, SelectItem, Input} from "@heroui/react";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -257,7 +257,7 @@ export default function Component() {
                 <p className="text-sm italic text-gray-600 dark:text-gray-400">
                     <b> AI Review:</b>
                 </p>
-                <p className="w-full">
+                <p className="w-full pb-2">
                     {response.review || "No review available"}
                 </p>
                 <p className="w-full">
@@ -473,27 +473,26 @@ export default function Component() {
                                 {editedSubmission.problem.map((submission) => (
                                     <div
                                         key={submission.questionId}
-                                        className="space-y-4 mb-6 p-4 bg-white dark:bg-[#18181b]  rounded-lg"
+                                        className="space-y-4 mb-6 p-8 bg-white dark:bg-[#18181b]  rounded-lg"
                                     >
-                                        <h3 className="font-medium ">
-                                            Problem Statement :
-                                        </h3>
                                         <div className="font-medium">
                                             {questionsData[
                                                 submission.questionId
                                             ] ? (
-                                                <MarkdownPreview
-                                                    source={
-                                                        questionsData[
-                                                            submission
-                                                                .questionId
-                                                        ].statementMarkdown
-                                                    }
-                                                    rehypePlugins={[
-                                                        [rehypeSanitize],
-                                                    ]}
-                                                    components={{ code: Code }}
-                                                />
+                                                <div className="p-6 bg-[#0d1117] rounded-lg">
+                                                    <MarkdownPreview
+                                                        source={
+                                                            questionsData[
+                                                                submission
+                                                                    .questionId
+                                                            ].statementMarkdown
+                                                        }
+                                                        rehypePlugins={[
+                                                            [rehypeSanitize],
+                                                        ]}
+                                                        components={{ code: Code }}
+                                                    />
+                                                </div>
                                             ) : (
                                                 "Loading question..."
                                             )}
@@ -522,36 +521,19 @@ export default function Component() {
                                                     Result
                                                 </h4>
                                                 <div className="flex items-center gap-5">
-                                                    <div className="flex items-center gap-3">
-                                                        <span>Points</span>
-                                                        <input
-                                                            type="number"
-                                                            className="w-12"
-                                                            value={
-                                                                submission.score ||
-                                                                0
-                                                            }
-                                                            onChange={(e) =>
-                                                                updateProblemSubmission(
-                                                                    submission.questionId,
-                                                                    {
-                                                                        score: parseInt(
-                                                                            e
-                                                                                .target
-                                                                                .value
-                                                                        ),
-                                                                    }
-                                                                )
-                                                            }
-                                                        />{" "}
-                                                        /{" "}
-                                                        {
-                                                            questionsData[
-                                                                submission
-                                                                    .questionId
-                                                            ].points
+                                                    <Input
+                                                        className="rounded-2xl w-48"
+                                                        isRequired
+                                                        label={`Points (Max ${questionsData[submission.questionId].points})`}
+                                                        type="number"
+                                                        min="0"
+                                                        value={(submission.score || 0).toString()}
+                                                        onChange={(e) =>
+                                                            updateProblemSubmission(submission.questionId, {
+                                                                score: parseInt(e.target.value),
+                                                            })
                                                         }
-                                                    </div>
+                                                    />
                                                     <Button
                                                         size="sm"
                                                         variant="flat"
@@ -676,34 +658,19 @@ export default function Component() {
                                                     </h4>
                                                     <div className="flex items-center gap-5">
                                                         <div className="flex items-center gap-3">
-                                                            <span>Points</span>
-                                                            <input
+                                                            <Input
+                                                                className="rounded-2xl w-48"
+                                                                isRequired
+                                                                label={`Points (Max ${questionsData[submission.questionId]?.score ?? 0})`}
                                                                 type="number"
-                                                                className="w-12"
-                                                                value={
-                                                                    submission.score ||
-                                                                    0
-                                                                }
+                                                                min="0"
+                                                                value={(submission.score || 0).toString()}
                                                                 onChange={(e) =>
-                                                                    updateWrittenSubmission(
-                                                                        submission.questionId,
-                                                                        {
-                                                                            score: parseInt(
-                                                                                e
-                                                                                    .target
-                                                                                    .value
-                                                                            ),
-                                                                        }
-                                                                    )
+                                                                    updateWrittenSubmission(submission.questionId, {
+                                                                        score: parseInt(e.target.value),
+                                                                    })
                                                                 }
                                                             />
-                                                            /
-                                                            {
-                                                                questionsData[
-                                                                    submission
-                                                                        .questionId
-                                                                ].score
-                                                            }
                                                         </div>
                                                         <Button
                                                             size="sm"
