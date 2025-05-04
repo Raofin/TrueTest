@@ -17,7 +17,23 @@ html.light {
 html.dark {
     color: #ffffff;
 }
-
+.mermaid {
+    background: white;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+  
+  [data-color-mode='dark'] .mermaid {
+    background: #1e1e1e;
+  }
+  
+  .katex-error {
+    color: #ff5555;
+    background: rgba(255,85,85,0.1);
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
 body {
     height: 100%;
     margin: 0;

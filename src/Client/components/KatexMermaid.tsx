@@ -27,7 +27,7 @@ interface MdEditorProps {
   readonly onChange: (newValue: string) => void
 }
 
-const Code: React.FC<CodeProps> = ({ children = [], className, node }) => {
+export const Code: React.FC<CodeProps> = ({ children = [], className, node }) => {
   const demoid = useRef(`dome${randomid()}`)
   const [container, setContainer] = useState<HTMLElement | null>(null)
   
@@ -101,7 +101,7 @@ export default function MdEditor({ value, onChange }: MdEditorProps) {
       className="w-full "
       onChange={(newValue = '') => onChange(newValue)}
       textareaProps={{
-        placeholder: 'Please enter Markdown text',
+        
       }}
       height={350}
       value={value}

@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Card, Input, Textarea, TimeInput } from "@heroui/react";
 import { CalendarDate, Time } from "@internationalized/date";
 import { DatePicker } from "@heroui/date-picker";
@@ -43,7 +42,7 @@ export default function ExamFormPage() {
     const route = useRouter();
     const [examId, setExamId] = useState(searchParams.get("id") || "");
     const isEdit = searchParams.get("isEdit") === "true";
-    const [published ,setPublished] = useState<boolean>()
+    const [published, setPublished] = useState<boolean>();
     const [formData, setFormData] = useState<FormData>({
         title: "",
         description: "",
@@ -57,6 +56,8 @@ export default function ExamFormPage() {
         writtenQues: [],
         mcq: [],
     });
+    const [isTotalPointsFocused, setIsTotalPointsFocused] = useState(false);
+
     const calculatedTotal = problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
     const handleGenerate = () => {
         const FetchData = async () => {
@@ -154,7 +155,7 @@ export default function ExamFormPage() {
                 resp = await api.patch(`/Exam/Update`, payload);
                 if (resp.status === 200) {
                     toast.success(`Exam updated successfully.`);
-                    setPublished(resp.data.isPublished)
+                    setPublished(resp.data.isPublished);
                     route.push("/view-exams");
                 }
             } else {
@@ -162,14 +163,14 @@ export default function ExamFormPage() {
                 if (resp.status === 200) {
                     toast.success(`Exam created successfully.`);
                     setExamId(resp.data.examId);
-                    setPublished(resp.data.isPublished)
+                    setPublished(resp.data.isPublished);
                 }
             }
             setPublishbtn(true);
-        } 
-        catch(error:any) {
-            const {data}=error.response;
-            toast.error(data.message||"An unexpected error occurred");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            const { data } = error.response;
+            toast.error(data.message || "An unexpected error occurred.Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -230,38 +231,77 @@ export default function ExamFormPage() {
                     components.push({ id: uuidv4(), type: "mcq" });
                 }
                 setActiveComponents(components);
-            } catch  {
-                toast.error("Failed to load exam data.Please check your network connection and try again.");
+            } catch {
+                toast.error(
+                    "Failed to load exam data.Please check your network connection and try again."
+                );
                 route.push("/view-exams");
             }
         };
 
         fetchExamDetails();
     }, [examId, isEdit, route, totalPoints]);
+    const toastIdRef = useRef<string | null>(null);
+    const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+    const showToastDebounced = useCallback(
+        (
+            calculatedTotal: number,
+            problemQuesPoint: number,
+            writtenQuesPoint: number,
+            mcqQuesPoint: number,
+            formTotal: number
+        ) => {
+            if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+            debounceTimer.current = setTimeout(() => {
+                const message = `Points updated:
+    Problem Solving: ${problemQuesPoint}
+    Written: ${writtenQuesPoint}
+    MCQ: ${mcqQuesPoint}
+    Total Calculated: ${calculatedTotal}
+    Exam Total Points: ${formTotal}`;
+
+                if (toastIdRef.current) {
+                    toast.loading(message, {
+                        id: toastIdRef.current,
+                        position: "bottom-right",
+                        style: { whiteSpace: "pre-line" },
+                    });
+                } else {
+                    toastIdRef.current = toast.loading(message, {
+                        position: "bottom-right",
+                        style: { whiteSpace: "pre-line" },
+                    });
+                }
+            }, 400);
+        },
+        []
+    );
     useEffect(() => {
         const calculatedTotal =
             problemQuesPoint + writtenQuesPoint + mcqQuesPoint;
-        if (calculatedTotal !== formData.totalPoints) {
-            const message = `Points updated:
-            Problem Solving: ${problemQuesPoint}
-            Written: ${writtenQuesPoint}
-            MCQ: ${mcqQuesPoint}
-            Total Calculated: ${calculatedTotal}
-            Exam Total Points: ${formData.totalPoints}`;
-            toast(message, {
-                duration: 4000,
-                position: "bottom-right",
-                style: {
-                    whiteSpace: "pre-line",
-                },
-            });
+        if ( isTotalPointsFocused ) {
+            showToastDebounced(
+                calculatedTotal,
+                problemQuesPoint,
+                writtenQuesPoint,
+                mcqQuesPoint,
+                formData.totalPoints
+            );
+        } else if (toastIdRef.current) {
+            toast.dismiss(toastIdRef.current);
+            toastIdRef.current = null;
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         formData.totalPoints,
-        mcqQuesPoint,
         problemQuesPoint,
         writtenQuesPoint,
+        mcqQuesPoint,
+        isTotalPointsFocused,
     ]);
+    
+
     const handlePublishExam = async () => {
         if (examId && !published) {
             try {
@@ -447,15 +487,23 @@ export default function ExamFormPage() {
                         </div>
                         <div className="flex items-end justify-between">
                             <div className="w-1/4">
-                                <Input
-                                    className="rounded-2xl"
-                                    isRequired
-                                    label="Total Points"
-                                    type="number"
-                                    min="1"
-                                    value={formData.totalPoints.toString()}
-                                    onChange={handleTotalPointsChange}
-                                />
+                            <Input
+                                className="rounded-2xl"
+                                isRequired
+                                label="Total Points"
+                                type="number"
+                                min="1"
+                                value={formData.totalPoints.toString()}
+                                onFocus={() => setIsTotalPointsFocused(true)}
+                                onBlur={() => {
+                                    setIsTotalPointsFocused(false);
+                                    if (toastIdRef.current) {
+                                        toast.dismiss(toastIdRef.current);
+                                        toastIdRef.current = null;
+                                    }
+                                }}
+                                onChange={handleTotalPointsChange}
+                            />
                             </div>
                             <div className="flex gap-3">
                                 {publishBtn && (
@@ -493,17 +541,33 @@ export default function ExamFormPage() {
                 {activeComponents.map((component) => (
                     <div key={component.id} className="w-full">
                         {component.type === "problemSolve" && (
-                            <ProblemSolve
-                                examId={examId}
-                                existingQuestions={questionData.problemSolve}
-                                problemPoints={handleProblemPointsChange}
-                            />
+                           <ProblemSolve
+                           examId={examId}
+                           existingQuestions={questionData.problemSolve}
+                           problemPoints={handleProblemPointsChange}
+                           onFocus={() => setIsTotalPointsFocused(true)}
+                           onBlur={() => {
+                               setIsTotalPointsFocused(false);
+                               if (toastIdRef.current) {
+                                   toast.dismiss(toastIdRef.current);
+                                   toastIdRef.current = null;
+                               }
+                           }}
+                       />
                         )}
                         {component.type === "writtenQues" && (
                             <WrittenQues
                                 examId={examId}
                                 existingQuestions={questionData.writtenQues}
                                 writtenPoints={handleWrittenPointsChange}
+                                onFocus={() => setIsTotalPointsFocused(true)}
+                                onBlur={() => {
+                                    setIsTotalPointsFocused(false);
+                                    if (toastIdRef.current) {
+                                        toast.dismiss(toastIdRef.current);
+                                        toastIdRef.current = null;
+                                    }
+                                }}
                             />
                         )}
                         {component.type === "mcq" && (
@@ -511,6 +575,14 @@ export default function ExamFormPage() {
                                 examId={examId}
                                 existingQuestions={questionData.mcq}
                                 mcqPoints={handleMcqPointsChange}
+                                onFocus={() => setIsTotalPointsFocused(true)}
+                                onBlur={() => {
+                                    setIsTotalPointsFocused(false);
+                                    if (toastIdRef.current) {
+                                        toast.dismiss(toastIdRef.current);
+                                        toastIdRef.current = null;
+                                    }
+                                }}
                             />
                         )}
                     </div>
@@ -523,7 +595,8 @@ export default function ExamFormPage() {
                             <Button
                                 onPress={() =>
                                     handleAddComponent("problemSolve")
-                                } >
+                                }
+                            >
                                 Add Problem Solving Question
                             </Button>
                         )}
@@ -533,7 +606,8 @@ export default function ExamFormPage() {
                             <Button
                                 onPress={() =>
                                     handleAddComponent("writtenQues")
-                                } >
+                                }
+                            >
                                 Add Written Question
                             </Button>
                         )}
