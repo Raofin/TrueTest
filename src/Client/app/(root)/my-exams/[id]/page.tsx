@@ -555,7 +555,7 @@ export default function Component() {
                         );
                     })}
                 </div>
-                <div className="flex h-full justify-center items-end py-6 mt-4">
+                <div className="flex h-full justify-center items-end py-6 mt-12">
                     <Pagination
                         total={totalPage}
                         page={currentPage}
