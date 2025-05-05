@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Select, SelectItem, Spinner } from "@heroui/react";
 import Editor from "@monaco-editor/react";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import api from "@/lib/api";
 import { languages } from "@/lib/language-selector";
 import { ProblemQuestion, TestCase } from "@/components/types/problemQues";
@@ -156,8 +154,7 @@ export default function CodeEditor({
                     <div className="space-y-4 overflow-auto p-6 bg-white dark:bg-[#18181b] rounded-lg">
                         <MarkdownPreview
                             source={question.statementMarkdown}
-                            remarkPlugins={[remarkMath]}
-                            rehypePlugins={[rehypeKatex, [rehypeSanitize]]}
+                            rehypePlugins={[rehypeSanitize]}
                             components={{ code: Code }}
                             style={{
                                 backgroundColor: Mode==="dark" ? '#18181b' : 'white',

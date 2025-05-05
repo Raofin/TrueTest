@@ -12,8 +12,6 @@ import {
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import {
     AiApiResponse,
     CandidateData,
@@ -499,7 +497,7 @@ export default function Component() {
                                             {questionsData[
                                                 submission.questionId
                                             ] ? (
-                                                <div className="p-6 bg-[#0d1117] rounded-lg">
+                                                <div className="p-6 bg-white dark:bg-[#18181b] rounded-lg">
                                                     <MarkdownPreview
                                                     source={
                                                         questionsData[
@@ -507,8 +505,7 @@ export default function Component() {
                                                                 .questionId
                                                         ].statementMarkdown
                                                     }
-                                                    remarkPlugins={[remarkMath]}
-                                                    rehypePlugins={[rehypeKatex, [rehypeSanitize]]}
+                                                    rehypePlugins={[rehypeSanitize]}
                                                     components={{ code: Code }}
                                                     style={{
                                                         backgroundColor: Mode==="dark" ? '#18181b' : 'white',
