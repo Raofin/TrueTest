@@ -164,7 +164,7 @@ export default function ViewExam() {
                                 <div className="flex flex-col flex-1">
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Date:
+                                            Date:{" "}
                                         </span>
                                         <FormattedDateWeekday
                                             date={exam.opensAt}
@@ -174,7 +174,7 @@ export default function ViewExam() {
                                         <span className="text-[#71717a] dark:text-white">
                                             Duration:
                                         </span>
-                                        {formatTimeHourMinutes(
+                                        {" "}{formatTimeHourMinutes(
                                             exam.durationMinutes
                                         )}
                                         hr
@@ -183,13 +183,13 @@ export default function ViewExam() {
                                         <span className="text-[#71717a] dark:text-white">
                                             Starts at:
                                         </span>
-                                        {convertUtcToLocalTime(exam.opensAt)}
+                                        {" "}{convertUtcToLocalTime(exam.opensAt)}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
                                             Closes at:
                                         </span>
-                                        {convertUtcToLocalTime(exam.closesAt)}
+                                        {" "}{convertUtcToLocalTime(exam.closesAt)}
                                     </p>
                                 </div>
                                 <div className="flex flex-col flex-1">
@@ -197,25 +197,25 @@ export default function ViewExam() {
                                         <span className="text-[#71717a] dark:text-white">
                                             Problem Solving:
                                         </span>
-                                        {exam.problemSolvingPoints}
+                                        {" "}{exam.problemSolvingPoints}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
                                             Written:
                                         </span>
-                                        {exam.writtenPoints}
+                                        {" "}{exam.writtenPoints}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
                                             MCQ:
                                         </span>
-                                        {exam.mcqPoints}
+                                        {" "}{exam.mcqPoints}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
                                             Score:
                                         </span>
-                                        {exam.totalPoints}
+                                        {" "}{exam.totalPoints}
                                     </p>
                                 </div>
                             </div>

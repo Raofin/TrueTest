@@ -434,7 +434,7 @@ export default function Component() {
                                         <span className="text-default-500">
                                             Score:
                                         </span>
-                                        {selectedCandidate.result?.totalScore ??
+                                        {" "}{selectedCandidate.result?.totalScore ??
                                             0}
                                         /{totalPoints}
                                     </div>
@@ -442,7 +442,7 @@ export default function Component() {
                                         <span className="text-default-500">
                                             Submitted At:
                                         </span>
-                                        {new Date(
+                                        {" "}{new Date(
                                             selectedCandidate.result
                                                 ?.submittedAt ?? ""
                                         ).toLocaleString()}
@@ -453,7 +453,7 @@ export default function Component() {
                                         <span className="text-default-500">
                                             Problem Solving:
                                         </span>
-                                        {selectedCandidate.result
+                                        {" "}{selectedCandidate.result
                                             ?.problemSolvingScore ?? 0}
                                         /{problemPoints}
                                     </div>
@@ -461,7 +461,7 @@ export default function Component() {
                                         <span className="text-default-500">
                                             Written Question:
                                         </span>
-                                        {selectedCandidate.result
+                                        {" "}{selectedCandidate.result
                                             ?.writtenScore ?? 0}
                                         /{writtenPoints}
                                     </div>
@@ -469,7 +469,7 @@ export default function Component() {
                                         <span className="text-default-500">
                                             MCQ:
                                         </span>
-                                        {mcqScore ?? 0}/{mcqPoints}
+                                        {" "}{mcqScore ?? 0}/{mcqPoints}
                                     </div>
                                 </div>
                             </div>

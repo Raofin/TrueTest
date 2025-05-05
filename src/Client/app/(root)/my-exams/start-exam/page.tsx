@@ -110,7 +110,7 @@ export default function StartExam() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <div>
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        Date:
+                                        Date:{" "}
                                     </span>
                                     <FormattedDateWeekday
                                         date={currentExam?.closesAt}
@@ -118,13 +118,13 @@ export default function StartExam() {
                                 </div>
                                 <div className="text-right">
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        Problem Solving:
+                                        Problem Solving:{" "}
                                     </span>
                                     {currentExam?.problemSolvingPoints}
                                 </div>
                                 <div>
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        Starts at:
+                                        Starts {" "}
                                     </span>
                                     {currentExam?.opensAt &&
                                         convertUtcToLocalTime(
@@ -133,13 +133,13 @@ export default function StartExam() {
                                 </div>
                                 <div className="text-right">
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        Written:
+                                        Written:{" "}
                                     </span>
                                     {currentExam?.writtenPoints}
                                 </div>
                                 <div>
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        Closes at:
+                                        Closes at:{" "}
                                     </span>
                                     {currentExam?.closesAt &&
                                         convertUtcToLocalTime(
@@ -148,13 +148,13 @@ export default function StartExam() {
                                 </div>
                                 <div className="text-right">
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        MCQ:
+                                        MCQ:{" "}
                                     </span>
                                     {currentExam?.mcqPoints}
                                 </div>
                                 <div>
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        Duration:
+                                        Duration:{" "}
                                     </span>
                                     {formatTimeHourMinutes(
                                         currentExam?.durationMinutes
@@ -163,7 +163,7 @@ export default function StartExam() {
                                 </div>
                                 <div className="text-right">
                                     <span className="text-gray-500 dark:text-gray-400">
-                                        Score:
+                                        Score:{" "}
                                     </span>
                                     {currentExam?.totalPoints}
                                 </div>

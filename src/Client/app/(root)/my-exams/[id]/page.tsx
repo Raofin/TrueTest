@@ -453,18 +453,18 @@ export default function Component() {
                             {codingQues + regularQues}
                         </div>
                         <div className="flex items-center gap-1 before:content-[''] before:w-2 before:h-2 before:bg-red-500 before:rounded-full">
-                            <p>Time Left : </p>
+                            <p className="pl-3">Time Left: </p>
                             <p
-                                className={`font-mono ml-1 ${
+                                className={`${
                                     timeLeft !== undefined && timeLeft < 300
-                                        ? "text-danger"
-                                        : "text-success"
+                                        ? "text-danger font-bold"
+                                        : "text-success font-bold"
                                 }`}
                             >
                                 {timeLeft !== undefined
                                     ? FormatTimeHourMinutesSeconds({
                                           seconds: timeLeft,
-                                      }) + " s"
+                                      }) + "s"
                                     : "Loading..."}
                             </p>
                         </div>
@@ -499,13 +499,13 @@ export default function Component() {
                                 className="space-y-4"
                             >
                                 <div className="w-full flex justify-between">
-                                    <h2 className="text-lg font-semibold">
+                                    <h2 className="pl-1 text-lg font-semibold">
                                         Question #{displayIndex}
                                     </h2>
                                     <p>
                                         Points:
-                                        <span className="text-red-500">
-                                            {(question as any).points ??
+                                        <span className="text-red-500 font-bold">
+                                            {" "}{(question as any).points ??
                                                 (question as any).score}
                                         </span>
                                     </p>
