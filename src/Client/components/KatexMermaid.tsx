@@ -28,6 +28,8 @@ interface MdEditorProps {
 }
 
 export const Code: React.FC<CodeProps> = ({ children = [], className, node }) => {
+  const Mode=useTheme();
+  const isDark=(Mode==='dark');
   const demoid = useRef(`dome${randomid()}`)
   const [container, setContainer] = useState<HTMLElement | null>(null)
   
@@ -88,7 +90,10 @@ export const Code: React.FC<CodeProps> = ({ children = [], className, node }) =>
     return <code dangerouslySetInnerHTML={{ __html: html }} style={{ background: 'transparent' }} />
   }
 
-  return <code className={className}>{children}</code>
+  return <code  style={{
+    backgroundColor: isDark ? "#0d1117" : "#f5f5f5",
+    color: isDark ? "#fff" : "#000",
+  }} className={className}>{children}</code>
 }
 
 export default function MdEditor({ value, onChange }: MdEditorProps) {

@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, Button, Textarea, Select, SelectItem } from "@heroui/react";
+import {
+    Card,
+    Button,
+    Textarea,
+    Select,
+    SelectItem,
+    Input,
+} from "@heroui/react";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -19,6 +26,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import rehypeSanitize from "rehype-sanitize";
 import { Code } from "@/components/KatexMermaid";
+import useTheme from '@/hooks/useTheme'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
@@ -180,7 +188,6 @@ export default function Component() {
         };
         fetchSubmissionData();
     }, [examId, selectedCandidateId]);
-    console.log(editedSubmission);
     const handleCandidateChange = (value: string) => {
         setSelectedCandidateId(value);
         setMcqScore(0);
@@ -243,29 +250,40 @@ export default function Component() {
             return { ...prev, problem: updatedProblem };
         });
     };
+    const [aiScores, setAiScores] = useState<Record<string, number>>({});
+
+    const handleScoreUpdate = (questionId: string, score: number) => {
+        setAiScores((prev) => ({
+            ...prev,
+            [questionId]: score,
+        }));
+    };
+
     const ReviewWithAi = ({
         questionId,
-        maxScore,
+        onScoreUpdate,
     }: {
         questionId: string;
-        maxScore: number;
+        onScoreUpdate: (score: number) => void;
     }) => {
         const response = aiReviewResponse[questionId];
-
+        useEffect(() => {
+            if (response && typeof response.score === "number") {
+                onScoreUpdate(response.score);
+            }
+        }, [response, onScoreUpdate]);
         return response ? (
-            <div className="mt-2 p-3 rounded-md bg-gray-100 dark:bg-gray-800">
-                <p className="text-sm italic text-gray-600 dark:text-gray-400">
+            <div className="mt-2 p-3 rounded-md bg-[#eeeef0] dark:bg-[#27272a]">
+                <p className="text-gray-600 dark:text-gray-400">
                     <b> AI Review:</b>
                 </p>
-                <p className="w-full">
+                <p className="w-full pb-2">
                     {response.review || "No review available"}
-                </p>
-                <p className="w-full">
-                    <b> Score: </b> {response.score ?? 0}/{maxScore}
                 </p>
             </div>
         ) : null;
     };
+    const Mode=useTheme();
     const updateWrittenSubmission = (
         questionId: string,
         updates: Partial<WrittenSubmission>
@@ -473,27 +491,28 @@ export default function Component() {
                                 {editedSubmission.problem.map((submission) => (
                                     <div
                                         key={submission.questionId}
-                                        className="space-y-4 mb-6 p-4 bg-white dark:bg-[#18181b]  rounded-lg"
+                                        className="space-y-4 mb-6 p-8 bg-white dark:bg-[#18181b]  rounded-lg"
                                     >
-                                        <h3 className="font-medium ">
-                                            Problem Statement :
-                                        </h3>
                                         <div className="font-medium">
                                             {questionsData[
                                                 submission.questionId
                                             ] ? (
-                                                <MarkdownPreview
+                                                <div className="bg-white dark:bg-[#18181b] rounded-lg">
+                                                    <MarkdownPreview
                                                     source={
                                                         questionsData[
                                                             submission
                                                                 .questionId
                                                         ].statementMarkdown
                                                     }
-                                                    rehypePlugins={[
-                                                        [rehypeSanitize],
-                                                    ]}
+                                                    rehypePlugins={[rehypeSanitize]}
                                                     components={{ code: Code }}
+                                                    style={{
+                                                        backgroundColor: Mode==="dark" ? '#18181b' : 'white',
+                                                        color:Mode==="dark" ? 'white' : 'black'
+                                                      }}
                                                 />
+                                                </div>
                                             ) : (
                                                 "Loading question..."
                                             )}
@@ -510,10 +529,11 @@ export default function Component() {
                                         </div>
                                         <ReviewWithAi
                                             questionId={submission.questionId}
-                                            maxScore={
-                                                questionsData[
-                                                    submission.questionId
-                                                ].points || 0
+                                            onScoreUpdate={(score) =>
+                                                handleScoreUpdate(
+                                                    submission.questionId,
+                                                    score
+                                                )
                                             }
                                         />
                                         <div className="w-full flex justify-between items-center">
@@ -522,36 +542,37 @@ export default function Component() {
                                                     Result
                                                 </h4>
                                                 <div className="flex items-center gap-5">
-                                                    <div className="flex items-center gap-3">
-                                                        <span>Points</span>
-                                                        <input
-                                                            type="number"
-                                                            className="w-12"
-                                                            value={
-                                                                submission.score ||
-                                                                0
-                                                            }
-                                                            onChange={(e) =>
-                                                                updateProblemSubmission(
-                                                                    submission.questionId,
-                                                                    {
-                                                                        score: parseInt(
-                                                                            e
-                                                                                .target
-                                                                                .value
-                                                                        ),
-                                                                    }
-                                                                )
-                                                            }
-                                                        />{" "}
-                                                        /{" "}
-                                                        {
+                                                    <Input
+                                                        className="rounded-2xl w-48"
+                                                        isRequired
+                                                        label={`Points (Max ${
                                                             questionsData[
                                                                 submission
                                                                     .questionId
                                                             ].points
+                                                        })`}
+                                                        type="number"
+                                                        min="0"
+                                                        value={(
+                                                            aiScores[
+                                                                submission
+                                                                    .questionId
+                                                            ] ??
+                                                            submission.score ??
+                                                            0
+                                                        ).toString()}
+                                                        onChange={(e) =>
+                                                            updateProblemSubmission(
+                                                                submission.questionId,
+                                                                {
+                                                                    score: parseInt(
+                                                                        e.target
+                                                                            .value
+                                                                    ),
+                                                                }
+                                                            )
                                                         }
-                                                    </div>
+                                                    />
                                                     <Button
                                                         size="sm"
                                                         variant="flat"
@@ -658,16 +679,14 @@ export default function Component() {
                                                     </div>
                                                 </Card>
                                                 <ReviewWithAi
-                                                    questionId={
-                                                        submission.questionId
-                                                    }
-                                                    maxScore={
-                                                        questionsData[
-                                                            submission
-                                                                .questionId
-                                                        ].score || 0
-                                                    }
-                                                />
+                                            questionId={submission.questionId}
+                                            onScoreUpdate={(score) =>
+                                                handleScoreUpdate(
+                                                    submission.questionId,
+                                                    score
+                                                )
+                                            }
+                                        />
                                             </div>
                                             <div className="w-full flex justify-between items-center">
                                                 <div>
@@ -676,14 +695,26 @@ export default function Component() {
                                                     </h4>
                                                     <div className="flex items-center gap-5">
                                                         <div className="flex items-center gap-3">
-                                                            <span>Points</span>
-                                                            <input
-                                                                type="number"
-                                                                className="w-12"
-                                                                value={
-                                                                    submission.score ||
+                                                            <Input
+                                                                className="rounded-2xl w-48"
+                                                                isRequired
+                                                                label={`Points (Max ${
+                                                                    questionsData[
+                                                                        submission
+                                                                            .questionId
+                                                                    ]?.score ??
                                                                     0
-                                                                }
+                                                                })`}
+                                                                type="number"
+                                                                min="0"
+                                                                value={(
+                                                                    aiScores[
+                                                                        submission
+                                                                            .questionId
+                                                                    ] ??
+                                                                    submission.score ??
+                                                                    0
+                                                                ).toString()}
                                                                 onChange={(e) =>
                                                                     updateWrittenSubmission(
                                                                         submission.questionId,
@@ -693,22 +724,11 @@ export default function Component() {
                                                                                     .target
                                                                                     .value
                                                                             ),
-                                                                        }
-                                                                    )
-                                                                }
-                                                            />
-                                                            /
-                                                            {
-                                                                questionsData[
-                                                                    submission
-                                                                        .questionId
-                                                                ].score
-                                                            }
+                                                                        } ) } />
                                                         </div>
                                                         <Button
                                                             size="sm"
-                                                            variant="flat"
-                                                        >
+                                                            variant="flat">
                                                             <input
                                                                 type="checkbox"
                                                                 checked={
