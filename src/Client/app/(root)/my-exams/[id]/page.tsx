@@ -479,7 +479,7 @@ export default function Component() {
                     </Button>
                 </div>
             </div>
-            <div className="mx-5 mt-3  border-none px-8 h-[90vh] flex flex-col justify-between">
+            <div className="mx-5 mt-3 border-none px-8 h-full flex flex-col justify-between">
                 <div className="space-y-8 rounded-lg">
                     {currentQuestions.map((question, index) => {
                         const problemQuestionCount =
@@ -555,7 +555,7 @@ export default function Component() {
                         );
                     })}
                 </div>
-                <div className="flex h-full justify-center items-end py-6 mt-12">
+                <div className="flex justify-center items-end py-6 mt-8">
                     <Pagination
                         total={totalPage}
                         page={currentPage}
