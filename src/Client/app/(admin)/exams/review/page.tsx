@@ -497,7 +497,7 @@ export default function Component() {
                                             {questionsData[
                                                 submission.questionId
                                             ] ? (
-                                                <div className="p-6 bg-white dark:bg-[#18181b] rounded-lg">
+                                                <div className="bg-white dark:bg-[#18181b] rounded-lg">
                                                     <MarkdownPreview
                                                     source={
                                                         questionsData[

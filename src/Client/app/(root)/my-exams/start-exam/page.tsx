@@ -158,7 +158,7 @@ export default function StartExam() {
                                     </span>
                                     {formatTimeHourMinutes(
                                         currentExam?.durationMinutes
-                                    )}{" "}
+                                    )}
                                     hr
                                 </div>
                                 <div className="text-right">
