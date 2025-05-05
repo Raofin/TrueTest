@@ -40,9 +40,9 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
 }) => (
     <div className="rounded-lg w-full flex flex-col justify-center items-center gap-4">
         <div className=" w-full">
-        <MdEditor 
-                value={problem.question} 
-                onChange={(value) => onQuestionChange(value || '')} 
+            <MdEditor
+                value={problem.question}
+                onChange={(value) => onQuestionChange(value || "")}
             />
         </div>
         {problem.testCases.map((testCase, index) => (
@@ -59,28 +59,30 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
         ))}
         <div className="w-full flex justify-between">
             <div className="flex gap-3">
-                 <Input
-                        className="w-32"
-                        type="number"
-                        label="Points"
-                        value={problem.points.toString()}
-                        onChange={(e) => onPointsChange(parseInt(e.target.value))}
-                        onFocus={onFocus}   
-                        onBlur={onBlur}       
-                    />
+                <Input
+                    className="w-32"
+                    type="number"
+                    label="Points"
+                    value={problem.points.toString()}
+                    onChange={(e) => onPointsChange(parseInt(e.target.value))}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                />
                 <div>
-                <Select
+                    <Select
                         label="Difficulty"
                         placeholder="Select difficulty"
                         selectedKeys={
                             problem.difficultyType
                                 ? [problem.difficultyType.toLowerCase()]
-                                : [] }
+                                : []
+                        }
                         className="w-40"
                         onChange={(e) => {
                             const value = e.target.value.toLowerCase();
                             onDifficultyChange(value);
-                        }} >
+                        }}
+                    >
                         <SelectItem key="easy">Easy</SelectItem>
                         <SelectItem key="medium">Medium</SelectItem>
                         <SelectItem key="hard">Hard</SelectItem>
@@ -164,7 +166,8 @@ export default function ProblemSolvingForm({
     examId,
     existingQuestions,
     problemPoints,
-    onFocus,onBlur,
+    onFocus,
+    onBlur,
 }: ProblemSolvingFormProps) {
     const [problems, setProblems] = useState<Problem[]>(
         existingQuestions.length > 0
@@ -271,21 +274,32 @@ export default function ProblemSolvingForm({
             (problem) => !problem.points
         );
         const indexMissingDifficulty = problems.findIndex(
-            (problem) => !problem.difficultyType || problem.difficultyType.trim() === ""
+            (problem) =>
+                !problem.difficultyType || problem.difficultyType.trim() === ""
         );
         const indexMissingTestCase = problems.findIndex(
             (problem) => problem.testCases[0].input.length === 0
         );
         if (indexMissingDifficulty !== -1) {
-            toast.error(`Please select difficulty level for Question ${ indexMissingDifficulty + 1 }` );
+            toast.error(
+                `Please select difficulty level for Question ${
+                    indexMissingDifficulty + 1
+                }`
+            );
             return;
         }
         if (indexMissingPoints !== -1) {
-            toast.error(`Please input points for Question ${indexMissingPoints + 1}` );
+            toast.error(
+                `Please input points for Question ${indexMissingPoints + 1}`
+            );
             return;
         }
         if (indexMissingTestCase !== -1) {
-            toast.error( `Please add at least one test case for Question ${ indexMissingTestCase + 1}`);
+            toast.error(
+                `Please add at least one test case for Question ${
+                    indexMissingTestCase + 1
+                }`
+            );
             return;
         }
         try {
@@ -324,8 +338,8 @@ export default function ProblemSolvingForm({
                             return p;
                         })
                     );
-                }else if(createResponse.status===409){
-                   toast.error("Exam of this question is already published.")
+                } else if (createResponse.status === 409) {
+                    toast.error("Exam of this question is already published.");
                 }
             }
             const updatePromises = existingProblems.map((problem) => {
@@ -537,7 +551,7 @@ export default function ProblemSolvingForm({
                                         <AIGenerateButton
                                             isGenerating={isGenerating}
                                             onGenerate={handleGenerate}
-                                        />{" "}
+                                        />
                                         {generatedContent && (
                                             <div className="p-4 mt-6 border rounded-lg bg-content2 border-default-200">
                                                 <p className="text-foreground">

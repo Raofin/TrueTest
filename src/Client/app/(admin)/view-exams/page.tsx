@@ -12,7 +12,7 @@ import {
     formatTimeHourMinutes,
 } from "@/components/DateTimeFormat";
 import { useRouter } from "next/navigation";
-import { viewExam } from '@/components/types/exam'
+import { viewExam } from "@/components/types/exam";
 
 const ITEMS_PER_PAGE = 3;
 
@@ -164,7 +164,7 @@ export default function ViewExam() {
                                 <div className="flex flex-col flex-1">
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Date:{" "}
+                                            Date:
                                         </span>
                                         <FormattedDateWeekday
                                             date={exam.opensAt}
@@ -172,22 +172,22 @@ export default function ViewExam() {
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Duration:{" "}
+                                            Duration:
                                         </span>
                                         {formatTimeHourMinutes(
                                             exam.durationMinutes
-                                        )}{" "}
+                                        )}
                                         hr
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Starts at:{" "}
+                                            Starts at:
                                         </span>
                                         {convertUtcToLocalTime(exam.opensAt)}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Closes at:{" "}
+                                            Closes at:
                                         </span>
                                         {convertUtcToLocalTime(exam.closesAt)}
                                     </p>
@@ -195,26 +195,26 @@ export default function ViewExam() {
                                 <div className="flex flex-col flex-1">
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Problem Solving:{" "}
+                                            Problem Solving:
                                         </span>
                                         {exam.problemSolvingPoints}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Written:{" "}
+                                            Written:
                                         </span>
                                         {exam.writtenPoints}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            MCQ:{" "}
+                                            MCQ:
                                         </span>
                                         {exam.mcqPoints}
                                     </p>
                                     <p>
                                         <span className="text-[#71717a] dark:text-white">
-                                            Score:{" "}
-                                        </span>{" "}
+                                            Score:
+                                        </span>
                                         {exam.totalPoints}
                                     </p>
                                 </div>

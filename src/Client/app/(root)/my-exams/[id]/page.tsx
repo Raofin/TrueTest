@@ -58,9 +58,7 @@ export default function Component() {
     };
     const allowedKeys = useMemo(
         () =>
-            new Set([
-                "Backspace", "Tab", "Enter", "Shift", "CapsLock", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "Delete", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "{", "}", "[", "]", ";", ":", ",", ".", "=", "+", "-", "*", "/", "<", ">", "?", "!", "@", "#", "$", "%", "^", "&", "_", "|", "~", "`", '"', "'", "\\", " ",
-            ]),
+            new Set([ "Backspace", "Tab", "Enter", "Shift", "CapsLock", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "Delete", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "{", "}", "[", "]", ";", ":", ",", ".", "=", "+", "-", "*", "/", "<", ">", "?", "!", "@", "#", "$", "%", "^", "&", "_", "|", "~", "`", '"', "'", "\\", " ", ]),
         []
     );
     useEffect(() => {
@@ -70,6 +68,7 @@ export default function Component() {
             const tag = target.tagName;
             const isInputOrTextarea = tag === "INPUT" || tag === "TEXTAREA";
             const isButton = tag === "BUTTON";
+
             if (e.key === "Escape" && document.fullscreenElement) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -432,15 +431,13 @@ export default function Component() {
                     <div
                         className={`${styles.modalContent} dark:bg-[#18181b] dark:text-white`}
                     >
-                            <h2 className="text-xl mb-4">
-                                Fullscreen Required
-                            </h2>
-                            <Button
-                                onPress={handleFullscreenRequest}
-                                color="primary"
-                            >
-                                Enter Fullscreen
-                            </Button>
+                        <h2 className="text-xl mb-4">Fullscreen Required</h2>
+                        <Button
+                            onPress={handleFullscreenRequest}
+                            color="primary"
+                        >
+                            Enter Fullscreen
+                        </Button>
                     </div>
                 </div>
             )}
@@ -506,9 +503,10 @@ export default function Component() {
                                         Question #{displayIndex}
                                     </h2>
                                     <p>
-                                        Points:{" "}
+                                        Points:
                                         <span className="text-red-500">
-                                            {(question as any).points ?? (question as any).score}
+                                            {(question as any).points ??
+                                                (question as any).score}
                                         </span>
                                     </p>
                                 </div>
@@ -557,7 +555,7 @@ export default function Component() {
                         );
                     })}
                 </div>
-                <div className="flex justify-center items-end py-6">
+                <div className="flex h-full justify-center items-end py-6">
                     <Pagination
                         total={totalPage}
                         page={currentPage}
