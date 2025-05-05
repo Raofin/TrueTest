@@ -60,8 +60,10 @@ export default function Component() {
                     setUserData(response.data.accounts);
                     setTotalPages(response.data.page.totalPages ?? 1);
                 }
-            } catch  {
-                toast.error("Failed to load users list .Please check your network connection and try again.");
+            } catch {
+                toast.error(
+                    "Failed to load users list .Please check your network connection and try again."
+                );
             }
         };
         ManageUser();
@@ -106,7 +108,7 @@ export default function Component() {
                 <div className="flex gap-3 w-[100px] justify-between ml-6">
                     <Button
                         type="button"
-                        variant='solid'
+                        variant="solid"
                         aria-label="Change Status"
                         onPress={() => {
                             setSelectedUser(user.accountId);
@@ -154,15 +156,15 @@ export default function Component() {
     const topContent = useMemo(
         () => (
             <div className="flex gap-5 p-3 w-full items-center justify-between mt-5">
-                 <Input
-                        isClearable
-                        className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
-                        placeholder="Search"
-                        startContent={<SearchIcon />}
-                        value={searchTerm}
-                        onClear={onClear}
-                        onValueChange={onSearchChange}
-                    />
+                <Input
+                    isClearable
+                    className="w-[400px] bg-[#eeeef0] dark:[#71717a] rounded-2xl"
+                    placeholder="Search"
+                    startContent={<SearchIcon />}
+                    value={searchTerm}
+                    onClear={onClear}
+                    onValueChange={onSearchChange}
+                />
                 <div className="flex gap-3">
                     <RoleFilter
                         roleFilter={roleFilter}
@@ -240,7 +242,7 @@ export default function Component() {
                         page={page}
                         total={totalPages}
                         onChange={setPage}
-                    />{" "}
+                    />
                     <span className=" text-small text-default-400">
                         Page {page} out of {totalPages}
                     </span>
@@ -295,34 +297,49 @@ export default function Component() {
                 content={`Do you want to delete this record?`}
                 confirmButtonText="Delete"
                 onConfirm={async () => {
-                 
-                     const success = await handleDelete(selectedUser);
-                     if (success) {
-                      setUserData((prevUsers) =>
-                     prevUsers.filter((user) => user.accountId !== selectedUser));
-                      setIsDeleteModalOpen(false);
-                      setSelectedUser("");
-                      const remainingUsersOnCurrentPage = filteredItems.filter(
-                     (user) => user.accountId !== selectedUser).slice((page - 1) * rowsPerPage, page * rowsPerPage).length;
-                      if (remainingUsersOnCurrentPage === 0 && page > 1)  setPage(page - 1);
-                      else {
-                       const ManageUser = async () => {
-                    try {
-                     const response = await api.get<ApiResponse>(
-                        `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${
-                            roleFilter ? `&role=${roleFilter}` : ""
-                        }${searchTerm ? `&searchTerm=${searchTerm}` : ""}`
-                     );
-                     if (response.status === 200) {
-                      setUserData(response.data.accounts);
-                      setTotalPages(response.data.page.totalPages ?? 1);
-                     }
-                    } catch  {}
-                     };
-                      ManageUser();
-                      }
-                     }
-                    }}
+                    const success = await handleDelete(selectedUser);
+                    if (success) {
+                        setUserData((prevUsers) =>
+                            prevUsers.filter(
+                                (user) => user.accountId !== selectedUser
+                            )
+                        );
+                        setIsDeleteModalOpen(false);
+                        setSelectedUser("");
+                        const remainingUsersOnCurrentPage = filteredItems
+                            .filter((user) => user.accountId !== selectedUser)
+                            .slice(
+                                (page - 1) * rowsPerPage,
+                                page * rowsPerPage
+                            ).length;
+                        if (remainingUsersOnCurrentPage === 0 && page > 1)
+                            setPage(page - 1);
+                        else {
+                            const ManageUser = async () => {
+                                try {
+                                    const response = await api.get<ApiResponse>(
+                                        `/Account?pageIndex=${page}&pageSize=${rowsPerPage}${
+                                            roleFilter
+                                                ? `&role=${roleFilter}`
+                                                : ""
+                                        }${
+                                            searchTerm
+                                                ? `&searchTerm=${searchTerm}`
+                                                : ""
+                                        }`
+                                    );
+                                    if (response.status === 200) {
+                                        setUserData(response.data.accounts);
+                                        setTotalPages(
+                                            response.data.page.totalPages ?? 1
+                                        );
+                                    }
+                                } catch {}
+                            };
+                            ManageUser();
+                        }
+                    }
+                }}
             />
         </div>
     );

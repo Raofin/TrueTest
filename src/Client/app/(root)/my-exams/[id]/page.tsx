@@ -58,9 +58,7 @@ export default function Component() {
     };
     const allowedKeys = useMemo(
         () =>
-            new Set([
-                "Backspace", "Tab", "Enter", "Shift", "CapsLock", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "Delete", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "{", "}", "[", "]", ";", ":", ",", ".", "=", "+", "-", "*", "/", "<", ">", "?", "!", "@", "#", "$", "%", "^", "&", "_", "|", "~", "`", '"', "'", "\\", " ",
-            ]),
+            new Set([ "Backspace", "Tab", "Enter", "Shift", "CapsLock", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "Delete", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "{", "}", "[", "]", ";", ":", ",", ".", "=", "+", "-", "*", "/", "<", ">", "?", "!", "@", "#", "$", "%", "^", "&", "_", "|", "~", "`", '"', "'", "\\", " ", ]),
         []
     );
     useEffect(() => {
@@ -70,6 +68,7 @@ export default function Component() {
             const tag = target.tagName;
             const isInputOrTextarea = tag === "INPUT" || tag === "TEXTAREA";
             const isButton = tag === "BUTTON";
+
             if (e.key === "Escape" && document.fullscreenElement) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -428,21 +427,17 @@ export default function Component() {
     return (
         <>
             {showFullscreenPrompt && (
-                <div className={styles.modalOverlay}>
+                <div className={styles.modalBackdropBlurred}>
                     <div
                         className={`${styles.modalContent} dark:bg-[#18181b] dark:text-white`}
                     >
-                        <div className="bg-white p-6 rounded-lg text-center z-10 relative">
-                            <h2 className="text-xl mb-4">
-                                Fullscreen Required
-                            </h2>
-                            <Button
-                                onPress={handleFullscreenRequest}
-                                color="primary"
-                            >
-                                Enter Fullscreen
-                            </Button>
-                        </div>
+                        <h2 className="text-xl mb-4">Fullscreen Required</h2>
+                        <Button
+                            onPress={handleFullscreenRequest}
+                            color="primary"
+                        >
+                            Enter Fullscreen
+                        </Button>
                     </div>
                 </div>
             )}
@@ -484,8 +479,8 @@ export default function Component() {
                     </Button>
                 </div>
             </div>
-            <div className="mx-5 mt-3  border-none px-8 h-[90vh] flex flex-col justify-between">
-                <div className="space-y-8 rounded-lg">
+            <div className="mx-5 mt-3 border-none px-8 min-h-screen flex flex-col justify-between">
+                <div className="space-y-8 rounded-lg flex-grow">
                     {currentQuestions.map((question, index) => {
                         const problemQuestionCount =
                             questions?.questions.problem.length || 0;
@@ -505,12 +500,14 @@ export default function Component() {
                             >
                                 <div className="w-full flex justify-between">
                                     <h2 className="text-lg font-semibold">
-                                        #Question: {displayIndex}
+                                        Question #{displayIndex}
                                     </h2>
                                     <p>
-                                        points:{" "}
-                                        {(question as any).points ??
-                                            (question as any).score}
+                                        Points:
+                                        <span className="text-red-500">
+                                            {(question as any).points ??
+                                                (question as any).score}
+                                        </span>
                                     </p>
                                 </div>
                                 {question.questionType === "ProblemSolving" && (
@@ -558,7 +555,7 @@ export default function Component() {
                         );
                     })}
                 </div>
-                <div className="flex justify-center items-end py-6">
+                <div className="w-full flex justify-center py-6 mt-8">
                     <Pagination
                         total={totalPage}
                         page={currentPage}
