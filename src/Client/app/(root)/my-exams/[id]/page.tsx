@@ -479,8 +479,8 @@ export default function Component() {
                     </Button>
                 </div>
             </div>
-            <div className="mx-5 mt-3 border-none px-8 h-full flex flex-col justify-between">
-                <div className="space-y-8 rounded-lg">
+            <div className="mx-5 mt-3 border-none px-8 min-h-screen flex flex-col justify-between">
+                <div className="space-y-8 rounded-lg flex-grow">
                     {currentQuestions.map((question, index) => {
                         const problemQuestionCount =
                             questions?.questions.problem.length || 0;
@@ -555,7 +555,7 @@ export default function Component() {
                         );
                     })}
                 </div>
-                <div className="flex justify-center items-end py-6 mt-8">
+                <div className="w-full flex justify-center py-6 mt-8">
                     <Pagination
                         total={totalPage}
                         page={currentPage}
