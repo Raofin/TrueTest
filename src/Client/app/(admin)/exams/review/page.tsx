@@ -12,6 +12,8 @@ import {
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import {
     AiApiResponse,
     CandidateData,
@@ -26,6 +28,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import rehypeSanitize from "rehype-sanitize";
 import { Code } from "@/components/KatexMermaid";
+import useTheme from '@/hooks/useTheme'
 
 export default function Component() {
     const [problemPoints, setProblemPoints] = useState<number | undefined>();
@@ -279,10 +282,10 @@ export default function Component() {
                 <p className="w-full pb-2">
                     {response.review || "No review available"}
                 </p>
-                maxScore={response.score ?? 0};
             </div>
         ) : null;
     };
+    const Mode=useTheme();
     const updateWrittenSubmission = (
         questionId: string,
         updates: Partial<WrittenSubmission>
@@ -498,19 +501,20 @@ export default function Component() {
                                             ] ? (
                                                 <div className="p-6 bg-[#0d1117] rounded-lg">
                                                     <MarkdownPreview
-                                                        source={
-                                                            questionsData[
-                                                                submission
-                                                                    .questionId
-                                                            ].statementMarkdown
-                                                        }
-                                                        rehypePlugins={[
-                                                            [rehypeSanitize],
-                                                        ]}
-                                                        components={{
-                                                            code: Code,
-                                                        }}
-                                                    />
+                                                    source={
+                                                        questionsData[
+                                                            submission
+                                                                .questionId
+                                                        ].statementMarkdown
+                                                    }
+                                                    remarkPlugins={[remarkMath]}
+                                                    rehypePlugins={[rehypeKatex, [rehypeSanitize]]}
+                                                    components={{ code: Code }}
+                                                    style={{
+                                                        backgroundColor: Mode==="dark" ? '#18181b' : 'white',
+                                                        color:Mode==="dark" ? 'white' : 'black'
+                                                      }}
+                                                />
                                                 </div>
                                             ) : (
                                                 "Loading question..."
