@@ -37,6 +37,79 @@
 ![Total Lines of Code](https://tokei.rs/b1/github/Learnathon-By-Geeky-Solutions/elite-programmers?category=code)
 ![Total Files](https://tokei.rs/b1/github/Learnathon-By-Geeky-Solutions/elite-programmers?category=files)
 
+
+## 🛠️ How to Run
+
+### 🔐 API Keys
+
+To generate the required API keys, please follow the instructions from gitbook. We've provided a detailed guide on how to obtain the necessary API keys for the project. You can find the instructions [here](https://truetest.gitbook.io/docs/how-to-run#api-keys).
+
+### 💻 Run Locally
+
+1. Clone the repository
+
+    ```bash
+    git clone https://github.com/Raofin/TrueTest.git
+    cd TrueTest
+    ```
+
+2. Configure
+
+    #### Backend
+
+    Use the following commands to store the credentials in user secrets 👇
+
+    ```bash
+    cd src/api/ops.api
+    dotnet user-secrets set "EmailSettings:Email" ""
+    dotnet user-secrets set "EmailSettings:Password" ""
+    dotnet user-secrets set "OneCompilerSettings:ApiKey" ""
+    dotnet user-secrets set "GoogleCloudSettings:FolderId" ""
+    dotnet user-secrets set "GeminiSettings:ApiKey" ""
+    ```
+
+    ✅ The project is configured to automatically apply migrations with some seed data on its first run using the default connection string.
+
+    #### Frontend
+
+    ```bash
+    cd ../../client
+    cp .env.example .env.local
+    ```
+
+3. 🏗️ Build & Run
+
+    #### Backend
+
+    ```bash
+    dotnet restore
+    dotnet run
+    ```
+
+    #### Frontend
+
+    ```bash
+    cd src/client
+    npm run build
+    npm start
+    ```
+
+### 🐳 Run with Docker
+
+Open the `docker-compose.yml` and fill in the required values under the `environment` section.
+
+1. Build & start containers
+
+    ```bash
+    docker-compose up --build
+    ```
+
+2. Access the application
+
+   - Frontend: https://localhost:9999
+   - Backend: https://localhost:9998
+   - Database: http://localhost:6666
+
 ## 🏆 Team Elite Programmers
 
 ### 👨‍🏫 Mentor: Mahbubur Rahman [@mahbub23](https://github.com/mahbub23)
