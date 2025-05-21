@@ -1,3 +1,5 @@
+'use Client'
+
 import React, { useCallback } from 'react';
 import { Input, Checkbox, Link } from '@heroui/react';
 import { Icon } from '@iconify/react';

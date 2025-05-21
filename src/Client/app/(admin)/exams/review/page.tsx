@@ -444,7 +444,7 @@ export default function Component() {
                                         </span>
                                         {new Date(
                                             selectedCandidate.result
-                                                ?.submittedAt ?? ""
+                                                ?.submittedAt 
                                         ).toLocaleString()}
                                     </div>
                                 </div>
