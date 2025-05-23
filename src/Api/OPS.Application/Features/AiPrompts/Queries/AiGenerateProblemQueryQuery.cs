@@ -59,7 +59,8 @@ public class AiGenerateProblemQueryHandler(IAiService aiService)
             [Output]
             [Explanation]
 
-            Input output format must be like codeforces.
+            * Input output format must be like codeforces.
+            * Input output must not be null or empty.
 
             ### Constraints
             [Constraints here with bullets]
@@ -88,7 +89,6 @@ public class AiGenerateProblemQueryValidator : AbstractValidator<AiGenerateProbl
 {
     public AiGenerateProblemQueryValidator()
     {
-        RuleFor(x => x.UserPrompt)
-            .MaximumLength(3000);
+        RuleFor(x => x.UserPrompt);
     }
 }
