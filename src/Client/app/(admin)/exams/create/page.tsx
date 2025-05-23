@@ -104,7 +104,8 @@ export default function ExamFormPage() {
                 selectedDate: CalendarDate | null
             ): string => {
                 if (!timeString || !selectedDate) return "";
-                const [hoursStr, minutesStr] = timeString.split(":");
+                const [timePart] = timeString.split(' ');
+                const [hoursStr, minutesStr] = timePart.split(":");
                 const hours = parseInt(hoursStr, 10);
                 const minutes = parseInt(minutesStr, 10);
                 const localDate = new Date(
@@ -156,6 +157,9 @@ export default function ExamFormPage() {
                 if (resp.status === 200) {
                     toast.success(`Exam updated successfully.`);
                     setPublished(resp.data.isPublished);
+                    route.push("/view-exams");
+                }else if(resp.status === 409){
+                    toast.error(resp.data.detail||"Exam is already published");
                     route.push("/view-exams");
                 }
             } else {
@@ -375,12 +379,14 @@ export default function ExamFormPage() {
             mcq: [],
         });
     };
-    const handleOpenCloseTime = (time: Time | null): string => {
-        if (!time) return "";
-        return `${String(time.hour).padStart(2, "0")}:${String(
-            time.minute
-        ).padStart(2, "0")}`;
-    };
+  const handleOpenCloseTime = (time: Time | null): string => {
+    if (!time) return "";
+    const hours = time.hour;
+    const minutes = time.minute;
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const twelveHour = hours % 12 || 12; 
+    return `${twelveHour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
+};
     return (
         <>
             <div className="mx-44 flex flex-col gap-8">
